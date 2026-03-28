@@ -4,3 +4,5 @@
    'npm install'
 2. 앱 실행:
    'npm run dev'
+3. 추가 install 
+   'npm install sonner motion lucide-react'
