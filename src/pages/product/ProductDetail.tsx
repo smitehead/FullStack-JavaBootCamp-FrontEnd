@@ -175,74 +175,61 @@ export const ProductDetail: React.FC = () => {
   useEffect(() => {
     if (!product || !product.id) return;
 
-    // 탭마다 고유한 채널 ID 사용 — 동일 상품을 여러 탭에서 열어도 서로 덮어쓰지 않도록
-    const clientId = `product_${id}_${Math.random().toString(36).slice(2, 9)}`;
-    const sseUrl = `${BACKEND_URL}/api/sse/subscribe?clientId=${clientId}`;
-    const eventSource = new EventSource(sseUrl);
-
-    // 1. 상품 가격 실시간 갱신
-    eventSource.addEventListener('priceUpdate', (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (String(data.productNo) === String(product.id)) {
-          setProduct(prev => prev ? ({ ...prev, currentPrice: data.currentPrice }) : prev);
-          // 내가 방금 입찰한 직후엔 SSE 토스트 생략 (입찰 완료 토스트와 중복 방지)
-          if (!justBidRef.current) {
-            const title = product?.title || '이 상품';
-            const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
-            showToast(`'${truncatedTitle}' 상품에 새로운 입찰이 생겼습니다!`, 'bid');
-          }
-          // 자동입찰 설정 중이면 상태 재확인 (상위입찰에 의해 취소됐을 수 있음)
-          const loginMemberNo = getMemberNo(user);
-          if (loginMemberNo) {
-            api.get(`/auto-bid/active?productNo=${data.productNo}`)
-              .then(res => {
-                if (res.status === 200 && res.data) {
-                  setActiveAutoBid({ autoBidNo: res.data.autoBidNo, maxPrice: res.data.maxPrice });
-                } else {
-                  setActiveAutoBid(null);
-                }
-              })
-              .catch(() => setActiveAutoBid(null));
-          }
-        }
-      } catch (e) {
-        console.error('[SSE] priceUpdate 파싱 오류', e);
+    // priceUpdate 공통 처리 함수
+    const handlePriceUpdate = (detail: { productNo: number | string; currentPrice: number }) => {
+      if (String(detail.productNo) !== String(product.id)) return;
+      setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
+      if (!justBidRef.current) {
+        const title = product?.title || '이 상품';
+        const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
+        showToast(`'${truncatedTitle}' 상품에 새로운 입찰이 생겼습니다!`, 'bid');
       }
-    });
-
-    // 2. 포인트 실시간 갱신 (입찰 차감 / 환불)
-    // 경쟁 자동입찰에 밀렸을 때도 pointUpdate(환불)가 반드시 발생하므로,
-    // 이 시점에 자동입찰 상태를 재확인해 뱃지를 자동 해제함
-    eventSource.addEventListener('pointUpdate', (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data && typeof data.points === 'number') {
-          updateCurrentUserPoints(data.points);
-          // 포인트 변동 시 자동입찰 상태 재확인 (자동입찰에 밀려 비활성화됐을 수 있음)
-          const currentMemberNo = getMemberNo(user);
-          if (currentMemberNo && product?.id) {
-            api.get(`/auto-bid/active?productNo=${product.id}`)
-              .then(res => {
-                setActiveAutoBid(res.status === 200 && res.data
-                  ? { autoBidNo: res.data.autoBidNo, maxPrice: res.data.maxPrice }
-                  : null);
-              })
-              .catch(() => setActiveAutoBid(null));
-          }
-        }
-      } catch (e) {
-        console.error('[SSE] pointUpdate 파싱 오류', e);
+      const loginMemberNo = getMemberNo(user);
+      if (loginMemberNo) {
+        api.get(`/auto-bid/active?productNo=${detail.productNo}`)
+          .then(res => setActiveAutoBid(res.status === 200 && res.data
+            ? { autoBidNo: res.data.autoBidNo, maxPrice: res.data.maxPrice }
+            : null))
+          .catch(() => setActiveAutoBid(null));
       }
-    });
-
-    // 오류 시 close() 미호출 → EventSource 스펙상 자동 재연결됨
-    eventSource.onerror = (err) => {
-      console.error('[SSE] 연결 오류', err);
     };
 
-    return () => eventSource.close();
-  }, [product?.id, user?.id]); // 상품 또는 로그인 사용자가 바뀔 때만 재연결
+    // pointUpdate 공통 처리 함수 (자동입찰 취소 시 반드시 발생 → 배지 자동 해제 트리거)
+    const handlePointUpdate = (detail: { points: number }) => {
+      if (typeof detail.points !== 'number') return;
+      updateCurrentUserPoints(detail.points);
+      const currentMemberNo = getMemberNo(user);
+      if (currentMemberNo && product?.id) {
+        api.get(`/auto-bid/active?productNo=${product.id}`)
+          .then(res => setActiveAutoBid(res.status === 200 && res.data
+            ? { autoBidNo: res.data.autoBidNo, maxPrice: res.data.maxPrice }
+            : null))
+          .catch(() => setActiveAutoBid(null));
+      }
+    };
+
+    if (user) {
+      // ── 로그인 사용자: AppContext SSE가 이미 연결됨 → window custom event만 수신 (중복 연결 방지)
+      const onPriceUpdate = (e: Event) => handlePriceUpdate((e as CustomEvent).detail);
+      const onPointUpdate = (e: Event) => handlePointUpdate((e as CustomEvent).detail);
+      window.addEventListener('sse:priceUpdate', onPriceUpdate);
+      window.addEventListener('sse:pointUpdate', onPointUpdate);
+      return () => {
+        window.removeEventListener('sse:priceUpdate', onPriceUpdate);
+        window.removeEventListener('sse:pointUpdate', onPointUpdate);
+      };
+    } else {
+      // ── 비로그인 사용자: priceUpdate 수신을 위해 SSE 직접 연결 (pointUpdate 불필요)
+      const clientId = `product_${id}_${Math.random().toString(36).slice(2, 9)}`;
+      const eventSource = new EventSource(`${BACKEND_URL}/api/sse/subscribe?clientId=${clientId}`);
+      eventSource.addEventListener('priceUpdate', (event: MessageEvent) => {
+        try { handlePriceUpdate(JSON.parse(event.data)); }
+        catch (e) { console.error('[SSE] priceUpdate 파싱 오류', e); }
+      });
+      eventSource.onerror = () => {};
+      return () => eventSource.close();
+    }
+  }, [product?.id, user?.id]);
 
   const prevPriceRef = React.useRef<number>(0);
   // 내가 직접 입찰한 직후 SSE priceUpdate 토스트 중복 방지용 플래그
