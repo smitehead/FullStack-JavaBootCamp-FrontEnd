@@ -1,89 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CURRENT_USER, BLOCKED_USERS, MOCK_PRODUCTS } from '@/services/mockData';
-import { Bell, Shield, ShieldCheck, LogOut, UserMinus, ChevronRight, X, AlertCircle, CheckCircle2, User, Phone, Mail, MapPin, CreditCard, Settings as SettingsIcon, ArrowLeft, GripVertical } from 'lucide-react';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-  TouchSensor
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  useSortable
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { Bell, Shield, ShieldCheck, UserMinus, X, AlertCircle, CheckCircle2, User, CreditCard } from 'lucide-react';
+import api from '@/services/api';
 import { showToast } from '@/components/toastService';
-
-// Sortable Card Component
-interface SortableCardProps {
-  card: {
-    id: string;
-    bank: string;
-    account: string;
-    isDefault: boolean;
-  };
-  onDelete: (id: string) => void;
-}
-
-const SortableCard: React.FC<SortableCardProps> = ({ card, onDelete }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: card.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zIndex: isDragging ? 10 : 1,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="group relative flex items-center justify-between p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-gray-200 transition-all"
-    >
-      <div className="flex items-center gap-4">
-        <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 hover:bg-white rounded-lg transition-colors">
-          <GripVertical className="w-5 h-5 text-gray-300" />
-        </div>
-        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
-          <CreditCard className="w-6 h-6 text-gray-400" />
-        </div>
-        <div>
-          <div className="flex items-center gap-2">
-            <p className="font-bold text-gray-900">{card.bank}</p>
-            {card.isDefault && (
-              <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-md">기본</span>
-            )}
-          </div>
-          <p className="text-sm text-gray-400 font-medium">{card.account}</p>
-        </div>
-      </div>
-
-      <button
-        onClick={() => onDelete(card.id)}
-        className="opacity-0 group-hover:opacity-100 p-2 text-gray-300 hover:text-red-400 transition-all"
-        title="삭제"
-      >
-        <X className="w-5 h-5" />
-      </button>
-    </div>
-  );
-};
 
 export const Settings: React.FC = () => {
   const navigate = useNavigate();
@@ -106,12 +26,9 @@ export const Settings: React.FC = () => {
   });
   const [blockedUsers, setBlockedUsers] = useState(BLOCKED_USERS);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isProfileSaveModalOpen, setIsProfileSaveModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
-  const [isCardDeleteModalOpen, setIsCardDeleteModalOpen] = useState(false);
-  const [cardToDelete, setCardToDelete] = useState<string | null>(null);
   const [withdrawStep, setWithdrawStep] = useState<'confirm' | 'reason' | 'input' | 'success'>('confirm');
   const [withdrawReason, setWithdrawReason] = useState('');
   const [withdrawReasonDetail, setWithdrawReasonDetail] = useState('');
@@ -141,40 +58,38 @@ export const Settings: React.FC = () => {
     confirm: ''
   });
 
-  const [cards, setCards] = useState([
-    { id: 'card_1', bank: '신한은행', account: '110-123-456789', isDefault: true },
-    { id: 'card_2', bank: '국민은행', account: '432102-01-987654', isDefault: false },
-  ] as { id: string; bank: string; account: string; isDefault: boolean }[]);
+  const [registeredCard, setRegisteredCard] = useState<{
+    cardName: string;
+    cardNo: string;
+    createdAt?: string;
+  } | null>(null);
+  const [isCardLoading, setIsCardLoading] = useState(true);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-    useSensor(TouchSensor)
-  );
+  useEffect(()=>{
+    api.get('/points/billing-key')
+      .then((res)=>{
+        if(res.data.registered){
+          setRegisteredCard({
+            cardName: res.data.cardName,
+            cardNo: res.data.cardNo,
+            createdAt: res.data.createdAt,
+          });
+        }
+      })
+      .catch(()=>{})
+      .finally(()=>setIsCardLoading(false));
+  },[]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setCards((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        const newItems = arrayMove(items, oldIndex, newIndex);
-
-        // If the item moved to the top, it becomes the default
-        return newItems.map((item: any, index: number) => ({
-          ...item,
-          isDefault: index === 0
-        }));
-      });
+  const handleDeleteRegisteredCard = async()=>{
+    if(!confirm('등록된 카드를 삭제하시겠습니다?\n카드 삭제 후에는 간편 충전을 사용할 수 없습니다.')) return;
+    try{
+      await api.delete('/points/billing-key');
+      setRegisteredCard(null);
+      showToast('카드가 성공적으로 삭제되었습니다.', 'success');
+    } catch(e){
+      showToast('카드 삭제 중 오류가 발생했습니다.', 'error');
     }
-  };
+  }
 
   const [isProfileSaving, setIsProfileSaving] = useState(false);
 
@@ -253,34 +168,6 @@ export const Settings: React.FC = () => {
     }
   };
 
-  const addCard = () => {
-    const newCard = {
-      id: `card_${Date.now()}`,
-      bank: '새로운 은행',
-      account: '000-000-000000',
-      isDefault: false
-    };
-    setCards([...cards, newCard]);
-  };
-
-  const deleteCard = (id: string) => {
-    setCardToDelete(id);
-    setIsCardDeleteModalOpen(true);
-  };
-
-  const confirmDeleteCard = () => {
-    if (cardToDelete) {
-      const newCards = cards.filter(c => c.id !== cardToDelete);
-      // If we deleted the default card, set the first remaining one as default
-      if (newCards.length > 0 && cards.find(c => c.id === cardToDelete)?.isDefault) {
-        newCards[0].isDefault = true;
-      }
-      setCards(newCards);
-      setIsCardDeleteModalOpen(false);
-      setCardToDelete(null);
-    }
-  };
-
   const toggleSetting = (key: keyof typeof settings) => {
     setSettings(prev => ({ ...prev, [key]: !prev[key] }));
   };
@@ -288,15 +175,6 @@ export const Settings: React.FC = () => {
   const unblockUser = (userId: string) => {
     // For unblock, we can just do it or add another modal, but for now let's just do it to avoid too many modals
     setBlockedUsers(prev => prev.filter(u => u.id !== userId));
-  };
-
-  const handleLogout = () => {
-    setIsLogoutModalOpen(true);
-  };
-
-  const confirmLogout = () => {
-    setIsLogoutModalOpen(false);
-    navigate('/login');
   };
 
   const validateWithdrawal = () => {
@@ -500,31 +378,55 @@ export const Settings: React.FC = () => {
           {activeTab === 'card' && (
             <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-bold text-gray-900">카드/계좌 관리</h3>
+                <h3 className="text-xl font-bold text-gray-900">결제 카드 관리</h3>
                 <button
-                  onClick={() => alert('카드/계좌 추가 기능은 준비 중입니다.')}
+                  onClick={() => navigate('/points/charge')}
                   className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
                 >
-                  추가하기
+                  카드 등록
                 </button>
               </div>
 
-              <div className="space-y-4">
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={cards.map(c => c.id)}
-                    strategy={verticalListSortingStrategy}
+              {isCardLoading ? (
+                <div className="py-10 flex justify-center">
+                  <div className="w-6 h-6 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : registeredCard ? (
+                <div className="flex items-center justify-between p-5 rounded-2xl border border-indigo-200 bg-indigo-50/30">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
+                      <CreditCard className="w-6 h-6 text-indigo-600" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-gray-900">{registeredCard.cardName || '등록된 카드'}</p>
+                        <span className="text-[10px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-full">
+                          기본
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-400">{registeredCard.cardNo || '카드번호 정보 없음'}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleDeleteRegisteredCard}
+                    className="px-4 py-2 bg-red-50 text-red-500 text-xs font-bold rounded-xl hover:bg-red-100 transition-all"
                   >
-                    {cards.map(card => (
-                      <SortableCard key={card.id} card={card} onDelete={deleteCard} />
-                    ))}
-                  </SortableContext>
-                </DndContext>
-              </div>
+                    삭제
+                  </button>
+                </div>
+              ) : (
+                <div className="py-10 text-center text-gray-400">
+                  <CreditCard className="w-10 h-10 mx-auto mb-3 text-gray-200" />
+                  <p className="text-sm font-medium">등록된 카드가 없습니다.</p>
+                  <p className="text-xs text-gray-300 mt-1 mb-4">카드를 등록하면 포인트를 간편하게 충전할 수 있습니다.</p>
+                  <button
+                    onClick={() => navigate('/points/charge')}
+                    className="px-6 py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all"
+                  >
+                    카드 등록하러 가기
+                  </button>
+                </div>
+              )}
             </section>
           )}
 
@@ -627,68 +529,6 @@ export const Settings: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* Card Delete Confirmation Modal */}
-      {isCardDeleteModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsCardDeleteModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-sm rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <AlertCircle className="w-8 h-8 text-red-500" />
-              </div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">카드/계좌 삭제</h3>
-              <p className="text-sm text-gray-500 mb-8 font-medium">정말 삭제하시겠습니까?</p>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setIsCardDeleteModalOpen(false)}
-                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={confirmDeleteCard}
-                  className="flex-1 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all shadow-lg shadow-red-100"
-                >
-                  삭제
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Logout Confirmation Modal */}
-      {isLogoutModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsLogoutModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-sm rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <LogOut className="w-8 h-8 text-red-500" />
-              </div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">로그아웃 하시겠습니까?</h3>
-              <p className="text-sm text-gray-500 mb-8 font-medium">다음에 또 만나요!</p>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setIsLogoutModalOpen(false)}
-                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={confirmLogout}
-                  className="flex-1 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all shadow-lg shadow-red-100"
-                >
-                  로그아웃
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Profile Save Success Modal */}
       {isProfileSaveModalOpen && (
