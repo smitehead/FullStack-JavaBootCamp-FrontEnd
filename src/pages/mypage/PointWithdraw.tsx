@@ -223,7 +223,7 @@ export const PointWithdraw: React.FC = () => {
       {isMethodModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMethodModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+          <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="p-8 border-b border-gray-50 flex items-center justify-between">
               <h3 className="text-xl font-bold text-gray-900">출금 계좌 관리</h3>
               <div className="flex items-center gap-4">

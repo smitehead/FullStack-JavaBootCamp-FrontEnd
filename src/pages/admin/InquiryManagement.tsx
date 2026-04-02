@@ -248,7 +248,7 @@ export const InquiryManagement: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-sm rounded-none p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-sm rounded-2xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
             <div className="w-16 h-16 bg-red-50 rounded-none flex items-center justify-center mb-4 mx-auto">
               <Trash2 className="w-8 h-8 text-red-500" />
             </div>

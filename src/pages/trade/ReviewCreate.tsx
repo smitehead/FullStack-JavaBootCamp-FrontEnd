@@ -124,7 +124,7 @@ export const ReviewCreate: React.FC = () => {
       {/* Success Modal */}
       {showSuccess && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[40px] max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-emerald-500" />
             </div>

@@ -410,7 +410,7 @@ export const WonProductDetail: React.FC = () => {
       {/* ── 결제 확인 모달 ── */}
       {showPaymentConfirm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
               <CreditCard className="w-8 h-8 text-indigo-600" />
             </div>
@@ -432,7 +432,7 @@ export const WonProductDetail: React.FC = () => {
       {/* ── 구매 확정 모달 ── */}
       {showPurchaseConfirm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
               <CheckCircle2 className="w-8 h-8 text-emerald-600" />
             </div>
@@ -452,7 +452,7 @@ export const WonProductDetail: React.FC = () => {
       {/* ── 거래 취소 모달 ── */}
       {showCancelConfirm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
               <XCircle className="w-8 h-8 text-red-600" />
             </div>
@@ -472,7 +472,7 @@ export const WonProductDetail: React.FC = () => {
       {/* ── 후기 모달 ── */}
       {showReviewModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[40px] max-w-lg w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
             <div className="mb-8 pb-6 border-b border-gray-50">
               <h3 className="text-xl font-black text-gray-900 leading-tight">
                 <span className="text-indigo-600">{result.seller.nickname}</span>님과의 거래<br />
@@ -534,7 +534,7 @@ export const WonProductDetail: React.FC = () => {
       {/* ── 후기 등록 완료 ── */}
       {showReviewSuccess && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-center justify-center p-4">
-          <div className="bg-white rounded-[40px] max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-emerald-500" />
             </div>

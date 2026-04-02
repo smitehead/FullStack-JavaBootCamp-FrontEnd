@@ -534,7 +534,7 @@ export const Settings: React.FC = () => {
       {isProfileSaveModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsProfileSaveModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-sm rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
+          <div className="relative bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="w-8 h-8 text-emerald-500" />
@@ -557,7 +557,7 @@ export const Settings: React.FC = () => {
       {isPasswordModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsPasswordModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
+          <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-black text-gray-900">비밀번호 변경</h3>
@@ -649,7 +649,7 @@ export const Settings: React.FC = () => {
       {isEmailModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsEmailModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
+          <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-black text-gray-900">이메일 변경</h3>
@@ -733,7 +733,7 @@ export const Settings: React.FC = () => {
       {isWithdrawModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsWithdrawModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden">
+          <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
             <button
               onClick={() => setIsWithdrawModalOpen(false)}
               className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 transition-colors"
