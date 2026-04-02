@@ -179,6 +179,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     else setNotifications([]);
   }, [user?.id, fetchNotifications]);
 
+  useEffect(() => {
+    if (!user) return;
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
+  }, [user?.id, fetchNotifications]);
+
   // 전역 SSE 구독 - 로그인한 사용자의 포인트/알림 실시간 업데이트
   useEffect(() => {
     if (!user) return;
@@ -195,16 +201,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         if (data && typeof data.points === 'number') {
           setUser(prev => {
             if (!prev) return prev;
-            // 포인트 값이 실제로 변경된 경우에만 업데이트
             if (prev.points === data.points) return prev;
             const updated = { ...prev, points: data.points };
-            // sessionStorage도 동기화하여 새로고침 후에도 유지
             sessionStorage.setItem('java_user', JSON.stringify(updated));
             return updated;
           });
+          // ProductDetail 등 다른 컴포넌트에서 포인트 변동을 감지할 수 있도록 window event 발행
+          window.dispatchEvent(new CustomEvent('sse:pointUpdate', { detail: data }));
         }
       } catch (e) {
         console.error('[SSE] pointUpdate 파싱 오류', e);
+      }
+    });
+
+    // 입찰가 실시간 브로드캐스트 — ProductDetail에 전달하기 위해 window event 발행
+    eventSource.addEventListener('priceUpdate', (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        window.dispatchEvent(new CustomEvent('sse:priceUpdate', { detail: data }));
+      } catch (e) {
+        console.error('[SSE] priceUpdate 파싱 오류', e);
       }
     });
 
@@ -221,7 +237,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             createdAt: data.createdAt,
             type: data.type as NotificationType,
           };
-          setNotifications(prev => [newNoti, ...prev]);
+          // 즉시 state 반영 → 빨간점 바로 활성화
+          setNotifications(prev => {
+            if (prev.some(n => n.id === newNoti.id)) return prev;
+            return [newNoti, ...prev];
+          });
         }
       } catch (e) {
         console.error('[SSE] notification 파싱 오류', e);

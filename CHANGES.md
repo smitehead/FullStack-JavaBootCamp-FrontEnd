@@ -179,7 +179,34 @@ useRef 플래그로 내가 방금 입찰한 직후엔 SSE 토스트를 건너뛰
 
 ---
 
+## 날짜: 2026-03-29
+
+---
+
+### 19. WonProductDetail 환불하기 기능 삭제 (박종권)
+
+#### 수정
+- **`WonProductDetail.tsx`** — 결제완료 상태에서 "환불 요청" 버튼 제거, "구매 확정하기" 단독 버튼으로 교체
+  - 안전 거래 안내 문구 중 "환불 요청" 관련 안내 문구 제거
+- **`InquiryManagement.tsx`** — 환불 관련 코드 정리
+- **`InquiryCreate.tsx`** — 환불 관련 코드 정리
+- **`mockData.ts`** — 환불 관련 mock 데이터 제거 및 정리
+- **`types.ts`** — 환불 관련 타입 정의 제거
+
+---
+
 ## 날짜: 2026-03-30 (마이페이지 세부 기능 및 뼈대 코드 추가)
+
+---
+
+### 20. 마이페이지 미구현 기능 뼈대 컴포넌트 추가 (박종권)
+
+#### 신규 생성
+- **`MyPageStubs.tsx`** — 추후 구현 예정 기능의 stub 컴포넌트 모음
+  - `ProfileEditStub` — 회원정보 수정 (닉네임, 휴대폰번호, 이메일, 주소)
+  - `MembershipWithdrawalStub` — 회원 탈퇴 확인 모달
+  - `ReviewManagementStub` — 내가 작성한/받은 리뷰 목록
+  - `NoticePageStub` — 공지사항 리스트
 
 ### 마이페이지 추가 작업 예정 목록
 - [ ] 입찰기록 - 판매 구매기록 연동
@@ -190,3 +217,121 @@ useRef 플래그로 내가 방금 입찰한 직후엔 SSE 토스트를 건너뛰
 - [ ] 공지사항 페이지 생성
 - [ ] 찜목록 가져오기 연동
 - [ ] 입찰기록 상세 페이지 연동
+
+---
+
+### 21. 자동입찰 관련 마이페이지 UI 수정
+
+#### 수정
+- **`MyPage.tsx`**
+  - 입찰 상태 배지 텍스트 변경: `"경매중"` → `"입찰중"`, `"낙찰"` → `"낙찰성공"`
+  - 낙찰 상품 버튼 텍스트/색상 변경: `"낙찰 상세보기"` (초록) → `"결제대기중"` (노란/amber)
+  - 구매내역 탭에 `"구매완료"` (indigo) 배지 추가
+- **`WonProductDetail.tsx`** — 소폭 UI 수정
+
+---
+
+### 22. 알림함 DB 연동 및 대화탭 정리 (오수환)
+
+#### 문제
+알림 목록이 mock 데이터로만 구성되어 실제 DB 알림이 표시되지 않았음. 알림탭 열어도 읽음 처리 API가 호출되지 않음.
+
+#### 수정
+- **`context/AppContext.tsx`**
+  - `notifications`, `chats` 초기값을 mock 데이터 → 빈 배열(`[]`)로 교체
+  - `fetchNotifications()` 추가 — `GET /api/notifications` 호출 후 상태 매핑 (`notiNo`, `content`, `isRead`, `linkUrl`, `type`)
+  - 로그인/로그아웃 시 알림 목록 자동 갱신 (`useEffect` — `user` 의존성)
+  - `markAllNotificationsAsRead()` 추가 — `PATCH /notifications/read-all` 호출
+  - `markNotificationAsRead()` — `PATCH /notifications/{id}/read` API 호출 추가 (기존엔 로컬 상태만 변경)
+- **`components/Layout.tsx`**
+  - 알림 드롭다운 열 때 `markAllNotificationsAsRead()` 자동 호출 (전체 읽음 처리)
+  - 알림 목록 비어있을 때 "알림이 없습니다." 빈 상태 표시 추가
+  - 대화 탭 채팅 목록 내용 제거 (미구현 상태 정리)
+  - `chats` 의존성 및 `markChatAsRead` 사용 제거
+
+---
+
+### 23. SSE 디버그 로그 추가 (오수환, 임시)
+
+#### 수정
+- **`context/AppContext.tsx`** — SSE 연결/메시지 디버깅용 콘솔 로그 추가 (추후 제거 예정)
+  - `eventSource.onopen`, `eventSource.onmessage` 로그
+  - `notification` 이벤트 수신 로그
+
+---
+
+## 날짜: 2026-03-31 (자동입찰 UI 구현)
+
+---
+
+### 24. 자동입찰 등록/수정/취소 UI (`pages/product/ProductDetail.tsx`)
+
+#### 신규 상태
+- `activeAutoBid: { autoBidNo: number; maxPrice: number } | null` — 내 활성 자동입찰 정보
+
+#### 수정 내용
+
+**자동입찰 상태 초기 로드**
+- `fetchProduct()` 내에서 `GET /api/auto-bid/active?productNo=` 호출
+- 200 응답 시 `activeAutoBid` 설정, 204(미존재) 시 `null`
+
+**자동입찰 등록/수정 모달 연동**
+- `openBidModal('auto')` 호출 시 `activeAutoBid`가 있으면 기존 `maxPrice`로 입력값 초기화
+- `handleBidSubmit()` — `modalType === 'auto'`이면 `POST /api/auto-bid`로 `{productNo, maxPrice}` 전송
+- 성공 시 `activeAutoBid` 상태 갱신 + 토스트 표시
+- 자동입찰 버튼 텍스트: `activeAutoBid` 존재 여부에 따라 "자동 입찰" / "자동입찰 수정"으로 전환
+
+**자동입찰 취소 버튼**
+- `activeAutoBid` 존재 시 버튼 아래 "설정중 · 최대 {maxPrice}원 / 취소" 배지 표시
+- 취소 클릭 → `DELETE /api/auto-bid/{productNo}` 호출
+- 400 응답도 성공으로 처리 (시스템이 이미 취소한 경우 멱등 처리)
+- 성공 시 `setActiveAutoBid(null)` + 토스트 표시
+
+**SSE 실시간 배지 갱신**
+- `pointUpdate` 이벤트 수신 시 `GET /api/auto-bid/active` 재조회 → 자동입찰이 취소되었으면 배지 자동 제거
+  - 근거: 자동입찰 취소(경쟁 패배/상위 입찰)는 반드시 포인트 환불 SSE를 동반함
+
+---
+
+## 날짜: 2026-03-31 (알림 UX 개선 및 SSE 안정화)
+
+---
+
+### 25. 알림 시간 표시 추가 (오수환)
+
+#### 수정
+- **`components/Layout.tsx`** — 알림 목록에 발송 시간 표시 추가
+  - `toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month, day, hour, minute })` 형식
+  - 항상 서울(KST) 기준으로 표시 (사용자 PC 시간대 무관)
+
+---
+
+### 26. 알림 SSE 실시간 처리 및 폴링 백업 (오수환)
+
+#### 문제
+SSE `notification` 이벤트가 오더라도 빨간점이 즉시 활성화되지 않고 수십 초 딜레이가 발생함.
+
+#### 원인
+- `ProductDetail.tsx`가 AppContext와 동일한 `clientId(memberNo)`로 SSE를 별도 연결 → 서로의 emitter를 덮어써 무한 재연결 루프 발생
+- SSE 이벤트 수신 시 `fetchNotifications()` API 호출 방식 사용 → 네트워크 왕복 딜레이
+
+#### 수정
+- **`context/AppContext.tsx`**
+  - SSE `notification` 이벤트 수신 시 즉시 state에 알림 추가 (API 호출 제거)
+  - 중복 알림 방지 (`notiNo` 기준 중복 체크)
+  - 60초 주기 폴링 유지 (SSE 누락 시 백업용)
+  - 디버그용 콘솔 로그 전체 제거
+- **`pages/product/ProductDetail.tsx`**
+  - SSE clientId를 `product_{id}_{랜덤}` 형식으로 변경 → AppContext 채널과 완전 분리
+  - 여러 탭에서 같은 상품 열어도 서로 간섭 없음
+
+---
+
+### 27. 알림 UI 개선 — 읽음/미읽음 구분 (오수환)
+
+#### 수정
+- **`components/Layout.tsx`**
+  - 미읽음 알림: 주황빛 배경 + 왼쪽 빨간 점 + 굵은 텍스트
+  - 읽음 알림: 흰 배경 + 회색 흐린 텍스트
+  - 알림창 열 때 즉시 읽음 처리 제거 → 닫을 때 전체 읽음 처리로 변경
+  - 알림탭 최대 10개까지만 표시 (전체보기 페이지에서 전체 조회 가능)

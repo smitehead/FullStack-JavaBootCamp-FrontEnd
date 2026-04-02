@@ -1,10 +1,13 @@
 **로컬로 실행**
 
 1. 종속성 설치:
+   - powershell 관리자 권한으로 실행
+   'Set-ExecutionPolicy RemoteSigned' // 관리자 권한 주는 명령어
+   - 터미널 창에서 명령어 실행
    'npm install'
-2. 앱 실행:
+3. 앱 실행:
    'npm run dev'
-3. 추가 install
+4. 추가 install 
    'npm install sonner motion lucide-react'
 
 원격 저장소의 특정 브랜치(예: main) 코드로 내 로컬 코드를 싹 다 밀어버리고 싶을 때 아래 두 줄을 차례대로 입력합니다.
