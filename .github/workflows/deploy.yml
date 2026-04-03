@@ -49,5 +49,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd /home/ubuntu/app
-          sudo docker-compose up -d --build frontend
+            cd /home/ubuntu/app
+            sudo docker-compose stop frontend
+            sudo docker-compose rm -f frontend
+            sudo docker-compose up -d --build frontend
