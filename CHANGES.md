@@ -335,3 +335,136 @@ SSE `notification` 이벤트가 오더라도 빨간점이 즉시 활성화되지
   - 읽음 알림: 흰 배경 + 회색 흐린 텍스트
   - 알림창 열 때 즉시 읽음 처리 제거 → 닫을 때 전체 읽음 처리로 변경
   - 알림탭 최대 10개까지만 표시 (전체보기 페이지에서 전체 조회 가능)
+
+---
+
+## 날짜: 2026-04-02
+
+---
+
+### 28. 알림 API 연동 완성 (오수환)
+
+#### 배경
+섹션 22에서 계획된 알림 API 연동이 실제로 반영되지 않은 상태였음.
+`notifications` 초기값이 Mock 데이터로 고정되어 로그인 후에도 실제 DB 알림이 표시되지 않았고,
+읽음 처리도 로컬 상태만 변경하고 API를 호출하지 않아 새로고침 시 초기화됨.
+
+#### 수정 (`context/AppContext.tsx`)
+- `INITIAL_NOTIFICATIONS` Mock import 제거, `notifications` 초기값 `→ []`
+- `mapNotificationToFrontend()` 헬퍼 추가
+  - 백엔드 응답 필드 매핑: `notiNo→id` / `content→message` / `isRead(0|1)→read` / `linkUrl→link` / `type→type`
+- `fetchNotifications()` useCallback 추가 (`GET /api/notifications`)
+- `user?.id` 변경 시 `fetchNotifications()` 자동 호출 — 로그인/세션 복원 시 DB 알림 전체 로딩, 로그아웃 시 `[]` 초기화
+- `markNotificationAsRead()` — `PATCH /api/notifications/{id}/read` API 호출 추가 (Optimistic Update 패턴)
+
+#### 동작 흐름
+```
+로그인 / 세션 복원
+  → user?.id 변경 감지 (useEffect)
+  → fetchNotifications() 호출
+  → GET /api/notifications → setNotifications() 교체
+
+실시간 새 알림 (SSE)
+  → 'notification' 이벤트 수신
+  → notiNo 기준 중복 체크
+  → setNotifications(prev => [newNoti, ...prev]) 즉시 반영
+
+60초 폴링 (SSE 누락 백업)
+  → fetchNotifications() 주기 호출
+
+읽음 처리
+  → UI 즉시 반영 (Optimistic Update)
+  → PATCH /api/notifications/{id}/read 백엔드 동기화
+```
+
+---
+
+## 전체 흐름 정리 (2026-04-02 기준)
+
+### 프론트엔드 핵심 흐름
+
+#### 1. 앱 초기화 흐름
+```
+앱 마운트
+  → sessionStorage에 java_user 존재 확인
+  → 있으면: setUser() + GET /api/members/{memberNo} (포인트/매너온도 동기화)
+  → setIsInitialized(true)
+  → AdminLayout: isInitialized가 true일 때만 권한 체크 실행
+```
+
+#### 2. 로그인 흐름
+```
+POST /api/auth/login
+  → token, memberNo, nickname 반환
+  → GET /api/members/{memberNo} (포인트, 매너온도, isAdmin, profileImage 조회)
+  → setUser() + sessionStorage 저장
+  → user?.id 변경 감지
+      → SSE 연결 (EventSource)
+      → fetchNotifications() (DB 알림 전체 로딩)
+      → isAdmin이면 fetchAdminData() (관리자 데이터 5개 병렬)
+```
+
+#### 3. 실시간 SSE 처리 (AppContext)
+```
+EventSource: GET /api/sse/subscribe?clientId={memberNo}
+
+이벤트별 처리:
+  pointUpdate  → setUser(prev => ({...prev, points})) + sessionStorage 동기화
+                 + window.dispatchEvent('sse:pointUpdate') (ProductDetail 자동입찰 배지 갱신)
+  priceUpdate  → window.dispatchEvent('sse:priceUpdate') (ProductDetail 입찰가 갱신)
+  notification → notiNo 중복 체크 후 setNotifications 맨 앞 추가
+  forceLogout  → 세션 초기화 + 강제 로그아웃 모달 표시
+```
+
+#### 4. 경매 상세 페이지 흐름 (ProductDetail)
+```
+진입 시:
+  GET /api/products/{id}
+  GET /api/auto-bid/active?productNo={id}  (자동입찰 상태)
+
+입찰/자동입찰:
+  POST /api/bids  or  POST /api/auto-bid
+  → SSE priceUpdate 수신 → 입찰가 갱신 (내 입찰 직후는 토스트 중복 방지)
+  → SSE pointUpdate 수신 → 포인트 갱신 + 자동입찰 배지 재조회
+
+SSE (ProductDetail 전용):
+  clientId = product_{id}_{random} (AppContext 채널과 분리)
+```
+
+#### 5. 마이페이지 흐름
+```
+탭별 API:
+  판매내역   → GET /api/products/my-selling
+  입찰내역   → GET /api/products/my-bidding  (결제완료/구매확정 제외)
+  구매내역   → GET /api/products/my-purchased (결제완료 + 구매확정 포함)
+  찜목록     → GET /api/wishlists/my
+
+낙찰 상세:
+  → WonProductDetail: GET /api/auction-results/product/{id}
+  → 결제: POST /api/auction-results/{no}/pay
+  → 구매확정: POST /api/auction-results/{no}/confirm
+```
+
+#### 6. 관리자 페이지 흐름
+```
+로그인 시 fetchAdminData() 병렬 호출:
+  /admin/members       → users 상태
+  /admin/reports       → reports 상태
+  /admin/members/manner-history → mannerHistory 상태
+  /admin/activity-logs → activityLogs 상태
+  /admin/products      → products 상태 (관리자용)
+
+액션 후 자동 갱신:
+  모든 관리자 액션 → fetchAdminData() + refreshActivityLogs() 재호출
+
+직접 API 호출 페이지:
+  BannerManagement     → GET/POST/PUT/DELETE /api/banners
+  NotificationManagement → GET/POST /api/admin/notifications
+```
+
+#### 7. API 인증 흐름
+```
+api.ts 인터셉터:
+  요청 → Authorization: Bearer {token} 자동 삽입
+  401 응답 → sessionStorage 초기화 + window.dispatchEvent('forceLogout')
+```

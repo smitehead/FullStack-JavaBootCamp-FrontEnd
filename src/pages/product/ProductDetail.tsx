@@ -840,7 +840,7 @@ export const ProductDetail: React.FC = () => {
       {/* Bid Modal */}
       {isBidModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <h3 className="text-xl font-black text-gray-900">
                 {modalType === 'bid' ? '입찰 참여하기' : '자동 입찰 설정'}
@@ -928,7 +928,7 @@ export const ProductDetail: React.FC = () => {
       {/* Recharge Prompt Modal */}
       {showRechargePrompt && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-8 text-center animate-in zoom-in-95 duration-200">
+          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 text-center animate-in zoom-in-95 duration-200">
             <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6">
               <AlertTriangle className="w-10 h-10 text-orange-500" />
             </div>

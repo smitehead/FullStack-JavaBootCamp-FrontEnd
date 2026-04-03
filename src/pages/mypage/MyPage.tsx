@@ -448,7 +448,7 @@ export const MyPage: React.FC = () => {
       {showDeleteModal && deleteProduct && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}></div>
-          <div className="bg-white rounded-[32px] w-full max-w-md relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="p-8">
               <div className="flex items-center justify-between mb-6">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${deleteProduct.participantCount > 0 ? 'bg-red-50 text-red-500' : 'bg-gray-50 text-gray-500'}`}>

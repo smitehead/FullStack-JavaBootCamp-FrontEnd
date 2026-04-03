@@ -15,6 +15,9 @@ dist-ssr
 migrated_prompt_history/
 CLAUDE.md
 
+# 환경변수
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
