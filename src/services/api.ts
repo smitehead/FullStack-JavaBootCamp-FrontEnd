@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: 'http://localhost:8080/api', // Spring Boot 백엔드 URL
+  baseURL: '/api', // 백엔드 URL을 상대경로로 변경!
   withCredentials: true,
 });
 
