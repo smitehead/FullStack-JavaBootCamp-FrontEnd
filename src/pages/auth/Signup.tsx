@@ -321,7 +321,7 @@ export const Signup: React.FC = () => {
           <div className="bg-white p-10 rounded-[32px] shadow-xl border border-gray-100">
             <div className="text-left mb-10">
               <h2 className="text-3xl font-black text-gray-900 tracking-tight">약관 동의</h2>
-              <p className="mt-2 text-sm text-gray-500 font-medium">LiveBid 서비스 이용을 위해 약관에 동의해주세요.</p>
+              <p className="mt-2 text-sm text-gray-500 font-medium">JAVAJAVA 서비스 이용을 위해 약관에 동의해주세요.</p>
             </div>
 
             <div className="space-y-4">
@@ -672,7 +672,7 @@ export const Signup: React.FC = () => {
             <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">환영합니다!</h2>
             <p className="text-gray-500 font-medium leading-relaxed mb-10">
               회원가입이 성공적으로 완료되었습니다.<br />
-              지금 바로 JAVAJAVA의 실시간 경매를 시작해보세요.
+              지금 바로 JAVAJAVA의 실시간 중고 경매를 시작해보세요.
             </p>
             <div className="space-y-3">
               <Link
