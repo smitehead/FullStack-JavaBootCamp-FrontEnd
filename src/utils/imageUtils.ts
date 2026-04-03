@@ -40,9 +40,9 @@ export function resolveImageUrl(imagePath: string | null | undefined): string | 
     return imagePath;
   }
   
-  // /로 시작하는 상대 경로 → 백엔드 절대 URL로 변환
+  // /로 시작하는 상대 경로 → 그대로 반환 (Vite proxy / Nginx이 백엔드로 중계)
   if (imagePath.startsWith('/')) {
-    return `${API_BASE_URL}${imagePath}`;
+    return imagePath;
   }
   
   // 기타 경우 (예외 처리)

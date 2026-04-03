@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useCa
 import { Notification, ChatRoom, User, Product, WithdrawnUser, NotificationType, Report, MannerHistory, ActivityLog } from '@/types';
 import { NOTIFICATIONS as INITIAL_NOTIFICATIONS, MOCK_CHATS as INITIAL_CHATS, CURRENT_USER as MOCK_USER, ADMIN_USER, MOCK_PRODUCTS as INITIAL_PRODUCTS, MOCK_USERS as INITIAL_USERS, MOCK_REPORTS as INITIAL_REPORTS } from '@/services/mockData';
 import api from '@/services/api';
-import { BACKEND_URL, resolveImageUrl } from '@/utils/imageUtils';
+import { resolveImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 
@@ -192,8 +192,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const memberNo = getMemberNo(user);
     if (!memberNo) return;
 
-    // BACKEND_URL을 사용하여 하드코딩 제거 (imageUtils.ts에서 환경변수 기반 관리)
-    const eventSource = new EventSource(`${BACKEND_URL}/api/sse/subscribe?clientId=${String(memberNo)}`);
+    const eventSource = new EventSource(`/api/sse/subscribe?clientId=${String(memberNo)}`);
 
     eventSource.addEventListener('pointUpdate', (event: MessageEvent) => {
       try {
