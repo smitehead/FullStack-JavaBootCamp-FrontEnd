@@ -1,0 +1,53 @@
+name: Frontend CI/CD (Docker)
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # React 빌드를 위해 Node.js를 세팅합니다.
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    # 패키지 설치 및 빌드
+    - name: Install dependencies & Build
+      run: |
+        npm install
+        npm run build
+
+    # 보낼 파일들(dist 폴더, Dockerfile, Nginx 설정) 모아두기
+    - name: Prepare Deployment Files
+      run: |
+        mkdir -p deploy
+        cp -r dist deploy/
+        cp Dockerfile deploy/
+        cp default.conf deploy/
+
+    - name: Deliver to EC2
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "deploy/*"
+        target: "/home/ubuntu/app/frontend"
+        strip_components: 1
+
+    # 도커 컴포즈로 프론트엔드만 재빌드 및 실행
+    - name: Deploy with Docker Compose
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd /home/ubuntu/app
+          sudo docker compose up -d --build frontend
