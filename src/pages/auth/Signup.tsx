@@ -16,12 +16,23 @@ export const Signup: React.FC = () => {
   const openPostcode = () => {
     new window.daum.Postcode({
       oncomplete: (data: any) => {
+        // 도로명 주소 우선, 없으면 지번
         const fullAddress = data.roadAddress || data.jibunAddress;
+
+        // 화면 표시용 짧은 주소 조립 (당근마켓 스타일)
+        // sido + sigungu + bname(읍면동) 조합
+        // 예: "서울특별시 강남구 역삼동" → "서울 강남구 역삼동"
+        const sido = data.sido
+          .replace('특별시', '').replace('광역시', '').replace('특별자치시', '').replace('도', '').trim();
+        const sigungu = data.sigungu || '';
+        const bname = data.bname || '';  // 읍면동 이름
+        const addrShort = `${sido} ${sigungu} ${bname}`.trim();
+
         setFormData(prev => ({
           ...prev,
-          zonecode: data.zonecode,
-          address: fullAddress,
+          address: fullAddress,    // 도로명 전체 주소
           addrDetail: '',
+          addrShort,               // "서울 강남구 역삼동"
         }));
       },
     }).open();
@@ -47,11 +58,11 @@ export const Signup: React.FC = () => {
     confirmPassword: '',
     nickname: '',
     email: '',
-    zonecode: '',
-    address: '',
+    address: '',      // 도로명 전체 (내부 관리용)
+    addrShort: '',    // 표시용 짧은 주소
     addrDetail: '',
     phoneNum: '',
-    birthDate: '' // 6자리 숫자 (YYMMDD)
+    birthDate: ''
   });
 
   // 아이디 중복확인 상태
@@ -266,8 +277,9 @@ export const Signup: React.FC = () => {
         nickname: formData.nickname,
         email: formData.email,
         phoneNum: formData.phoneNum,
-        emdNo: 1,                    // 카카오 주소 API는 emdNo 미제공 — 임시값 유지
-        addrDetail: `${formData.address} ${formData.addrDetail}`.trim(),
+        addrRoad: formData.address,          // 도로명 전체
+        addrDetail: formData.addrDetail,     // 상세주소
+        addrShort: formData.addrShort,       // 표시용 짧은 주소
         birthDate: birthDateFormatted,
         marketingAgree: terms.marketing ? 1 : 0,
       });
@@ -547,52 +559,51 @@ export const Signup: React.FC = () => {
               {/* Address & Phone & Birth */}
               <div className="space-y-4">
                 {/* 주소 */}
-<div>
-  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</label>
-  <div className="space-y-2">
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</label>
+                  <div className="space-y-2">
 
-    {/* 우편번호 + 찾기 버튼 */}
-    <div className="flex gap-2">
-      <input
-        type="text"
-        readOnly
-        placeholder="우편번호"
-        value={formData.zonecode}
-        className="w-[140px] px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-indigo-600 cursor-not-allowed"
-      />
-      <button
-        type="button"
-        onClick={openPostcode}
-        className="px-5 py-3.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-2xl transition-all"
-      >
-        우편번호 찾기
-      </button>
-    </div>
+                    {/* 우편번호 + 찾기 버튼 */}
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        readOnly
+                        placeholder="우편번호"
+                        value={formData.zonecode}
+                        className="w-[140px] px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-indigo-600 cursor-not-allowed"
+                      />
+                      <button
+                        type="button"
+                        onClick={openPostcode}
+                        className="px-5 py-3.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-2xl transition-all"
+                      >
+                        우편번호 찾기
+                      </button>
+                    </div>
 
-    {/* 도로명 주소 */}
-    <input
-      type="text"
-      readOnly
-      placeholder="우편번호 찾기를 이용해주세요"
-      value={formData.address}
-      className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
-    />
+                    {/* 도로명 주소 */}
+                    <input
+                      type="text"
+                      readOnly
+                      placeholder="우편번호 찾기를 이용해주세요"
+                      value={formData.address}
+                      className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
+                    />
 
-    {/* 상세주소 — 우편번호 입력 전 비활성화 */}
-    <input
-      type="text"
-      placeholder="상세주소를 입력하세요"
-      value={formData.addrDetail}
-      disabled={!formData.zonecode}
-      onChange={(e) => setFormData({ ...formData, addrDetail: e.target.value })}
-      className={`block w-full px-5 py-3.5 border border-gray-100 rounded-2xl text-sm transition-all outline-none ${
-        !formData.zonecode
-          ? 'bg-gray-100 text-gray-400 cursor-not-allowed placeholder-gray-400'
-          : 'bg-gray-50 focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white text-gray-900'
-      }`}
-    />
-  </div>
-</div>
+                    {/* 상세주소 — 우편번호 입력 전 비활성화 */}
+                    <input
+                      type="text"
+                      placeholder="상세주소를 입력하세요"
+                      value={formData.addrDetail}
+                      disabled={!formData.zonecode}
+                      onChange={(e) => setFormData({ ...formData, addrDetail: e.target.value })}
+                      className={`block w-full px-5 py-3.5 border border-gray-100 rounded-2xl text-sm transition-all outline-none ${!formData.zonecode
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed placeholder-gray-400'
+                        : 'bg-gray-50 focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white text-gray-900'
+                        }`}
+                    />
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>

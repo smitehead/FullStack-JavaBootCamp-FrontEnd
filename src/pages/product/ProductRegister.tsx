@@ -44,6 +44,7 @@ export const ProductRegister: React.FC = () => {
   // 거래 상태
   const [methods, setMethods] = useState<{ face: boolean; delivery: boolean }>({ face: true, delivery: false });
   const [address, setAddress] = useState('');
+  const [addrShort, setAddrShort] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
   const [shippingFee, setShippingFee] = useState<number>(0);
   const [isFreeShipping, setIsFreeShipping] = useState(false);
@@ -201,8 +202,8 @@ export const ProductRegister: React.FC = () => {
         description,
         tradeType: methods.face && methods.delivery ? '혼합' :
           methods.face ? '직거래' : '택배거래',
-        tradeEmdNo: 1, // Default town code
         tradeAddrDetail: address,
+        tradeAddrShort: addrShort,
         startPrice,
         buyoutPrice: isInstantPriceEnabled ? instantPrice : null,
         minBidUnit: minBidIncrement,
@@ -230,6 +231,21 @@ export const ProductRegister: React.FC = () => {
       console.error('상품 등록 실패', error);
       showToast('상품 등록 중 오류가 발생했습니다.', 'error');
     }
+  };
+
+  const openPostcode = () => {
+    new window.daum.Postcode({
+      oncomplete: (data: any) => {
+        const fullAddress = data.roadAddress || data.jibunAddress;
+        const sido = data.sido
+          .replace('특별시', '').replace('광역시', '')
+          .replace('특별자치시', '').replace('도', '').trim();
+        const short = `${sido} ${data.sigungu || ''} ${data.bname || ''}`.trim();
+
+        setAddress(fullAddress);
+        setAddrShort(short);
+      },
+    }).open();
   };
 
   const selectedLarge = CATEGORY_DATA.find(c => c.id === largeCat);
@@ -555,7 +571,7 @@ export const ProductRegister: React.FC = () => {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setAddress('서울 강남구 테헤란로 123')}
+                  onClick={openPostcode}
                   className="px-6 py-4 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors"
                 >
                   주소 검색

@@ -241,8 +241,8 @@ export interface ProductRequestDto {
   title: string;
   description: string;
   tradeType: string;
-  tradeEmdNo?: number;
   tradeAddrDetail?: string;
+  tradeAddrShort: string;
   startPrice: number;
   buyoutPrice?: number | null;
   minBidUnit: number;

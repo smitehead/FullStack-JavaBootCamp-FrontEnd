@@ -47,28 +47,38 @@ export const Settings: React.FC = () => {
   const openPostcode = () => {
     new window.daum.Postcode({
       oncomplete: (data: any) => {
-        // 도로명 주소 우선, 없으면 지번 주소
+        // 도로명 주소 우선, 없으면 지번
         const fullAddress = data.roadAddress || data.jibunAddress;
-        setProfileData(prev => ({
+
+        // 화면 표시용 짧은 주소 조립 (당근마켓 스타일)
+        // sido + sigungu + bname(읍면동) 조합
+        // 예: "서울특별시 강남구 역삼동" → "서울 강남구 역삼동"
+        const sido = data.sido
+          .replace('특별시', '').replace('광역시', '').replace('특별자치시', '').replace('도', '').trim();
+        const sigungu = data.sigungu || '';
+        const bname = data.bname || '';  // 읍면동 이름
+        const addrShort = `${sido} ${sigungu} ${bname}`.trim();
+
+        setFormData(prev => ({
           ...prev,
-          zonecode: data.zonecode,
-          address: fullAddress,
-          addrDetail: '',   // 주소 바뀌면 상세주소 초기화
+          address: fullAddress,    // 도로명 전체 주소
+          addrDetail: '',
+          addrShort,               // "서울 강남구 역삼동"
         }));
       },
     }).open();
   };
 
   // Profile Edit state
-  const [profileData, setProfileData] = useState({
+  const [formData, setFormData] = useState({
     nickname: CURRENT_USER.nickname,
     email: CURRENT_USER.email,
-    phoneNum: CURRENT_USER.phoneNum || '010-1234-5678',
-    zonecode: '',
-    address: CURRENT_USER.address || '서울시 강남구 테헤란로 123',
-    addrDetail: '4층 402호',
-    paymentCard: '신한카드 (****-****-****-1234)'
+    phoneNum: CURRENT_USER.phoneNum || '',
+    address: CURRENT_USER.address || '',
+    addrDetail: '',
+    addrShort: '',
   });
+
 
   const [newEmail, setNewEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
@@ -88,10 +98,10 @@ export const Settings: React.FC = () => {
   } | null>(null);
   const [isCardLoading, setIsCardLoading] = useState(true);
 
-  useEffect(()=>{
+  useEffect(() => {
     api.get('/points/billing-key')
-      .then((res)=>{
-        if(res.data.registered){
+      .then((res) => {
+        if (res.data.registered) {
           setRegisteredCard({
             cardName: res.data.cardName,
             cardNo: res.data.cardNo,
@@ -99,17 +109,17 @@ export const Settings: React.FC = () => {
           });
         }
       })
-      .catch(()=>{})
-      .finally(()=>setIsCardLoading(false));
-  },[]);
+      .catch(() => { })
+      .finally(() => setIsCardLoading(false));
+  }, []);
 
-  const handleDeleteRegisteredCard = async()=>{
-    if(!confirm('등록된 카드를 삭제하시겠습니다?\n카드 삭제 후에는 간편 충전을 사용할 수 없습니다.')) return;
-    try{
+  const handleDeleteRegisteredCard = async () => {
+    if (!confirm('등록된 카드를 삭제하시겠습니다?\n카드 삭제 후에는 간편 충전을 사용할 수 없습니다.')) return;
+    try {
       await api.delete('/points/billing-key');
       setRegisteredCard(null);
       showToast('카드가 성공적으로 삭제되었습니다.', 'success');
-    } catch(e){
+    } catch (e) {
       showToast('카드 삭제 중 오류가 발생했습니다.', 'error');
     }
   }
@@ -173,7 +183,7 @@ export const Settings: React.FC = () => {
     if (verificationCode === '123456') {
       if (type === 'email') {
         setEmailStep('success');
-        setProfileData({ ...profileData, email: newEmail });
+        setFormData({ ...formData, email: newEmail });
         setTimeout(() => {
           setIsEmailModalOpen(false);
           setEmailStep('input');
@@ -296,191 +306,190 @@ export const Settings: React.FC = () => {
         {/* Right Column: Content */}
         <div className="lg:col-span-2 space-y-8">
           {activeTab === 'profile' && (
-  <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
-    <div className="flex items-center justify-between mb-8">
-      <h3 className="text-xl font-bold text-gray-900">프로필 수정</h3>
-      {!isProfileEditMode && (
-        <button
-          onClick={() => setIsProfileEditMode(true)}
-          className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
-        >
-          프로필 수정하기
-        </button>
-      )}
-    </div>
-
-    <div className="space-y-8 max-w-2xl">
-      {!isProfileEditMode ? (
-        /* ── 조회 모드 ── */
-        <div className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* 닉네임 */}
-            <div className="md:col-start-1">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">닉네임</p>
-              <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
-                {profileData.nickname}
-              </div>
-            </div>
-
-            {/* 이메일 */}
-            <div className="md:col-start-1">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일</p>
-              <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
-                {profileData.email}
-              </div>
-            </div>
-
-            {/* 휴대폰 번호 */}
-            <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">휴대폰 번호</p>
-              <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
-                {profileData.phoneNum}
-              </div>
-            </div>
-          </div>
-
-          {/* 주소 */}
-          <div>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</p>
-            <div className="space-y-3">
-              <div className="w-[200px] px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-indigo-600">
-                {profileData.zonecode || '우편번호'}
-              </div>
-              <div className="w-full px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
-                {profileData.address || '도로명 주소'}
-              </div>
-              <div className="w-full px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
-                {profileData.addrDetail || '상세 주소'}
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* ── 수정 모드 ── */
-        <>
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* 닉네임 */}
-              <div className="space-y-2 md:col-start-1">
-                <div className="flex items-center justify-between px-1">
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">닉네임</label>
+            <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl font-bold text-gray-900">프로필 수정</h3>
+                {!isProfileEditMode && (
                   <button
-                    onClick={() => setIsPasswordModalOpen(true)}
-                    className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
+                    onClick={() => setIsProfileEditMode(true)}
+                    className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
                   >
-                    비밀번호 변경
+                    프로필 수정하기
                   </button>
-                </div>
-                <input
-                  type="text"
-                  className="block w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
-                  value={profileData.nickname}
-                  onChange={(e) => setProfileData({ ...profileData, nickname: e.target.value })}
-                />
+                )}
               </div>
 
-              {/* 이메일 */}
-              <div className="space-y-2 md:col-start-1">
-                <div className="flex items-center justify-between px-1">
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">이메일</label>
-                  <button
-                    onClick={() => setIsEmailModalOpen(true)}
-                    className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
-                  >
-                    이메일 변경
-                  </button>
-                </div>
-                <input
-                  type="email"
-                  className="block w-full px-5 h-[56px] bg-gray-100 border border-gray-100 rounded-2xl text-sm text-gray-500 cursor-not-allowed outline-none font-bold"
-                  value={profileData.email}
-                  readOnly
-                />
+              <div className="space-y-8 max-w-2xl">
+                {!isProfileEditMode ? (
+                  /* ── 조회 모드 ── */
+                  <div className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* 닉네임 */}
+                      <div className="md:col-start-1">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">닉네임</p>
+                        <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                          {formData.nickname}
+                        </div>
+                      </div>
+
+                      {/* 이메일 */}
+                      <div className="md:col-start-1">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일</p>
+                        <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                          {formData.email}
+                        </div>
+                      </div>
+
+                      {/* 휴대폰 번호 */}
+                      <div>
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">휴대폰 번호</p>
+                        <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                          {formData.phoneNum}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 주소 */}
+                    <div>
+                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</p>
+                      <div className="space-y-3">
+                        <div className="w-[200px] px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-indigo-600">
+                          {formData.zonecode || '우편번호'}
+                        </div>
+                        <div className="w-full px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                          {formData.address || '도로명 주소'}
+                        </div>
+                        <div className="w-full px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                          {formData.addrDetail || '상세 주소'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* ── 수정 모드 ── */
+                  <>
+                    <div className="space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* 닉네임 */}
+                        <div className="space-y-2 md:col-start-1">
+                          <div className="flex items-center justify-between px-1">
+                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">닉네임</label>
+                            <button
+                              onClick={() => setIsPasswordModalOpen(true)}
+                              className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
+                            >
+                              비밀번호 변경
+                            </button>
+                          </div>
+                          <input
+                            type="text"
+                            className="block w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
+                            value={formData.nickname}
+                            onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+                          />
+                        </div>
+
+                        {/* 이메일 */}
+                        <div className="space-y-2 md:col-start-1">
+                          <div className="flex items-center justify-between px-1">
+                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">이메일</label>
+                            <button
+                              onClick={() => setIsEmailModalOpen(true)}
+                              className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
+                            >
+                              이메일 변경
+                            </button>
+                          </div>
+                          <input
+                            type="email"
+                            className="block w-full px-5 h-[56px] bg-gray-100 border border-gray-100 rounded-2xl text-sm text-gray-500 cursor-not-allowed outline-none font-bold"
+                            value={formData.email}
+                            readOnly
+                          />
+                        </div>
+
+                        {/* 휴대폰 번호 */}
+                        <div className="space-y-2">
+                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">휴대폰 번호</label>
+                          <input
+                            type="tel"
+                            className="block w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
+                            value={formData.phoneNum}
+                            onChange={(e) => setFormData({ ...formData, phoneNum: e.target.value })}
+                          />
+                        </div>
+                      </div>
+
+                      {/* 주소 */}
+                      <div className="space-y-3">
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">주소</label>
+
+                        {/* 우편번호 + 찾기 버튼 */}
+                        <div className="flex gap-3">
+                          <input
+                            type="text"
+                            readOnly
+                            placeholder="우편번호"
+                            value={formData.zonecode}
+                            className="w-[160px] px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-indigo-600 cursor-not-allowed"
+                          />
+                          <button
+                            type="button"
+                            onClick={openPostcode}
+                            className="h-[56px] px-6 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-2xl transition-all"
+                          >
+                            우편번호 찾기
+                          </button>
+                        </div>
+
+                        {/* 도로명 주소 */}
+                        <input
+                          type="text"
+                          readOnly
+                          placeholder="도로명 주소"
+                          value={formData.address}
+                          className="w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
+                        />
+
+                        {/* 상세 주소 — 우편번호 입력 전 비활성화 */}
+                        <input
+                          type="text"
+                          placeholder="상세 주소를 입력해주세요"
+                          value={formData.addrDetail}
+                          disabled={!formData.zonecode}
+                          onChange={(e) => setFormData({ ...formData, addrDetail: e.target.value })}
+                          className={`block w-full px-5 h-[56px] border border-gray-100 rounded-2xl text-sm transition-all outline-none font-bold ${!formData.zonecode
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : 'bg-gray-50 focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white text-gray-900'
+                            }`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* 버튼 */}
+                    <div className="pt-4 flex gap-3">
+                      <button
+                        onClick={() => setIsProfileEditMode(false)}
+                        className="flex-1 h-[56px] bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+                      >
+                        취소
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleProfileSave();
+                          setIsProfileEditMode(false);
+                        }}
+                        disabled={isProfileSaving}
+                        className="flex-1 h-[56px] bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50"
+                      >
+                        {isProfileSaving ? '저장 중...' : '프로필 정보 저장'}
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
-
-              {/* 휴대폰 번호 */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">휴대폰 번호</label>
-                <input
-                  type="tel"
-                  className="block w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
-                  value={profileData.phoneNum}
-                  onChange={(e) => setProfileData({ ...profileData, phoneNum: e.target.value })}
-                />
-              </div>
-            </div>
-
-            {/* 주소 */}
-            <div className="space-y-3">
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">주소</label>
-
-              {/* 우편번호 + 찾기 버튼 */}
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  readOnly
-                  placeholder="우편번호"
-                  value={profileData.zonecode}
-                  className="w-[160px] px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-indigo-600 cursor-not-allowed"
-                />
-                <button
-                  type="button"
-                  onClick={openPostcode}
-                  className="h-[56px] px-6 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-2xl transition-all"
-                >
-                  우편번호 찾기
-                </button>
-              </div>
-
-              {/* 도로명 주소 */}
-              <input
-                type="text"
-                readOnly
-                placeholder="도로명 주소"
-                value={profileData.address}
-                className="w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
-              />
-
-              {/* 상세 주소 — 우편번호 입력 전 비활성화 */}
-              <input
-                type="text"
-                placeholder="상세 주소를 입력해주세요"
-                value={profileData.addrDetail}
-                disabled={!profileData.zonecode}
-                onChange={(e) => setProfileData({ ...profileData, addrDetail: e.target.value })}
-                className={`block w-full px-5 h-[56px] border border-gray-100 rounded-2xl text-sm transition-all outline-none font-bold ${
-                  !profileData.zonecode
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-50 focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white text-gray-900'
-                }`}
-              />
-            </div>
-          </div>
-
-          {/* 버튼 */}
-          <div className="pt-4 flex gap-3">
-            <button
-              onClick={() => setIsProfileEditMode(false)}
-              className="flex-1 h-[56px] bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
-            >
-              취소
-            </button>
-            <button
-              onClick={() => {
-                handleProfileSave();
-                setIsProfileEditMode(false);
-              }}
-              disabled={isProfileSaving}
-              className="flex-1 h-[56px] bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50"
-            >
-              {isProfileSaving ? '저장 중...' : '프로필 정보 저장'}
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  </section>
-)}
+            </section>
+          )}
 
           {/* Card/Account Management */}
           {activeTab === 'card' && (
