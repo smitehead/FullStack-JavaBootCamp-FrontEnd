@@ -20,21 +20,6 @@ export const PointCharge: React.FC = () => {
   } | null>(null);
   const [isCardLoading, setIsCardLoading] = useState(true);
 
-  // 카드 입력 상태 추가
-  const [cardForm, setCardForm] = useState({
-    cardNumber: '',   // 16자리
-    expiryMonth: '',  // MM
-    expiryYear: '',   // YY
-    birth: '',        // 생년월일 6자리
-    pwd2digit: '',    // 비밀번호 앞 2자리
-  });
-  const [isCardFormOpen, setIsCardFormOpen] = useState(false);
-
-  // 카드번호 입력 시 자동 하이픈 포맷팅
-  const formatCardNumber = (value: string) => {
-    const numbers = value.replace(/\D/g, '').slice(0, 16);
-    return numbers.replace(/(\d{4})(?=\d)/g, '$1-');
-  };
 
   // 결과 상태
   const [result, setResult] = useState<{
@@ -64,48 +49,6 @@ export const PointCharge: React.FC = () => {
     }
   };
 
-  // 카드 등록 버튼 클릭
-  const handleRegisterCard = async () => {
-    const { cardNumber, expiryMonth, expiryYear, birth, pwd2digit } = cardForm;
-
-    // 유효성 검사
-    const rawCard = cardNumber.replace(/-/g, '');
-    if (rawCard.length !== 16) {
-      showToast('카드번호 16자리를 입력해주세요.', 'warning'); return;
-    }
-    if (!expiryMonth || !expiryYear) {
-      showToast('유효기간을 입력해주세요.', 'warning'); return;
-    }
-    if (birth.length !== 6) {
-      showToast('생년월일 6자리를 입력해주세요.', 'warning'); return;
-    }
-    if (pwd2digit.length !== 2) {
-      showToast('비밀번호 앞 2자리를 입력해주세요.', 'warning'); return;
-    }
-
-    setIsLoading(true);
-    try {
-      // expiry 형식: YYYY-MM
-      const expiry = `20${expiryYear}-${expiryMonth}`;
-
-      await api.post('/points/billing-key', {
-        cardNumber: rawCard,
-        expiry,
-        birth,
-        pwd2digit,
-      });
-
-      await fetchRegisteredCard(); // 등록 후 카드 정보 새로고침
-      setIsCardFormOpen(false);
-      setCardForm({ cardNumber: '', expiryMonth: '', expiryYear: '', birth: '', pwd2digit: '' });
-      showToast('카드가 성공적으로 등록되었습니다.', 'success');
-    } catch (e: any) {
-      const msg = e.response?.data?.error || '카드 등록에 실패했습니다. 카드 정보를 확인해주세요.';
-      showToast(msg, 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // 카드 삭제
   const handleDeleteCard = async () => {
@@ -240,135 +183,24 @@ export const PointCharge: React.FC = () => {
             </div>
           ) : (
             <div>
-              {!isCardFormOpen ? (
-                /* 카드 미등록 — 등록 버튼만 표시 */
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100">
-                      <CreditCard className="w-6 h-6 text-gray-400" />
-                    </div>
-                    <div>
-                      <p className="font-black text-gray-500">등록된 카드 없음</p>
-                      <p className="text-sm text-gray-400">카드를 등록하면 간편하게 충전할 수 있습니다</p>
-                    </div>
+              {/* 카드 미등록 — 등록 버튼만 표시 */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100">
+                    <CreditCard className="w-6 h-6 text-gray-400" />
                   </div>
-                  <button
-                    onClick={() => setIsCardFormOpen(true)}
-                    className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all"
-                  >
-                    카드 등록
-                  </button>
-                </div>
-              ) : (
-                /* 카드 입력 폼 */
-                <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                  {/* 카드번호 */}
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 mb-1">카드번호</label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="0000-0000-0000-0000"
-                      value={cardForm.cardNumber}
-                      onChange={(e) => setCardForm(prev => ({
-                        ...prev,
-                        cardNumber: formatCardNumber(e.target.value)
-                      }))}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* 유효기간 */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1">유효기간 (월)</label>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="MM"
-                        maxLength={2}
-                        value={cardForm.expiryMonth}
-                        onChange={(e) => setCardForm(prev => ({
-                          ...prev,
-                          expiryMonth: e.target.value.replace(/\D/g, '')
-                        }))}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1">유효기간 (년)</label>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="YY"
-                        maxLength={2}
-                        value={cardForm.expiryYear}
-                        onChange={(e) => setCardForm(prev => ({
-                          ...prev,
-                          expiryYear: e.target.value.replace(/\D/g, '')
-                        }))}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  {/* 생년월일 / 비밀번호 */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1">생년월일 6자리</label>
-                      <input
-                        type="password"
-                        inputMode="numeric"
-                        placeholder="YYMMDD"
-                        maxLength={6}
-                        value={cardForm.birth}
-                        onChange={(e) => setCardForm(prev => ({
-                          ...prev,
-                          birth: e.target.value.replace(/\D/g, '')
-                        }))}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1">비밀번호 앞 2자리</label>
-                      <input
-                        type="password"
-                        inputMode="numeric"
-                        placeholder="••"
-                        maxLength={2}
-                        value={cardForm.pwd2digit}
-                        onChange={(e) => setCardForm(prev => ({
-                          ...prev,
-                          pwd2digit: e.target.value.replace(/\D/g, '')
-                        }))}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  {/* 보안 안내 */}
-                  <p className="text-xs text-gray-400 text-center">
-                    🔒 카드 정보는 PortOne 서버에 직접 전송되며 당사 서버에 저장되지 않습니다
-                  </p>
-
-                  {/* 버튼 */}
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      onClick={() => setIsCardFormOpen(false)}
-                      className="flex-1 py-3 bg-gray-100 text-gray-600 text-sm font-bold rounded-xl hover:bg-gray-200 transition-all"
-                    >
-                      취소
-                    </button>
-                    <button
-                      onClick={handleRegisterCard}
-                      disabled={isLoading}
-                      className="flex-1 py-3 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                    >
-                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : '카드 등록'}
-                    </button>
+                    <p className="font-black text-gray-500">등록된 카드 없음</p>
+                    <p className="text-sm text-gray-400">카드를 등록하면 간편하게 충전할 수 있습니다</p>
                   </div>
                 </div>
-              )}
+                <button
+                  onClick={() => navigate('/points/card-register')}
+                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all"
+                >
+                  카드 등록
+                </button>
+              </div>
             </div>
           )}
         </div>
