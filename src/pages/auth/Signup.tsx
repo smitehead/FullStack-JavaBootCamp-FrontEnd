@@ -4,10 +4,29 @@ import api from '@/services/api';
 import { Package, Check, ChevronRight, Mail, User, Lock, ShieldCheck, MapPin, Phone, Calendar, AlertCircle, Send, CheckCircle2, X } from 'lucide-react';
 import { showToast } from '@/components/toastService';
 
+declare global {
+  interface Window { daum: any; }
+}
+
 type SignupStep = 'terms' | 'info' | 'success';
 
 export const Signup: React.FC = () => {
   const navigate = useNavigate();
+
+  const openPostcode = () => {
+    new window.daum.Postcode({
+      oncomplete: (data: any) => {
+        const fullAddress = data.roadAddress || data.jibunAddress;
+        setFormData(prev => ({
+          ...prev,
+          zonecode: data.zonecode,
+          address: fullAddress,
+          addrDetail: '',
+        }));
+      },
+    }).open();
+  };
+
   const [step, setStep] = useState<SignupStep>('terms');
 
   // 약관 동의 상태
@@ -28,6 +47,7 @@ export const Signup: React.FC = () => {
     confirmPassword: '',
     nickname: '',
     email: '',
+    zonecode: '',
     address: '',
     addrDetail: '',
     phoneNum: '',
@@ -223,6 +243,16 @@ export const Signup: React.FC = () => {
       return;
     }
 
+    // 6. 주소 입력 여부 확인
+    if (!formData.zonecode || !formData.address) {
+      showToast('주소를 검색해주세요.', 'warning');
+      return;
+    }
+    if (!formData.addrDetail.trim()) {
+      showToast('상세주소를 입력해주세요.', 'warning');
+      return;
+    }
+
     // 6. birthDate: YYMMDD → yyyy-MM-dd 변환
     const yy = parseInt(formData.birthDate.substring(0, 2), 10);
     const currentYY = new Date().getFullYear() % 100;
@@ -236,8 +266,8 @@ export const Signup: React.FC = () => {
         nickname: formData.nickname,
         email: formData.email,
         phoneNum: formData.phoneNum,
-        emdNo: 1, // TODO: 주소 검색 API 연동 후 실제 읍면동 번호로 교체 필요
-        addrDetail: formData.addrDetail,
+        emdNo: 1,                    // 카카오 주소 API는 emdNo 미제공 — 임시값 유지
+        addrDetail: `${formData.address} ${formData.addrDetail}`.trim(),
         birthDate: birthDateFormatted,
         marketingAgree: terms.marketing ? 1 : 0,
       });
@@ -516,30 +546,53 @@ export const Signup: React.FC = () => {
 
               {/* Address & Phone & Birth */}
               <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</label>
-                  <div className="flex gap-2 mb-2">
-                    <div className="relative flex-1">
-                      <input
-                        type="text"
-                        required
-                        readOnly
-                        className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none"
-                        placeholder="주소 검색을 이용해주세요"
-                        value={formData.address}
-                      />
-                    </div>
-                    <button type="button" onClick={() => setFormData({ ...formData, address: '서울 강남구 테헤란로 123' })} className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all">검색</button>
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
-                    placeholder="상세주소를 입력하세요"
-                    value={formData.addrDetail}
-                    onChange={(e) => setFormData({ ...formData, addrDetail: e.target.value })}
-                  />
-                </div>
+                {/* 주소 */}
+<div>
+  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</label>
+  <div className="space-y-2">
+
+    {/* 우편번호 + 찾기 버튼 */}
+    <div className="flex gap-2">
+      <input
+        type="text"
+        readOnly
+        placeholder="우편번호"
+        value={formData.zonecode}
+        className="w-[140px] px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-indigo-600 cursor-not-allowed"
+      />
+      <button
+        type="button"
+        onClick={openPostcode}
+        className="px-5 py-3.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-2xl transition-all"
+      >
+        우편번호 찾기
+      </button>
+    </div>
+
+    {/* 도로명 주소 */}
+    <input
+      type="text"
+      readOnly
+      placeholder="우편번호 찾기를 이용해주세요"
+      value={formData.address}
+      className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
+    />
+
+    {/* 상세주소 — 우편번호 입력 전 비활성화 */}
+    <input
+      type="text"
+      placeholder="상세주소를 입력하세요"
+      value={formData.addrDetail}
+      disabled={!formData.zonecode}
+      onChange={(e) => setFormData({ ...formData, addrDetail: e.target.value })}
+      className={`block w-full px-5 py-3.5 border border-gray-100 rounded-2xl text-sm transition-all outline-none ${
+        !formData.zonecode
+          ? 'bg-gray-100 text-gray-400 cursor-not-allowed placeholder-gray-400'
+          : 'bg-gray-50 focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white text-gray-900'
+      }`}
+    />
+  </div>
+</div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>

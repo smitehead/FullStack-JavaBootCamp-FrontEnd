@@ -7,7 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import api from '@/services/api';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { resolveImageUrls, resolveImageUrl, BACKEND_URL } from '../../utils/imageUtils';
+import { resolveImageUrls, resolveImageUrl } from '../../utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 import { toast } from 'sonner';
@@ -221,7 +221,7 @@ export const ProductDetail: React.FC = () => {
     } else {
       // ── 비로그인 사용자: priceUpdate 수신을 위해 SSE 직접 연결 (pointUpdate 불필요)
       const clientId = `product_${id}_${Math.random().toString(36).slice(2, 9)}`;
-      const eventSource = new EventSource(`${BACKEND_URL}/api/sse/subscribe?clientId=${clientId}`);
+      const eventSource = new EventSource(`/api/sse/subscribe?clientId=${clientId}`);
       eventSource.addEventListener('priceUpdate', (event: MessageEvent) => {
         try { handlePriceUpdate(JSON.parse(event.data)); }
         catch (e) { console.error('[SSE] priceUpdate 파싱 오류', e); }
