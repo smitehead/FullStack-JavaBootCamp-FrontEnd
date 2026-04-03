@@ -87,10 +87,6 @@ export const Home: React.FC = () => {
       }
     });
 
-    eventSource.onerror = () => {
-      // close() 미호출 — EventSource 스펙상 오류 후 자동 재연결됨
-    };
-
     return () => eventSource.close();
   }, []);
 
