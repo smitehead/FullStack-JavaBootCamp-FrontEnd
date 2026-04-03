@@ -107,7 +107,7 @@ const App: React.FC = () => {
                 <Route path="/points" element={<Points />} />
                 <Route path="/points/charge" element={<PointCharge />} />
                 <Route path="/points/withdraw" element={<PointWithdraw />} />
-                <Route path="/points/card-register" element={<Layout><CardRegistration /></Layout>} />
+                <Route path="/points/card-register" element={<CardRegistration />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/report" element={<Report />} />

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Loader2, Lock } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Loader2, Lock } from 'lucide-react';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -108,6 +108,15 @@ export const CardRegistration: React.FC = () => {
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-50 py-12 px-4">
       <div className="max-w-md mx-auto">
+
+        {/* 뒤로가기 */}
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          뒤로가기
+        </button>
 
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
 
