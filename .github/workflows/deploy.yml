@@ -50,6 +50,6 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
             cd /home/ubuntu/app
-            sudo docker-compose stop frontend
-            sudo docker-compose rm -f frontend
-            sudo docker-compose up -d --build frontend
+            sudo docker compose stop frontend
+            sudo docker compose rm -f frontend
+            sudo docker compose up -d --build frontend
