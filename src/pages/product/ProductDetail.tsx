@@ -216,7 +216,7 @@ export const ProductDetail: React.FC = () => {
         try { handlePriceUpdate(JSON.parse(event.data)); }
         catch (e) { console.error('[SSE] priceUpdate 파싱 오류', e); }
       });
-      eventSource.onerror = () => {};
+      eventSource.onerror = () => { };
       return () => eventSource.close();
     }
   }, [product?.id, user?.id]);
@@ -249,7 +249,7 @@ export const ProductDetail: React.FC = () => {
         <Package className="w-20 h-20 text-gray-200 mx-auto mb-8" />
         <h2 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">상품을 찾을 수 없거나 접근 권한이 없습니다.</h2>
         <p className="text-gray-400 font-medium mb-10 leading-relaxed">
-          해당 상품이 삭제되었거나, 종료된 경매로 접근이 제한되었습니다.<br/>
+          해당 상품이 삭제되었거나, 종료된 경매로 접근이 제한되었습니다.<br />
           판매자 또는 입찰 참여자만 종료된 상품을 확인할 수 있습니다.
         </p>
         <div className="flex flex-col items-center gap-4">
@@ -429,11 +429,10 @@ export const ProductDetail: React.FC = () => {
             {/* Bidding Status Chip */}
             {!isFinished && userBids.length > 0 && (
               <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
-                <div className={`flex items-center px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md ${
-                  isHighestBidder
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-orange-500 text-white'
-                }`}>
+                <div className={`flex items-center px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md ${isHighestBidder
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-orange-500 text-white'
+                  }`}>
                   <span className="text-xs font-black tracking-tight">
                     입찰 중 <span className="mx-1.5 opacity-50">|</span> {isHighestBidder ? '최고 입찰' : '추월 변동'}
                   </span>
@@ -611,26 +610,6 @@ export const ProductDetail: React.FC = () => {
                 </button>
                 {activeAutoBid && (
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-[11px] text-orange-500 font-bold">
-                      설정중 · 최대 {activeAutoBid.maxPrice.toLocaleString()}원
-                    </span>
-                    <button
-                      onClick={async () => {
-                        try {
-                          await api.delete(`/auto-bid/${product.id}`);
-                        } catch (err: any) {
-                          if (err?.response?.status !== 400) {
-                            showToast('자동입찰 취소에 실패했습니다.', 'error');
-                            return;
-                          }
-                        }
-                        setActiveAutoBid(null);
-                        showToast('자동입찰이 취소되었습니다.', 'success');
-                      }}
-                      className="text-[11px] text-gray-400 hover:text-red-500 font-bold underline underline-offset-2"
-                    >
-                      취소
-                    </button>
                   </div>
                 )}
               </div>
@@ -1029,8 +1008,8 @@ export const ProductDetail: React.FC = () => {
             </div>
             <h3 className="text-2xl font-black text-gray-900 mb-3">포인트가 부족합니다</h3>
             <p className="text-gray-500 mb-8 leading-relaxed">
-              입찰을 진행하기 위해 포인트 충전이 필요합니다.<br/>
-              현재 보유 포인트: <span className="text-indigo-600 font-bold">{(user?.points || 0).toLocaleString()}P</span><br/>
+              입찰을 진행하기 위해 포인트 충전이 필요합니다.<br />
+              현재 보유 포인트: <span className="text-indigo-600 font-bold">{(user?.points || 0).toLocaleString()}P</span><br />
               지금 충전하러 가시겠습니까?
             </p>
             <div className="flex gap-3">
