@@ -187,15 +187,17 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               <Link to="/notice" className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">고객센터</Link>
             </div>
 
-            {/* 포인트 영역 (비회원은 0으로 보이게 고정) */}
-            <div className="flex flex-col items-end">
-              <Link to="/points" className="bg-[#F8F9FA] px-4 py-2.5 rounded-2xl flex items-center space-x-2 border border-gray-50 hover:bg-gray-100 transition-colors">
-                <span className="text-[#FF5A5A] font-black text-sm">P</span>
-                <span className="text-sm font-black text-gray-700">
-                  {user ? user.points.toLocaleString() : '0'}
-                </span>
-              </Link>
-            </div>
+            {/* 포인트 영역 (비회원은 숨김) */}
+            {user && (
+              <div className="flex flex-col items-end">
+                <Link to="/points" className="bg-[#F8F9FA] px-4 py-2.5 rounded-2xl flex items-center space-x-2 border border-gray-50 hover:bg-gray-100 transition-colors">
+                  <span className="text-[#FF5A5A] font-black text-sm">P</span>
+                  <span className="text-sm font-black text-gray-700">
+                    {user.points.toLocaleString()}
+                  </span>
+                </Link>
+              </div>
+            )}
 
             {user ? (
               <>

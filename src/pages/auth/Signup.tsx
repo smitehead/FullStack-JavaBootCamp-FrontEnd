@@ -567,7 +567,7 @@ export const Signup: React.FC = () => {
                       <input
                         type="text"
                         readOnly
-                        placeholder="우편번호 찾기를 이용해주세요"
+                        placeholder="주소 찾기를 이용해주세요"
                         value={formData.address}
                         className="flex-1 px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
                       />
