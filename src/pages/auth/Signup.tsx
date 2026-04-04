@@ -255,7 +255,7 @@ export const Signup: React.FC = () => {
     }
 
     // 6. 주소 입력 여부 확인
-    if (!formData.zonecode || !formData.address) {
+    if (!formData.address) {
       showToast('주소를 검색해주세요.', 'warning');
       return;
     }
@@ -563,41 +563,31 @@ export const Signup: React.FC = () => {
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</label>
                   <div className="space-y-2">
 
-                    {/* 우편번호 + 찾기 버튼 */}
                     <div className="flex gap-2">
                       <input
                         type="text"
                         readOnly
-                        placeholder="우편번호"
-                        value={formData.zonecode}
-                        className="w-[140px] px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-indigo-600 cursor-not-allowed"
+                        placeholder="우편번호 찾기를 이용해주세요"
+                        value={formData.address}
+                        className="flex-1 px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
                       />
                       <button
                         type="button"
                         onClick={openPostcode}
-                        className="px-5 py-3.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-2xl transition-all"
+                        className="px-5 py-3.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-2xl transition-all whitespace-nowrap"
                       >
-                        우편번호 찾기
+                        주소 검색
                       </button>
                     </div>
 
-                    {/* 도로명 주소 */}
-                    <input
-                      type="text"
-                      readOnly
-                      placeholder="우편번호 찾기를 이용해주세요"
-                      value={formData.address}
-                      className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
-                    />
-
-                    {/* 상세주소 — 우편번호 입력 전 비활성화 */}
+                    {/* 상세주소 — 주소 입력 전 비활성화 */}
                     <input
                       type="text"
                       placeholder="상세주소를 입력하세요"
                       value={formData.addrDetail}
-                      disabled={!formData.zonecode}
+                      disabled={!formData.address}
                       onChange={(e) => setFormData({ ...formData, addrDetail: e.target.value })}
-                      className={`block w-full px-5 py-3.5 border border-gray-100 rounded-2xl text-sm transition-all outline-none ${!formData.zonecode
+                      className={`block w-full px-5 py-3.5 border border-gray-100 rounded-2xl text-sm transition-all outline-none ${!formData.address
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed placeholder-gray-400'
                         : 'bg-gray-50 focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white text-gray-900'
                         }`}
