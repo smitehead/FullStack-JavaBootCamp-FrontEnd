@@ -604,7 +604,7 @@ export const ProductDetail: React.FC = () => {
                 <button
                   onClick={() => openBidModal('auto')}
                   disabled={isFinished}
-                  className="w-full py-4 border border-orange-500 text-orange-500 font-bold rounded-xl hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 py-4 border border-orange-500 text-orange-500 font-bold rounded-xl hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
                 </button>
