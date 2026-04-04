@@ -507,16 +507,16 @@ export const ProductDetail: React.FC = () => {
           <div className="mb-4">
             <div className="flex justify-between items-start mb-1">
               <Link to={`/seller/${product.seller.id}`} className="font-bold text-lg text-gray-900 hover:text-orange-500 transition-colors">{product.seller.nickname}</Link>
-              <Link to={`/seller/${product.seller.id}`}>
-                {product.seller.profileImage ? (
+                <Link to={`/seller/${product.seller.id}`}>
+                  {product.seller.profileImage ? (
                   <img src={product.seller.profileImage} alt="Seller" className="w-10 h-10 rounded-full object-cover border border-gray-100 hover:border-orange-500 transition-all" />
-                ) : (
+                  ) : (
                   <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border border-gray-100">
-                    <Users className="w-6 h-6 text-gray-300" />
-                  </div>
-                )}
-              </Link>
-            </div>
+                      <Users className="w-6 h-6 text-gray-300" />
+                    </div>
+                  )}
+                </Link>
+                </div>
             <div className="flex justify-between items-end mb-0.5">
               <div className="text-sm font-bold text-[#009678]">
                 매너온도 <span className="text-lg">{product.seller.mannerTemp}</span>

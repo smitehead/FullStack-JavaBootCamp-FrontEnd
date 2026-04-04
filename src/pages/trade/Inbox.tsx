@@ -192,7 +192,7 @@ export const Inbox: React.FC = () => {
             filteredChats.map(chat => (
               <Link
                 key={chat.id}
-                to={`/chat/${chat.id}`}
+                to={`/chat?id=${chat.id}`}
                 onClick={() => markChatAsRead(chat.id)}
                 className="flex items-center gap-4 p-5 bg-white rounded-3xl border border-gray-100 transition-all hover:shadow-md"
               >

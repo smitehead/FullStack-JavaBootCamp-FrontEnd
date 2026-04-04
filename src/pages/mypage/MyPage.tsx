@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, Eye, EyeOff } from 'lucide-react';
+import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, Eye, EyeOff, MessageSquare } from 'lucide-react';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl } from '@/utils/imageUtils';
@@ -344,6 +344,12 @@ export const MyPage: React.FC = () => {
             <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
               <Star className="w-5 h-5 mr-3" /> 리뷰 관리
             </button>
+            <Link 
+               to="/chat"
+               className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
+             >
+               <MessageSquare className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
+            </Link>
           </nav>
         </div>
 

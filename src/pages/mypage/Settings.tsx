@@ -354,7 +354,7 @@ export const Settings: React.FC = () => {
                       <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</p>
                       <div className="space-y-3">
                         <div className="w-full px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
-                          {formData.address || '도로명 주소'}
+                          {formData.addrRoad || '도로명 주소'}
                         </div>
                         <div className="w-full px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
                           {formData.addrDetail || '상세 주소'}
@@ -426,7 +426,7 @@ export const Settings: React.FC = () => {
                             type="text"
                             readOnly
                             placeholder="주소 검색을 이용해주세요"
-                            value={formData.address}
+                            value={formData.addrRoad}
                             className="flex-1 px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
                           />
                           <button
@@ -443,9 +443,9 @@ export const Settings: React.FC = () => {
                           type="text"
                           placeholder="상세 주소를 입력해주세요"
                           value={formData.addrDetail}
-                          disabled={!formData.address}
+                          disabled={!formData.addrRoad}
                           onChange={(e) => setFormData({ ...formData, addrDetail: e.target.value })}
-                          className={`block w-full px-5 h-[56px] border border-gray-100 rounded-2xl text-sm transition-all outline-none font-bold ${!formData.address
+                          className={`block w-full px-5 h-[56px] border border-gray-100 rounded-2xl text-sm transition-all outline-none font-bold ${!formData.addrRoad
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             : 'bg-gray-50 focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white text-gray-900'
                             }`}
