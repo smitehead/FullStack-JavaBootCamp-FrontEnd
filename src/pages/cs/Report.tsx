@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { AlertTriangle, ChevronLeft, Send, Info, CheckCircle2, Camera, X, Plus } from 'lucide-react';
+import { AlertTriangle, ChevronLeft, Send, Info, CheckCircle2, Camera, X } from 'lucide-react';
 import { showToast } from '@/components/toastService';
+import { useAppContext } from '@/context/AppContext';
+import { getMemberNo } from '@/utils/memberUtils';
+import api from '@/services/api';
 
 export const Report: React.FC = () => {
   const navigate = useNavigate();
@@ -10,10 +13,13 @@ export const Report: React.FC = () => {
   const sellerId = searchParams.get('sellerId');
   const sellerNickname = searchParams.get('sellerNickname');
 
+  const { user } = useAppContext();
+
   const [reason, setReason] = useState('');
   const [details, setDetails] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -30,17 +36,53 @@ export const Report: React.FC = () => {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user) {
+      showToast('로그인이 필요한 서비스입니다.', 'error');
+      navigate('/login');
+      return;
+    }
     if (!reason) {
       showToast('신고 사유를 선택해주세요.', 'error');
       return;
     }
-    // Simulate API call
-    setIsSubmitted(true);
-    setTimeout(() => {
-      navigate(-1);
-    }, 3000);
+
+    const memberNo = getMemberNo(user);
+    if (!memberNo) {
+      showToast('로그인 정보를 확인할 수 없습니다.', 'error');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const body: Record<string, any> = {
+        reporterNo: memberNo,
+        type: reason,
+        content: details || null,
+      };
+
+      // 상품 신고: targetProductNo 설정 (판매자도 자동 연결은 백엔드에서 처리)
+      if (productId) {
+        body.targetProductNo = Number(productId);
+      }
+      // 판매자 신고: targetMemberNo 설정
+      if (sellerId) {
+        body.targetMemberNo = Number(sellerId);
+      }
+
+      await api.post('/reports', body);
+      setIsSubmitted(true);
+      setTimeout(() => {
+        navigate(-1);
+      }, 3000);
+    } catch (error: any) {
+      const msg = error.response?.data?.message || '신고 접수 중 오류가 발생했습니다.';
+      showToast(msg, 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const productReasons = [
@@ -106,14 +148,20 @@ export const Report: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-8">
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 ml-1">신고 사유 선택 <span className="text-red-500">*</span></label>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 ml-1">
+                  신고 사유 선택 <span className="text-red-500">*</span>
+                </label>
                 <div className="grid grid-cols-1 gap-3">
                   {reportReasons.map((r, idx) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => setReason(r)}
-                      className={`w-full p-4 text-left rounded-2xl border-2 transition-all font-bold text-sm ${reason === r ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-50 bg-gray-50 text-gray-600 hover:border-gray-200'}`}
+                      className={`w-full p-4 text-left rounded-2xl border-2 transition-all font-bold text-sm ${
+                        reason === r
+                          ? 'border-red-500 bg-red-50 text-red-600'
+                          : 'border-gray-50 bg-gray-50 text-gray-600 hover:border-gray-200'
+                      }`}
                     >
                       {r}
                     </button>
@@ -122,14 +170,16 @@ export const Report: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 ml-1">상세 내용 (선택사항)</label>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 ml-1">
+                  상세 내용 (선택사항)
+                </label>
                 <textarea
                   rows={5}
                   className="w-full p-5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-red-500/20 focus:bg-white transition-all resize-none placeholder:text-gray-300"
                   placeholder="신고 사유에 대한 구체적인 내용을 입력해주세요."
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
-                ></textarea>
+                />
               </div>
 
               <div>
@@ -140,7 +190,7 @@ export const Report: React.FC = () => {
                   {images.map((file, idx) => (
                     <div key={idx} className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-100 group">
                       <img
-                        src={URL.createObjectURL(file) || undefined}
+                        src={URL.createObjectURL(file)}
                         alt={`upload-${idx}`}
                         className="w-full h-full object-cover"
                       />
@@ -181,10 +231,11 @@ export const Report: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-5 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full py-5 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <Send className="w-5 h-5" />
-                신고 접수하기
+                {isSubmitting ? '접수 중...' : '신고 접수하기'}
               </button>
             </form>
           </div>
