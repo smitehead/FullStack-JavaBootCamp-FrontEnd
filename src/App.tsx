@@ -55,6 +55,7 @@ import { AuctionManagement } from '@/pages/admin/AuctionManagement';
 import { ReportManagement } from '@/pages/admin/ReportManagement';
 import { ActivityLogManagement } from '@/pages/admin/ActivityLogManagement';
 import { MannerHistoryManagement } from '@/pages/admin/MannerHistoryManagement';
+import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 
 const App: React.FC = () => {
   return (
@@ -82,6 +83,9 @@ const App: React.FC = () => {
                 <Route path="/reports" element={<ReportManagement />} />
                 <Route path="/activity-logs" element={<ActivityLogManagement />} />
                 <Route path="/manner-history" element={<MannerHistoryManagement />} />
+                <Route path="/admin/withdraws" element={<AdminLayout />}>
+                  <Route index element={<WithdrawManagement />} />
+                </Route>
               </Routes>
             </AdminLayout>
           } />

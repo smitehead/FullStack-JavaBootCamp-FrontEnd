@@ -128,7 +128,6 @@ export const Points: React.FC = () => {
 
       {/* 잔액 카드 */}
       <div className="bg-gray-900 rounded-[32px] p-8 text-white mb-10 shadow-2xl shadow-indigo-100 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full -mr-16 -mt-16" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <p className="text-xs font-bold text-indigo-300 uppercase tracking-widest mb-2">현재 보유 포인트</p>

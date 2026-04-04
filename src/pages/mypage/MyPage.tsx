@@ -230,8 +230,6 @@ export const MyPage: React.FC = () => {
     <div className="max-w-[1200px] mx-auto px-10 py-8">
       {/* Profile Header */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10 mb-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 opacity-50 z-0"></div>
-
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
           {/* Profile Image */}
           <div className="relative group">

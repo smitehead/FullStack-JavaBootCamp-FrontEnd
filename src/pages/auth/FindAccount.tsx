@@ -200,39 +200,47 @@ export const FindAccount: React.FC = () => {
                           인증번호 전송
                         </button>
                       </div>
+                      {/* 인증번호 입력 섹션 (중앙 정렬 스타일) */}
                       {!isPwVerified && pwSentCode && (
-                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                          <div className="flex gap-2">
-                            <div className="relative flex-1">
-                              <input
-                                type="text"
-                                className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white hover:border-[#FF5A5A]/30 transition-all outline-none"
-                                placeholder="인증번호 4자리 입력"
-                                value={pwEmailCode}
-                                onChange={(e) => setPwEmailCode(e.target.value)}
-                              />
-                              {timer > 0 && (
-                                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-[#FF5A5A]">
-                                  {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
-                                </div>
-                              )}
+                        <div className="mt-8 space-y-3 animate-in fade-in slide-in-from-top-2">
+                          <div className="flex flex-col items-center gap-4">
+                            <div className="w-40">
+                              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1 text-center">인증번호</label>
+                              <div className="relative border-b border-gray-200 pb-1.5 flex items-center focus-within:border-[#FF5A5A] transition-colors">
+                                <input
+                                  type="text"
+                                  maxLength={4}
+                                  className="block w-full bg-transparent text-xl font-bold placeholder:text-gray-200 outline-none tracking-[0.3em] text-center"
+                                  placeholder="0000"
+                                  value={pwEmailCode}
+                                  onChange={(e) => {
+                                    const val = e.target.value.replace(/[^0-9]/g, '');
+                                    setPwEmailCode(val);
+                                  }}
+                                />
+                                {timer > 0 && (
+                                  <span className="absolute -right-2 text-[10px] font-bold text-[#FF5A5A] tabular-nums">
+                                    {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                            <button
-                              type="button"
-                              onClick={handleVerifyCode}
-                              className="px-5 py-3.5 bg-[#FF5A5A] text-white text-xs font-bold rounded-2xl hover:bg-[#FF4545] transition-all"
-                            >
-                              확인
-                            </button>
-                          </div>
-                          <div className="flex justify-center px-1">
-                            <button
-                              type="button"
-                              onClick={handleSendCode}
-                              className="text-[10px] font-bold text-gray-400 hover:text-gray-600 transition-colors underline underline-offset-2"
-                            >
-                              인증번호 재전송
-                            </button>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={handleVerifyCode}
+                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                              >
+                                인증 확인
+                              </button>
+                              <button
+                                type="button"
+                                onClick={handleSendCode}
+                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                              >
+                                재요청
+                              </button>
+                            </div>
                           </div>
                         </div>
                       )}
