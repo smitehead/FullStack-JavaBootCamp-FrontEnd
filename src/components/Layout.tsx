@@ -411,7 +411,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               </Link>
             )}
             <button
-              onClick={() => navigate('/settings?tab=profile')}
+              onClick={() => navigate(user ? '/settings?tab=profile' : '/login')}
               className="flex items-center text-xs font-bold text-gray-400 bg-white border border-gray-100 px-3 py-1.5 rounded-full shadow-sm hover:border-[#FF5A5A] hover:text-[#FF5A5A] transition-all group overflow-hidden"
             >
               <MapPin className="w-3.5 h-3.5 mr-1.5 text-[#FF5A5A] shrink-0" />
