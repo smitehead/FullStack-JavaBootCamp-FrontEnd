@@ -58,6 +58,10 @@ export const ProductDetail: React.FC = () => {
   const [visibleBidsCount, setVisibleBidsCount] = useState(5);
   const [timeLeft, setTimeLeft] = useState<string>('');
 
+  // 입찰 참여 여부 및 최고입찰자 여부 (SSE 실시간 반영)
+  const [hasBid, setHasBid] = useState(false);
+  const [isHighestBidder, setIsHighestBidder] = useState(false);
+
   // 입찰 성공 후 상품 데이터 재조회
   const fetchProduct = React.useCallback(async () => {
     try {
@@ -107,6 +111,20 @@ export const ProductDetail: React.FC = () => {
       setBidAmount((mappedProduct.currentPrice || 0) + (mappedProduct.minBidIncrement || 0));
       setAutoBidMaxAmount((mappedProduct.currentPrice || 0) + (mappedProduct.minBidIncrement || 0) * 5);
       setIsWishlisted(mappedProduct.isWishlisted || false);
+
+      // 입찰 참여 여부 및 최고입찰자 여부 계산 (timestamp 기준 정렬 후 마지막 입찰자 확인)
+      if (user?.nickname) {
+        const sortedBids = [...mappedProduct.bids].sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+        const userHasBid = sortedBids.some(b => b.bidderName === user.nickname);
+        const userIsHighest = sortedBids.length > 0 && sortedBids[0].bidderName === user.nickname;
+        setHasBid(userHasBid);
+        setIsHighestBidder(userIsHighest);
+      } else {
+        setHasBid(false);
+        setIsHighestBidder(false);
+      }
 
       // 활성 자동입찰 조회 (로그인 사용자만)
       const loginMemberNo = getMemberNo(user);
@@ -171,6 +189,8 @@ export const ProductDetail: React.FC = () => {
       if (String(detail.productNo) !== String(product.id)) return;
       setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
       if (!justBidRef.current) {
+        // 타인이 입찰 → 내가 최고입찰자였어도 추월당함
+        setIsHighestBidder(false);
         const title = product?.title || '이 상품';
         const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
         showToast(`'${truncatedTitle}' 상품에 새로운 입찰이 생겼습니다!`, 'bid');
@@ -343,6 +363,9 @@ export const ProductDetail: React.FC = () => {
         });
       }
 
+      // 내가 방금 입찰 → 즉시 최고입찰자로 표시 (fetchProduct 완료 전 선반영)
+      setHasBid(true);
+      setIsHighestBidder(true);
       setIsBidModalOpen(false);
       showToast(modalType === 'bid' ? '입찰이 완료되었습니다!' : '자동 입찰이 설정되었습니다!', 'success');
       await fetchProduct();
@@ -395,9 +418,10 @@ export const ProductDetail: React.FC = () => {
   const isFinished = product ? (product.status === 'completed' || new Date(product.endTime).getTime() <= Date.now()) : false;
 
   const isSeller = product?.seller.id === user?.id;
+  // 나의 입찰가 표시용 (금액 계산에만 사용)
   const userBids = product?.bids.filter(b => b.bidderName === user?.nickname) || [];
   const myHighestBid = userBids.length > 0 ? Math.max(...userBids.map(b => b.amount)) : 0;
-  const isHighestBidder = product && product.bids.length > 0 && product.bids[product.bids.length - 1].bidderName === user?.nickname;
+  // isHighestBidder / hasBid 는 state로 관리 (SSE 실시간 반영)
 
   return (
     <div className="max-w-[1200px] mx-auto px-10 py-4">
@@ -427,7 +451,7 @@ export const ProductDetail: React.FC = () => {
             )}
 
             {/* Bidding Status Chip */}
-            {!isFinished && userBids.length > 0 && (
+            {!isFinished && hasBid && (
               <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
                 <div className={`flex items-center px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md ${isHighestBidder
                   ? 'bg-emerald-600 text-white'
@@ -855,7 +879,7 @@ export const ProductDetail: React.FC = () => {
 
             <div className="p-8 space-y-8">
               {/* My Participation Status */}
-              {userBids.length > 0 && (
+              {hasBid && (
                 <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm relative overflow-hidden">
                   <div className={`absolute top-0 left-0 right-0 h-1 ${isHighestBidder ? 'bg-emerald-500' : 'bg-red-500'}`} />
 
