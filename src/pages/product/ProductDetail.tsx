@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Product, BidHistory } from '@/types';
+import { Product } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { Heart, Share2, AlertTriangle, Clock, MapPin, Send, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, PlusCircle, ArrowLeft, Package, Users, MessageSquare, Edit2, Trash2, Reply, Sparkles } from 'lucide-react';
+import { Heart, Share2, AlertTriangle, Clock, MapPin, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, ArrowLeft, Package, Users, MessageSquare, Reply } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { formatDistanceToNow } from 'date-fns';
@@ -10,14 +10,11 @@ import { ko } from 'date-fns/locale';
 import { resolveImageUrls, resolveImageUrl } from '../../utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
-import { toast } from 'sonner';
-import { motion } from 'motion/react';
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { products, user, updateCurrentUserPoints } = useAppContext();
-  // updateCurrentUserPoints: AppContext의 user.points를 갱신해 헤더 포인트도 동시에 업데이트됨
+  const { user, updateCurrentUserPoints } = useAppContext();
   const [product, setProduct] = useState<Product | null | undefined>(null);
   const [bidAmount, setBidAmount] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'detail' | 'history' | 'shipping' | 'qna'>('detail');
@@ -33,7 +30,7 @@ export const ProductDetail: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['detail', 'history', 'shipping', 'qna'];
-      const scrollPosition = window.scrollY + 300; // 탭 동기화 정확도를 위해 오프셋 증가
+      const scrollPosition = window.scrollY + 300;
 
       for (const section of sections) {
         const element = document.getElementById(section);
@@ -61,7 +58,7 @@ export const ProductDetail: React.FC = () => {
   const [visibleBidsCount, setVisibleBidsCount] = useState(5);
   const [timeLeft, setTimeLeft] = useState<string>('');
 
-  // 입찰 성공 후 상품 데이터 재조회에 사용 (재호출 가능하도록 단돈으로 분리)
+  // 입찰 성공 후 상품 데이터 재조회
   const fetchProduct = React.useCallback(async () => {
     try {
       const memberNo = getMemberNo(user);
@@ -139,6 +136,7 @@ export const ProductDetail: React.FC = () => {
     }
   }, [fetchProduct]);
 
+  // 남은 시간 카운트다운
   useEffect(() => {
     if (!product) return;
     const updateTime = () => {
@@ -152,12 +150,7 @@ export const ProductDetail: React.FC = () => {
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        const h = String(hours).padStart(2, '0');
-        const m = String(minutes).padStart(2, '0');
-        const s = String(seconds).padStart(2, '0');
-
-        setTimeLeft(`${h}:${m}:${s}`);
+        setTimeLeft(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
       }
     };
 
@@ -171,11 +164,9 @@ export const ProductDetail: React.FC = () => {
   // - priceUpdate: 다른 사람이 입찰하면 현재 가격 즉시 갱신
   // - pointUpdate: 내 포인트가 변경되면(입찰차감/환불) 즉시 팝업과 헤더에 반영
   // -----------------------------------------------------------------------------
-
   useEffect(() => {
     if (!product || !product.id) return;
 
-    // priceUpdate 공통 처리 함수
     const handlePriceUpdate = (detail: { productNo: number | string; currentPrice: number }) => {
       if (String(detail.productNo) !== String(product.id)) return;
       setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
@@ -194,7 +185,6 @@ export const ProductDetail: React.FC = () => {
       }
     };
 
-    // pointUpdate 공통 처리 함수 (자동입찰 취소 시 반드시 발생 → 배지 자동 해제 트리거)
     const handlePointUpdate = (detail: { points: number }) => {
       if (typeof detail.points !== 'number') return;
       updateCurrentUserPoints(detail.points);
@@ -209,7 +199,7 @@ export const ProductDetail: React.FC = () => {
     };
 
     if (user) {
-      // ── 로그인 사용자: AppContext SSE가 이미 연결됨 → window custom event만 수신 (중복 연결 방지)
+      // 로그인 사용자: AppContext SSE가 이미 연결됨 → window custom event만 수신 (중복 연결 방지)
       const onPriceUpdate = (e: Event) => handlePriceUpdate((e as CustomEvent).detail);
       const onPointUpdate = (e: Event) => handlePointUpdate((e as CustomEvent).detail);
       window.addEventListener('sse:priceUpdate', onPriceUpdate);
@@ -219,7 +209,7 @@ export const ProductDetail: React.FC = () => {
         window.removeEventListener('sse:pointUpdate', onPointUpdate);
       };
     } else {
-      // ── 비로그인 사용자: priceUpdate 수신을 위해 SSE 직접 연결 (pointUpdate 불필요)
+      // 비로그인 사용자: priceUpdate 수신을 위해 SSE 직접 연결
       const clientId = `product_${id}_${Math.random().toString(36).slice(2, 9)}`;
       const eventSource = new EventSource(`/api/sse/subscribe?clientId=${clientId}`);
       eventSource.addEventListener('priceUpdate', (event: MessageEvent) => {
@@ -239,8 +229,6 @@ export const ProductDetail: React.FC = () => {
     if (product && prevPriceRef.current > 0 && product.currentPrice > prevPriceRef.current) {
       const oldPrice = prevPriceRef.current;
       const minInc = product.minBidIncrement || 0;
-
-      // 모달에 세팅된 금액이 이전 기본 최소입찰가 그대로라면, 새로운 최소입찰가로 덮어써줍니다.
       setBidAmount(prev => prev === oldPrice + minInc ? product.currentPrice + minInc : prev);
       setAutoBidMaxAmount(prev => prev === oldPrice + minInc * 5 ? product.currentPrice + minInc * 5 : prev);
     }
@@ -257,11 +245,11 @@ export const ProductDetail: React.FC = () => {
 
   if (product === undefined) return (
     <div className="max-w-[1200px] mx-auto px-10 py-32 text-center">
-      <div className="bg-white rounded-[32px] border border-gray-100 p-20 shadow-sm">
+      <div className="bg-white rounded-2xl border border-gray-100 p-20 shadow-sm">
         <Package className="w-20 h-20 text-gray-200 mx-auto mb-8" />
         <h2 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">상품을 찾을 수 없거나 접근 권한이 없습니다.</h2>
         <p className="text-gray-400 font-medium mb-10 leading-relaxed">
-          해당 상품이 삭제되었거나, 종료된 경매로 접근이 제한되었습니다.<br />
+          해당 상품이 삭제되었거나, 종료된 경매로 접근이 제한되었습니다.<br/>
           판매자 또는 입찰 참여자만 종료된 상품을 확인할 수 있습니다.
         </p>
         <div className="flex flex-col items-center gap-4">
@@ -357,7 +345,6 @@ export const ProductDetail: React.FC = () => {
 
       setIsBidModalOpen(false);
       showToast(modalType === 'bid' ? '입찰이 완료되었습니다!' : '자동 입찰이 설정되었습니다!', 'success');
-
       await fetchProduct();
 
     } catch (error: any) {
@@ -391,7 +378,7 @@ export const ProductDetail: React.FC = () => {
       const memberNo = getMemberNo(user);
       if (!memberNo) return;
       const response = await api.post(`/wishlists/toggle?memberNo=${memberNo}&productNo=${product?.id}`);
-      const newState = response.data; // returns boolean
+      const newState = response.data;
 
       setIsWishlisted(newState);
       setProduct(prev => prev ? ({
@@ -406,6 +393,11 @@ export const ProductDetail: React.FC = () => {
   };
 
   const isFinished = product ? (product.status === 'completed' || new Date(product.endTime).getTime() <= Date.now()) : false;
+
+  const isSeller = product?.seller.id === user?.id;
+  const userBids = product?.bids.filter(b => b.bidderName === user?.nickname) || [];
+  const myHighestBid = userBids.length > 0 ? Math.max(...userBids.map(b => b.amount)) : 0;
+  const isHighestBidder = product && product.bids.length > 0 && product.bids[product.bids.length - 1].bidderName === user?.nickname;
 
   return (
     <div className="max-w-[1200px] mx-auto px-10 py-4">
@@ -431,6 +423,21 @@ export const ProductDetail: React.FC = () => {
               <div className="flex flex-col items-center text-gray-300">
                 <Package className="w-20 h-20 mb-2" />
                 <span className="text-sm font-medium">등록된 이미지가 없습니다.</span>
+              </div>
+            )}
+
+            {/* Bidding Status Chip */}
+            {!isFinished && userBids.length > 0 && (
+              <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
+                <div className={`flex items-center px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md ${
+                  isHighestBidder
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-orange-500 text-white'
+                }`}>
+                  <span className="text-xs font-black tracking-tight">
+                    입찰 중 <span className="mx-1.5 opacity-50">|</span> {isHighestBidder ? '최고 입찰' : '추월 변동'}
+                  </span>
+                </div>
               </div>
             )}
 
@@ -468,54 +475,74 @@ export const ProductDetail: React.FC = () => {
         {/* Right: Info & Bidding */}
         <div className="lg:w-[45%] flex flex-col">
           <div className="flex-1">
-            {/* Breadcrumb */}
-            <nav className="flex items-center text-xs text-gray-400 mb-3 space-x-1">
-              <span>홈</span>
-              <ChevronRight className="w-3 h-3" />
-              <span>{product.category.split('>')[0] || product.category}</span>
-              {product.category.includes('>') && (
-                <>
-                  <ChevronRight className="w-3 h-3" />
-                  <span>{product.category.split('>')[1]}</span>
-                </>
-              )}
-            </nav>
+            {/* Breadcrumb & Time */}
+            <div className="flex items-center justify-between mb-2">
+              <nav className="flex items-center text-xs text-gray-400 space-x-1">
+                <span>홈</span>
+                <ChevronRight className="w-3 h-3" />
+                <span>{product.category.split('>')[0] || product.category}</span>
+                {product.category.includes('>') && (
+                  <>
+                    <ChevronRight className="w-3 h-3" />
+                    <span>{product.category.split('>')[1]}</span>
+                  </>
+                )}
+                <span className="mx-1 text-gray-300">•</span>
+                <span className="flex items-center">
+                  <Clock className="w-3 h-3 mr-1" />
+                  {formatDistanceToNow(new Date(product.startTime || Date.now()), { addSuffix: true, locale: ko })}
+                </span>
+              </nav>
+            </div>
 
             {/* Title & Tags */}
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-900 mb-3">{product.title}</h1>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">직거래</span>
-                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">택배거래</span>
+            <div className="flex flex-col mb-3">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">{product.title}</h1>
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">직거래</span>
+                <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">택배거래</span>
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-gray-400">
+                <div className="flex items-center">
+                  <MapPin className="w-3 h-3 mr-1" /> {product.location}
                 </div>
-                <div className="flex items-center text-xs text-gray-400 space-x-3">
-                  <span className="flex items-center"><MapPin className="w-3 h-3 mr-1" /> {product.location}</span>
-                  <span className="flex items-center"><Clock className="w-3 h-3 mr-1" /> {formatDistanceToNow(new Date(product.startTime || Date.now()), { addSuffix: true, locale: ko })}</span>
-                  <Link to={`/report?productId=${product.id}`} className="flex items-center text-gray-400 hover:text-red-500 transition-colors">
+                <div className="flex items-center gap-3">
+                  <Link to={`/report?productId=${product.id}`} className="flex items-center hover:text-red-500 transition-colors font-medium">
                     <Flag className="w-3 h-3 mr-1" /> 신고하기
                   </Link>
+                  <button className="flex items-center hover:text-gray-600 transition-colors font-medium">
+                    <Share2 className="w-3 h-3 mr-1" /> 공유하기
+                  </button>
                 </div>
               </div>
-              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                <Share2 className="w-5 h-5" />
-              </button>
             </div>
           </div>
 
-          {/* Seller Profile - Redesigned to match image */}
-          <div className="mb-4">
+          {/* Seller Profile */}
+          <div className="mb-8">
             <div className="flex justify-between items-start mb-1">
               <Link to={`/seller/${product.seller.id}`} className="font-bold text-lg text-gray-900 hover:text-orange-500 transition-colors">{product.seller.nickname}</Link>
-              <Link to={`/seller/${product.seller.id}`}>
-                {product.seller.profileImage ? (
-                  <img src={product.seller.profileImage} alt="Seller" className="w-10 h-10 rounded-full object-cover border border-gray-100 hover:border-orange-500 transition-all" />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border border-gray-100">
-                    <Users className="w-6 h-6 text-gray-300" />
-                  </div>
+              <div className="flex items-center gap-2">
+                {(isFinished && product.winnerId === user?.id) && (
+                  <button
+                    onClick={() => navigate(`/chat?id=chat_1`)}
+                    className="px-3 py-1.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-lg border border-gray-200 hover:border-orange-200 transition-all flex items-center gap-1.5"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span className="text-xs font-bold">채팅하기</span>
+                  </button>
                 )}
-              </Link>
+                <Link to={`/seller/${product.seller.id}`}>
+                  {product.seller.profileImage ? (
+                    <img src={product.seller.profileImage} alt="Seller" className="w-10 h-10 rounded-full object-cover border border-gray-100 hover:border-orange-500 transition-all" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border border-gray-100">
+                      <Users className="w-6 h-6 text-gray-300" />
+                    </div>
+                  )}
+                </Link>
+              </div>
             </div>
             <div className="flex justify-between items-end mb-0.5">
               <div className="text-sm font-bold text-[#009678]">
@@ -531,20 +558,20 @@ export const ProductDetail: React.FC = () => {
             </div>
           </div>
 
-          {/* Auction Status Card - This will be at the bottom of the right column */}
-          <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm mt-auto">
+          {/* Auction Status Card */}
+          <div id="bid-card" className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm mt-auto">
             <div className="flex justify-between items-start mb-6">
               <div>
                 <p className="text-xs font-bold text-gray-400 mb-2">남은 시간</p>
-                <div className="flex items-center text-2xl font-bold text-red-500">
+                <div className={`flex items-center text-2xl font-bold ${isFinished ? 'text-gray-500' : 'text-red-500'}`}>
                   <Clock className="w-6 h-6 mr-2" />
-                  {timeLeft}
+                  {timeLeft || (isFinished ? '경매 종료' : '--:--:--')}
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-xs font-bold text-gray-400 mb-2 flex items-center justify-end">
                   <Users className="w-3 h-3 mr-1" />
-                  총 입찰 {product.bids.length}회 (참여 {product.participantCount}명)
+                  {product.participantCount}명 참여 중
                 </p>
               </div>
             </div>
@@ -558,11 +585,9 @@ export const ProductDetail: React.FC = () => {
                 <span className="text-gray-500">최소 입찰 단위</span>
                 <span className="font-bold text-gray-900">{(product.minBidIncrement || 0).toLocaleString()} 원</span>
               </div>
-              <div className="flex justify-between items-center p-3 -mx-3 rounded-2xl bg-transparent border border-transparent">
-                <span className="font-bold text-gray-500">현재 입찰가</span>
-                <span className="text-3xl font-black text-orange-500">
-                  {(product.currentPrice || 0).toLocaleString()} 원
-                </span>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 font-bold">{isFinished ? '최종 낙찰가' : '현재 입찰가'}</span>
+                <span className={`text-3xl font-black ${isFinished ? 'text-gray-900' : 'text-orange-500'}`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
               </div>
             </div>
 
@@ -594,7 +619,6 @@ export const ProductDetail: React.FC = () => {
                         try {
                           await api.delete(`/auto-bid/${product.id}`);
                         } catch (err: any) {
-                          // 이미 비활성화된 경우(400)도 취소 성공으로 처리
                           if (err?.response?.status !== 400) {
                             showToast('자동입찰 취소에 실패했습니다.', 'error');
                             return;
@@ -639,7 +663,7 @@ export const ProductDetail: React.FC = () => {
                   setActiveTab(tab.id as any);
                   const element = document.getElementById(tab.id);
                   if (element) {
-                    const headerOffset = 250; // 헤더 높이 고려한 스크롤 오프셋
+                    const headerOffset = 250;
                     const elementPosition = element.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                     window.scrollTo({
@@ -837,6 +861,7 @@ export const ProductDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
       {/* Bid Modal */}
       {isBidModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -851,6 +876,26 @@ export const ProductDetail: React.FC = () => {
             </div>
 
             <div className="p-8 space-y-8">
+              {/* My Participation Status */}
+              {userBids.length > 0 && (
+                <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+                  <div className={`absolute top-0 left-0 right-0 h-1 ${isHighestBidder ? 'bg-emerald-500' : 'bg-red-500'}`} />
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${isHighestBidder ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                      <span className={`text-xs font-bold ${isHighestBidder ? 'text-emerald-600' : 'text-red-500'}`}>
+                        {isHighestBidder ? '현재 최고 입찰 중' : '상위 입찰자 발생'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">나의 입찰가</span>
+                      <span className="text-sm font-black text-gray-900">{myHighestBid.toLocaleString()}원</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Point Info */}
               <div className="bg-gray-900 rounded-2xl p-5 text-white flex justify-between items-center shadow-lg">
                 <div className="flex items-center gap-3">
@@ -864,8 +909,8 @@ export const ProductDetail: React.FC = () => {
 
               {/* Price Info */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl border bg-gray-50 border-gray-100">
-                  <p className="text-[10px] font-bold uppercase tracking-wider mb-1 text-gray-400">현재가</p>
+                <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">현재가</p>
                   <p className="text-lg font-black text-gray-900">{(product.currentPrice || 0).toLocaleString()}원</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
@@ -914,12 +959,62 @@ export const ProductDetail: React.FC = () => {
               </div>
 
               {/* Action Button */}
-              <button
-                onClick={handleBidSubmit}
-                className="w-full py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
-              >
-                {modalType === 'bid' ? '입찰하기' : '자동 입찰 설정하기'}
-              </button>
+              {modalType === 'bid' ? (
+                isHighestBidder ? (
+                  <button
+                    onClick={() => {
+                      showToast("입찰이 취소되었습니다.", 'success');
+                      setIsBidModalOpen(false);
+                    }}
+                    className="w-full py-5 bg-gray-100 text-gray-600 font-black rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98]"
+                  >
+                    입찰 취소하기
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleBidSubmit}
+                    className="w-full py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                  >
+                    입찰하기
+                  </button>
+                )
+              ) : (
+                activeAutoBid ? (
+                  <div className="flex gap-3">
+                    <button
+                      onClick={async () => {
+                        try {
+                          await api.delete(`/auto-bid/${product.id}`);
+                        } catch (err: any) {
+                          if (err?.response?.status !== 400) {
+                            showToast('자동입찰 취소에 실패했습니다.', 'error');
+                            return;
+                          }
+                        }
+                        setActiveAutoBid(null);
+                        showToast("자동 입찰이 취소되었습니다.", 'success');
+                        setIsBidModalOpen(false);
+                      }}
+                      className="flex-1 py-5 bg-gray-100 text-gray-600 font-black rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98]"
+                    >
+                      취소하기
+                    </button>
+                    <button
+                      onClick={handleBidSubmit}
+                      className="flex-1 py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                    >
+                      변경하기
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleBidSubmit}
+                    className="w-full py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                  >
+                    자동 입찰 설정하기
+                  </button>
+                )
+              )}
             </div>
           </div>
         </div>
@@ -934,8 +1029,8 @@ export const ProductDetail: React.FC = () => {
             </div>
             <h3 className="text-2xl font-black text-gray-900 mb-3">포인트가 부족합니다</h3>
             <p className="text-gray-500 mb-8 leading-relaxed">
-              입찰을 진행하기 위해 포인트 충전이 필요합니다.<br />
-              현재 보유 포인트: <span className="text-indigo-600 font-bold">{(user?.points || 0).toLocaleString()}P</span><br />
+              입찰을 진행하기 위해 포인트 충전이 필요합니다.<br/>
+              현재 보유 포인트: <span className="text-indigo-600 font-bold">{(user?.points || 0).toLocaleString()}P</span><br/>
               지금 충전하러 가시겠습니까?
             </p>
             <div className="flex gap-3">
@@ -955,7 +1050,6 @@ export const ProductDetail: React.FC = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
