@@ -591,6 +591,7 @@ export const ProductDetail: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3">
+              {/* 1. 찜하기 버튼 */}
               <button
                 onClick={toggleWishlist}
                 className={`flex flex-col items-center justify-center transition-all min-w-[48px] ${isWishlisted ? 'text-red-500' : 'text-gray-300 hover:text-gray-400'}`}
@@ -600,24 +601,24 @@ export const ProductDetail: React.FC = () => {
                   {product.wishlistCount || 0}
                 </span>
               </button>
-              <div className="flex-1 flex flex-col gap-1">
-                <button
-                  onClick={() => openBidModal('auto')}
-                  disabled={isFinished}
-                  className="flex-1 py-4 border border-orange-500 text-orange-500 font-bold rounded-xl hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
-                </button>
 
-                {/* 3. 입찰 참여하기 버튼 (감싸던 div 삭제하고 flex-1 직접 적용) */}
-                <button
-                  onClick={() => openBidModal('bid')}
-                  disabled={isFinished}
-                  className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-                >
-                  입찰 참여하기
-                </button>
-              </div>
+              {/* 2. 자동 입찰 버튼 (감싸던 div 삭제) */}
+              <button
+                onClick={() => openBidModal('auto')}
+                disabled={isFinished}
+                className="flex-1 py-4 border border-orange-500 text-orange-500 font-bold rounded-xl hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
+              </button>
+
+              {/* 3. 입찰 참여하기 버튼 */}
+              <button
+                onClick={() => openBidModal('bid')}
+                disabled={isFinished}
+                className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+              >
+                입찰 참여하기
+              </button>
             </div>
           </div>
         </div>
