@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, Eye, EyeOff } from 'lucide-react';
+import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, Eye, EyeOff, MessageSquare } from 'lucide-react';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl } from '@/utils/imageUtils';
@@ -230,8 +230,6 @@ export const MyPage: React.FC = () => {
     <div className="max-w-[1200px] mx-auto px-10 py-8">
       {/* Profile Header */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10 mb-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 opacity-50 z-0"></div>
-
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
           {/* Profile Image */}
           <div className="relative group">
@@ -344,6 +342,12 @@ export const MyPage: React.FC = () => {
             <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
               <Star className="w-5 h-5 mr-3" /> 리뷰 관리
             </button>
+            <Link 
+               to="/chat"
+               className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
+             >
+               <MessageSquare className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
+            </Link>
           </nav>
         </div>
 

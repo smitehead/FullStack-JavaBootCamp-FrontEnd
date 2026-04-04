@@ -132,6 +132,7 @@ export interface ChatRoom {
   productId: string;
   productTitle: string;
   productImage: string;
+  productPrice: number;
   otherUser: {
     id: string;
     nickname: string;

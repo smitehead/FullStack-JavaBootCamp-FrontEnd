@@ -136,7 +136,7 @@ export const Signup: React.FC = () => {
 
   // 이메일 인증 상태
   const [emailCode, setEmailCode] = useState('');
-  const [sentCode, setSentCode] = useState<string | null>(null);
+  const [showCodeInput, setShowCodeInput] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [verificationError, setVerificationError] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
@@ -191,7 +191,7 @@ export const Signup: React.FC = () => {
     // 백엔드로 인증번호 발송 요청
     try {
       await api.post('/auth/send-email-code', { email: formData.email });
-      setSentCode('sent'); // 발송 완료 표시용 (실제 코드는 서버에서 관리)
+      setShowCodeInput(true); // 발송 완료 표시용
       setTimer(180); // 3분
       showToast("'인증번호'가 발송되었습니다. 이메일을 확인해주세요.", 'success');
     } catch {
@@ -297,30 +297,29 @@ export const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-gray-50 py-12 px-4">
-      <div className="max-w-xl mx-auto">
+    <div className="min-h-[calc(100vh-64px)] bg-gray-50 py-12 px-6">
+      <div className="max-w-lg mx-auto">
         {/* Progress Header */}
-        <div className="flex items-center justify-between mb-10 px-4">
+        <div className="flex items-center justify-between mb-6 px-4">
           <div className="flex flex-col items-center gap-2">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'terms' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>1</div>
-            <span className={`text-[10px] font-black uppercase tracking-wider ${step === 'terms' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>약관동의</span>
+            <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'terms' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>약관동의</span>
           </div>
-          <div className="flex-1 h-px bg-gray-100 mx-4"></div>
+          <div className="flex-1 h-px mx-4"></div>
           <div className="flex flex-col items-center gap-2">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'info' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>2</div>
-            <span className={`text-[10px] font-black uppercase tracking-wider ${step === 'info' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>정보입력</span>
+            <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'info' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>정보입력</span>
           </div>
-          <div className="flex-1 h-px bg-gray-100 mx-4"></div>
           <div className="flex flex-col items-center gap-2">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'success' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>3</div>
-            <span className={`text-[10px] font-black uppercase tracking-wider ${step === 'success' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>가입완료</span>
+            <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'success' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>가입완료</span>
           </div>
         </div>
 
         {step === 'terms' && (
           <div className="bg-white p-10 rounded-[32px] shadow-xl border border-gray-100">
-            <div className="text-left mb-10">
-              <h2 className="text-3xl font-black text-gray-900 tracking-tight">약관 동의</h2>
+            <div className="text-left mb-6">
+              <h2 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">약관 동의</h2>
               <p className="mt-2 text-sm text-gray-500 font-medium">JAVAJAVA 서비스 이용을 위해 약관에 동의해주세요.</p>
             </div>
 
@@ -390,7 +389,7 @@ export const Signup: React.FC = () => {
 
         {step === 'info' && (
           <div className="bg-white p-10 rounded-[32px] shadow-xl border border-gray-100">
-            <h2 className="text-2xl font-black text-gray-900 mb-8 tracking-tight">회원정보 입력</h2>
+            <h2 className="text-2xl font-black text-gray-900 mb-6 tracking-tight">회원정보</h2>
 
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* ID & PW */}
@@ -503,11 +502,11 @@ export const Signup: React.FC = () => {
                         className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50"
                         placeholder="example@email.com"
                         value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
                       />
                     </div>
-                    <button
-                      type="button"
+                    <button 
+                      type="button" 
                       onClick={sendVerificationCode}
                       disabled={isEmailVerified}
                       className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200"
@@ -515,44 +514,58 @@ export const Signup: React.FC = () => {
                       코드전송
                     </button>
                   </div>
-                  {!isEmailVerified && sentCode && (
-                    <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type="text"
-                            className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
-                            placeholder="인증번호 6자리 입력"
-                            value={emailCode}
-                            onChange={(e) => setEmailCode(e.target.value)}
-                          />
-                          {timer > 0 && (
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-[#FF5A5A]">
-                              {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
-                            </div>
-                          )}
+
+                  {/* 인증번호 입력 섹션 (중앙 정렬 스타일) */}
+                  {!isEmailVerified && showCodeInput && (
+                    <div className="mt-6 space-y-3 animate-in fade-in slide-in-from-top-2">
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="w-40">
+                          <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1 text-center">인증번호</label>
+                          <div className="relative border-b border-gray-200 pb-1.5 flex items-center focus-within:border-[#FF5A5A] transition-colors">
+                            <input
+                              type="text"
+                              maxLength={6}
+                              className="block w-full bg-transparent text-xl font-bold placeholder:text-gray-200 outline-none tracking-[0.3em] text-center"
+                              placeholder="000000"
+                              value={emailCode}
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/[^0-9]/g, '');
+                                setEmailCode(val);
+                              }}
+                            />
+                            {timer > 0 && (
+                              <span className="absolute -right-2 text-[10px] font-bold text-[#FF5A5A] tabular-nums">
+                                {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={verifyCode}
-                          className="px-5 py-3.5 bg-[#FF5A5A] text-white text-xs font-bold rounded-2xl hover:bg-[#FF4545] transition-all"
-                        >
-                          확인
-                        </button>
-                      </div>
-                      <div className="flex justify-center px-1">
-                        <button
-                          type="button"
-                          onClick={sendVerificationCode}
-                          className="text-[10px] font-bold text-gray-400 hover:text-gray-600 transition-colors underline underline-offset-2"
-                        >
-                          인증번호 재전송
-                        </button>
+                        <div className="flex gap-2">
+                          <button 
+                            type="button" 
+                            onClick={verifyCode}
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                          >
+                            인증 확인
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={sendVerificationCode}
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                          >
+                            재요청
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
-                  {verificationError && <p className="text-[10px] text-red-500 mt-1 ml-1 font-bold">{verificationError}</p>}
-                  {isEmailVerified && <p className="text-[10px] text-emerald-500 mt-1 ml-1 font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> 인증이 완료되었습니다.</p>}
+
+                  {verificationError && <p className="text-[10px] text-red-500 mt-1 ml-1 font-bold text-center">{verificationError}</p>}
+                  {isEmailVerified && (
+                    <p className="text-[10px] text-emerald-500 mt-1 ml-1 font-bold flex items-center justify-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> 인증이 완료되었습니다.
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -645,7 +658,7 @@ export const Signup: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-5 bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-[#FF5A5A] text-white font-black text-sm rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 active:scale-95 flex items-center justify-center gap-2"
               >
                 가입 완료하기
                 <ChevronRight className="w-5 h-5" />
@@ -655,11 +668,7 @@ export const Signup: React.FC = () => {
         )}
 
         {step === 'success' && (
-          <div className="bg-white p-12 rounded-[40px] shadow-2xl text-center border border-gray-100 animate-in zoom-in-95 duration-500">
-            <div className="w-24 h-24 bg-red-50 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner">
-              <CheckCircle2 className="w-12 h-12 text-[#FF5A5A]" />
-            </div>
-            <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">환영합니다!</h2>
+          <div className="bg-white p-12 rounded-[40px] shadow-2xl text-left border border-gray-100 animate-in zoom-in-95 duration-500">
             <p className="text-gray-500 font-medium leading-relaxed mb-10">
               회원가입이 성공적으로 완료되었습니다.<br />
               지금 바로 JAVAJAVA의 실시간 중고 경매를 시작해보세요.

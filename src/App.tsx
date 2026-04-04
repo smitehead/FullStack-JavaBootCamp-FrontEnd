@@ -32,6 +32,7 @@ import { CardRegistration } from '@/pages/mypage/CardRegistration';
 // [ Trade Pages (거래/커뮤니케이션) ]
 import { Inbox } from '@/pages/trade/Inbox';
 import { SellerProfile } from '@/pages/trade/SellerProfile';
+import { Chat } from '@/pages/trade/chat';
 
 // [ CS Pages (고객센터) ]
 import { FAQ } from '@/pages/cs/FAQ';
@@ -54,6 +55,7 @@ import { AuctionManagement } from '@/pages/admin/AuctionManagement';
 import { ReportManagement } from '@/pages/admin/ReportManagement';
 import { ActivityLogManagement } from '@/pages/admin/ActivityLogManagement';
 import { MannerHistoryManagement } from '@/pages/admin/MannerHistoryManagement';
+import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 
 const App: React.FC = () => {
   return (
@@ -81,6 +83,9 @@ const App: React.FC = () => {
                 <Route path="/reports" element={<ReportManagement />} />
                 <Route path="/activity-logs" element={<ActivityLogManagement />} />
                 <Route path="/manner-history" element={<MannerHistoryManagement />} />
+                <Route path="/admin/withdraws" element={<AdminLayout />}>
+                  <Route index element={<WithdrawManagement />} />
+                </Route>
               </Routes>
             </AdminLayout>
           } />
@@ -97,6 +102,7 @@ const App: React.FC = () => {
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/won/:id" element={<WonProductDetail />} />
                 <Route path="/inbox" element={<Inbox />} />
+                <Route path="/chat" element={<Chat />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/notice" element={<NoticeList />} />
                 <Route path="/notice/:id" element={<NoticeDetail />} />

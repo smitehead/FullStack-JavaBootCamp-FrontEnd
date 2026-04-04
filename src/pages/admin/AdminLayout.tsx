@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Users, Bell, MessageSquare, Image, Home, LayoutDashboard, LogOut, UserX, Megaphone, Gavel, Thermometer, AlertTriangle, Settings, History } from 'lucide-react';
+import { Users, Bell, MessageSquare, Image, Home, LayoutDashboard, LogOut, UserX, Megaphone, Gavel, Thermometer, AlertTriangle, Settings, History, Wallet } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
 
@@ -53,6 +53,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         { path: '/admin/inquiries', icon: MessageSquare, label: '문의사항 관리' },
         { path: '/admin/notifications', icon: Bell, label: '알림 관리' },
         { path: '/admin/banners', icon: Image, label: '배너 관리' },
+      ]
+    },
+    {
+      title: '포인트 출금 관리',
+      items: [
+        { path: '/admin/withdraws', icon: Wallet, label: '출금 신청 관리' },
       ]
     },
     {
