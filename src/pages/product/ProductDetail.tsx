@@ -608,18 +608,16 @@ export const ProductDetail: React.FC = () => {
                 >
                   {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
                 </button>
-                {activeAutoBid && (
-                  <div className="flex items-center justify-between px-1">
-                  </div>
-                )}
+
+                {/* 3. 입찰 참여하기 버튼 (감싸던 div 삭제하고 flex-1 직접 적용) */}
+                <button
+                  onClick={() => openBidModal('bid')}
+                  disabled={isFinished}
+                  className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                >
+                  입찰 참여하기
+                </button>
               </div>
-              <button
-                onClick={() => openBidModal('bid')}
-                disabled={isFinished}
-                className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-              >
-                입찰 참여하기
-              </button>
             </div>
           </div>
         </div>
