@@ -83,9 +83,7 @@ const App: React.FC = () => {
                 <Route path="/reports" element={<ReportManagement />} />
                 <Route path="/activity-logs" element={<ActivityLogManagement />} />
                 <Route path="/manner-history" element={<MannerHistoryManagement />} />
-                <Route path="/admin/withdraws" element={<AdminLayout />}>
-                  <Route index element={<WithdrawManagement />} />
-                </Route>
+                <Route path="/withdraws" element={<WithdrawManagement />} />
               </Routes>
             </AdminLayout>
           } />

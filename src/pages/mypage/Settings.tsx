@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CURRENT_USER, BLOCKED_USERS, MOCK_PRODUCTS } from '@/services/mockData';
-import { Bell, Shield, ShieldCheck, UserMinus, X, AlertCircle, CheckCircle2, User, CreditCard } from 'lucide-react';
+import { Bell, Shield, ShieldCheck, UserMinus, X, AlertCircle, CheckCircle2, User, CreditCard, Landmark } from 'lucide-react';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 
@@ -210,6 +210,55 @@ export const Settings: React.FC = () => {
     setBlockedUsers(prev => prev.filter(u => u.id !== userId));
   };
 
+  const [accounts, setAccounts] = useState<{
+    accountNo: number;
+    bankName: string;
+    accountNumber: string;
+    accountHolder: string;
+    isDefault: number;
+  }[]>([]);
+  const [isAccountLoading, setIsAccountLoading] = useState(false);
+  const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
+  const [newAccount, setNewAccount] = useState({ bankName: '', accountNumber: '', accountHolder: '' });
+
+  useEffect(() => {
+    if (activeTab === 'account') {
+      setIsAccountLoading(true);
+      api.get('/points/accounts')
+        .then(res => setAccounts(res.data))
+        .catch(() => { })
+        .finally(() => setIsAccountLoading(false));
+    }
+  }, [activeTab]);
+
+  const handleAddAccount = async () => {
+    if (!newAccount.bankName || !newAccount.accountNumber || !newAccount.accountHolder) {
+      showToast('모든 항목을 입력해주세요.', 'warning');
+      return;
+    }
+    try {
+      await api.post('/points/accounts', newAccount);
+      const res = await api.get('/points/accounts');
+      setAccounts(res.data);
+      setNewAccount({ bankName: '', accountNumber: '', accountHolder: '' });
+      setIsAddAccountOpen(false);
+      showToast('계좌가 등록되었습니다.', 'success');
+    } catch (e) {
+      showToast('계좌 등록에 실패했습니다.', 'error');
+    }
+  };
+
+  const handleDeleteAccount = async (accountNo: number) => {
+    if (!confirm('이 계좌를 삭제하시겠습니까?')) return;
+    try {
+      await api.delete(`/points/accounts/${accountNo}`);
+      setAccounts(prev => prev.filter(a => a.accountNo !== accountNo));
+      showToast('계좌가 삭제되었습니다.', 'success');
+    } catch (e) {
+      showToast('계좌 삭제에 실패했습니다.', 'error');
+    }
+  };
+
   const validateWithdrawal = () => {
     // (1) Points must be 0
     if (CURRENT_USER.points > 0) {
@@ -292,6 +341,12 @@ export const Settings: React.FC = () => {
                 className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'card' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 <CreditCard className="w-5 h-5 mr-3" /> 카드 관리
+              </button>
+              <button
+                onClick={() => setActiveTab('account')}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'account' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                <Landmark className="w-5 h-5 mr-3" /> 계좌 관리
               </button>
               <button
                 onClick={openWithdrawModal}
@@ -529,6 +584,107 @@ export const Settings: React.FC = () => {
                   >
                     카드 등록하러 가기
                   </button>
+                </div>
+              )}
+            </section>
+          )}
+
+          {activeTab === 'account' && (
+            <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">계좌 관리</h3>
+                  <p className="text-xs text-gray-400 mt-1">최대 3개까지 등록 가능합니다.</p>
+                </div>
+                {accounts.length < 3 && (
+                  <button
+                    onClick={() => setIsAddAccountOpen(!isAddAccountOpen)}
+                    className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
+                  >
+                    {isAddAccountOpen ? '취소' : '계좌 추가'}
+                  </button>
+                )}
+              </div>
+
+              {/* 계좌 추가 폼 */}
+              {isAddAccountOpen && (
+                <div className="bg-gray-50 rounded-2xl p-6 mb-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1.5">은행명</label>
+                      <input
+                        type="text"
+                        placeholder="예: 신한은행"
+                        value={newAccount.bankName}
+                        onChange={e => setNewAccount(p => ({ ...p, bankName: e.target.value }))}
+                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1.5">계좌번호</label>
+                      <input
+                        type="text"
+                        placeholder="- 없이 입력"
+                        value={newAccount.accountNumber}
+                        onChange={e => setNewAccount(p => ({ ...p, accountNumber: e.target.value.replace(/[^0-9]/g, '') }))}
+                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1.5">예금주</label>
+                      <input
+                        type="text"
+                        placeholder="예금주명"
+                        value={newAccount.accountHolder}
+                        onChange={e => setNewAccount(p => ({ ...p, accountHolder: e.target.value }))}
+                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleAddAccount}
+                    className="w-full py-3 bg-indigo-600 text-white text-sm font-black rounded-xl hover:bg-indigo-700 transition-all"
+                  >
+                    등록하기
+                  </button>
+                </div>
+              )}
+
+              {/* 등록된 계좌 목록 */}
+              {isAccountLoading ? (
+                <div className="py-10 flex justify-center">
+                  <div className="w-6 h-6 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : accounts.length === 0 ? (
+                <div className="py-10 text-center text-gray-400">
+                  <Landmark className="w-10 h-10 mx-auto mb-3 text-gray-200" />
+                  <p className="text-sm font-medium">등록된 계좌가 없습니다.</p>
+                  <p className="text-xs text-gray-300 mt-1">출금 시 사용할 계좌를 등록하세요.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {accounts.map(acc => (
+                    <div key={acc.accountNo} className="flex items-center justify-between p-5 rounded-2xl border border-gray-100 bg-white">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
+                          <Landmark className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900">{acc.bankName}</p>
+                          <p className="text-sm text-gray-400">{acc.accountNumber} · {acc.accountHolder}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteAccount(acc.accountNo)}
+                        className="px-3 py-1.5 bg-red-50 text-red-500 text-xs font-bold rounded-lg hover:bg-red-100 transition-all"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  ))}
+                  <p className="text-xs text-gray-400 text-center pt-2">
+                    {accounts.length}/3 계좌 등록됨
+                  </p>
                 </div>
               )}
             </section>

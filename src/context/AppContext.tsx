@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
-import { Notification, ChatRoom, User, Product, WithdrawnUser, NotificationType, Report, MannerHistory, ActivityLog } from '@/types';
-import { NOTIFICATIONS as INITIAL_NOTIFICATIONS, MOCK_CHATS as INITIAL_CHATS, CURRENT_USER as MOCK_USER, ADMIN_USER, MOCK_PRODUCTS as INITIAL_PRODUCTS, MOCK_USERS as INITIAL_USERS, MOCK_REPORTS as INITIAL_REPORTS } from '@/services/mockData';
+import { Category, Notification, ChatRoom, User, Product, WithdrawnUser, NotificationType, Report, MannerHistory, ActivityLog } from '@/types';
+import { NOTIFICATIONS as INITIAL_NOTIFICATIONS, MOCK_CHAT_ROOMS as INITIAL_CHATS, CURRENT_USER as MOCK_USER, ADMIN_USER, MOCK_PRODUCTS as INITIAL_PRODUCTS, MOCK_USERS as INITIAL_USERS, MOCK_REPORTS as INITIAL_REPORTS } from '@/services/mockData';
 import api from '@/services/api';
 import { resolveImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -54,7 +54,7 @@ const mapAdminProductToFrontend = (p: any): Product => ({
   id: `prod_${p.productNo}`,
   title: p.title,
   description: '',
-  category: { large: '', medium: '', small: '' },
+  category: Category.ETC,
   seller: {
     id: `user_${p.sellerNo}`,
     nickname: p.sellerNickname,
@@ -300,7 +300,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const login = async (userId: string, password: string): Promise<boolean> => {
     try {
       const response = await api.post('/auth/login', { userId, password });
-      const { token, memberNo, nickname } = response.data;
+      const { token, memberNo, nickname, addrShort } = response.data;
 
       sessionStorage.setItem('java_token', token);
 
@@ -326,6 +326,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         mannerTemp: dbMannerTemp,
         joinedAt: new Date().toISOString(),
         isAdmin: dbIsAdmin,
+        address: addrShort || '',
       };
 
       setUser(loggedInUser);

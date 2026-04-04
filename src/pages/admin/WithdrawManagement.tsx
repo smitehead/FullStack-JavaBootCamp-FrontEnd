@@ -325,8 +325,8 @@ export const WithdrawManagement: React.FC = () => {
                     rows={3}
                     className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-none text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 outline-none resize-none font-medium"
                   />
-                  <p className="text-[10px] text-red-400 font-medium">
-                    ⚠ 거절 시 차감된 포인트가 자동으로 환불됩니다.
+                  <p className="text-[10px] text-gray-400 font-medium">
+                    ⚠ 거절 시 별도의 포인트 처리는 발생하지 않습니다. (포인트는 완료 시에만 차감됩니다)
                   </p>
                 </div>
               )}
