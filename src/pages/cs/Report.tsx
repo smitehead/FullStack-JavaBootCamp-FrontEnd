@@ -48,6 +48,10 @@ export const Report: React.FC = () => {
       showToast('신고 사유를 선택해주세요.', 'error');
       return;
     }
+    if (!details.trim()) {
+      showToast('상세 신고 내용을 입력해주세요.', 'error');
+      return;
+    }
 
     const memberNo = getMemberNo(user);
     if (!memberNo) {
@@ -171,11 +175,11 @@ export const Report: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 ml-1">
-                  상세 내용 (선택사항)
+                  상세 내용 <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   rows={5}
-                  className="w-full p-5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-red-500/20 focus:bg-white transition-all resize-none placeholder:text-gray-300"
+                  className="w-full p-5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-red-500/20 focus:bg-white outline-none transition-all resize-none placeholder:text-gray-300"
                   placeholder="신고 사유에 대한 구체적인 내용을 입력해주세요."
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}

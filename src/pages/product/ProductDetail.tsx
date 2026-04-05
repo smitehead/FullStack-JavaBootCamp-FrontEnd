@@ -301,6 +301,11 @@ export const ProductDetail: React.FC = () => {
       return;
     }
 
+    if (type === 'bid' && activeAutoBid) {
+      showToast("'자동 입찰이 활성화'된 상태입니다. 자동 입찰 설정을 먼저 종료하거나 수정해 주세요.", 'warning');
+      return;
+    }
+
     // 백엔드에서 실시간 포인트 조회
     try {
       const memberNo = getMemberNo(user);
@@ -635,7 +640,6 @@ export const ProductDetail: React.FC = () => {
                 {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
               </button>
 
-              {/* 3. 입찰 참여하기 버튼 */}
               <button
                 onClick={() => openBidModal('bid')}
                 disabled={isFinished}

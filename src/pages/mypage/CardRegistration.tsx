@@ -8,6 +8,26 @@ import { showToast } from '@/components/toastService';
 export const CardRegistration: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAppContext();
+  const [isCheckLoading, setIsCheckLoading] = useState(true);
+
+  // 이미 카드가 등록되어 있는지 확인
+  React.useEffect(() => {
+    const checkCard = async () => {
+      try {
+        const res = await api.get('/points/billing-key');
+        if (res.data.registered) {
+          showToast('이미 카드가 등록되어 있습니다. 삭제 후 다시 눌러주세요.', 'warning');
+          navigate('/points/charge', { replace: true });
+        }
+      } catch (e) {
+        // 미등록 상태면 그대로 진행
+      } finally {
+        setIsCheckLoading(false);
+      }
+    };
+    checkCard();
+  }, [navigate]);
+
 
   // 카드번호 4칸 분리 입력
   const [cardNumber1, setCardNumber1] = useState('');
@@ -101,6 +121,14 @@ export const CardRegistration: React.FC = () => {
           <p className="text-gray-500 font-medium">결제 카드가 성공적으로 등록되었습니다.</p>
           <p className="text-gray-400 text-sm mt-3">잠시 후 충전 페이지로 이동합니다...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (isCheckLoading) {
+    return (
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
       </div>
     );
   }

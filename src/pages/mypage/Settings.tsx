@@ -218,8 +218,6 @@ export const Settings: React.FC = () => {
     isDefault: number;
   }[]>([]);
   const [isAccountLoading, setIsAccountLoading] = useState(false);
-  const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
-  const [newAccount, setNewAccount] = useState({ bankName: '', accountNumber: '', accountHolder: '' });
 
   useEffect(() => {
     if (activeTab === 'account') {
@@ -231,22 +229,6 @@ export const Settings: React.FC = () => {
     }
   }, [activeTab]);
 
-  const handleAddAccount = async () => {
-    if (!newAccount.bankName || !newAccount.accountNumber || !newAccount.accountHolder) {
-      showToast('모든 항목을 입력해주세요.', 'warning');
-      return;
-    }
-    try {
-      await api.post('/points/accounts', newAccount);
-      const res = await api.get('/points/accounts');
-      setAccounts(res.data);
-      setNewAccount({ bankName: '', accountNumber: '', accountHolder: '' });
-      setIsAddAccountOpen(false);
-      showToast('계좌가 등록되었습니다.', 'success');
-    } catch (e) {
-      showToast('계좌 등록에 실패했습니다.', 'error');
-    }
-  };
 
   const handleDeleteAccount = async (accountNo: number) => {
     if (!confirm('이 계좌를 삭제하시겠습니까?')) return;
@@ -539,7 +521,13 @@ export const Settings: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-bold text-gray-900">결제 카드 관리</h3>
                 <button
-                  onClick={() => navigate('/points/charge')}
+                  onClick={() => {
+                    if (registeredCard) {
+                      showToast('이미 카드가 등록되어 있습니다. 삭제 후 다시 눌러주세요.', 'warning');
+                    } else {
+                      navigate('/points/charge');
+                    }
+                  }}
                   className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
                 >
                   카드 등록
@@ -598,57 +586,14 @@ export const Settings: React.FC = () => {
                 </div>
                 {accounts.length < 3 && (
                   <button
-                    onClick={() => setIsAddAccountOpen(!isAddAccountOpen)}
+                    onClick={() => navigate('/settings/account-register')}
                     className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
                   >
-                    {isAddAccountOpen ? '취소' : '계좌 추가'}
+                    계좌 추가
                   </button>
                 )}
               </div>
 
-              {/* 계좌 추가 폼 */}
-              {isAddAccountOpen && (
-                <div className="bg-gray-50 rounded-2xl p-6 mb-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1.5">은행명</label>
-                      <input
-                        type="text"
-                        placeholder="예: 신한은행"
-                        value={newAccount.bankName}
-                        onChange={e => setNewAccount(p => ({ ...p, bankName: e.target.value }))}
-                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1.5">계좌번호</label>
-                      <input
-                        type="text"
-                        placeholder="- 없이 입력"
-                        value={newAccount.accountNumber}
-                        onChange={e => setNewAccount(p => ({ ...p, accountNumber: e.target.value.replace(/[^0-9]/g, '') }))}
-                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1.5">예금주</label>
-                      <input
-                        type="text"
-                        placeholder="예금주명"
-                        value={newAccount.accountHolder}
-                        onChange={e => setNewAccount(p => ({ ...p, accountHolder: e.target.value }))}
-                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
-                      />
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleAddAccount}
-                    className="w-full py-3 bg-indigo-600 text-white text-sm font-black rounded-xl hover:bg-indigo-700 transition-all"
-                  >
-                    등록하기
-                  </button>
-                </div>
-              )}
 
               {/* 등록된 계좌 목록 */}
               {isAccountLoading ? (

@@ -28,6 +28,7 @@ import { Points } from '@/pages/mypage/Points';
 import { PointCharge } from '@/pages/mypage/PointCharge';
 import { PointWithdraw } from '@/pages/mypage/PointWithdraw';
 import { CardRegistration } from '@/pages/mypage/CardRegistration';
+import { AccountRegistration } from '@/pages/mypage/AccountRegistration';
 
 // [ Trade Pages (거래/커뮤니케이션) ]
 import { Inbox } from '@/pages/trade/Inbox';
@@ -114,6 +115,7 @@ const App: React.FC = () => {
                 <Route path="/points" element={<Points />} />
                 <Route path="/points/charge" element={<PointCharge />} />
                 <Route path="/points/withdraw" element={<PointWithdraw />} />
+                <Route path="/settings/account-register" element={<AccountRegistration />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/report" element={<Report />} />

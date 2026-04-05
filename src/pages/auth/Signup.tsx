@@ -310,6 +310,7 @@ export const Signup: React.FC = () => {
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'info' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>2</div>
             <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'info' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>정보입력</span>
           </div>
+          <div className="flex-1 h-px mx-4"></div>
           <div className="flex flex-col items-center gap-2">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'success' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>3</div>
             <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'success' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>가입완료</span>
@@ -502,11 +503,11 @@ export const Signup: React.FC = () => {
                         className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50"
                         placeholder="example@email.com"
                         value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
                     </div>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={sendVerificationCode}
                       disabled={isEmailVerified}
                       className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200"
@@ -541,15 +542,15 @@ export const Signup: React.FC = () => {
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <button 
-                            type="button" 
+                          <button
+                            type="button"
                             onClick={verifyCode}
                             className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
                           >
                             인증 확인
                           </button>
-                          <button 
-                            type="button" 
+                          <button
+                            type="button"
                             onClick={sendVerificationCode}
                             className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
                           >
