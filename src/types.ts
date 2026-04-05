@@ -21,6 +21,12 @@ export interface UserSettings {
   chat: boolean;
 }
 
+export interface Account {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+}
+
 export interface User {
   id: string;
   nickname: string;
@@ -42,6 +48,7 @@ export interface User {
   blockedUserIds?: string[];
   auctionCount?: number; // 관리자 기능용 추가
   postCount?: number; // 관리자 기능용 추가
+  account?: Account;
 }
 
 export interface Report {

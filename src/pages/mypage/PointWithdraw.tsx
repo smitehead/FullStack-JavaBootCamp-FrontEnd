@@ -1,9 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Landmark, Plus, ChevronRight, CheckCircle2, ArrowLeft, X } from 'lucide-react';
+import { motion } from 'motion/react';
 import { useAppContext } from '@/context/AppContext';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
+
+const BANKS = [
+  { name: 'KB국민은행' },
+  { name: '신한은행' },
+  { name: '우리은행' },
+  { name: '하나은행' },
+  { name: 'NH농협은행' },
+  { name: 'IBK기업은행' },
+  { name: '카카오뱅크' },
+  { name: '토스뱅크' },
+  { name: '케이뱅크' },
+  { name: 'SC제일은행' },
+  { name: '씨티은행' },
+  { name: '수협은행' },
+  { name: '우체국' },
+  { name: '새마을금고' },
+  { name: '신협' },
+  { name: '저축은행' },
+];
 
 export const PointWithdraw: React.FC = () => {
   const navigate = useNavigate();
@@ -170,7 +190,7 @@ export const PointWithdraw: React.FC = () => {
                 <div className="text-center py-4">
                   <p className="text-sm text-gray-400 mb-3">등록된 계좌가 없습니다.</p>
                   <button
-                    onClick={() => navigate('/settings')}
+                    onClick={() => navigate('/settings/account-register')}
                     className="text-xs font-bold text-indigo-600 hover:underline"
                   >
                     계좌 등록하러 가기
@@ -179,38 +199,90 @@ export const PointWithdraw: React.FC = () => {
               )}
             </div>
           ) : (
+            /* "새로운 계좌로" 선택 시 나타나는 섹션 */
             <div className="space-y-6">
               <h4 className="text-xl font-black text-gray-900 mb-2">어디로 보낼까요?</h4>
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">은행명</label>
-                <input
-                  type="text"
-                  value={newBank}
-                  onChange={(e) => setNewBank(e.target.value)}
-                  placeholder="은행명을 입력하세요"
-                  className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-indigo-600 outline-none transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">계좌번호</label>
-                <input
-                  type="text"
-                  value={newAccount}
-                  onChange={(e) => setNewAccount(e.target.value)}
-                  placeholder="계좌번호를 입력하세요 (- 제외)"
-                  className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-indigo-600 outline-none transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">예금주</label>
-                <input
-                  type="text"
-                  value={newAccountHolder}
-                  onChange={(e) => setNewAccountHolder(e.target.value)}
-                  placeholder="예금주명을 입력하세요"
-                  className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-indigo-600 outline-none transition-all"
-                />
-              </div>
+              
+              {!newBank ? (
+                /* 1단계: 은행 선택 그리드 */
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
+                >
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">은행 선택</label>
+                  <div className="flex flex-wrap justify-between gap-y-3">
+                    {BANKS.map((bank) => (
+                      <button
+                        key={bank.name}
+                        type="button"
+                        onClick={() => setNewBank(bank.name)}
+                        className="w-[calc(25%-8px)] sm:w-[88px] aspect-square flex flex-col items-center justify-center p-2 rounded-xl border border-gray-100 bg-gray-50 hover:border-gray-200 transition-all shadow-sm hover:bg-gray-100"
+                      >
+                        <div className="w-8 h-8 rounded-full mb-1 bg-gray-200 flex items-center justify-center text-[10px] text-gray-400 font-black">
+                          {bank.name.substring(0, 1)}
+                        </div>
+                        <span className="text-[10px] font-bold text-center leading-tight text-gray-500">
+                          {bank.name}
+                        </span>
+                      </button>
+                    ))}
+                    {/* 그리드 정렬을 위한 빈 공간 채우기 */}
+                    <div className="w-[calc(25%-8px)] sm:w-[88px] h-0"></div>
+                    <div className="w-[calc(25%-8px)] sm:w-[88px] h-0"></div>
+                    <div className="w-[calc(25%-8px)] sm:w-[88px] h-0"></div>
+                  </div>
+                </motion.div>
+              ) : (
+                /* 2단계: 계좌 정보 입력 폼 */
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="space-y-6"
+                >
+                  {/* 선택된 은행 표시 및 변경 버튼 */}
+                  <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-[11px] text-gray-400 font-black">
+                        {newBank.substring(0, 1)}
+                      </div>
+                      <p className="text-lg font-black text-gray-900">{newBank}</p>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => setNewBank('')}
+                      className="px-3 py-1.5 text-[10px] font-black text-gray-400 border border-gray-200 rounded-lg hover:bg-white transition-all hover:text-gray-900"
+                    >
+                      변경
+                    </button>
+                  </div>
+
+                  {/* 예금주 및 계좌번호 입력란 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">예금주</label>
+                      <input 
+                        type="text" 
+                        value={newAccountHolder}
+                        onChange={(e) => setNewAccountHolder(e.target.value)}
+                        placeholder="예금주명 입력"
+                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-indigo-600 outline-none transition-all font-bold focus:bg-white"
+                        autoFocus
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">계좌번호</label>
+                      <input 
+                        type="text" 
+                        value={newAccount}
+                        onChange={(e) => setNewAccount(e.target.value.replace(/\D/g, ''))}
+                        placeholder="계좌번호 입력 (- 제외)"
+                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-indigo-600 outline-none transition-all font-bold focus:bg-white"
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
             </div>
           )}
         </div>
@@ -247,6 +319,9 @@ export const PointWithdraw: React.FC = () => {
           >
             출금 신청하기
           </button>
+          <p className="text-[10px] text-gray-400 mt-4 font-medium text-center">
+            출금 신청 후 영업일 기준 1~3일 이내에 입금됩니다.
+          </p>
         </div>
       </div>
 
@@ -259,7 +334,7 @@ export const PointWithdraw: React.FC = () => {
               <h3 className="text-xl font-bold text-gray-900">출금 계좌 관리</h3>
               <div className="flex items-center gap-4">
                 <button
-                  onClick={() => navigate('/settings')}
+                  onClick={() => navigate('/settings/account-register')}
                   className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
                 >
                   추가/수정

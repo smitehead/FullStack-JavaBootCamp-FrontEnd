@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
 import { resolveImageUrl } from '@/utils/imageUtils';
-import {
-  ChevronLeft, ChevronRight, MapPin, CreditCard, MessageSquare,
-  CheckCircle2, XCircle, Package, Info, AlertCircle,
+import { 
+  ChevronLeft, ChevronRight, MapPin, Truck, CreditCard, MessageSquare, 
+  CheckCircle2, XCircle, Package, Info, AlertCircle, Star 
 } from 'lucide-react';
 import { showToast } from '@/components/toastService';
 
@@ -23,6 +23,7 @@ interface AuctionResultDetail {
     sellerNo: number;
     nickname: string;
     mannerTemp: number;
+    profileImage?: string;
   };
   deliveryEmdNo: number | null;
   deliveryAddrDetail: string | null;
@@ -53,6 +54,7 @@ export const WonProductDetail: React.FC = () => {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [address, setAddress] = useState('');
   const [detailAddress, setDetailAddress] = useState('');
+  const [activeTransactionTab, setActiveTransactionTab] = useState<'delivery' | 'face-to-face'>('delivery');
 
   // 후기 상태
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -65,9 +67,14 @@ export const WonProductDetail: React.FC = () => {
       .then(res => {
         const data: AuctionResultDetail = res.data;
         setResult(data);
-        // 이미 저장된 배송지가 있으면 초기값으로 세팅
         if (data.deliveryAddrDetail) {
           setAddress(data.deliveryAddrDetail);
+        }
+        // 초기 거래 방식 지정
+        if (data.tradeType === '직거래') {
+          setActiveTransactionTab('face-to-face');
+        } else {
+          setActiveTransactionTab('delivery');
         }
       })
       .catch(() => {
@@ -75,11 +82,11 @@ export const WonProductDetail: React.FC = () => {
         navigate(-1);
       })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, navigate]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
       </div>
     );
@@ -90,23 +97,21 @@ export const WonProductDetail: React.FC = () => {
   const isPaid = result.status === '결제완료';
   const isCompleted = result.status === '구매확정';
   const isCanceled = result.status === '거래취소';
-  const isFaceToFace = result.tradeType === '직거래';
-
-  const statusLabel = isPending ? '결제 대기'
-    : isPaid ? '결제 완료 (배송 대기)'
-      : isCompleted ? '거래 완료'
-        : '거래 취소';
+  
+  const statusLabel = isPending ? '결제 대기' 
+    : isPaid ? (result.tradeType === '직거래' ? '결제 완료 (거래 대기)' : '결제 완료 (배송 대기)')
+    : isCompleted ? '거래 완료' 
+    : '거래 취소';
 
   const statusClass = isPending ? 'bg-amber-100 text-amber-600'
     : isPaid ? 'bg-emerald-100 text-emerald-600'
-      : isCompleted ? 'bg-indigo-100 text-indigo-600'
-        : 'bg-gray-100 text-gray-500';
+    : isCompleted ? 'bg-indigo-100 text-indigo-600'
+    : 'bg-gray-100 text-gray-500';
 
   const images = result.images.map(img => resolveImageUrl(img) || img);
 
-  // ── 결제 처리 ──────────────────────────────────────────
   const handlePayment = () => {
-    if (!isFaceToFace && !address.trim()) {
+    if (activeTransactionTab === 'delivery' && !address.trim() && result.tradeType !== '직거래') {
       showToast('배송지를 입력해주세요.', 'error');
       return;
     }
@@ -120,10 +125,11 @@ export const WonProductDetail: React.FC = () => {
       await api.post(`/auction-results/${result.resultNo}/pay`, {
         address,
         addressDetail: detailAddress,
+        tradeType: activeTransactionTab === 'delivery' ? '택배' : '직거래'
       });
       setResult(prev => prev ? { ...prev, status: '결제완료' } : null);
       setIsEditingAddress(false);
-      showToast('결제가 완료되었습니다.', 'success');
+      showToast('확정이 되었습니다.', 'success');
     } catch {
       showToast('결제 처리 중 오류가 발생했습니다.', 'error');
     } finally {
@@ -131,7 +137,6 @@ export const WonProductDetail: React.FC = () => {
     }
   };
 
-  // ── 구매 확정 ──────────────────────────────────────────
   const executeConfirmPurchase = async () => {
     setShowPurchaseConfirm(false);
     try {
@@ -143,25 +148,33 @@ export const WonProductDetail: React.FC = () => {
     }
   };
 
-  // ── 거래 취소 ──────────────────────────────────────────
   const executeCancel = async () => {
     setShowCancelConfirm(false);
     try {
       await api.post(`/auction-results/${result.resultNo}/cancel`);
       setResult(prev => prev ? { ...prev, status: '거래취소' } : null);
+      showToast('결제가 취소되었습니다.', 'success');
     } catch {
       showToast('취소 처리 중 오류가 발생했습니다.', 'error');
     }
   };
 
-  // ── 후기 제출 (백엔드 리뷰 API 미구현 → TODO) ──────────
+  const toggleTag = (tagContent: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tagContent) 
+        ? prev.filter(t => t !== tagContent) 
+        : [...prev, tagContent]
+    );
+  };
+
   const handleSubmitReview = () => {
     if (selectedTags.length === 0 && !reviewContent.trim()) {
       showToast('후기 태그를 선택하거나 내용을 입력해주세요.', 'error');
       return;
     }
+
     setIsSubmittingReview(true);
-    // TODO: POST /api/reviews 백엔드 구현 후 교체
+    // TODO: 백엔드 리뷰 API 구현 후 연동
     setTimeout(() => {
       setIsSubmittingReview(false);
       setShowReviewSuccess(true);
@@ -170,233 +183,289 @@ export const WonProductDetail: React.FC = () => {
         setShowReviewModal(false);
         navigate('/mypage');
       }, 2000);
-    }, 1000);
+    }, 1500);
+  };
+
+  const handleChatWithSeller = () => {
+    showToast('판매자와의 채팅방으로 이동합니다.', 'success');
   };
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-
-        {/* 헤더 */}
+      <div className="max-w-4xl mx-auto font-sans">
+        {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <button
+          <button 
             onClick={() => navigate(-1)}
             className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors group"
           >
             <ChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
             뒤로가기
           </button>
-          <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider ${statusClass}`}>
-            {statusLabel}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider ${statusClass}`}>
+              {statusLabel}
+            </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column: Consolidated Info Card */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              {/* Product Summary */}
+              <section className="p-8">
+                <h3 className="text-lg font-black text-gray-900 mb-6 flex items-center gap-2">
+                  <Package className="w-5 h-5 text-emerald-500" /> 낙찰 상품 정보
+                </h3>
+                <div className="flex gap-6">
+                  {images.length > 0 && (
+                    <div className="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-100">
+                      <img src={images[imgIndex] || undefined} alt={result.title} className="w-full h-full object-cover" />
+                      {images.length > 1 && (
+                        <>
+                          <button 
+                            onClick={() => setImgIndex(i => Math.max(0, i - 1))}
+                            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-r"
+                          >
+                            <ChevronLeft className="w-3 h-3" />
+                          </button>
+                          <button 
+                            onClick={() => setImgIndex(i => Math.min(images.length - 1, i + 1))}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-l"
+                          >
+                            <ChevronRight className="w-3 h-3" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <Link to={`/product/${result.productNo}`} className="block group">
+                      <h4 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-emerald-500 transition-colors">{result.title}</h4>
+                    </Link>
+                    <p className="text-sm text-gray-500 mb-4 line-clamp-1">{result.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">최종 낙찰가</span>
+                      <span className="text-2xl font-black text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
 
-          {/* 좌측 */}
-          <div className="lg:col-span-2 space-y-6">
+              <hr className="border-gray-100 mx-8" />
 
-            {/* 낙찰 상품 정보 */}
-            <section className="bg-white rounded-[32px] shadow-sm border border-gray-100 p-8">
-              <h3 className="text-lg font-black text-gray-900 mb-6 flex items-center gap-2">
-                <Package className="w-5 h-5 text-emerald-500" /> 낙찰 상품 정보
-              </h3>
-              <div className="flex gap-6">
-                {images.length > 0 && (
-                  <div className="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-100">
-                    <img src={images[imgIndex] || undefined} alt={result.title} className="w-full h-full object-cover" />
-                    {images.length > 1 && (
-                      <>
-                        <button
-                          onClick={() => setImgIndex(i => Math.max(0, i - 1))}
-                          className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-r"
-                        >
-                          <ChevronLeft className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={() => setImgIndex(i => Math.min(images.length - 1, i + 1))}
-                          className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-l"
-                        >
-                          <ChevronRight className="w-3 h-3" />
-                        </button>
-                      </>
+              {/* Address Section */}
+              <section className="p-8">
+                {result.tradeType === '혼합' && (
+                  <div className="flex bg-gray-100 p-1 rounded-xl w-fit mb-4">
+                    <button 
+                      onClick={() => setActiveTransactionTab('delivery')}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTransactionTab === 'delivery' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                      택배 거래
+                    </button>
+                    <button 
+                      onClick={() => setActiveTransactionTab('face-to-face')}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTransactionTab === 'face-to-face' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                      직거래
+                    </button>
+                  </div>
+                )}
+
+                <div className="bg-gray-50/50 rounded-2xl border border-gray-100 p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg font-black text-gray-900">
+                        {activeTransactionTab === 'face-to-face' ? '거래 방식 및 장소' : '배송지 정보'}
+                      </h3>
+                      <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">
+                        {activeTransactionTab === 'face-to-face' ? '직거래' : '택배거래'}
+                      </span>
+                    </div>
+                    {isPending && activeTransactionTab === 'delivery' && (
+                      <button 
+                        onClick={() => setIsEditingAddress(!isEditingAddress)}
+                        className="text-xs font-bold text-indigo-600 hover:text-indigo-800"
+                      >
+                        {isEditingAddress ? '저장' : '변경하기'}
+                      </button>
                     )}
                   </div>
-                )}
-                <div className="flex-1">
-                  <h4 className="text-xl font-bold text-gray-900 mb-1">{result.title}</h4>
-                  <p className="text-sm text-gray-500 mb-4 line-clamp-2">{result.description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">최종 낙찰가</span>
-                    <span className="text-2xl font-black text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
-                  </div>
-                </div>
-              </div>
-            </section>
 
-            {/* 배송지 정보 */}
-            <section className="bg-white rounded-[32px] shadow-sm border border-gray-100 p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-black text-gray-900">배송지 정보</h3>
-                {isPending && !isFaceToFace && (
-                  <button
-                    onClick={() => setIsEditingAddress(v => !v)}
-                    className="text-xs font-bold text-indigo-600 hover:text-indigo-800"
-                  >
-                    {isEditingAddress ? '저장' : '변경하기'}
-                  </button>
-                )}
-              </div>
-
-              {isFaceToFace ? (
-                <div className="bg-gray-50 p-6 rounded-2xl border border-dashed border-gray-200 text-center">
-                  <MapPin className="w-5 h-5 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm font-bold text-gray-500">
-                    직거래 상품입니다.{result.location ? ` 거래 장소: ${result.location}` : ' 판매자와 채팅으로 장소를 정해주세요.'}
-                  </p>
-                </div>
-              ) : isEditingAddress ? (
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    value={address}
-                    onChange={e => setAddress(e.target.value)}
-                    placeholder="주소를 입력해주세요"
-                    className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
-                  />
-                  <input
-                    type="text"
-                    value={detailAddress}
-                    onChange={e => setDetailAddress(e.target.value)}
-                    placeholder="상세 주소를 입력해주세요"
-                    className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
-                  />
-                  <div className="bg-amber-50 p-4 rounded-2xl flex items-start gap-3 border border-amber-100">
-                    <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-amber-800 leading-relaxed">
-                      택배 거래 시 정확한 주소를 입력해주세요. 결제 완료 후에는 주소 변경이 어려울 수 있습니다.
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div>
-                    <p className="font-bold text-gray-900">{address || result.deliveryAddrDetail || '주소를 등록해주세요'}</p>
-                    {detailAddress && <p className="text-sm text-gray-500 mt-1">{detailAddress}</p>}
-                  </div>
-                  {isPending && (
-                    <div className="bg-amber-50 p-4 rounded-2xl flex items-start gap-3 border border-amber-100">
-                      <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                      <p className="text-[11px] text-amber-800 leading-relaxed">
-                        택배 거래 시 정확한 주소를 입력해주세요.
-                      </p>
+                  {activeTransactionTab === 'face-to-face' ? (
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                        <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 flex-shrink-0">
+                          <MapPin className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">희망 거래 장소</p>
+                          <p className="font-bold text-gray-900">{result.location || '판매자와 협의 후 장소를 결정해주세요.'}</p>
+                          <p className="text-sm text-gray-500 mt-1">상세 장소는 판매자와 채팅으로 협의해주세요.</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          {isEditingAddress ? (
+                            <div className="space-y-3">
+                              <div className="flex gap-2">
+                                <input 
+                                  type="text" 
+                                  value={address}
+                                  onChange={(e) => setAddress(e.target.value)}
+                                  placeholder="주소를 입력해주세요"
+                                  className="flex-1 p-3 bg-white border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none font-bold"
+                                />
+                                <button className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl active:scale-95 transition-transform">검색</button>
+                              </div>
+                              <input 
+                                type="text" 
+                                value={detailAddress}
+                                onChange={(e) => setDetailAddress(e.target.value)}
+                                placeholder="상세 주소를 입력해주세요"
+                                className="w-full p-3 bg-white border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none font-bold"
+                              />
+                            </div>
+                          ) : (
+                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                              {address || result.deliveryAddrDetail ? (
+                                <>
+                                  <p className="font-bold text-gray-900">{address || result.deliveryAddrDetail || '주소를 등록해주세요'}</p>
+                                  {(detailAddress || result.deliveryAddrDetail) && (
+                                    <p className="text-sm text-gray-500 mt-1">{detailAddress || ''}</p>
+                                  )}
+                                </>
+                              ) : (
+                                <p className="text-sm text-gray-400 font-medium italic">배송지 정보를 입력해주세요.</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
-              )}
-            </section>
+              </section>
 
-            {/* 결제 정보 */}
-            <section className="bg-white rounded-[32px] shadow-sm border border-gray-100 p-8">
-              <h3 className="text-lg font-black text-gray-900 mb-6">결제 정보</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 font-medium">낙찰 금액</span>
-                  <span className="text-gray-900 font-bold">{result.finalPrice.toLocaleString()}원</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 font-medium">배송비</span>
-                  <span className="text-gray-900 font-bold">0원 (무료배송)</span>
-                </div>
-                <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
-                  <span className="text-base font-black text-gray-900">총 결제 금액</span>
-                  <span className="text-2xl font-black text-[#FF5A5A]">{result.finalPrice.toLocaleString()}원</span>
-                </div>
-              </div>
+              <hr className="border-gray-100 mx-8" />
 
-              <div className="mt-8 space-y-3">
-                {isPending && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button
-                      onClick={handlePayment}
-                      disabled={isProcessing}
-                      className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 disabled:opacity-50"
-                    >
-                      {isProcessing ? '처리 중...' : '결제하기'}
-                    </button>
-                    <button
-                      onClick={() => setShowCancelConfirm(true)}
-                      className="w-full py-5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl transition-all border border-gray-200"
-                    >
-                      낙찰 취소하기
-                    </button>
+              {/* Payment Summary */}
+              <section className="p-8">
+                <h3 className="text-lg font-black text-gray-900 mb-6 flex items-center gap-2">
+                   <CreditCard className="w-5 h-5 text-indigo-500" /> 결제 정보
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500 font-medium">낙찰 금액</span>
+                    <span className="text-gray-900 font-bold">{result.finalPrice.toLocaleString()}원</span>
                   </div>
-                )}
-
-                {isPaid && (
-                  <button
-                    onClick={() => setShowPurchaseConfirm(true)}
-                    className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
-                  >
-                    구매 확정하기
-                  </button>
-                )}
-
-                {isCompleted && (
-                  <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl text-center">
-                    <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
-                    <p className="text-sm font-bold text-emerald-600">거래가 성공적으로 완료되었습니다.</p>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500 font-medium">배송비</span>
+                    <span className="text-gray-900 font-bold">0원 (무료배송)</span>
                   </div>
-                )}
-
-                {isCanceled && (
-                  <div className="bg-red-50 border border-red-100 p-6 rounded-2xl text-center">
-                    <XCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
-                    <p className="text-sm font-bold text-red-500">거래가 취소되었습니다.</p>
+                  <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
+                    <span className="text-base font-black text-gray-900">총 결제 금액</span>
+                    <span className="text-2xl font-black text-[#FF5A5A]">{result.finalPrice.toLocaleString()}원</span>
                   </div>
-                )}
-              </div>
-            </section>
+                </div>
+
+                {/* Local Action Buttons */}
+                <div className="mt-8 space-y-3">
+                  {isPending && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button 
+                        onClick={handlePayment}
+                        disabled={isProcessing}
+                        className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 disabled:opacity-50"
+                      >
+                        {isProcessing ? '처리 중...' : '입찰 구매 확정 (결제)'}
+                      </button>
+                      <button 
+                        onClick={() => setShowCancelConfirm(true)}
+                        className="w-full py-5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl transition-all border border-gray-200 shadow-sm"
+                      >
+                        낙찰 취소하기
+                      </button>
+                    </div>
+                  )}
+
+                  {isPaid && (
+                    <div className="grid grid-cols-1 gap-3">
+                      <button 
+                        onClick={() => setShowPurchaseConfirm(true)}
+                        className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
+                      >
+                        구매 확정하기
+                      </button>
+                    </div>
+                  )}
+
+                  {isCompleted && (
+                    <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl text-center">
+                      <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
+                      <p className="text-sm font-bold text-emerald-600">거래가 성공적으로 완료되었습니다.</p>
+                    </div>
+                  )}
+
+                  {isCanceled && (
+                    <div className="bg-red-50 border border-red-100 p-6 rounded-2xl text-center">
+                      <XCircle className="w-10 h-10 text-red-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
+                      <p className="text-sm font-bold text-red-500">거래가 취소되었습니다.</p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            </div>
           </div>
 
-          {/* 우측 — 판매자 정보 */}
+          {/* Right Column: Actions & Seller Info */}
           <div className="space-y-6">
             <div className="sticky top-24 space-y-6">
-              <div className="bg-gray-900 rounded-[40px] p-8 text-white shadow-2xl shadow-indigo-100">
+              {/* Action Card */}
+              <div className="bg-gray-900 rounded-[32px] p-8 text-white shadow-2xl shadow-indigo-100">
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold text-lg">{result.seller.nickname[0]}</span>
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white/20 flex-shrink-0 bg-white/10 flex items-center justify-center">
+                    {result.seller.profileImage ? (
+                      <img src={resolveImageUrl(result.seller.profileImage)} alt={result.seller.nickname} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-white font-bold text-lg">{result.seller.nickname[0]}</span>
+                    )}
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">판매자</p>
-                    <p className="font-bold text-white">{result.seller.nickname}</p>
-                    <p className="text-xs text-white/60">매너온도 {result.seller.mannerTemp}°</p>
+                    <p className="font-bold text-white truncate">{result.seller.nickname}</p>
+                    <p className="text-xs text-white/50">매너온도 {result.seller.mannerTemp}°</p>
                   </div>
-                  <Link
-                    to={`/seller/${result.seller.sellerNo}`}
-                    className="ml-auto p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
-                  >
+                  <Link to={`/seller/${result.seller.sellerNo}`} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors shrink-0">
                     <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
 
                 <div className="pt-8 border-t border-white/10">
-                  <button
-                    onClick={() => showToast('판매자와의 채팅방으로 이동합니다.', 'info')}
-                    className="w-full py-5 bg-white text-gray-900 font-black rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
-                  >
-                    <MessageSquare className="w-5 h-5" />
-                    판매자와 채팅하기
-                  </button>
+                  <div className="space-y-3">
+                    <button 
+                      onClick={handleChatWithSeller}
+                      className="w-full py-5 bg-white text-gray-900 font-black rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
+                    >
+                      <MessageSquare className="w-5 h-5 text-gray-900" />
+                      판매자와 채팅하기
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-6 border border-gray-100">
+              {/* Safety Notice */}
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                 <div className="flex gap-3">
                   <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold text-gray-900 mb-1">안전 거래 안내</p>
-                    <p className="text-[11px] text-gray-500 leading-relaxed">
+                    <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
                       결제된 포인트는 LiveBid에서 안전하게 보관하며, 구매자가 '구매 확정'을 누른 후에 판매자에게 전달됩니다.
                     </p>
                   </div>
@@ -407,93 +476,127 @@ export const WonProductDetail: React.FC = () => {
         </div>
       </div>
 
-      {/* ── 결제 확인 모달 ── */}
+      {/* Confirmation Modals */}
       {showPaymentConfirm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
               <CreditCard className="w-8 h-8 text-indigo-600" />
             </div>
             <h3 className="text-xl font-black text-gray-900 mb-2">결제를 진행할까요?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-8">
-              낙찰된 금액만큼 포인트가 차감됩니다.<br />
+              낙찰된 금액만큼 포인트가 차감됩니다.<br/>
               결제 후에는 취소가 어려울 수 있습니다.
             </p>
             <div className="flex gap-3">
-              <button onClick={() => setShowPaymentConfirm(false)} className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all">취소</button>
-              <button onClick={executePayment} disabled={isProcessing} className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-200 disabled:opacity-50">
-                {isProcessing ? '처리 중...' : '결제하기'}
+              <button 
+                onClick={() => setShowPaymentConfirm(false)}
+                className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+              >
+                취소
+              </button>
+              <button 
+                onClick={executePayment}
+                className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-200 active:scale-95"
+              >
+                결제하기
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── 구매 확정 모달 ── */}
       {showPurchaseConfirm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
               <CheckCircle2 className="w-8 h-8 text-emerald-600" />
             </div>
             <h3 className="text-xl font-black text-gray-900 mb-2">구매를 확정하시겠습니까?</h3>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">물건을 정상적으로 수령하셨나요?</p>
+            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
+              물건을 정상적으로 수령하셨나요?
+            </p>
             <p className="text-xs text-red-500 font-bold mb-8 flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" /> 구매 확정 시 다시 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-3">
-              <button onClick={() => setShowPurchaseConfirm(false)} className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all">취소</button>
-              <button onClick={executeConfirmPurchase} className="flex-1 py-4 bg-emerald-500 text-white font-black rounded-2xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-200">확정하기</button>
+              <button 
+                onClick={() => setShowPurchaseConfirm(false)}
+                className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+              >
+                취소
+              </button>
+              <button 
+                onClick={executeConfirmPurchase}
+                className="flex-1 py-4 bg-emerald-500 text-white font-black rounded-2xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-200 active:scale-95"
+              >
+                확확정하기
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── 거래 취소 모달 ── */}
       {showCancelConfirm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
               <XCircle className="w-8 h-8 text-red-600" />
             </div>
             <h3 className="text-xl font-black text-gray-900 mb-2">낙찰을 취소하시겠습니까?</h3>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">정말 취소하시겠습니까?</p>
+            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
+              정말 취소하시겠습니까?
+            </p>
             <p className="text-xs text-red-500 font-bold mb-8 flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" /> 취소 시 서비스 이용 패널티가 부과될 수 있습니다.
             </p>
             <div className="flex gap-3">
-              <button onClick={() => setShowCancelConfirm(false)} className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all">아니오</button>
-              <button onClick={executeCancel} className="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-400 transition-all shadow-lg shadow-red-200">취소하기</button>
+              <button 
+                onClick={() => setShowCancelConfirm(false)}
+                className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+              >
+                아니오
+              </button>
+              <button 
+                onClick={executeCancel}
+                className="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-400 transition-all shadow-lg shadow-red-200 active:scale-95"
+              >
+                취소하기
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── 후기 모달 ── */}
+      {/* Review Modal */}
       {showReviewModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
-            <div className="mb-8 pb-6 border-b border-gray-50">
-              <h3 className="text-xl font-black text-gray-900 leading-tight">
-                <span className="text-indigo-600">{result.seller.nickname}</span>님과의 거래<br />
-                어떤 점이 좋았나요?
-              </h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[32px] max-w-lg w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div className="flex items-center gap-4 mb-8 pb-6 border-b border-gray-50">
+              <div className="w-16 h-16 rounded-2xl overflow-hidden border border-gray-100 flex-shrink-0">
+                <img src={images[0]} alt={result.title} className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-gray-900 leading-tight">
+                  <span className="text-indigo-600">{result.seller.nickname}</span>님과의 거래<br/>
+                  어떤 점이 좋았나요?
+                </h3>
+              </div>
             </div>
 
             <div className="space-y-8">
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">거래하며 느낀 점을 선택해주세요</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1">거래하며 느낀 점을 선택해주세요</p>
                 <div className="flex flex-wrap gap-2">
                   {REVIEW_TAGS.map(tag => (
                     <button
                       key={tag.id}
-                      onClick={() => setSelectedTags(prev =>
-                        prev.includes(tag.content) ? prev.filter(t => t !== tag.content) : [...prev, tag.content]
-                      )}
-                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${selectedTags.includes(tag.content)
-                          ? 'bg-indigo-600 border-indigo-600 text-white'
+                      onClick={() => toggleTag(tag.content)}
+                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
+                        selectedTags.includes(tag.content)
+                          ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
                           : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
-                        }`}
+                      }`}
                     >
                       {tag.content}
                     </button>
@@ -502,26 +605,26 @@ export const WonProductDetail: React.FC = () => {
               </div>
 
               <div>
-                <h4 className="text-sm font-black text-gray-900 mb-3">상세 후기 남기기</h4>
+                <h4 className="text-sm font-black text-gray-900 mb-3 ml-1">상세 후기 남기기</h4>
                 <textarea
                   value={reviewContent}
-                  onChange={e => setReviewContent(e.target.value)}
+                  onChange={(e) => setReviewContent(e.target.value)}
                   placeholder="판매자에게 따뜻한 후기를 남겨주세요."
-                  className="w-full h-32 p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none resize-none"
-                />
+                  className="w-full h-32 p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none resize-none font-medium text-gray-900"
+                ></textarea>
               </div>
 
-              <div className="flex gap-3">
-                <button
+              <div className="flex gap-3 pt-2">
+                <button 
                   onClick={() => { setShowReviewModal(false); navigate('/mypage'); }}
-                  className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+                  className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all font-black"
                 >
                   나중에 하기
                 </button>
-                <button
+                <button 
                   onClick={handleSubmitReview}
                   disabled={isSubmittingReview}
-                  className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-200 disabled:opacity-50"
+                  className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-200 disabled:opacity-50 active:scale-95"
                 >
                   {isSubmittingReview ? '등록 중...' : '후기 등록하기'}
                 </button>
@@ -531,16 +634,16 @@ export const WonProductDetail: React.FC = () => {
         </div>
       )}
 
-      {/* ── 후기 등록 완료 ── */}
+      {/* Review Success Modal */}
       {showReviewSuccess && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[120] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[40px] max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="w-20 h-20 bg-emerald-50 rounded-[24px] flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-emerald-500" />
             </div>
             <h3 className="text-2xl font-black text-gray-900 mb-2">후기 등록 완료!</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed">
-              소중한 후기가 등록되었습니다.<br />
+              소중한 후기가 등록되었습니다.<br/>
               마이페이지로 이동합니다.
             </p>
           </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Package, Mail, Lock, AlertCircle, ChevronRight } from 'lucide-react';
+import { Mail, Lock, AlertCircle, ChevronRight, Sparkles } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
 
@@ -48,13 +48,13 @@ export const Login: React.FC = () => {
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-[32px] shadow-xl border border-gray-100">
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-[#FF5A5A] rounded-2xl flex items-center justify-center shadow-lg shadow-red-100">
-            <Package className="h-10 w-10 text-white" />
+            <Sparkles className="h-10 w-10 text-white" />
           </div>
           <h2 className="mt-6 text-3xl font-black text-gray-900 tracking-tight">
             로그인
           </h2>
           <p className="mt-2 text-sm text-gray-500 font-medium">
-            LiveBid에 오신 것을 환영합니다.
+            JAVAJAVA에 오신 것을 환영합니다.
           </p>
         </div>
 

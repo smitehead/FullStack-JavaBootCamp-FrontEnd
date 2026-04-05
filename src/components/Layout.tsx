@@ -415,7 +415,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               className="flex items-center text-xs font-bold text-gray-400 bg-white border border-gray-100 px-3 py-1.5 rounded-full shadow-sm hover:border-[#FF5A5A] hover:text-[#FF5A5A] transition-all group overflow-hidden"
             >
               <MapPin className="w-3.5 h-3.5 mr-1.5 text-[#FF5A5A] shrink-0" />
-              <span className="whitespace-nowrap">{user?.addrShort || '위치를 확인할 수 없습니다.'}</span>
+              <span className="whitespace-nowrap">{user?.address || '위치를 확인할 수 없습니다.'}</span>
               <span className="text-[10px] max-w-0 opacity-0 group-hover:max-w-[100px] group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap ml-0 group-hover:ml-2 border-l border-transparent group-hover:border-gray-200 pl-0 group-hover:pl-2">
                 위치 변경하기
               </span>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Bell, MessageSquare, AlertCircle, TrendingUp, Gavel, DollarSign, BarChart3, Clock } from 'lucide-react';
 import {
@@ -8,6 +8,7 @@ import {
 import { MOCK_INQUIRIES, MOCK_NOTICES } from '@/services/mockData';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
+import api from '@/services/api';
 
 const MONTHLY_DATA = [
   { name: '1월', users: 400 },
@@ -40,6 +41,20 @@ const BID_TRAFFIC_DATA = [
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { reports } = useAppContext();
+  const [unprocessedWithdraws, setUnprocessedWithdraws] = useState(0);
+
+  const fetchWithdrawCount = async () => {
+    try {
+      const res = await api.get('/admin/withdraws', { params: { status: '신청', size: 1 } });
+      setUnprocessedWithdraws(res.data.totalElements || 0);
+    } catch (e) {
+      console.error('Failed to fetch withdraw count', e);
+    }
+  };
+
+  useEffect(() => {
+    fetchWithdrawCount();
+  }, []);
 
   const unprocessedInquiries = MOCK_INQUIRIES.filter(i => i.status === '답변 대기중').length;
   const unprocessedReports = reports.filter(r => r.status === 'pending').length;
@@ -47,6 +62,7 @@ export const AdminDashboard: React.FC = () => {
   const stats = [
     { label: '미처리 신고', value: unprocessedReports, icon: AlertCircle, color: 'bg-red-500', path: '/admin/reports' },
     { label: '미처리 문의', value: unprocessedInquiries, icon: MessageSquare, color: 'bg-orange-500', path: '/admin/inquiries' },
+    { label: '미처리 출금', value: unprocessedWithdraws, icon: DollarSign, color: 'bg-emerald-500', path: '/admin/withdraws' },
   ];
 
   const popularCategories = [
@@ -66,8 +82,8 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </header>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Stats Grid - 상단 3컬럼 */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -88,9 +104,10 @@ export const AdminDashboard: React.FC = () => {
         })}
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      {/* Main Content Grid - 하단 3컬럼 (상단과 너비 일치) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Popular Categories */}
-        <section className="lg:w-1/3 bg-white p-6 rounded-none shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
           <h2 className="text-lg font-black text-gray-900 mb-6">인기 카테고리</h2>
           <div className="h-[200px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -125,7 +142,7 @@ export const AdminDashboard: React.FC = () => {
         </section>
 
         {/* Recent Inquiries */}
-        <section className="lg:flex-1 bg-white p-6 rounded-none shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-black text-gray-900">최근 문의사항</h2>
             <button
@@ -155,7 +172,7 @@ export const AdminDashboard: React.FC = () => {
         </section>
 
         {/* Recent Notices */}
-        <section className="lg:flex-1 bg-white p-6 rounded-none shadow-sm border border-gray-200">
+        <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-black text-gray-900">최근 공지사항</h2>
             <button

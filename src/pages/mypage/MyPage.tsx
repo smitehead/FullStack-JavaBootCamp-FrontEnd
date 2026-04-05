@@ -390,12 +390,7 @@ export const MyPage: React.FC = () => {
                         className="flex-1 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center gap-1.5">
                         <Trash2 className="w-3.5 h-3.5" /> 삭제하기
                       </button>
-                      {p.status === 'completed' && (
-                        <button onClick={() => handleRepost(p)}
-                          className="flex-1 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-xs font-bold hover:bg-emerald-100 transition-all flex items-center justify-center gap-1.5">
-                          <RefreshCw className="w-3.5 h-3.5" /> 재게시
-                        </button>
-                      )}
+
                     </div>
                   </div>
                 ))}

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
-import { Category, Notification, ChatRoom, User, Product, WithdrawnUser, NotificationType, Report, MannerHistory, ActivityLog } from '@/types';
+import { Category, Notification, ChatRoom, User, Product, Account, WithdrawnUser, NotificationType, Report, MannerHistory, ActivityLog } from '@/types';
 import { NOTIFICATIONS as INITIAL_NOTIFICATIONS, MOCK_CHAT_ROOMS as INITIAL_CHATS, CURRENT_USER as MOCK_USER, ADMIN_USER, MOCK_PRODUCTS as INITIAL_PRODUCTS, MOCK_USERS as INITIAL_USERS, MOCK_REPORTS as INITIAL_REPORTS } from '@/services/mockData';
 import api from '@/services/api';
 import { resolveImageUrl } from '@/utils/imageUtils';
@@ -118,6 +118,7 @@ interface AppContextType {
   updateUserPoints: (userId: string, points: number) => void;
   updateCurrentUserPoints: (points: number) => void;
   updateCurrentUserProfileImage: (profileImageUrl: string) => void;
+  registerAccount: (account: Account) => Promise<void>;
   sendAdminMessage: (userId: string, content: string) => void;
   toggleMaintenanceMode: (enabled: boolean, message?: string) => void;
   unreadNotificationsCount: number;
@@ -555,6 +556,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const registerAccount = async (account: Account) => {
+    try {
+      await api.post('/points/accounts', account);
+      // 로컬 user 객체에도 최신 계좌 정보를 업데이트 (선택 사항이나 UI 편의상 추가)
+      setUser(prev => {
+        if (!prev) return prev;
+        const updated = { ...prev, account };
+        sessionStorage.setItem('java_user', JSON.stringify(updated));
+        return updated;
+      });
+      showToast('계좌가 성공적으로 등록되었습니다.', 'success');
+    } catch (err: any) {
+      const msg = err.response?.data?.message || '계좌 등록에 실패했습니다.';
+      showToast(msg, 'error');
+      throw err;
+    }
+  };
+
   const unreadNotificationsCount = notifications.filter(n => !n.read).length;
   const unreadChatsCount = chats.filter(c => c.unreadCount > 0).length;
 
@@ -588,6 +607,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       updateUserPoints,
       updateCurrentUserPoints,
       updateCurrentUserProfileImage,
+      registerAccount,
       sendAdminMessage,
       toggleMaintenanceMode,
       unreadNotificationsCount,
