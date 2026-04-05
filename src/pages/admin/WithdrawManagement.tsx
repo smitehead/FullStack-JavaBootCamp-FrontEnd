@@ -41,8 +41,8 @@ export const WithdrawManagement: React.FC = () => {
     setIsLoading(true);
     try {
       const res = await api.get('/admin/withdraws', {
-        // 백엔드가 0-indexed일 가능성이 높아 page: page - 1로 조정 (디자인 스니펫 반영)
-        params: { status: statusFilter, page: page - 1, size: 20 },
+        // 백엔드 서비스가 PageRequest.of(page - 1, size)로 자체 변환하므로 1-indexed 그대로 전송
+        params: { status: statusFilter, page: page, size: 20 },
       });
       setWithdraws(res.data.content || []);
       setTotalPages(res.data.totalPages || 1);

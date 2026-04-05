@@ -163,7 +163,7 @@ export const ProductDetail: React.FC = () => {
       const diff = end - now;
 
       if (diff <= 0) {
-        setTimeLeft('경매 종료');
+        setTimeLeft('--:--:--');
       } else {
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -591,9 +591,9 @@ export const ProductDetail: React.FC = () => {
             <div className="flex justify-between items-start mb-6">
               <div>
                 <p className="text-xs font-bold text-gray-400 mb-2">남은 시간</p>
-                <div className={`flex items-center text-2xl font-bold ${isFinished ? 'text-gray-500' : 'text-red-500'}`}>
-                  <Clock className="w-6 h-6 mr-2" />
-                  {timeLeft || (isFinished ? '경매 종료' : '--:--:--')}
+                <div className={`flex items-center text-2xl font-bold font-mono tracking-tight ${isFinished ? 'text-gray-400' : 'text-red-500'}`}>
+                  <Clock className="w-6 h-6 mr-3 shrink-0" />
+                  <span>{timeLeft || '--:--:--'}</span>
                 </div>
               </div>
               <div className="text-right">
