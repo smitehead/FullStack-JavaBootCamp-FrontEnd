@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
@@ -53,6 +53,11 @@ export const MyPage: React.FC = () => {
   const [purchasedProducts, setPurchasedProducts] = useState<Product[]>([]);
   const [wishlistProducts, setWishlistProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // SSE 실시간 입찰 상태 오버라이드: { [productId]: 'outbid' | 'bidding' }
+  const [bidStatusOverrides, setBidStatusOverrides] = useState<Record<string, string>>({});
+  const biddingProductsRef = useRef(biddingProducts);
+  useEffect(() => { biddingProductsRef.current = biddingProducts; }, [biddingProducts]);
 
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -155,10 +160,48 @@ export const MyPage: React.FC = () => {
   useEffect(() => {
     if (!user) return;
     if (activeTab === 'selling') fetchSellingProducts();
-    else if (activeTab === 'bidding') fetchBiddingProducts();
+    else if (activeTab === 'bidding') { fetchBiddingProducts(); setBidStatusOverrides({}); }
     else if (activeTab === 'purchased') fetchPurchasedProducts();
     else if (activeTab === 'wishlist') fetchWishlistProducts();
   }, [activeTab, user, fetchSellingProducts, fetchBiddingProducts, fetchPurchasedProducts, fetchWishlistProducts]);
+
+  // 입찰 내역 SSE 실시간 상태 업데이트
+  useEffect(() => {
+    if (activeTab !== 'bidding' || !user) return;
+
+    const onPriceUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { productNo: number | string; currentPrice: number };
+      const productId = String(detail.productNo);
+      const inList = biddingProductsRef.current.find(p => p.id === productId);
+      if (!inList) return;
+
+      // 현재 가격 업데이트
+      setBiddingProducts(prev => prev.map(p =>
+        p.id === productId ? { ...p, currentPrice: detail.currentPrice } : p
+      ));
+
+      // 내가 최고입찰자였으면 → 추월당함
+      setBidStatusOverrides(prev => {
+        const effective = prev[productId] || inList.bidStatus;
+        if (effective === 'bidding') {
+          return { ...prev, [productId]: 'outbid' };
+        }
+        return prev;
+      });
+    };
+
+    const onPointUpdate = () => {
+      // 내 포인트 변동 = 자동입찰 or 재입찰 → 서버 재조회로 정확한 상태 반영
+      fetchBiddingProducts().then(() => setBidStatusOverrides({}));
+    };
+
+    window.addEventListener('sse:priceUpdate', onPriceUpdate);
+    window.addEventListener('sse:pointUpdate', onPointUpdate);
+    return () => {
+      window.removeEventListener('sse:priceUpdate', onPriceUpdate);
+      window.removeEventListener('sse:pointUpdate', onPointUpdate);
+    };
+  }, [activeTab, user, fetchBiddingProducts]);
 
   // 상품 삭제
   const handleDeleteClick = (product: Product) => {
@@ -190,12 +233,22 @@ export const MyPage: React.FC = () => {
   });
 
   // 입찰 상태별 뱃지
+  // bidding  → 상위입찰자 (경매 진행 중, 내가 최고 입찰자)
+  // outbid   → 추월변동   (경매 진행 중, 다른 사람에게 추월당함) — SSE 오버라이드
+  // won      → 낙찰성공   (경매 종료 후 낙찰)
+  // lost     → 뱃지 없음  (낙찰 실패는 표시하지 않음)
   const getBidStatusBadge = (bidStatus?: string) => {
     switch (bidStatus) {
       case 'bidding':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold">
-            <Gavel className="w-3 h-3" /> 입찰중
+            <Gavel className="w-3 h-3" /> 상위입찰자
+          </span>
+        );
+      case 'outbid':
+        return (
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-500 rounded-full text-xs font-bold">
+            <XCircle className="w-3 h-3" /> 추월변동
           </span>
         );
       case 'won':
@@ -205,11 +258,6 @@ export const MyPage: React.FC = () => {
           </span>
         );
       case 'lost':
-        return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-500 rounded-full text-xs font-bold">
-            <XCircle className="w-3 h-3" /> 낙찰실패
-          </span>
-        );
       default:
         return null;
     }
@@ -396,26 +444,29 @@ export const MyPage: React.FC = () => {
                 ))}
 
                 {/* 입찰 내역 */}
-                {activeTab === 'bidding' && biddingProducts.map(p => (
-                  <div key={p.id} className="flex flex-col gap-2">
-                    <ProductCard
-                      product={p}
-                      isWon={p.bidStatus === 'won'}
-                      isSold={p.bidStatus === 'lost'}
-                    />
-                    <div className="flex items-center justify-between px-1">
-                      {getBidStatusBadge(p.bidStatus)}
-                      {p.bidStatus === 'won' && (
-                        <button
-                          onClick={() => navigate(`/won/${p.id}`)}
-                          className="px-4 py-1.5 bg-amber-500 text-white rounded-xl text-xs font-bold hover:bg-amber-600 transition-all"
-                        >
-                          결제대기중
-                        </button>
-                      )}
+                {activeTab === 'bidding' && biddingProducts.map(p => {
+                  const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
+                  return (
+                    <div key={p.id} className="flex flex-col gap-2">
+                      <ProductCard
+                        product={p}
+                        isWon={effectiveStatus === 'won'}
+                        isSold={effectiveStatus === 'lost'}
+                      />
+                      <div className="flex items-center justify-between px-1">
+                        {getBidStatusBadge(effectiveStatus)}
+                        {effectiveStatus === 'won' && (
+                          <button
+                            onClick={() => navigate(`/won/${p.id}`)}
+                            className="px-4 py-1.5 bg-amber-500 text-white rounded-xl text-xs font-bold hover:bg-amber-600 transition-all"
+                          >
+                            결제대기중
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {/* 구매 내역 */}
                 {activeTab === 'purchased' && purchasedProducts.map(p => (
