@@ -1,31 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
-import { MOCK_NOTICES } from '@/services/mockData';
 import { NoticeCategory } from '@/types';
 import { format } from 'date-fns';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
+import api from '@/services/api';
+
+interface NoticeItem {
+  id: number;
+  category: string;
+  title: string;
+  description: string;
+  content: string;
+  isImportant: boolean;
+  createdAt: string;
+}
 
 export const NoticeList: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<NoticeCategory | '전체'>('전체');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [notices, setNotices] = useState<NoticeItem[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const categories: (NoticeCategory | '전체')[] = ['전체', '업데이트', '이벤트', '점검', '정책'];
 
-  const filteredNotices = MOCK_NOTICES.filter(notice => {
-    const matchesCategory = activeCategory === '전체' || notice.category === activeCategory;
-    const matchesSearch = notice.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      notice.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const fetchNotices = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params: any = { page: currentPage - 1, size: 10 };
+      if (activeCategory !== '전체') params.category = activeCategory;
+      if (searchQuery.trim()) params.keyword = searchQuery.trim();
+      const res = await api.get('/notices', { params });
+      setNotices(res.data.content || []);
+      setTotalPages(res.data.totalPages || 1);
+    } catch {
+      setNotices([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, activeCategory, searchQuery]);
 
-  // 정렬: 중요 공지 우선, 날짜 내림차순
-  const sortedNotices = [...filteredNotices].sort((a, b) => {
-    if (a.isImportant && !b.isImportant) return -1;
-    if (!a.isImportant && b.isImportant) return 1;
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
+  useEffect(() => {
+    fetchNotices();
+  }, [fetchNotices]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentPage(1);
+    fetchNotices();
+  };
+
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-12">
@@ -43,7 +70,7 @@ export const NoticeList: React.FC = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="relative mb-8">
+          <form onSubmit={handleSearch} className="relative mb-8">
             <input
               type="text"
               placeholder="공지사항 제목이나 내용을 검색하세요"
@@ -51,10 +78,10 @@ export const NoticeList: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <div className="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center">
+            <button type="submit" className="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center">
               <Search className="w-5 h-5 text-gray-400" />
-            </div>
-          </div>
+            </button>
+          </form>
 
           {/* Category Tabs */}
           <div className="flex flex-wrap gap-2 mb-8">
@@ -77,9 +104,13 @@ export const NoticeList: React.FC = () => {
 
           {/* Notice List */}
           <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
-            {sortedNotices.length > 0 ? (
+            {loading ? (
+              <div className="py-20 text-center">
+                <p className="text-gray-400">불러오는 중...</p>
+              </div>
+            ) : notices.length > 0 ? (
               <div className="divide-y divide-gray-50">
-                {sortedNotices.map(notice => (
+                {notices.map(notice => (
                   <Link
                     key={notice.id}
                     to={`/notice/${notice.id}`}
@@ -111,25 +142,36 @@ export const NoticeList: React.FC = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center items-center gap-2 mt-10">
-            <button className="p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors">
-              <ChevronLeft className="w-4 h-4 text-gray-400" />
-            </button>
-            {[1, 2, 3, 4, 5].map(page => (
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-10">
               <button
-                key={page}
-                className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${page === currentPage
-                  ? 'bg-red-500 text-white shadow-lg shadow-red-200'
-                  : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
-                  }`}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-30"
               >
-                {page}
+                <ChevronLeft className="w-4 h-4 text-gray-400" />
               </button>
-            ))}
-            <button className="p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors">
-              <ChevronRight className="w-4 h-4 text-gray-400" />
-            </button>
-          </div>
+              {pageNumbers.map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${page === currentPage
+                    ? 'bg-red-500 text-white shadow-lg shadow-red-200'
+                    : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
+                    }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-30"
+              >
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
