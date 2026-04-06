@@ -212,11 +212,21 @@ export const MyPage: React.FC = () => {
       fetchBiddingProducts().then(() => setBidStatusOverrides({}));
     };
 
+    const onNotification = (e: Event) => {
+      const noti = (e as CustomEvent).detail as { type?: string };
+      // 낙찰/입찰 관련 알림 → 경매 종료 후 낙찰성공/실패 뱃지 즉시 반영
+      if (noti?.type === 'bid') {
+        fetchBiddingProducts().then(() => setBidStatusOverrides({}));
+      }
+    };
+
     window.addEventListener('sse:priceUpdate', onPriceUpdate);
     window.addEventListener('sse:pointUpdate', onPointUpdate);
+    window.addEventListener('sse:notification', onNotification);
     return () => {
       window.removeEventListener('sse:priceUpdate', onPriceUpdate);
       window.removeEventListener('sse:pointUpdate', onPointUpdate);
+      window.removeEventListener('sse:notification', onNotification);
     };
   }, [activeTab, user, fetchBiddingProducts]);
 
