@@ -277,10 +277,10 @@ export const Home: React.FC = () => {
           <section className="pb-8">
             <Link to={adBanners[currentAdBanner].link} className="block w-full h-[200px] md:h-[250px] relative overflow-hidden rounded-[32px] group shadow-2xl">
               <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url('${adBanners[currentAdBanner].image}')` }}
               >
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors"></div>
+                <div className="absolute inset-0 bg-black/10"></div>
               </div>
             </Link>
           </section>
