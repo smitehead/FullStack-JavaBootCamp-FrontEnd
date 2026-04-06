@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
 import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, MessageSquare } from 'lucide-react';
@@ -38,8 +38,13 @@ type TabType = 'selling' | 'bidding' | 'purchased' | 'wishlist' | 'reviews';
 
 export const MyPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, updateCurrentUserProfileImage } = useAppContext();
-  const [activeTab, setActiveTab] = useState<TabType>('selling');
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    const tab = searchParams.get('tab');
+    return (tab && ['selling', 'bidding', 'purchased', 'wishlist', 'reviews'].includes(tab))
+      ? tab as TabType : 'selling';
+  });
   const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'completed'>('all');
 
   interface ReviewItem {
