@@ -242,6 +242,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             if (prev.some(n => n.id === newNoti.id)) return prev;
             return [newNoti, ...prev];
           });
+          // 다른 컴포넌트(MyPage 등)에서 실시간 반응할 수 있도록 window event 발행
+          window.dispatchEvent(new CustomEvent('sse:notification', { detail: newNoti }));
         }
       } catch (e) {
         console.error('[SSE] notification 파싱 오류', e);

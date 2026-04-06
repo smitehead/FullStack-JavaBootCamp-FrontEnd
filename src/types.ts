@@ -166,6 +166,8 @@ export interface Review {
   targetUserId: string;
   productId: string;
   productTitle: string;
+  rating?: number;
+  tags?: string[];
   content: string;
   isHidden: boolean;
   createdAt: string;

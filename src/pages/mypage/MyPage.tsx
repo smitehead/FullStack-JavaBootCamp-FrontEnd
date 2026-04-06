@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, Eye, EyeOff, MessageSquare } from 'lucide-react';
+import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, MessageSquare } from 'lucide-react';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
-import { MOCK_REVIEWS, MOCK_REVIEW_TAGS, CURRENT_USER } from '@/services/mockData';
 
 /** 백엔드 ProductListResponseDto → 프론트 Product 타입 변환 */
 function mapToProduct(item: any): Product & { bidStatus?: string } {
@@ -39,20 +38,48 @@ type TabType = 'selling' | 'bidding' | 'purchased' | 'wishlist' | 'reviews';
 
 export const MyPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, updateCurrentUserProfileImage } = useAppContext();
-  const [activeTab, setActiveTab] = useState<TabType>('selling');
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    const tab = searchParams.get('tab');
+    return (tab && ['selling', 'bidding', 'purchased', 'wishlist', 'reviews'].includes(tab))
+      ? tab as TabType : 'selling';
+  });
   const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'completed'>('all');
 
-  const [reviews, setReviews] = useState(MOCK_REVIEWS);
-  const toggleReviewVisibility = (id: string) => {
-    setReviews(prev => prev.map(r => r.id === id ? { ...r, isHidden: !r.isHidden } : r));
-  };
+  interface ReviewItem {
+    reviewNo: number;
+    resultNo: number;
+    writerNo: number;
+    writerNickname: string;
+    targetNo: number;
+    rating: number | null;
+    tags: string[];
+    content: string;
+    createdAt: string;
+  }
+  const [reviews, setReviews] = useState<ReviewItem[]>([]);
+
+  // 리뷰 탭 진입 시 API 호출
+  useEffect(() => {
+    if (activeTab !== 'reviews') return;
+    const memberNo = getMemberNo(user);
+    if (!memberNo) return;
+    api.get(`/reviews/target/${memberNo}`)
+      .then(res => setReviews(res.data))
+      .catch(() => setReviews([]));
+  }, [activeTab]);
 
   const [sellingProducts, setSellingProducts] = useState<Product[]>([]);
   const [biddingProducts, setBiddingProducts] = useState<(Product & { bidStatus?: string })[]>([]);
   const [purchasedProducts, setPurchasedProducts] = useState<Product[]>([]);
   const [wishlistProducts, setWishlistProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // SSE 실시간 입찰 상태 오버라이드: { [productId]: 'outbid' | 'bidding' }
+  const [bidStatusOverrides, setBidStatusOverrides] = useState<Record<string, string>>({});
+  const biddingProductsRef = useRef(biddingProducts);
+  useEffect(() => { biddingProductsRef.current = biddingProducts; }, [biddingProducts]);
 
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -155,10 +182,58 @@ export const MyPage: React.FC = () => {
   useEffect(() => {
     if (!user) return;
     if (activeTab === 'selling') fetchSellingProducts();
-    else if (activeTab === 'bidding') fetchBiddingProducts();
+    else if (activeTab === 'bidding') { fetchBiddingProducts(); setBidStatusOverrides({}); }
     else if (activeTab === 'purchased') fetchPurchasedProducts();
     else if (activeTab === 'wishlist') fetchWishlistProducts();
   }, [activeTab, user, fetchSellingProducts, fetchBiddingProducts, fetchPurchasedProducts, fetchWishlistProducts]);
+
+  // 입찰 내역 SSE 실시간 상태 업데이트
+  useEffect(() => {
+    if (activeTab !== 'bidding' || !user) return;
+
+    const onPriceUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { productNo: number | string; currentPrice: number };
+      const productId = String(detail.productNo);
+      const inList = biddingProductsRef.current.find(p => p.id === productId);
+      if (!inList) return;
+
+      // 현재 가격 업데이트
+      setBiddingProducts(prev => prev.map(p =>
+        p.id === productId ? { ...p, currentPrice: detail.currentPrice } : p
+      ));
+
+      // 내가 최고입찰자였으면 → 추월당함
+      setBidStatusOverrides(prev => {
+        const effective = prev[productId] || inList.bidStatus;
+        if (effective === 'bidding') {
+          return { ...prev, [productId]: 'outbid' };
+        }
+        return prev;
+      });
+    };
+
+    const onPointUpdate = () => {
+      // 내 포인트 변동 = 자동입찰 or 재입찰 → 서버 재조회로 정확한 상태 반영
+      fetchBiddingProducts().then(() => setBidStatusOverrides({}));
+    };
+
+    const onNotification = (e: Event) => {
+      const noti = (e as CustomEvent).detail as { type?: string };
+      // 낙찰/입찰 관련 알림 → 경매 종료 후 낙찰성공/실패 뱃지 즉시 반영
+      if (noti?.type === 'bid') {
+        fetchBiddingProducts().then(() => setBidStatusOverrides({}));
+      }
+    };
+
+    window.addEventListener('sse:priceUpdate', onPriceUpdate);
+    window.addEventListener('sse:pointUpdate', onPointUpdate);
+    window.addEventListener('sse:notification', onNotification);
+    return () => {
+      window.removeEventListener('sse:priceUpdate', onPriceUpdate);
+      window.removeEventListener('sse:pointUpdate', onPointUpdate);
+      window.removeEventListener('sse:notification', onNotification);
+    };
+  }, [activeTab, user, fetchBiddingProducts]);
 
   // 상품 삭제
   const handleDeleteClick = (product: Product) => {
@@ -190,12 +265,22 @@ export const MyPage: React.FC = () => {
   });
 
   // 입찰 상태별 뱃지
+  // bidding  → 상위입찰자 (경매 진행 중, 내가 최고 입찰자)
+  // outbid   → 추월변동   (경매 진행 중, 다른 사람에게 추월당함) — SSE 오버라이드
+  // won      → 낙찰성공   (경매 종료 후 낙찰)
+  // lost     → 뱃지 없음  (낙찰 실패는 표시하지 않음)
   const getBidStatusBadge = (bidStatus?: string) => {
     switch (bidStatus) {
       case 'bidding':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold">
-            <Gavel className="w-3 h-3" /> 입찰중
+            <Gavel className="w-3 h-3" /> 상위입찰자
+          </span>
+        );
+      case 'outbid':
+        return (
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-500 rounded-full text-xs font-bold">
+            <XCircle className="w-3 h-3" /> 추월변동
           </span>
         );
       case 'won':
@@ -205,11 +290,6 @@ export const MyPage: React.FC = () => {
           </span>
         );
       case 'lost':
-        return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-500 rounded-full text-xs font-bold">
-            <XCircle className="w-3 h-3" /> 낙찰실패
-          </span>
-        );
       default:
         return null;
     }
@@ -262,7 +342,7 @@ export const MyPage: React.FC = () => {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-sm font-bold text-emerald-600">매너온도</span>
-                      <span className="text-xl font-black text-emerald-600">{user.mannerTemp}</span>
+                      <span className="text-xl font-black text-emerald-600">{Number(user.mannerTemp).toFixed(1)}</span>
                     </div>
                     <span className="text-xs font-medium text-gray-300">100</span>
                   </div>
@@ -396,26 +476,29 @@ export const MyPage: React.FC = () => {
                 ))}
 
                 {/* 입찰 내역 */}
-                {activeTab === 'bidding' && biddingProducts.map(p => (
-                  <div key={p.id} className="flex flex-col gap-2">
-                    <ProductCard
-                      product={p}
-                      isWon={p.bidStatus === 'won'}
-                      isSold={p.bidStatus === 'lost'}
-                    />
-                    <div className="flex items-center justify-between px-1">
-                      {getBidStatusBadge(p.bidStatus)}
-                      {p.bidStatus === 'won' && (
-                        <button
-                          onClick={() => navigate(`/won/${p.id}`)}
-                          className="px-4 py-1.5 bg-amber-500 text-white rounded-xl text-xs font-bold hover:bg-amber-600 transition-all"
-                        >
-                          결제대기중
-                        </button>
-                      )}
+                {activeTab === 'bidding' && biddingProducts.map(p => {
+                  const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
+                  return (
+                    <div key={p.id} className="flex flex-col gap-2">
+                      <ProductCard
+                        product={p}
+                        isWon={effectiveStatus === 'won'}
+                        isSold={effectiveStatus === 'lost'}
+                      />
+                      <div className="flex items-center justify-between px-1">
+                        {getBidStatusBadge(effectiveStatus)}
+                        {effectiveStatus === 'won' && (
+                          <button
+                            onClick={() => navigate(`/won/${p.id}`)}
+                            className="px-4 py-1.5 bg-amber-500 text-white rounded-xl text-xs font-bold hover:bg-amber-600 transition-all"
+                          >
+                            결제대기중
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {/* 구매 내역 */}
                 {activeTab === 'purchased' && purchasedProducts.map(p => (
@@ -441,58 +524,56 @@ export const MyPage: React.FC = () => {
               {activeTab === 'wishlist' && wishlistProducts.length === 0 && <EmptyState message="찜한 상품이 없습니다." />}
               {activeTab === 'reviews' && (
                 <div className="flex flex-col gap-8">
-                  {/* Review Tags Section */}
-                  <div className="bg-white rounded-2xl border border-gray-100 p-6">
-                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">나에 대한 템플릿 태그</h4>
-                    <div className="flex flex-wrap gap-3">
-                      {MOCK_REVIEW_TAGS.map(tag => (
-                        <div key={tag.id} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
-                          <span className="text-sm font-medium text-gray-700">{tag.content}</span>
-                          <span className="bg-indigo-100 text-indigo-600 text-xs font-black px-2 py-0.5 rounded-full">{tag.count}</span>
-                        </div>
-                      ))}
+                  {/* 태그 집계 */}
+                  {reviews.length > 0 && (
+                    <div className="bg-white rounded-2xl border border-gray-100 p-6">
+                      <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">받은 태그</h4>
+                      <div className="flex flex-wrap gap-3">
+                        {(() => {
+                          const tagCounts: Record<string, number> = {};
+                          reviews.forEach(r => r.tags?.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+                          return Object.entries(tagCounts).map(([tag, count]) => (
+                            <div key={tag} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
+                              <span className="text-sm font-medium text-gray-700">{tag}</span>
+                              <span className="bg-indigo-100 text-indigo-600 text-xs font-black px-2 py-0.5 rounded-full">{count}</span>
+                            </div>
+                          ));
+                        })()}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* Direct Reviews List */}
+                  {/* 리뷰 목록 */}
                   <div className="flex flex-col gap-4">
                     <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider">받은 거래 후기</h4>
                     {reviews.length > 0 ? (
                       reviews.map(review => (
-                        <div key={review.id} className={`bg-white rounded-2xl border p-6 transition-all ${review.isHidden ? 'opacity-50 border-gray-200 bg-gray-50' : 'border-gray-100 shadow-sm'}`}>
+                        <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                           <div className="flex justify-between items-start mb-4">
-                            <div className="flex items-center gap-3">
-                              <img src={review.authorProfileImage || undefined} alt={review.authorNickname} className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
-                              <div>
-                                <p className="font-bold text-gray-900">{review.authorNickname}</p>
-                                <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</p>
+                            <div>
+                              <p className="font-bold text-gray-900">{review.writerNickname}</p>
+                              <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            {review.rating && (
+                              <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map(s => (
+                                  <Star key={s} className={`w-4 h-4 ${s <= review.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                                ))}
                               </div>
+                            )}
+                          </div>
+                          {review.tags && review.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {review.tags.map(tag => (
+                                <span key={tag} className="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">{tag}</span>
+                              ))}
                             </div>
-                            <div className="flex flex-col items-end gap-2">
-                              {/* Hide Button: Visible to seller (current user) or author (mocked as visible for demo) */}
-                              {(review.targetUserId === CURRENT_USER.id || review.authorId === CURRENT_USER.id) && (
-                                <button 
-                                  onClick={() => toggleReviewVisibility(review.id)}
-                                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${review.isHidden ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                                >
-                                  {review.isHidden ? (
-                                    <><Eye className="w-3.5 h-3.5" /> 보이기</>
-                                  ) : (
-                                    <><EyeOff className="w-3.5 h-3.5" /> 가리기</>
-                                  )}
-                                </button>
-                              )}
+                          )}
+                          {review.content && (
+                            <div className="bg-gray-50 rounded-xl p-4">
+                              <p className="text-sm text-gray-700 leading-relaxed">{review.content}</p>
                             </div>
-                          </div>
-                          <div className="bg-gray-50 rounded-xl p-4 mb-3">
-                            <p className="text-sm text-gray-700 leading-relaxed">
-                              {review.isHidden ? '가려진 리뷰입니다.' : review.content}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs font-medium text-gray-400">
-                            <Package className="w-3.5 h-3.5" />
-                            <span>{review.productTitle}</span>
-                          </div>
+                          )}
                         </div>
                       ))
                     ) : (

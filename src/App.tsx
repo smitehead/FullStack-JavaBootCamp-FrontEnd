@@ -34,6 +34,7 @@ import { AccountRegistration } from '@/pages/mypage/AccountRegistration';
 import { Inbox } from '@/pages/trade/Inbox';
 import { SellerProfile } from '@/pages/trade/SellerProfile';
 import { Chat } from '@/pages/trade/chat';
+import { ReviewCreate } from '@/pages/trade/ReviewCreate';
 
 // [ CS Pages (고객센터) ]
 import { FAQ } from '@/pages/cs/FAQ';
@@ -102,6 +103,7 @@ const App: React.FC = () => {
                 <Route path="/won/:id" element={<WonProductDetail />} />
                 <Route path="/inbox" element={<Inbox />} />
                 <Route path="/chat" element={<Chat />} />
+                <Route path="/review/:orderId" element={<ReviewCreate />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/notice" element={<NoticeList />} />
                 <Route path="/notice/:id" element={<NoticeDetail />} />

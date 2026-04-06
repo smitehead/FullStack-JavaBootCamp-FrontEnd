@@ -1,33 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { CURRENT_USER, MOCK_PRODUCTS, MOCK_REVIEW_TAGS } from '@/services/mockData';
-import { Product } from '@/types';
-import { ChevronLeft, Star, Camera, CheckCircle2, Package, User } from 'lucide-react';
+import { MOCK_REVIEW_TAGS } from '@/services/mockData';
+import { ChevronLeft, Star, CheckCircle2 } from 'lucide-react';
 import { showToast } from '@/components/toastService';
+import api from '@/services/api';
 
 export const ReviewCreate: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const productId = queryParams.get('productId');
+  const resultNo = queryParams.get('resultNo') || orderId;
 
-  const [product, setProduct] = useState<Product | null>(null);
+  const [sellerNickname, setSellerNickname] = useState('판매자');
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  useEffect(() => {
-    if (productId) {
-      const found = MOCK_PRODUCTS.find(p => p.id === productId);
-      if (found) setProduct(found);
-    }
-  }, [productId]);
-
-  if (!product) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
-  }
 
   const toggleTag = (tagContent: string) => {
     setSelectedTags(prev =>
@@ -37,21 +28,28 @@ export const ReviewCreate: React.FC = () => {
     );
   };
 
-  const handleSubmit = () => {
-    if (selectedTags.length === 0 && !content.trim()) {
-      showToast('후기 태그를 선택하거나 내용을 입력해주세요.', 'error');
+  const handleSubmit = async () => {
+    if (selectedTags.length === 0 && !content.trim() && rating === 0) {
+      showToast('별점, 태그, 또는 후기 내용 중 하나 이상 입력해주세요.', 'error');
       return;
     }
 
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await api.post('/reviews', {
+        resultNo: Number(resultNo),
+        rating: rating > 0 ? rating : null,
+        tags: selectedTags.length > 0 ? selectedTags : null,
+        content: content.trim() || null,
+      });
       setShowSuccess(true);
-      setTimeout(() => {
-        navigate('/mypage');
-      }, 2000);
-    }, 1500);
+      setTimeout(() => navigate('/mypage'), 2000);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || '리뷰 등록에 실패했습니다.';
+      showToast(msg, 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -69,31 +67,50 @@ export const ReviewCreate: React.FC = () => {
           <h2 className="text-2xl font-black text-gray-900">거래 후기 작성</h2>
         </div>
 
-        {/* Review Content */}
         <section className="bg-white rounded-[40px] shadow-sm border border-gray-100 p-10 space-y-10">
-          <div className="flex items-center gap-5 pb-8 border-b border-gray-50">
-            <img
-              src={product.seller.profileImage || undefined}
-              alt={product.seller.nickname}
-              className="w-16 h-16 rounded-2xl object-cover border border-gray-100 shadow-sm"
-            />
-            <h3 className="text-xl font-black text-gray-900 leading-tight">
-              <span className="text-indigo-600">{product.seller.nickname}</span>님과의 거래<br />
-              어떤 점이 좋았나요?
-            </h3>
+          {/* 별점 */}
+          <div>
+            <h3 className="text-lg font-black text-gray-900 mb-4">거래는 어떠셨나요?</h3>
+            <div className="flex items-center gap-2">
+              {[1, 2, 3, 4, 5].map(star => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star === rating ? 0 : star)}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                  className="transition-transform hover:scale-110 active:scale-95"
+                >
+                  <Star
+                    className={`w-10 h-10 ${
+                      star <= (hoverRating || rating)
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-gray-200'
+                    } transition-colors`}
+                  />
+                </button>
+              ))}
+              {rating > 0 && (
+                <span className="ml-3 text-sm font-bold text-gray-500">{rating}점</span>
+              )}
+            </div>
           </div>
 
+          {/* 태그 */}
           <div>
-            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">거래하며 느낀 점을 태그로 선택해주세요. (중복 선택 가능)</p>
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">
+              거래하며 느낀 점을 태그로 선택해주세요. (중복 선택 가능)
+            </p>
             <div className="flex flex-wrap gap-2.5">
               {MOCK_REVIEW_TAGS.map(tag => (
                 <button
                   key={tag.id}
                   onClick={() => toggleTag(tag.content)}
-                  className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${selectedTags.includes(tag.content)
-                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
-                    : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
-                    }`}
+                  className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
+                    selectedTags.includes(tag.content)
+                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
+                      : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+                  }`}
                 >
                   {tag.content}
                 </button>
@@ -101,6 +118,7 @@ export const ReviewCreate: React.FC = () => {
             </div>
           </div>
 
+          {/* 텍스트 후기 */}
           <div>
             <h3 className="text-lg font-black text-gray-900 mb-4">직접 후기 남기기</h3>
             <textarea
@@ -108,7 +126,7 @@ export const ReviewCreate: React.FC = () => {
               onChange={(e) => setContent(e.target.value)}
               placeholder="판매자에게 따뜻한 후기를 남겨주세요."
               className="w-full h-40 p-6 bg-gray-50 border border-gray-100 rounded-3xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all outline-none resize-none"
-            ></textarea>
+            />
           </div>
 
           <button
