@@ -541,7 +541,7 @@ export const WonProductDetail: React.FC = () => {
                 onClick={executeConfirmPurchase}
                 className="flex-1 py-4 bg-emerald-500 text-white font-black rounded-2xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-200 active:scale-95"
               >
-                확확정하기
+                확정하기
               </button>
             </div>
           </div>

@@ -244,7 +244,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                           notifications.length > 0 ? notifications.slice(0, 10).map(noti => (
                             <Link
                               key={noti.id}
-                              to="/inbox?tab=noti"
+                              to={noti.link || '/inbox?tab=noti'}
                               className={`block px-5 py-4 text-sm transition-colors hover:bg-gray-50 relative ${!noti.read ? 'bg-orange-50/60' : 'bg-white'}`}
                               onClick={() => {
                                 markNotificationAsRead(noti.id);
