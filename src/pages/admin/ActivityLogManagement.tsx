@@ -6,6 +6,7 @@ import { ActivityLog } from '@/types';
 export const ActivityLogManagement: React.FC = () => {
   const { activityLogs } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const filteredLogs = activityLogs.filter(log =>
     log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -45,7 +46,7 @@ export const ActivityLogManagement: React.FC = () => {
 
       {/* Log List - Card Style */}
       <div className="space-y-3">
-        {filteredLogs.map((log) => {
+        {filteredLogs.slice(0, visibleCount).map((log) => {
           const target = getTargetLabel(log.targetType);
           const TargetIcon = target.icon;
           return (
@@ -74,6 +75,17 @@ export const ActivityLogManagement: React.FC = () => {
           );
         })}
       </div>
+
+      {visibleCount < filteredLogs.length && (
+        <div className="text-center">
+          <button
+            onClick={() => setVisibleCount(prev => prev + 10)}
+            className="px-8 py-3 bg-gray-100 text-gray-600 font-black text-sm hover:bg-gray-200 transition-all rounded-none"
+          >
+            더보기 ({visibleCount} / {filteredLogs.length})
+          </button>
+        </div>
+      )}
 
       {filteredLogs.length === 0 && (
         <div className="py-20 text-center">
