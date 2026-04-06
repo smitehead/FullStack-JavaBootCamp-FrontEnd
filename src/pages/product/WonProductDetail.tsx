@@ -59,6 +59,8 @@ export const WonProductDetail: React.FC = () => {
   // 후기 상태
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [reviewContent, setReviewContent] = useState('');
+  const [reviewRating, setReviewRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   useEffect(() => {
@@ -167,23 +169,32 @@ export const WonProductDetail: React.FC = () => {
     );
   };
 
-  const handleSubmitReview = () => {
-    if (selectedTags.length === 0 && !reviewContent.trim()) {
-      showToast('후기 태그를 선택하거나 내용을 입력해주세요.', 'error');
+  const handleSubmitReview = async () => {
+    if (selectedTags.length === 0 && !reviewContent.trim() && reviewRating === 0) {
+      showToast('별점, 태그, 또는 후기 내용 중 하나 이상 입력해주세요.', 'error');
       return;
     }
 
     setIsSubmittingReview(true);
-    // TODO: 백엔드 리뷰 API 구현 후 연동
-    setTimeout(() => {
-      setIsSubmittingReview(false);
+    try {
+      await api.post('/reviews', {
+        resultNo: result.resultNo,
+        rating: reviewRating > 0 ? reviewRating : null,
+        tags: selectedTags.length > 0 ? selectedTags : null,
+        content: reviewContent.trim() || null,
+      });
       setShowReviewSuccess(true);
       setTimeout(() => {
         setShowReviewSuccess(false);
         setShowReviewModal(false);
         navigate('/mypage');
       }, 2000);
-    }, 1500);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || '리뷰 등록에 실패했습니다.';
+      showToast(msg, 'error');
+    } finally {
+      setIsSubmittingReview(false);
+    }
   };
 
   const handleChatWithSeller = () => {
@@ -585,6 +596,35 @@ export const WonProductDetail: React.FC = () => {
             </div>
 
             <div className="space-y-8">
+              {/* 별점 */}
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1">거래는 어떠셨나요?</p>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star === reviewRating ? 0 : star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      className="transition-transform hover:scale-110 active:scale-95"
+                    >
+                      <Star
+                        className={`w-9 h-9 ${
+                          star <= (hoverRating || reviewRating)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-gray-200'
+                        } transition-colors`}
+                      />
+                    </button>
+                  ))}
+                  {reviewRating > 0 && (
+                    <span className="ml-2 text-sm font-bold text-gray-500">{reviewRating}점</span>
+                  )}
+                </div>
+              </div>
+
+              {/* 태그 */}
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1">거래하며 느낀 점을 선택해주세요</p>
                 <div className="flex flex-wrap gap-2">

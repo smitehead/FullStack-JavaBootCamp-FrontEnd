@@ -2,13 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, Eye, EyeOff, MessageSquare } from 'lucide-react';
+import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, MessageSquare } from 'lucide-react';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
-import { MOCK_REVIEWS, MOCK_REVIEW_TAGS, CURRENT_USER } from '@/services/mockData';
 
 /** 백엔드 ProductListResponseDto → 프론트 Product 타입 변환 */
 function mapToProduct(item: any): Product & { bidStatus?: string } {
@@ -43,10 +42,28 @@ export const MyPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('selling');
   const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'completed'>('all');
 
-  const [reviews, setReviews] = useState(MOCK_REVIEWS);
-  const toggleReviewVisibility = (id: string) => {
-    setReviews(prev => prev.map(r => r.id === id ? { ...r, isHidden: !r.isHidden } : r));
-  };
+  interface ReviewItem {
+    reviewNo: number;
+    resultNo: number;
+    writerNo: number;
+    writerNickname: string;
+    targetNo: number;
+    rating: number | null;
+    tags: string[];
+    content: string;
+    createdAt: string;
+  }
+  const [reviews, setReviews] = useState<ReviewItem[]>([]);
+
+  // 리뷰 탭 진입 시 API 호출
+  useEffect(() => {
+    if (activeTab !== 'reviews') return;
+    const memberNo = getMemberNo(user);
+    if (!memberNo) return;
+    api.get(`/reviews/target/${memberNo}`)
+      .then(res => setReviews(res.data))
+      .catch(() => setReviews([]));
+  }, [activeTab]);
 
   const [sellingProducts, setSellingProducts] = useState<Product[]>([]);
   const [biddingProducts, setBiddingProducts] = useState<(Product & { bidStatus?: string })[]>([]);
@@ -441,58 +458,56 @@ export const MyPage: React.FC = () => {
               {activeTab === 'wishlist' && wishlistProducts.length === 0 && <EmptyState message="찜한 상품이 없습니다." />}
               {activeTab === 'reviews' && (
                 <div className="flex flex-col gap-8">
-                  {/* Review Tags Section */}
-                  <div className="bg-white rounded-2xl border border-gray-100 p-6">
-                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">나에 대한 템플릿 태그</h4>
-                    <div className="flex flex-wrap gap-3">
-                      {MOCK_REVIEW_TAGS.map(tag => (
-                        <div key={tag.id} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
-                          <span className="text-sm font-medium text-gray-700">{tag.content}</span>
-                          <span className="bg-indigo-100 text-indigo-600 text-xs font-black px-2 py-0.5 rounded-full">{tag.count}</span>
-                        </div>
-                      ))}
+                  {/* 태그 집계 */}
+                  {reviews.length > 0 && (
+                    <div className="bg-white rounded-2xl border border-gray-100 p-6">
+                      <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">받은 태그</h4>
+                      <div className="flex flex-wrap gap-3">
+                        {(() => {
+                          const tagCounts: Record<string, number> = {};
+                          reviews.forEach(r => r.tags?.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+                          return Object.entries(tagCounts).map(([tag, count]) => (
+                            <div key={tag} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
+                              <span className="text-sm font-medium text-gray-700">{tag}</span>
+                              <span className="bg-indigo-100 text-indigo-600 text-xs font-black px-2 py-0.5 rounded-full">{count}</span>
+                            </div>
+                          ));
+                        })()}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* Direct Reviews List */}
+                  {/* 리뷰 목록 */}
                   <div className="flex flex-col gap-4">
                     <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider">받은 거래 후기</h4>
                     {reviews.length > 0 ? (
                       reviews.map(review => (
-                        <div key={review.id} className={`bg-white rounded-2xl border p-6 transition-all ${review.isHidden ? 'opacity-50 border-gray-200 bg-gray-50' : 'border-gray-100 shadow-sm'}`}>
+                        <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                           <div className="flex justify-between items-start mb-4">
-                            <div className="flex items-center gap-3">
-                              <img src={review.authorProfileImage || undefined} alt={review.authorNickname} className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" />
-                              <div>
-                                <p className="font-bold text-gray-900">{review.authorNickname}</p>
-                                <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</p>
+                            <div>
+                              <p className="font-bold text-gray-900">{review.writerNickname}</p>
+                              <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            {review.rating && (
+                              <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map(s => (
+                                  <Star key={s} className={`w-4 h-4 ${s <= review.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                                ))}
                               </div>
+                            )}
+                          </div>
+                          {review.tags && review.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {review.tags.map(tag => (
+                                <span key={tag} className="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">{tag}</span>
+                              ))}
                             </div>
-                            <div className="flex flex-col items-end gap-2">
-                              {/* Hide Button: Visible to seller (current user) or author (mocked as visible for demo) */}
-                              {(review.targetUserId === CURRENT_USER.id || review.authorId === CURRENT_USER.id) && (
-                                <button 
-                                  onClick={() => toggleReviewVisibility(review.id)}
-                                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${review.isHidden ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                                >
-                                  {review.isHidden ? (
-                                    <><Eye className="w-3.5 h-3.5" /> 보이기</>
-                                  ) : (
-                                    <><EyeOff className="w-3.5 h-3.5" /> 가리기</>
-                                  )}
-                                </button>
-                              )}
+                          )}
+                          {review.content && (
+                            <div className="bg-gray-50 rounded-xl p-4">
+                              <p className="text-sm text-gray-700 leading-relaxed">{review.content}</p>
                             </div>
-                          </div>
-                          <div className="bg-gray-50 rounded-xl p-4 mb-3">
-                            <p className="text-sm text-gray-700 leading-relaxed">
-                              {review.isHidden ? '가려진 리뷰입니다.' : review.content}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs font-medium text-gray-400">
-                            <Package className="w-3.5 h-3.5" />
-                            <span>{review.productTitle}</span>
-                          </div>
+                          )}
                         </div>
                       ))
                     ) : (
