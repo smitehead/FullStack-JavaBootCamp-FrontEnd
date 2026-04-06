@@ -463,9 +463,9 @@ const Footer: React.FC = () => {
           <div className="md:col-span-2">
             <h4 className="text-sm font-black text-gray-800 mb-6 uppercase tracking-wider">고객지원</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
-              <li className="flex items-center gap-2"><Sparkles className="w-4 h-4 opacity-50" /><Link to="/notice" className="hover:text-[#FF5A5A] transition-colors">공지사항</Link></li>
-              <li className="flex items-center gap-2"><Info className="w-4 h-4 opacity-50" /><Link to="/faq" className="hover:text-[#FF5A5A] transition-colors">자주 묻는 질문 (FAQ)</Link></li>
-              <li className="flex items-center gap-2"><ChevronDown className="w-4 h-4 opacity-50" /><Link to="/inquiry" className="hover:text-[#FF5A5A] transition-colors">1:1 문의하기</Link></li>
+              <li className="flex items-center gap-2"><Link to="/notice" className="hover:text-[#FF5A5A] transition-colors">공지사항</Link></li>
+              <li className="flex items-center gap-2"><Link to="/faq" className="hover:text-[#FF5A5A] transition-colors">자주 묻는 질문 (FAQ)</Link></li>
+              <li className="flex items-center gap-2"><Link to="/inquiry" className="hover:text-[#FF5A5A] transition-colors">1:1 문의하기</Link></li>
             </ul>
           </div>
 
