@@ -181,8 +181,7 @@ export const ProductRegister: React.FC = () => {
     try {
       const sellerNo = getMemberNo(user);
       if (!sellerNo) { showToast('로그인 정보를 확인할 수 없습니다.', 'error'); return; }
-      const categoryNoStr = smallCat || mediumCat || largeCat || 'cat_1';
-      const categoryNo = parseInt(categoryNoStr.replace(/[^0-9]/g, '') || '1', 10);
+      const categoryNo = parseInt(smallCat || mediumCat || largeCat || '1', 10);
 
       // toISOString()은 UTC 변환 → 한국 서버(KST)와 9시간 차이 발생
       // LocalDateTime 형식(타임존 없이 로컬 시간)으로 전송

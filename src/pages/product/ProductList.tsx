@@ -74,9 +74,9 @@ export const ProductList: React.FC = () => {
       const params = {
         page: pageToFetch,
         size: 16,
-        large: largeCat ? parseInt(largeCat.replace(/[^0-9]/g, '') || '0') : undefined,
-        medium: mediumCat ? parseInt(mediumCat.replace(/[^0-9]/g, '') || '0') : undefined,
-        small: smallCat ? parseInt(smallCat.replace(/[^0-9]/g, '') || '0') : undefined,
+        large: largeCat ? parseInt(largeCat, 10) : undefined,
+        medium: mediumCat ? parseInt(mediumCat, 10) : undefined,
+        small: smallCat ? parseInt(smallCat, 10) : undefined,
         minPrice: minPrice ? parseInt(minPrice) : undefined,
         maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
         city: city || undefined,
