@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Loader2, Lock } from 'lucide-react';
+import { CheckCircle2, Loader2, Lock } from 'lucide-react';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -134,15 +134,17 @@ export const CardRegistration: React.FC = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-gray-50 py-12 px-4">
+    <div className="bg-gray-50 pt-8 pb-12 px-4">
       <div className="max-w-md mx-auto">
 
         {/* 뒤로가기 */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8"
+          className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8 group"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <svg className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
           뒤로가기
         </button>
 
@@ -260,7 +262,7 @@ export const CardRegistration: React.FC = () => {
             </div>
 
             {/* 제출 버튼 */}
-            <div className="pt-1">
+            <div className="pt-1 space-y-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -271,14 +273,13 @@ export const CardRegistration: React.FC = () => {
                   : '카드 등록하기'
                 }
               </button>
+              
+              <p className="text-center text-[11px] text-gray-400 font-medium leading-relaxed">
+                카드는 1개만 등록 가능하며,<br />설정에서 언제든지 변경할 수 있습니다.
+              </p>
             </div>
           </form>
         </div>
-
-        {/* 하단 안내 */}
-        <p className="text-center text-xs text-gray-400 mt-6 font-medium">
-          카드는 1개만 등록 가능하며, 설정에서 언제든지 변경할 수 있습니다.
-        </p>
       </div>
     </div>
   );
