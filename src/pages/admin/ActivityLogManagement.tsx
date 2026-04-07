@@ -3,7 +3,7 @@ import { History, Search, ShieldCheck, User, Gavel, AlertTriangle, Calendar, Inf
 import { useAppContext } from '@/context/AppContext';
 import { ActivityLog } from '@/types';
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 15;
 
 export const ActivityLogManagement: React.FC = () => {
   const { activityLogs } = useAppContext();

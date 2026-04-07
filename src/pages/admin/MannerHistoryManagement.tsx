@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Thermometer, Search, User, Calendar, TrendingUp, TrendingDown } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 15;
 
 export const MannerHistoryManagement: React.FC = () => {
   const { mannerHistory, users } = useAppContext();

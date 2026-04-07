@@ -15,7 +15,7 @@ interface NoticeItem {
   isDeleted: number;
 }
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 15;
 
 export const NoticeManagement: React.FC = () => {
   const [notices, setNotices] = useState<NoticeItem[]>([]);

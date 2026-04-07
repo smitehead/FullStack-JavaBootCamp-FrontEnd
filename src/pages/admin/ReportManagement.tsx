@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { showToast } from '@/components/toastService';
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 15;
 
 export const ReportManagement: React.FC = () => {
   const { reports, resolveReport, users, products } = useAppContext();

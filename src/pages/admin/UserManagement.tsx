@@ -9,7 +9,7 @@ type UserStatus = '정상' | '정지' | '영구정지' | '탈퇴';
 type SortField = 'mannerTemp' | 'points' | 'joinedAt' | 'role' | 'status' | 'postCount';
 type SortOrder = 'asc' | 'desc';
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 15;
 
 export const UserManagement: React.FC = () => {
   const { users, suspendUser, unsuspendUser, updateUserRole, updateUserManner, updateUserPoints, mannerHistory } = useAppContext();

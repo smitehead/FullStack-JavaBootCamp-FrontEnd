@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { resolveImageUrl } from '@/utils/imageUtils';
 import { showToast } from '@/components/toastService';
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 15;
 
 export const AuctionManagement: React.FC = () => {
   const { products, cancelAuction } = useAppContext();

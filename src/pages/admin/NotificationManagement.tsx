@@ -13,7 +13,7 @@ interface AdminNotification {
   createdAt: string;
 }
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 15;
 
 export const NotificationManagement: React.FC = () => {
   const [recentNotifications, setRecentNotifications] = useState<AdminNotification[]>([]);

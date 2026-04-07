@@ -42,7 +42,7 @@ export const WithdrawManagement: React.FC = () => {
     setIsLoading(true);
     try {
       const res = await api.get('/admin/withdraws', {
-        params: { status: statusFilter, page: pageNum, size: 50 },
+        params: { status: statusFilter, page: pageNum, size: 15 },
       });
       const content = res.data.content || [];
       setWithdraws(prev => reset ? content : [...prev, ...content]);
