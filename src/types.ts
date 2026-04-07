@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 export enum Category {
   DIGITAL = "디지털기기",
   FURNITURE = "가구/인테리어",
