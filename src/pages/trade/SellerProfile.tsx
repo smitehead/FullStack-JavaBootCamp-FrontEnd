@@ -138,7 +138,7 @@ export const SellerProfile: React.FC = () => {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-sm font-bold text-emerald-600">매너온도</span>
-                    <span className="text-xl font-black text-emerald-600">{seller.mannerTemp}</span>
+                    <span className="text-xl font-black text-emerald-600">{Number(seller.mannerTemp).toFixed(1)}</span>
                   </div>
                   <span className="text-xs font-medium text-gray-300">100</span>
                 </div>
