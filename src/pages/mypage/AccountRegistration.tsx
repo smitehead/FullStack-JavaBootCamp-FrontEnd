@@ -4,38 +4,60 @@ import { motion } from 'motion/react';
 import { useAppContext } from '../../context/AppContext';
 import { showToast } from '@/components/toastService';
 
+// 1. src/images/ 폴더의 이미지들을 import 합니다. (저축은행 제외, 경남은행 추가)
+import kbLogo from '@/images/KB국민은행.png';
+import shinhanLogo from '@/images/신한은행.png';
+import wooriLogo from '@/images/우리은행.jpg';
+import hanaLogo from '@/images/하나은행.png';
+import nhLogo from '@/images/NH농협은행.jpg';
+import ibkLogo from '@/images/ibk기업은행.png';
+import kakaoLogo from '@/images/카카오뱅크.png';
+import tossLogo from '@/images/토스은행.png';
+import kbankLogo from '@/images/케이뱅크.png';
+import scLogo from '@/images/제일은행.png';
+import citiLogo from '@/images/씨티은행.png';
+import suhyupLogo from '@/images/수협은행.png';
+import postLogo from '@/images/우체국.png';
+import kfccLogo from '@/images/새마을금고.jpg';
+import cuLogo from '@/images/신협.png';
+import kyongnamLogo from '@/images/경남은행.png'; // 경남은행 로고 추가
+
+// 2. BANKS 배열에 import한 로고를 연결합니다. (저축은행 -> 경남은행으로 변경)
 const BANKS = [
-  { name: 'KB국민은행' },
-  { name: '신한은행' },
-  { name: '우리은행' },
-  { name: '하나은행' },
-  { name: 'NH농협은행' },
-  { name: 'IBK기업은행' },
-  { name: '카카오뱅크' },
-  { name: '토스뱅크' },
-  { name: '케이뱅크' },
-  { name: 'SC제일은행' },
-  { name: '씨티은행' },
-  { name: '수협은행' },
-  { name: '우체국' },
-  { name: '새마을금고' },
-  { name: '신협' },
-  { name: '저축은행' },
+  { name: 'KB국민은행', logo: kbLogo },
+  { name: '신한은행', logo: shinhanLogo },
+  { name: '우리은행', logo: wooriLogo },
+  { name: '하나은행', logo: hanaLogo },
+  { name: 'NH농협은행', logo: nhLogo },
+  { name: 'IBK기업은행', logo: ibkLogo },
+  { name: '카카오뱅크', logo: kakaoLogo },
+  { name: '토스뱅크', logo: tossLogo },
+  { name: '케이뱅크', logo: kbankLogo },
+  { name: 'SC제일은행', logo: scLogo },
+  { name: '씨티은행', logo: citiLogo },
+  { name: '수협은행', logo: suhyupLogo },
+  { name: '우체국', logo: postLogo },
+  { name: '새마을금고', logo: kfccLogo },
+  { name: '신협', logo: cuLogo },
+  { name: '경남은행', logo: kyongnamLogo },
 ];
 
 export const AccountRegistration: React.FC = () => {
   const navigate = useNavigate();
   const { registerAccount } = useAppContext();
-  
+
   const [selectedBank, setSelectedBank] = useState<string | null>(null);
   const [accountNumber, setAccountNumber] = useState('');
   const [accountHolder, setAccountHolder] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // 3. 현재 선택된 은행 객체 찾기
+  const selectedBankInfo = BANKS.find(bank => bank.name === selectedBank);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedBank) {
       showToast('은행을 선택해주세요.', 'error');
       return;
@@ -50,7 +72,7 @@ export const AccountRegistration: React.FC = () => {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       await registerAccount({
         bankName: selectedBank,
@@ -59,7 +81,7 @@ export const AccountRegistration: React.FC = () => {
       });
       setIsSubmitting(false);
       setIsSuccess(true);
-      
+
       setTimeout(() => {
         navigate('/settings?tab=account');
       }, 2000);
@@ -72,7 +94,7 @@ export const AccountRegistration: React.FC = () => {
   if (isSuccess) {
     return (
       <div className="min-h-[calc(100vh-64px)] bg-gray-50 flex items-center justify-center px-4">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white p-12 rounded-2xl shadow-2xl text-center border border-gray-100"
@@ -99,7 +121,7 @@ export const AccountRegistration: React.FC = () => {
   return (
     <div className="bg-gray-50 pt-8 pb-12 px-4">
       <div className="max-w-md mx-auto">
-        <button 
+        <button
           onClick={() => navigate(-1)}
           className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8 group"
         >
@@ -117,7 +139,7 @@ export const AccountRegistration: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="p-8 space-y-8">
             {!selectedBank ? (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
@@ -133,8 +155,13 @@ export const AccountRegistration: React.FC = () => {
                       onClick={() => setSelectedBank(bank.name)}
                       className="aspect-square flex flex-col items-center justify-center p-2 rounded-xl border border-gray-100 bg-gray-50 hover:border-gray-200 transition-all hover:bg-gray-100 active:scale-95"
                     >
-                      <div className="w-8 h-8 rounded-full mb-2 bg-gray-200 flex items-center justify-center text-[10px] text-gray-400 font-black">
-                        {bank.name.substring(0, 1)}
+                      <div className={`w-8 h-8 rounded-full mb-2 flex items-center justify-center overflow-hidden ${bank.logo ? 'bg-white border border-gray-100' : 'bg-gray-200'}`}>
+                        {/* 이미지가 있으면 보여주고, 없으면 기존처럼 첫 글자 표시 */}
+                        {bank.logo ? (
+                          <img src={bank.logo} alt={bank.name} className="w-full h-full object-cover p-1" />
+                        ) : (
+                          <span className="text-[10px] text-gray-400 font-black">{bank.name.substring(0, 1)}</span>
+                        )}
                       </div>
                       <span className="text-[10px] font-bold text-center leading-tight text-gray-500">
                         {bank.name}
@@ -144,7 +171,7 @@ export const AccountRegistration: React.FC = () => {
                 </div>
               </motion.div>
             ) : (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="space-y-8"
@@ -152,12 +179,17 @@ export const AccountRegistration: React.FC = () => {
                 {/* Selected Bank Display */}
                 <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-2xl border border-gray-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-[11px] text-gray-400 font-black">
-                      {selectedBank.substring(0, 1)}
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${selectedBankInfo?.logo ? 'bg-white border border-gray-100' : 'bg-gray-200'}`}>
+                      {/* 선택된 은행도 이미지가 있으면 보여주고, 없으면 첫 글자 표시 */}
+                      {selectedBankInfo?.logo ? (
+                        <img src={selectedBankInfo.logo} alt={selectedBank} className="w-full h-full object-cover p-1" />
+                      ) : (
+                        <span className="text-[11px] text-gray-400 font-black">{selectedBank.substring(0, 1)}</span>
+                      )}
                     </div>
                     <p className="text-lg font-black text-gray-900">{selectedBank}</p>
                   </div>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setSelectedBank(null)}
                     className="px-3 py-1.5 text-[10px] font-black text-gray-400 border border-gray-200 rounded-lg hover:bg-white transition-all hover:text-gray-900"
