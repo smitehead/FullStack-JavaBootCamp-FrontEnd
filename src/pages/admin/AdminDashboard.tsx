@@ -1,89 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Bell, MessageSquare, AlertCircle, TrendingUp, Gavel, DollarSign, BarChart3, Clock } from 'lucide-react';
+import { MessageSquare, AlertCircle, DollarSign, FileText } from 'lucide-react';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
-  LineChart, Line
 } from 'recharts';
-import { MOCK_INQUIRIES, MOCK_NOTICES } from '@/services/mockData';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
 import api from '@/services/api';
 
-const MONTHLY_DATA = [
-  { name: '1월', users: 400 },
-  { name: '2월', users: 300 },
-  { name: '3월', users: 500 },
-  { name: '4월', users: 280 },
-  { name: '5월', users: 590 },
-  { name: '6월', users: 800 },
-];
+const CATEGORY_COLORS: Record<string, string> = {
+  [Category.DIGITAL]: '#FF5A5A',
+  [Category.CLOTHING]: '#4F46E5',
+  [Category.FURNITURE]: '#10B981',
+  [Category.BOOKS]: '#F59E0B',
+  [Category.ETC]: '#9CA3AF',
+};
 
-const HOURLY_DATA = [
-  { time: '00:00', visitors: 120 },
-  { time: '04:00', visitors: 80 },
-  { time: '08:00', visitors: 250 },
-  { time: '12:00', visitors: 450 },
-  { time: '16:00', visitors: 580 },
-  { time: '20:00', visitors: 720 },
-  { time: '23:59', visitors: 300 },
-];
-
-const BID_TRAFFIC_DATA = [
-  { time: '10:00', bids: 45 },
-  { time: '11:00', bids: 52 },
-  { time: '12:00', bids: 89 },
-  { time: '13:00', bids: 64 },
-  { time: '14:00', bids: 78 },
-  { time: '15:00', bids: 95 },
-];
+interface NoticeItem {
+  id: number;
+  category: string;
+  title: string;
+  isImportant: boolean;
+  createdAt: string;
+}
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { reports } = useAppContext();
+  const { reports, products } = useAppContext();
   const [unprocessedWithdraws, setUnprocessedWithdraws] = useState(0);
-
-  const fetchWithdrawCount = async () => {
-    try {
-      const res = await api.get('/admin/withdraws', { params: { status: '신청', size: 1 } });
-      setUnprocessedWithdraws(res.data.totalElements || 0);
-    } catch (e) {
-      console.error('Failed to fetch withdraw count', e);
-    }
-  };
+  const [recentNotices, setRecentNotices] = useState<NoticeItem[]>([]);
 
   useEffect(() => {
-    fetchWithdrawCount();
+    api.get('/admin/withdraws', { params: { status: '신청', size: 1 } })
+      .then(res => setUnprocessedWithdraws(res.data.totalElements || 0))
+      .catch(() => {});
+
+    api.get('/notices/all')
+      .then(res => setRecentNotices((res.data || []).slice(0, 5)))
+      .catch(() => {});
   }, []);
 
-  const unprocessedInquiries = MOCK_INQUIRIES.filter(i => i.status === '답변 대기중').length;
   const unprocessedReports = reports.filter(r => r.status === 'pending').length;
 
   const stats = [
     { label: '미처리 신고', value: unprocessedReports, icon: AlertCircle, color: 'bg-red-500', path: '/admin/reports' },
-    { label: '미처리 문의', value: unprocessedInquiries, icon: MessageSquare, color: 'bg-orange-500', path: '/admin/inquiries' },
     { label: '미처리 출금', value: unprocessedWithdraws, icon: DollarSign, color: 'bg-emerald-500', path: '/admin/withdraws' },
   ];
 
-  const popularCategories = [
-    { name: Category.DIGITAL, count: 40, color: '#FF5A5A' },
-    { name: Category.CLOTHING, count: 25, color: '#4F46E5' },
-    { name: Category.FURNITURE, count: 15, color: '#10B981' },
-    { name: Category.BOOKS, count: 10, color: '#F59E0B' },
-    { name: '기타', count: 10, color: '#9CA3AF' },
-  ];
+  const popularCategories = Object.values(Category).map(cat => ({
+    name: cat,
+    count: products.filter(p => p.category === cat).length,
+    color: CATEGORY_COLORS[cat],
+  })).filter(c => c.count > 0);
 
   return (
     <div className="space-y-6 pb-10">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-gray-900 tracking-tight">관리자 대시보드</h1>
-          <p className="text-gray-500 mt-1 text-xs font-medium">서비스 현황을 확인하세요.</p>
-        </div>
+      <header>
+        <h1 className="text-2xl font-black text-gray-900 tracking-tight">관리자 대시보드</h1>
+        <p className="text-gray-500 mt-1 text-xs font-medium">서비스 현황을 확인하세요.</p>
       </header>
 
-      {/* Stats Grid - 상단 3컬럼 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -104,71 +82,49 @@ export const AdminDashboard: React.FC = () => {
         })}
       </div>
 
-      {/* Main Content Grid - 하단 3컬럼 (상단과 너비 일치) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Popular Categories */}
         <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
           <h2 className="text-lg font-black text-gray-900 mb-6">인기 카테고리</h2>
-          <div className="h-[200px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={popularCategories}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={40}
-                  outerRadius={70}
-                  paddingAngle={5}
-                  dataKey="count"
-                >
-                  {popularCategories.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{ borderRadius: '0px', border: '1px solid #e5e7eb', fontWeight: 'bold', fontSize: '12px' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-4">
-            {popularCategories.map((cat) => (
-              <div key={cat.name} className="flex items-center space-x-1.5 whitespace-nowrap">
-                <div className="w-2 h-2 shrink-0" style={{ backgroundColor: cat.color }}></div>
-                <span className="text-[10px] font-bold text-gray-600">{cat.name} ({cat.count}%)</span>
+          {popularCategories.length > 0 ? (
+            <>
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={popularCategories}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={70}
+                      paddingAngle={5}
+                      dataKey="count"
+                    >
+                      {popularCategories.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{ borderRadius: '0px', border: '1px solid #e5e7eb', fontWeight: 'bold', fontSize: '12px' }}
+                      formatter={(value: number) => [`${value}건`, '']}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Recent Inquiries */}
-        <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-black text-gray-900">최근 문의사항</h2>
-            <button
-              onClick={() => navigate('/admin/inquiries')}
-              className="text-xs font-bold text-[#FF5A5A] hover:underline"
-            >
-              전체보기
-            </button>
-          </div>
-          <div className="space-y-3">
-            {MOCK_INQUIRIES.slice(0, 5).map((inquiry) => (
-              <div key={inquiry.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-none">
-                <div className="flex items-center space-x-3 overflow-hidden">
-                  <div className={`w-1.5 h-1.5 rounded-none shrink-0 ${inquiry.status === '답변 완료' ? 'bg-green-500' : 'bg-orange-500'}`}></div>
-                  <div className="overflow-hidden">
-                    <p className="text-xs font-bold text-gray-900 truncate">{inquiry?.title || '제목 없음'}</p>
-                    <p className="text-[10px] font-medium text-gray-400">{inquiry?.createdAt?.split('T')[0] || '-'}</p>
+              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-4">
+                {popularCategories.map((cat) => (
+                  <div key={cat.name} className="flex items-center space-x-1.5 whitespace-nowrap">
+                    <div className="w-2 h-2 shrink-0" style={{ backgroundColor: cat.color }}></div>
+                    <span className="text-[10px] font-bold text-gray-600">{cat.name} ({cat.count}건)</span>
                   </div>
-                </div>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-none shrink-0 ${inquiry.status === '답변 완료' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-                  }`}>
-                  {inquiry.status}
-                </span>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          ) : (
+            <div className="h-[200px] flex items-center justify-center text-gray-400 text-sm font-bold">
+              등록된 상품이 없습니다.
+            </div>
+          )}
         </section>
 
         {/* Recent Notices */}
@@ -183,23 +139,29 @@ export const AdminDashboard: React.FC = () => {
             </button>
           </div>
           <div className="space-y-3">
-            {MOCK_NOTICES.slice(0, 5).map((notice) => (
+            {recentNotices.length > 0 ? recentNotices.map((notice) => (
               <div key={notice.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-none">
                 <div className="flex items-center space-x-3 overflow-hidden">
                   <div className={`w-1.5 h-1.5 rounded-none shrink-0 ${notice.isImportant ? 'bg-red-500' : 'bg-gray-300'}`}></div>
                   <div className="overflow-hidden">
                     <p className="text-xs font-bold text-gray-900 truncate">{notice.title}</p>
-                    <p className="text-[10px] font-medium text-gray-400">{notice.createdAt.split('T')[0]}</p>
+                    <p className="text-[10px] font-medium text-gray-400">{notice.createdAt?.split('T')[0]}</p>
                   </div>
                 </div>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-none shrink-0 ${notice.category === '점검' ? 'bg-orange-100 text-orange-700' :
-                    notice.category === '업데이트' ? 'bg-blue-100 text-blue-700' :
-                      'bg-gray-100 text-gray-700'
-                  }`}>
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-none shrink-0 ${
+                  notice.category === '점검' ? 'bg-orange-100 text-orange-700' :
+                  notice.category === '업데이트' ? 'bg-blue-100 text-blue-700' :
+                  'bg-gray-100 text-gray-700'
+                }`}>
                   {notice.category}
                 </span>
               </div>
-            ))}
+            )) : (
+              <div className="py-10 text-center text-gray-400 text-sm font-bold">
+                <FileText className="w-8 h-8 mx-auto mb-2 text-gray-100" />
+                공지사항이 없습니다.
+              </div>
+            )}
           </div>
         </section>
       </div>

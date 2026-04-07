@@ -298,7 +298,7 @@ export const UserManagement: React.FC = () => {
                         <>
                           <span className="inline-flex items-center gap-1 font-bold text-gray-600">
                             <Thermometer className={`w-3 h-3 ${user.mannerTemp >= 36.5 ? 'text-orange-500' : 'text-blue-500'}`} />
-                            {user.mannerTemp}°C
+                            {Number(user.mannerTemp).toFixed(1)}°C
                           </span>
                           <span className="text-gray-300">|</span>
                           <span className="font-bold text-gray-600">

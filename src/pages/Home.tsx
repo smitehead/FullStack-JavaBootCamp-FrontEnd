@@ -6,9 +6,15 @@ import { ProductCard } from '@/components/ProductCard';
 import { CATEGORY_DATA } from '@/constants';
 import { motion, AnimatePresence } from 'motion/react';
 import { resolveImageUrl, resolveImageUrls } from '../utils/imageUtils';
+import { useAppContext } from '@/context/AppContext';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAppContext();
+
+  const handleBannerClick = (link: string) => {
+    navigate(user ? link : '/login');
+  };
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -185,13 +191,15 @@ export const Home: React.FC = () => {
               }}
               className="absolute inset-0"
             >
-              <Link to={heroBanners[currentBanner].link} className="block w-full h-full">
+              <div
+                onClick={() => handleBannerClick(heroBanners[currentBanner].link)}
+                className="block w-full h-full cursor-pointer"
+              >
                 <div
                   className="absolute inset-0 bg-cover bg-center"
                   style={{ backgroundImage: `url('${heroBanners[currentBanner].image}')` }}
-                >
-                </div>
-              </Link>
+                />
+              </div>
             </motion.div>
           </AnimatePresence>
         )}
@@ -274,14 +282,17 @@ export const Home: React.FC = () => {
         {/* Banner Ad */}
         {adBanners.length > 0 && (
           <section className="pb-8">
-            <Link to={adBanners[currentAdBanner].link} className="block w-full h-[200px] md:h-[250px] relative overflow-hidden rounded-[32px] group shadow-2xl">
+            <div
+              onClick={() => handleBannerClick(adBanners[currentAdBanner].link)}
+              className="block w-full h-[200px] md:h-[250px] relative overflow-hidden rounded-[32px] group shadow-2xl cursor-pointer"
+            >
               <div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url('${adBanners[currentAdBanner].image}')` }}
               >
                 <div className="absolute inset-0 bg-black/10"></div>
               </div>
-            </Link>
+            </div>
           </section>
         )}
       </div>
