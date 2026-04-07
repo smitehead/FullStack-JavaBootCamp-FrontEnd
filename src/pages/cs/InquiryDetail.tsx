@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 export const InquiryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const inquiry = MOCK_INQUIRIES.find(inq => inq.id === id);
+  const inquiry = MOCK_INQUIRIES.find(inq => inq.inquiryNo === id);
 
   if (!inquiry) {
     return (
@@ -37,7 +37,7 @@ export const InquiryDetail: React.FC = () => {
           <div className="flex items-center justify-between gap-4 mb-6">
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 text-xs font-black rounded-md uppercase tracking-wider bg-gray-50 text-gray-500">
-                {inquiry.category}
+                {inquiry.type}
               </span>
               {inquiry.bugType && (
                 <span className="px-3 py-1 bg-blue-50 text-blue-500 text-xs font-black rounded-md uppercase tracking-wider">
@@ -46,7 +46,7 @@ export const InquiryDetail: React.FC = () => {
               )}
             </div>
             
-            {inquiry.status === '답변 완료' ? (
+            {inquiry.status === 1 ? (
               <div className="flex items-center gap-1.5 px-4 py-2 bg-green-50 text-green-600 rounded-full text-xs font-black">
                 <CheckCircle2 className="w-4 h-4" />
                 답변 완료
@@ -98,7 +98,7 @@ export const InquiryDetail: React.FC = () => {
           </div>
 
           {/* Answer Section */}
-          {inquiry.status === '답변 완료' && inquiry.answer && (
+          {inquiry.status === 1 && inquiry.answer && (
             <div className="mt-12 p-8 bg-gray-50 rounded-3xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-red-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/20">
@@ -126,7 +126,7 @@ export const InquiryDetail: React.FC = () => {
             </div>
           )}
           
-          {inquiry.status === '답변 대기중' && (
+          {inquiry.status === 0 && (
             <div className="mt-12 p-8 bg-amber-50/50 rounded-3xl border border-dashed border-amber-200 flex flex-col items-center justify-center text-center gap-4">
               <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                 <Clock className="w-6 h-6 text-amber-500 animate-pulse" />

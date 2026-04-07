@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MessageSquare, CheckCircle2, Trash2, Send, User } from 'lucide-react';
 import { MOCK_INQUIRIES, MOCK_USERS } from '@/services/mockData';
 import { Inquiry } from '@/types';
+import { showToast } from '@/components/toastService';
+import api from '@/services/api';
 
 export const InquiryManagement: React.FC = () => {
   const navigate = useNavigate();
@@ -13,14 +15,14 @@ export const InquiryManagement: React.FC = () => {
   const [inquiryToDelete, setInquiryToDelete] = useState<string | null>(null);
   const [answer, setAnswer] = useState('');
   const [activeTab, setActiveTab] = useState<'전체' | '답변 대기중' | '답변 완료'>('전체');
-  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
+  const [selectedType, setSelectedType] = useState<string>('전체');
 
   const filteredInquiries = inquiries.filter(i => {
     const matchesSearch = i.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       i.content.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTab = activeTab === '전체' || i.status === activeTab;
-    const matchesCategory = selectedCategory === '전체' || i.category === selectedCategory;
-    return matchesSearch && matchesTab && matchesCategory;
+    const matchesTab = activeTab === '전체' || (activeTab === '답변 대기중' && i.status === 0) || (activeTab === '답변 완료' && i.status === 1);
+    const matchesType = selectedType === '전체' || i.type === selectedType;
+    return matchesSearch && matchesTab && matchesType;
   });
 
   const handleSelectInquiry = (inquiry: Inquiry) => {
@@ -28,18 +30,27 @@ export const InquiryManagement: React.FC = () => {
     setAnswer(inquiry.answer || '');
   };
 
-  const handleSaveAnswer = () => {
-    if (!selectedInquiry) return;
+  const statusParam = activeTab === '전체' ? null : activeTab === '답변 대기중' ? 0 : 1;
+  const fetchInquiries = async () => {
+    const res = await api.get('/admin/inquiries', {
+      params: { status: statusParam, page: 1, size: 50 }
+    });
+    setInquiries(res.data.content || []);
+  };
 
-    setInquiries(prev => prev.map(i => i.id === selectedInquiry.id ? {
-      ...i,
-      status: '답변 완료',
-      answer,
-      answeredAt: new Date().toISOString()
-    } : i));
+  useEffect(() => { fetchInquiries(); }, [activeTab]);
 
-    setSelectedInquiry(null);
-    setAnswer('');
+  const handleSaveAnswer = async () => {
+    if (!selectedInquiry || !answer.trim()) return;
+    try {
+      await api.patch(`/admin/inquiries/${selectedInquiry.inquiryNo}/answer`, { answer });
+      showToast('답변이 등록되었습니다.', 'success');
+      fetchInquiries();
+      setSelectedInquiry(null);
+      setAnswer('');
+    } catch (e) {
+      showToast('답변 등록에 실패했습니다.', 'error');
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -47,13 +58,11 @@ export const InquiryManagement: React.FC = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
-    if (inquiryToDelete) {
-      setInquiries(prev => prev.filter(i => i.id !== inquiryToDelete));
-      if (selectedInquiry?.id === inquiryToDelete) setSelectedInquiry(null);
-      setInquiryToDelete(null);
-      setIsDeleteModalOpen(false);
-    }
+  const confirmDelete = async () => {
+    if (!inquiryToDelete) return;
+    await api.delete(`/admin/inquiries/${inquiryToDelete}`);
+    fetchInquiries();
+    setIsDeleteModalOpen(false);
   };
 
   const getUserNickname = (userId: string) => {
@@ -78,11 +87,11 @@ export const InquiryManagement: React.FC = () => {
                 key={tab}
                 onClick={() => {
                   setActiveTab(tab);
-                  setSelectedCategory('전체');
+                  setSelectedType('전체');
                 }}
                 className={`pb-3 text-xs font-black transition-all relative ${activeTab === tab
-                    ? 'text-[#FF5A5A]'
-                    : 'text-gray-400 hover:text-gray-600'
+                  ? 'text-[#FF5A5A]'
+                  : 'text-gray-400 hover:text-gray-600'
                   }`}
               >
                 {tab}
@@ -101,11 +110,11 @@ export const InquiryManagement: React.FC = () => {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedCategory(cat);
+                    setSelectedType(cat);
                   }}
-                  className={`px-3 py-1.5 rounded-none text-[10px] font-black whitespace-nowrap transition-all border ${selectedCategory === cat
-                      ? 'bg-[#FF5A5A] text-white border-[#FF5A5A] shadow-sm'
-                      : 'bg-white text-gray-500 border-gray-100 hover:border-gray-200'
+                  className={`px-3 py-1.5 rounded-none text-[10px] font-black whitespace-nowrap transition-all border ${selectedType === cat
+                    ? 'bg-[#FF5A5A] text-white border-[#FF5A5A] shadow-sm'
+                    : 'bg-white text-gray-500 border-gray-100 hover:border-gray-200'
                     }`}
                 >
                   {cat}
@@ -133,17 +142,17 @@ export const InquiryManagement: React.FC = () => {
         <div className="flex-1 overflow-y-auto space-y-3 pr-2">
           {filteredInquiries.map((inquiry) => (
             <button
-              key={inquiry.id}
+              key={inquiry.inquiryNo}
               onClick={() => handleSelectInquiry(inquiry)}
-              className={`w-full text-left p-4 rounded-none border-2 transition-all ${selectedInquiry?.id === inquiry.id
-                  ? 'bg-white border-[#FF5A5A] shadow-lg shadow-red-900/5'
-                  : 'bg-white border-gray-100 shadow-sm hover:shadow-md'
+              className={`w-full text-left p-4 rounded-none border-2 transition-all ${selectedInquiry?.inquiryNo === inquiry.inquiryNo
+                ? 'bg-white border-[#FF5A5A] shadow-lg shadow-red-900/5'
+                : 'bg-white border-gray-100 shadow-sm hover:shadow-md'
                 }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className={`px-2 py-0.5 rounded-none text-[10px] font-black ${inquiry.status === '답변 완료' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                <span className={`px-2 py-0.5 rounded-none text-[10px] font-black ${inquiry.status === 1 ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                   }`}>
-                  {inquiry.status}
+                  {inquiry.status === 1 ? '답변 완료' : '답변 대기중'}
                 </span>
                 <span className="text-[10px] font-medium text-gray-400">{inquiry.createdAt.split('T')[0]}</span>
               </div>
@@ -160,7 +169,7 @@ export const InquiryManagement: React.FC = () => {
                   {getUserNickname(inquiry.userId)}
                 </button>
                 <span>•</span>
-                <span>{inquiry.category}</span>
+                <span>{inquiry.type}</span>
               </div>
             </button>
           ))}
@@ -174,7 +183,7 @@ export const InquiryManagement: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-black text-gray-900">문의 상세 내용</h2>
               <button
-                onClick={() => handleDelete(selectedInquiry.id)}
+                onClick={() => handleDelete(selectedInquiry.inquiryNo)}
                 className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
               >
                 <Trash2 className="w-5 h-5" />
@@ -201,7 +210,7 @@ export const InquiryManagement: React.FC = () => {
                 <p className="text-sm text-gray-700 font-medium leading-relaxed whitespace-pre-wrap">{selectedInquiry.content}</p>
               </div>
 
-              {selectedInquiry.status === '답변 완료' && (
+              {selectedInquiry.status === 1 && (
                 <div className="p-5 bg-[#FF5A5A]/5 rounded-none border border-[#FF5A5A]/10">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="w-8 h-8 bg-[#FF5A5A] rounded-none flex items-center justify-center shadow-lg shadow-red-900/10">

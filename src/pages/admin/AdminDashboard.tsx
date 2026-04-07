@@ -56,7 +56,7 @@ export const AdminDashboard: React.FC = () => {
     fetchWithdrawCount();
   }, []);
 
-  const unprocessedInquiries = MOCK_INQUIRIES.filter(i => i.status === '답변 대기중').length;
+  const unprocessedInquiries = MOCK_INQUIRIES.filter(i => i.status === 0).length;
   const unprocessedReports = reports.filter(r => r.status === 'pending').length;
 
   const stats = [
@@ -154,17 +154,17 @@ export const AdminDashboard: React.FC = () => {
           </div>
           <div className="space-y-3">
             {MOCK_INQUIRIES.slice(0, 5).map((inquiry) => (
-              <div key={inquiry.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-none">
+              <div key={inquiry.inquiryNo} className="flex items-center justify-between p-3 bg-gray-50 rounded-none">
                 <div className="flex items-center space-x-3 overflow-hidden">
-                  <div className={`w-1.5 h-1.5 rounded-none shrink-0 ${inquiry.status === '답변 완료' ? 'bg-green-500' : 'bg-orange-500'}`}></div>
+                  <div className={`w-1.5 h-1.5 rounded-none shrink-0 ${inquiry.status === 1 ? 'bg-green-500' : 'bg-orange-500'}`}></div>
                   <div className="overflow-hidden">
                     <p className="text-xs font-bold text-gray-900 truncate">{inquiry?.title || '제목 없음'}</p>
                     <p className="text-[10px] font-medium text-gray-400">{inquiry?.createdAt?.split('T')[0] || '-'}</p>
                   </div>
                 </div>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-none shrink-0 ${inquiry.status === '답변 완료' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-none shrink-0 ${inquiry.status === 1 ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                   }`}>
-                  {inquiry.status}
+                  {inquiry.status === 1 ? '답변 완료' : '답변 대기중'}
                 </span>
               </div>
             ))}

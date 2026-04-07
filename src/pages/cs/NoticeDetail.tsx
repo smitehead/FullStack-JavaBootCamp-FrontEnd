@@ -68,12 +68,11 @@ export const NoticeDetail: React.FC = () => {
         {/* Header Section */}
         <div className="p-10 border-b border-gray-50">
           <div className="flex items-center gap-2 mb-4">
-            <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-              notice.category === '점검' ? 'bg-blue-50 text-blue-500' :
-              notice.category === '업데이트' ? 'bg-green-50 text-green-500' :
-              notice.category === '이벤트' ? 'bg-purple-50 text-purple-500' :
-              'bg-gray-50 text-gray-500'
-            }`}>
+            <span className={`px-3 py-1 text-xs font-bold rounded-full ${notice.category === '점검' ? 'bg-blue-50 text-blue-500' :
+                notice.category === '업데이트' ? 'bg-green-50 text-green-500' :
+                  notice.category === '이벤트' ? 'bg-purple-50 text-purple-500' :
+                    'bg-gray-50 text-gray-500'
+              }`}>
               {notice.category}
             </span>
           </div>

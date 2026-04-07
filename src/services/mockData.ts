@@ -478,14 +478,14 @@ export const MOCK_NOTICES: Notice[] = [
 
 export const MOCK_INQUIRIES: Inquiry[] = [
   {
-    id: "inq_1",
+    inquiryNo: "inq_1",
     userId: "user_1",
-    category: "버그 신고",
+    type: "버그 신고",
     bugType: "기능 작동 오류",
     title: "입찰 버튼이 클릭되지 않아요",
     content:
       "아이패드 프로 상품 상세 페이지에서 입찰하기 버튼을 눌러도 아무런 반응이 없습니다. 크롬 브라우저 사용 중입니다.",
-    status: "답변 완료",
+    status: 1,
     answer:
       "안녕하세요, 경매왕님. 이용에 불편을 드려 죄송합니다. 해당 문제는 현재 수정 완료되었으며, 브라우저 캐시 삭제 후 다시 시도해 주시기 바랍니다.",
     answeredAt: "2024-05-21T10:00:00",
@@ -493,13 +493,13 @@ export const MOCK_INQUIRIES: Inquiry[] = [
   },
 
   {
-    id: "inq_3",
+    inquiryNo: "inq_3",
     userId: "user_1",
-    category: "기타",
+    type: "기타",
     title: "매너 온도 기준이 궁금해요",
     content:
       "매너 온도가 어떻게 계산되는지, 그리고 어떻게 하면 올릴 수 있는지 궁금합니다.",
-    status: "답변 완료",
+    status: 1,
     answer:
       "매너 온도는 거래 후 받은 후기와 매너 평가를 바탕으로 계산됩니다. 긍정적인 평가를 많이 받을수록 온도가 올라가며, 불친절하거나 약속을 어길 경우 내려갈 수 있습니다.",
     answeredAt: "2024-05-19T14:00:00",
