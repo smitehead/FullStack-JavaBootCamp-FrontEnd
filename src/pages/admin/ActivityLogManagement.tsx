@@ -1,18 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { History, Search, ShieldCheck, User, Gavel, AlertTriangle, Calendar, Info } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { ActivityLog } from '@/types';
 
+const ITEMS_PER_PAGE = 50;
+
 export const ActivityLogManagement: React.FC = () => {
   const { activityLogs } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
-  const [visibleCount, setVisibleCount] = useState(10);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const filteredLogs = activityLogs.filter(log =>
     log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
     log.details.toLowerCase().includes(searchTerm.toLowerCase()) ||
     log.adminNickname.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchTerm]);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    if (entries[0].isIntersecting && visibleCount < filteredLogs.length) {
+      setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+    }
+  }, [visibleCount, filteredLogs.length]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   const getTargetLabel = (type?: ActivityLog['targetType']) => {
     switch (type) {
@@ -44,55 +63,59 @@ export const ActivityLogManagement: React.FC = () => {
         </div>
       </header>
 
-      {/* Log List - Card Style */}
-      <div className="space-y-3">
-        {filteredLogs.slice(0, visibleCount).map((log) => {
-          const target = getTargetLabel(log.targetType);
-          const TargetIcon = target.icon;
-          return (
-            <div key={log.id} className="bg-white p-4 rounded-none shadow-sm border border-gray-100 hover:shadow-md transition-all">
-              <div className="flex items-start justify-between gap-3 mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-none bg-red-50 flex items-center justify-center shrink-0">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#FF5A5A]" />
+      <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
+        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+            <History className="w-5 h-5 text-gray-400" /> 활동 내역
+          </h2>
+          <span className="text-xs font-bold text-gray-400">{filteredLogs.length}건</span>
+        </div>
+
+        <div className="divide-y divide-gray-50">
+          {filteredLogs.slice(0, visibleCount).map((log) => {
+            const target = getTargetLabel(log.targetType);
+            const TargetIcon = target.icon;
+            return (
+              <div key={log.id} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-4 min-w-0 flex-1">
+                    <div className="w-8 h-8 rounded-none bg-red-50 flex items-center justify-center shrink-0 mt-0.5">
+                      <ShieldCheck className="w-4 h-4 text-[#FF5A5A]" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-sm font-black text-gray-900">{log.adminNickname}</span>
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-black ${target.color}`}>
+                          <TargetIcon className="w-3 h-3" />
+                          {target.label}
+                        </span>
+                      </div>
+                      <p className="text-sm font-bold text-gray-800">{log.action}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{log.details}</p>
+                    </div>
                   </div>
-                  <span className="text-sm font-black text-gray-900">{log.adminNickname}</span>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-black ${target.color}`}>
-                    <TargetIcon className="w-3 h-3" />
-                    {target.label}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400 shrink-0">
-                  <Calendar className="w-3 h-3" />
-                  {new Date(log.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
+                  <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400 shrink-0">
+                    <Calendar className="w-3 h-3" />
+                    {new Date(log.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
+                  </div>
                 </div>
               </div>
-              <div className="pl-9">
-                <p className="text-sm font-bold text-gray-800">{log.action}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{log.details}</p>
-              </div>
+            );
+          })}
+          {filteredLogs.length === 0 && (
+            <div className="px-8 py-20 text-center">
+              <History className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <p className="text-gray-400 font-bold">활동 로그가 없습니다.</p>
             </div>
-          );
-        })}
+          )}
+        </div>
+
+        {visibleCount < filteredLogs.length && (
+          <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
+            불러오는 중...
+          </div>
+        )}
       </div>
-
-      {visibleCount < filteredLogs.length && (
-        <div className="text-center">
-          <button
-            onClick={() => setVisibleCount(prev => prev + 10)}
-            className="px-8 py-3 bg-gray-100 text-gray-600 font-black text-sm hover:bg-gray-200 transition-all rounded-none"
-          >
-            더보기 ({visibleCount} / {filteredLogs.length})
-          </button>
-        </div>
-      )}
-
-      {filteredLogs.length === 0 && (
-        <div className="py-20 text-center">
-          <History className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-          <p className="text-gray-400 font-bold">활동 로그가 없습니다.</p>
-        </div>
-      )}
     </div>
   );
 };

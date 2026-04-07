@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Search, ShieldAlert, Thermometer, Coins, UserX, UserCheck, Shield, User as UserIcon, ArrowUpDown, Filter, AlertCircle } from 'lucide-react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { Search, Thermometer, Coins, UserX, UserCheck, Shield, User as UserIcon, ArrowUpDown, Filter } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { User, WithdrawnUser } from '@/types';
@@ -8,6 +8,8 @@ import { showToast } from '@/components/toastService';
 type UserStatus = '정상' | '정지' | '영구정지' | '탈퇴';
 type SortField = 'mannerTemp' | 'points' | 'joinedAt' | 'role' | 'status' | 'postCount';
 type SortOrder = 'asc' | 'desc';
+
+const ITEMS_PER_PAGE = 50;
 
 export const UserManagement: React.FC = () => {
   const { users, suspendUser, unsuspendUser, updateUserRole, updateUserManner, updateUserPoints, mannerHistory } = useAppContext();
@@ -31,6 +33,8 @@ export const UserManagement: React.FC = () => {
   const [suspendDays, setSuspendDays] = useState(7);
   const [suspendReason, setSuspendReason] = useState('');
   const [pointAmount, setPointAmount] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const nickname = searchParams.get('nickname');
@@ -69,6 +73,22 @@ export const UserManagement: React.FC = () => {
         return sortOrder === 'asc' ? comparison : -comparison;
       });
   }, [allUsers, searchTerm, filterRole, filterStatus, sortField, sortOrder]);
+
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchTerm, filterRole, filterStatus]);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    if (entries[0].isIntersecting && visibleCount < filteredAndSortedUsers.length) {
+      setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+    }
+  }, [visibleCount, filteredAndSortedUsers.length]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   const handleOpenModal = (user: User, type: 'manner' | 'suspend' | 'points') => {
     setSelectedUser(user);
@@ -204,174 +224,134 @@ export const UserManagement: React.FC = () => {
         </div>
       </header>
 
-      {/* User Table */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-left border-collapse table-fixed">
-          <thead>
-            <tr className="bg-gray-50 border-b border-gray-100">
-              <th className="w-[20%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider">사용자</th>
-              <th
-                className="w-[10%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => toggleSort('role')}
-              >
-                <div className="flex items-center gap-1">
-                  권한
-                  <ArrowUpDown className={`w-2.5 h-2.5 ${sortField === 'role' ? 'text-[#FF5A5A]' : 'text-gray-300'}`} />
-                </div>
-              </th>
-              <th
-                className="w-[10%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => toggleSort('mannerTemp')}
-              >
-                <div className="flex items-center gap-1">
-                  매너온도
-                  <ArrowUpDown className={`w-2.5 h-2.5 ${sortField === 'mannerTemp' ? 'text-[#FF5A5A]' : 'text-gray-300'}`} />
-                </div>
-              </th>
-              <th
-                className="w-[10%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => toggleSort('points')}
-              >
-                <div className="flex items-center gap-1">
-                  포인트
-                  <ArrowUpDown className={`w-2.5 h-2.5 ${sortField === 'points' ? 'text-[#FF5A5A]' : 'text-gray-300'}`} />
-                </div>
-              </th>
-              <th
-                className="w-[10%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => toggleSort('postCount')}
-              >
-                <div className="flex items-center gap-1">
-                  경매 수
-                  <ArrowUpDown className={`w-2.5 h-2.5 ${sortField === 'postCount' ? 'text-[#FF5A5A]' : 'text-gray-300'}`} />
-                </div>
-              </th>
-              <th
-                className="w-[10%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => toggleSort('status')}
-              >
-                <div className="flex items-center gap-1">
-                  상태
-                  <ArrowUpDown className={`w-2.5 h-2.5 ${sortField === 'status' ? 'text-[#FF5A5A]' : 'text-gray-300'}`} />
-                </div>
-              </th>
-              <th
-                className="w-[10%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => toggleSort('joinedAt')}
-              >
-                <div className="flex items-center gap-1">
-                  가입일
-                  <ArrowUpDown className={`w-2.5 h-2.5 ${sortField === 'joinedAt' ? 'text-[#FF5A5A]' : 'text-gray-300'}`} />
-                </div>
-              </th>
-              <th className="w-[14%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider text-right">관리</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredAndSortedUsers.map((user) => (
-              <tr key={user.id} className={`hover:bg-gray-50 transition-colors group ${user.isWithdrawn ? 'opacity-60 bg-gray-50/30' : ''}`}>
-                <td className="px-4 py-3">
-                  <div className="flex items-center space-x-3">
-                    <img src={user.profileImage || undefined} alt={user.nickname} className="w-8 h-8 rounded-none object-cover shadow-sm" />
-                    <div className="min-w-0">
+        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+            <UserIcon className="w-5 h-5 text-gray-400" /> 사용자 목록
+          </h2>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              {(['role', 'mannerTemp', 'points', 'postCount', 'status', 'joinedAt'] as SortField[]).map((field) => {
+                const labels: Record<SortField, string> = { role: '권한', mannerTemp: '매너온도', points: '포인트', postCount: '경매수', status: '상태', joinedAt: '가입일' };
+                return (
+                  <button
+                    key={field}
+                    onClick={() => toggleSort(field)}
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-none text-[10px] font-black transition-colors ${sortField === field ? 'bg-[#FF5A5A] text-white' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
+                  >
+                    {labels[field]}
+                    <ArrowUpDown className="w-2.5 h-2.5" />
+                  </button>
+                );
+              })}
+            </div>
+            <span className="text-xs font-bold text-gray-400">{filteredAndSortedUsers.length}명</span>
+          </div>
+        </div>
+
+        <div className="divide-y divide-gray-50">
+          {filteredAndSortedUsers.slice(0, visibleCount).map((user) => (
+            <div key={user.id} className={`px-8 py-5 hover:bg-gray-50 transition-colors group ${user.isWithdrawn ? 'opacity-60' : ''}`}>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4 min-w-0 flex-1">
+                  <img src={user.profileImage || undefined} alt={user.nickname} className="w-10 h-10 rounded-none object-cover bg-gray-100 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
                       <button
                         onClick={() => handleUserClick(user.nickname)}
-                        className="font-bold text-gray-900 text-sm truncate hover:text-[#FF5A5A] transition-colors"
+                        className="text-sm font-black text-gray-900 hover:text-[#FF5A5A] transition-colors"
                       >
                         {user.nickname}
                       </button>
-                      <p className="text-[10px] font-medium text-gray-400 truncate">{user.email || '이메일 없음'}</p>
+                      {!user.isWithdrawn && (
+                        <div className="relative inline-block group/role">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-none text-[10px] font-black cursor-pointer ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                            {user.isAdmin ? <Shield className="w-2.5 h-2.5 mr-1" /> : <UserIcon className="w-2.5 h-2.5 mr-1" />}
+                            {user.isAdmin ? '관리자' : '일반'}
+                          </span>
+                          <div className="absolute left-0 mt-1 w-24 bg-white border border-gray-100 rounded-none shadow-xl py-1 z-10 opacity-0 invisible group-hover/role:opacity-100 group-hover/role:visible transition-all">
+                            <button
+                              onClick={() => handleRoleChange(user as any, false)}
+                              className="w-full text-left px-3 py-1.5 text-[10px] font-bold text-gray-600 hover:bg-gray-50 hover:text-blue-600"
+                            >
+                              일반
+                            </button>
+                            <button
+                              onClick={() => handleRoleChange(user as any, true)}
+                              className="w-full text-left px-3 py-1.5 text-[10px] font-bold text-gray-600 hover:bg-gray-50 hover:text-purple-600"
+                            >
+                              관리자
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-none text-[10px] font-black ${user.status === '영구정지' ? 'bg-black text-white' :
+                        user.status === '정지' ? 'bg-red-100 text-red-700' :
+                          'bg-green-100 text-green-700'
+                        }`}>
+                        {user.status}
+                      </span>
+                    </div>
+                    <p className="text-[10px] font-medium text-gray-400 mb-1">{user.email || '이메일 없음'}</p>
+                    <div className="flex items-center gap-3 flex-wrap text-xs">
+                      {!user.isWithdrawn && (
+                        <>
+                          <span className="inline-flex items-center gap-1 font-bold text-gray-600">
+                            <Thermometer className={`w-3 h-3 ${user.mannerTemp >= 36.5 ? 'text-orange-500' : 'text-blue-500'}`} />
+                            {user.mannerTemp}°C
+                          </span>
+                          <span className="text-gray-300">|</span>
+                          <span className="font-bold text-gray-600">
+                            <Coins className="w-3 h-3 inline mr-1 text-yellow-500" />{user.points.toLocaleString()}P
+                          </span>
+                          <span className="text-gray-300">|</span>
+                          <span className="font-medium text-gray-500">경매 {user.postCount || 0}건</span>
+                          <span className="text-gray-300">|</span>
+                        </>
+                      )}
+                      <span className="text-[10px] font-medium text-gray-400">가입 {user.joinedAt.split('T')[0]}</span>
                     </div>
                   </div>
-                </td>
-                <td className="px-4 py-3">
-                  {!user.isWithdrawn ? (
-                    <div className="relative inline-block text-left group/role">
-                      <button className={`inline-flex items-center px-2 py-1 rounded-none text-[10px] font-black transition-colors ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
-                        }`}>
-                        {user.isAdmin ? <Shield className="w-2.5 h-2.5 mr-1" /> : <UserIcon className="w-2.5 h-2.5 mr-1" />}
-                        {user.isAdmin ? '관리자' : '일반'}
-                      </button>
-                      <div className="absolute left-0 mt-1 w-24 bg-white border border-gray-100 rounded-none shadow-xl py-1 z-10 opacity-0 invisible group-hover/role:opacity-100 group-hover/role:visible transition-all">
-                        <button
-                          onClick={() => handleRoleChange(user as any, false)}
-                          className="w-full text-left px-3 py-1.5 text-[10px] font-bold text-gray-600 hover:bg-gray-50 hover:text-blue-600"
-                        >
-                          일반
-                        </button>
-                        <button
-                          onClick={() => handleRoleChange(user as any, true)}
-                          className="w-full text-left px-3 py-1.5 text-[10px] font-bold text-gray-600 hover:bg-gray-50 hover:text-purple-600"
-                        >
-                          관리자
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <span className="text-[10px] font-bold text-gray-400">-</span>
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  {!user.isWithdrawn ? (
-                    <div className="flex items-center space-x-1">
-                      <Thermometer className={`w-3 h-3 ${user.mannerTemp >= 36.5 ? 'text-orange-500' : 'text-blue-500'}`} />
-                      <span className="font-bold text-gray-900 text-xs">{user.mannerTemp}°C</span>
-                    </div>
-                  ) : (
-                    <span className="text-xs text-gray-400">-</span>
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  {!user.isWithdrawn ? (
-                    <span className="font-bold text-gray-900 text-xs">{user.points.toLocaleString()}P</span>
-                  ) : (
-                    <span className="text-xs text-gray-400">-</span>
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  <span className="font-bold text-gray-900 text-xs">{user.postCount || 0}</span>
-                </td>
-                <td className="px-4 py-3">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-none text-[10px] font-black ${user.status === '영구정지' ? 'bg-black text-white' :
-                    user.status === '정지' ? 'bg-red-100 text-red-700' :
-                      'bg-green-100 text-green-700'
-                    }`}>
-                    {user.status}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <span className="text-[11px] font-medium text-gray-400">{user.joinedAt.split('T')[0]}</span>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  {!user.isWithdrawn && (
-                    <div className="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={() => handleOpenModal(user as any, 'manner')}
-                        className="p-1.5 hover:bg-orange-100 text-orange-600 rounded-none transition-colors" title="온도 조절"
-                      >
-                        <Thermometer className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleOpenModal(user as any, 'points')}
-                        className="p-1.5 hover:bg-blue-100 text-blue-600 rounded-none transition-colors" title="포인트 지급"
-                      >
-                        <Coins className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => user.isSuspended ? toggleSuspension(user as any) : handleOpenModal(user as any, 'suspend')}
-                        className={`p-1.5 rounded-none transition-colors ${user.isSuspended ? 'hover:bg-green-100 text-green-600' : 'hover:bg-red-100 text-red-600'
-                          }`}
-                        title={user.isSuspended ? "정지 해제" : "계정 정지"}
-                      >
-                        {user.isSuspended ? <UserCheck className="w-4 h-4" /> : <UserX className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+                {!user.isWithdrawn && (
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    <button
+                      onClick={() => handleOpenModal(user as any, 'manner')}
+                      className="p-2 hover:bg-orange-100 text-orange-600 rounded-none transition-colors" title="온도 조절"
+                    >
+                      <Thermometer className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleOpenModal(user as any, 'points')}
+                      className="p-2 hover:bg-blue-100 text-blue-600 rounded-none transition-colors" title="포인트 지급"
+                    >
+                      <Coins className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => user.isSuspended ? toggleSuspension(user as any) : handleOpenModal(user as any, 'suspend')}
+                      className={`p-2 rounded-none transition-colors ${user.isSuspended ? 'hover:bg-green-100 text-green-600' : 'hover:bg-red-100 text-red-600'}`}
+                      title={user.isSuspended ? "정지 해제" : "계정 정지"}
+                    >
+                      {user.isSuspended ? <UserCheck className="w-4 h-4" /> : <UserX className="w-4 h-4" />}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+          {filteredAndSortedUsers.length === 0 && (
+            <div className="px-8 py-20 text-center">
+              <UserIcon className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
+            </div>
+          )}
+        </div>
+
+        {visibleCount < filteredAndSortedUsers.length && (
+          <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
+            불러오는 중...
+          </div>
+        )}
       </div>
 
       {isModalOpen && selectedUser && (

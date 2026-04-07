@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Plus, Search, Edit2, Trash2 } from "lucide-react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { Plus, Search, Edit2, Trash2, FileText } from "lucide-react";
 import { NoticeCategory } from "@/types";
 import api from "@/services/api";
 import { showToast } from "@/components/toastService";
@@ -15,6 +15,8 @@ interface NoticeItem {
   isDeleted: number;
 }
 
+const ITEMS_PER_PAGE = 50;
+
 export const NoticeManagement: React.FC = () => {
   const [notices, setNotices] = useState<NoticeItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -22,6 +24,8 @@ export const NoticeManagement: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingNotice, setEditingNotice] = useState<NoticeItem | null>(null);
   const [noticeToDelete, setNoticeToDelete] = useState<number | null>(null);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   // Form States
   const [title, setTitle] = useState("");
@@ -48,6 +52,22 @@ export const NoticeManagement: React.FC = () => {
       n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       n.content.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchTerm]);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    if (entries[0].isIntersecting && visibleCount < filteredNotices.length) {
+      setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+    }
+  }, [visibleCount, filteredNotices.length]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   const handleOpenModal = (notice?: NoticeItem) => {
     if (notice) {
@@ -140,66 +160,84 @@ export const NoticeManagement: React.FC = () => {
         </div>
       </header>
 
-      {/* Notice List */}
-      <div className="grid grid-cols-1 gap-4">
-        {filteredNotices.map((notice) => (
-          <div
-            key={notice.id}
-            className={`bg-white p-5 rounded-none shadow-sm border border-gray-100 flex items-start justify-between group hover:shadow-md transition-all ${notice.isDeleted ? 'opacity-40' : ''}`}
-          >
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <span
-                  className={`px-2 py-0.5 rounded-none text-[10px] font-black ${notice.category === "점검"
-                      ? "bg-orange-100 text-orange-700"
-                      : notice.category === "업데이트"
-                        ? "bg-blue-100 text-blue-700"
-                        : notice.category === "이벤트"
-                          ? "bg-purple-100 text-purple-700"
-                          : "bg-gray-100 text-gray-700"
-                    }`}
-                >
-                  {notice.category}
-                </span>
-                {notice.isImportant && (
-                  <span className="flex items-center text-[10px] font-black text-red-600 bg-red-50 px-2 py-0.5 rounded-none">
-                    중요
-                  </span>
-                )}
-                {notice.isDeleted === 1 && (
-                  <span className="flex items-center text-[10px] font-black text-gray-400 bg-gray-100 px-2 py-0.5 rounded-none">
-                    삭제됨
-                  </span>
-                )}
-                <span className="text-[10px] font-medium text-gray-400">
-                  {notice.createdAt?.split("T")[0]}
-                </span>
-              </div>
-              <h3 className="text-base font-black text-gray-900 mb-1">
-                {notice.title}
-              </h3>
-            </div>
+      <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
+        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-gray-400" /> 공지 목록
+          </h2>
+          <span className="text-xs font-bold text-gray-400">{filteredNotices.length}건</span>
+        </div>
 
-            {!notice.isDeleted && (
-              <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={() => handleOpenModal(notice)}
-                  className="p-2 hover:bg-gray-100 text-gray-600 rounded-none transition-colors"
-                >
-                  <Edit2 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleDelete(notice.id)}
-                  className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+        <div className="divide-y divide-gray-50">
+          {filteredNotices.slice(0, visibleCount).map((notice) => (
+            <div
+              key={notice.id}
+              className={`px-8 py-5 hover:bg-gray-50 transition-colors group ${notice.isDeleted ? 'opacity-40' : ''}`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                    <span
+                      className={`px-2 py-0.5 rounded-none text-[10px] font-black ${notice.category === "점검"
+                        ? "bg-orange-100 text-orange-700"
+                        : notice.category === "업데이트"
+                          ? "bg-blue-100 text-blue-700"
+                          : notice.category === "이벤트"
+                            ? "bg-purple-100 text-purple-700"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
+                    >
+                      {notice.category}
+                    </span>
+                    {notice.isImportant && (
+                      <span className="text-[10px] font-black text-red-600 bg-red-50 px-2 py-0.5 rounded-none">
+                        중요
+                      </span>
+                    )}
+                    {notice.isDeleted === 1 && (
+                      <span className="text-[10px] font-black text-gray-400 bg-gray-100 px-2 py-0.5 rounded-none">
+                        삭제됨
+                      </span>
+                    )}
+                    <span className="text-[10px] font-medium text-gray-400">
+                      {notice.createdAt?.split("T")[0]}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-black text-gray-900">
+                    {notice.title}
+                  </h3>
+                </div>
+
+                {!notice.isDeleted && (
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    <button
+                      onClick={() => handleOpenModal(notice)}
+                      className="p-2 hover:bg-gray-100 text-gray-600 rounded-none transition-colors"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(notice.id)}
+                      className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+          ))}
+          {filteredNotices.length === 0 && (
+            <div className="px-8 py-20 text-center">
+              <p className="text-gray-400 font-bold">공지사항이 없습니다.</p>
+            </div>
+          )}
+        </div>
+
+        {visibleCount < filteredNotices.length && (
+          <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
+            불러오는 중...
           </div>
-        ))}
-        {filteredNotices.length === 0 && (
-          <div className="py-20 text-center text-gray-400 text-sm">공지사항이 없습니다.</div>
         )}
       </div>
 

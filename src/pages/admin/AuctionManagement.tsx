@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Gavel, Search, Filter, AlertCircle, Clock, Users, Ban, CheckCircle2 } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { Product } from '@/types';
@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { resolveImageUrl } from '@/utils/imageUtils';
 import { showToast } from '@/components/toastService';
 
+const ITEMS_PER_PAGE = 50;
+
 export const AuctionManagement: React.FC = () => {
   const { products, cancelAuction } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,6 +16,8 @@ export const AuctionManagement: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -22,6 +26,22 @@ export const AuctionManagement: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchTerm, statusFilter]);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    if (entries[0].isIntersecting && visibleCount < filteredProducts.length) {
+      setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+    }
+  }, [visibleCount, filteredProducts.length]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleObserver]);
+
   const handleCancelAuction = async () => {
     if (selectedProduct) {
       await cancelAuction(selectedProduct.id, '관리자에 의한 강제 종료');
@@ -29,6 +49,15 @@ export const AuctionManagement: React.FC = () => {
       setSelectedProduct(null);
       showToast('경매가 강제 종료되었습니다.', 'info');
     }
+  };
+
+  const getRemainingTime = (product: Product) => {
+    if (product.status !== 'active' || !product.endTime) return '종료';
+    const diff = new Date(product.endTime).getTime() - Date.now();
+    if (diff <= 0) return '종료 임박';
+    const hours = Math.floor(diff / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    return hours > 24 ? `${Math.floor(hours / 24)}일 ${hours % 24}시간` : `${hours}시간 ${mins}분`;
   };
 
   return (
@@ -68,104 +97,83 @@ export const AuctionManagement: React.FC = () => {
         </div>
       </header>
 
-      {/* Auction List Table */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50/50 border-b border-gray-100">
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">상품 정보</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">판매자</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">현재가 / 시작가</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">입찰자 수</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">남은 시간</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">상태</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">관리</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50/50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={resolveImageUrl(product.images[0]) || ''}
-                        alt={product.title}
-                        className="w-10 h-10 rounded-none object-cover bg-gray-100"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div>
-                        <p className="text-sm font-bold text-gray-900 line-clamp-1">{product.title}</p>
-                        <p className="text-[10px] text-gray-400 font-medium">ID: {product.id}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <Link
-                      to={`/admin/users?nickname=${product.seller.nickname}`}
-                      className="text-sm font-bold text-gray-700 hover:text-[#FF5A5A] transition-colors"
-                    >
-                      {product.seller.nickname}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <p className="text-sm font-black text-gray-900">{product.currentPrice.toLocaleString()}원</p>
-                    <p className="text-[10px] text-gray-400 font-medium">{product.startPrice.toLocaleString()}원</p>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-600 rounded-none text-[10px] font-black">
-                      <Users className="w-3 h-3" />
-                      {product.participantCount}명
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="flex flex-col items-center">
-                      <Clock className="w-3 h-3 text-gray-300 mb-1" />
-                      <span className="text-[10px] font-bold text-gray-500">
-                        {product.status === 'active' && product.endTime
-                          ? (() => {
-                            const diff = new Date(product.endTime).getTime() - Date.now();
-                            if (diff <= 0) return '종료 임박';
-                            const hours = Math.floor(diff / 3600000);
-                            const mins = Math.floor((diff % 3600000) / 60000);
-                            return hours > 24 ? `${Math.floor(hours / 24)}일 ${hours % 24}시간` : `${hours}시간 ${mins}분`;
-                          })()
-                          : '종료'}
+        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+            <Gavel className="w-5 h-5 text-gray-400" /> 경매 목록
+          </h2>
+          <span className="text-xs font-bold text-gray-400">{filteredProducts.length}건</span>
+        </div>
+
+        <div className="divide-y divide-gray-50">
+          {filteredProducts.slice(0, visibleCount).map((product) => (
+            <div key={product.id} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4 min-w-0 flex-1">
+                  <img
+                    src={resolveImageUrl(product.images[0]) || ''}
+                    alt={product.title}
+                    className="w-12 h-12 rounded-none object-cover bg-gray-100 shrink-0"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <p className="text-sm font-bold text-gray-900 truncate">{product.title}</p>
+                      <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${product.status === 'active' ? 'bg-green-50 text-green-600' :
+                        product.status === 'completed' ? 'bg-gray-100 text-gray-500' :
+                          'bg-red-50 text-red-600'
+                        }`}>
+                        {product.status === 'active' ? '진행중' :
+                          product.status === 'completed' ? '종료됨' : '취소됨'}
                       </span>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className={`inline-flex px-2 py-1 rounded-none text-[10px] font-black ${product.status === 'active' ? 'bg-green-50 text-green-600' :
-                      product.status === 'completed' ? 'bg-gray-100 text-gray-500' :
-                        'bg-red-50 text-red-600'
-                      }`}>
-                      {product.status === 'active' ? '진행중' :
-                        product.status === 'completed' ? '종료됨' : '취소됨'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {product.status === 'active' && (
-                      <button
-                        onClick={() => {
-                          setSelectedProduct(product);
-                          setShowCancelModal(true);
-                        }}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-none transition-all"
-                        title="경매 강제 종료"
+                    <div className="flex items-center gap-3 flex-wrap text-xs">
+                      <Link
+                        to={`/admin/users?nickname=${product.seller.nickname}`}
+                        className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
                       >
-                        <Ban className="w-4 h-4" />
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                        {product.seller.nickname}
+                      </Link>
+                      <span className="text-gray-300">|</span>
+                      <span className="font-black text-gray-900">{product.currentPrice.toLocaleString()}원</span>
+                      <span className="text-[10px] text-gray-400">시작 {product.startPrice.toLocaleString()}원</span>
+                      <span className="text-gray-300">|</span>
+                      <span className="inline-flex items-center gap-1 text-blue-600 font-bold">
+                        <Users className="w-3 h-3" /> {product.participantCount}명
+                      </span>
+                      <span className="text-gray-300">|</span>
+                      <span className="inline-flex items-center gap-1 text-gray-500 font-medium">
+                        <Clock className="w-3 h-3" /> {getRemainingTime(product)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                {product.status === 'active' && (
+                  <button
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      setShowCancelModal(true);
+                    }}
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0"
+                    title="경매 강제 종료"
+                  >
+                    <Ban className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+          {filteredProducts.length === 0 && (
+            <div className="px-8 py-20 text-center">
+              <Gavel className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
+            </div>
+          )}
         </div>
-        {filteredProducts.length === 0 && (
-          <div className="py-20 text-center">
-            <Gavel className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-            <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
+
+        {visibleCount < filteredProducts.length && (
+          <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
+            불러오는 중...
           </div>
         )}
       </div>
