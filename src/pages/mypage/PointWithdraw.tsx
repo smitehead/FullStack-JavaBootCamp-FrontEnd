@@ -1,28 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Landmark, Plus, ChevronRight, CheckCircle2, ArrowLeft, X } from 'lucide-react';
+import { Landmark, Plus, CheckCircle2, ArrowLeft, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAppContext } from '@/context/AppContext';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 
+// import 없이 깔끔하게 문자열 경로만 사용합니다.
 const BANKS = [
-  { name: 'KB국민은행' },
-  { name: '신한은행' },
-  { name: '우리은행' },
-  { name: '하나은행' },
-  { name: 'NH농협은행' },
-  { name: 'IBK기업은행' },
-  { name: '카카오뱅크' },
-  { name: '토스뱅크' },
-  { name: '케이뱅크' },
-  { name: 'SC제일은행' },
-  { name: '씨티은행' },
-  { name: '수협은행' },
-  { name: '우체국' },
-  { name: '새마을금고' },
-  { name: '신협' },
-  { name: '저축은행' },
+  { name: 'KB국민은행', logo: '/images/KB국민은행.png' },
+  { name: '신한은행', logo: '/images/신한은행.png' },
+  { name: '우리은행', logo: '/images/우리은행.jpg' },
+  { name: '하나은행', logo: '/images/하나은행.png' },
+  { name: 'NH농협은행', logo: '/images/NH농협은행.jpg' },
+  { name: 'IBK기업은행', logo: '/images/ibk기업은행.png' },
+  { name: '카카오뱅크', logo: '/images/카카오뱅크.png' },
+  { name: '토스뱅크', logo: '/images/토스은행.png' },
+  { name: '케이뱅크', logo: '/images/케이뱅크.png' },
+  { name: 'SC제일은행', logo: '/images/제일은행.png' },
+  { name: '씨티은행', logo: '/images/씨티은행.png' },
+  { name: '수협은행', logo: '/images/수협은행.png' },
+  { name: '우체국', logo: '/images/우체국.png' },
+  { name: '새마을금고', logo: '/images/새마을금고.jpg' },
+  { name: '신협', logo: '/images/신협.png' },
+  { name: '경남은행', logo: '/images/경남은행.png' },
 ];
 
 export const PointWithdraw: React.FC = () => {
@@ -43,6 +44,9 @@ export const PointWithdraw: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMethodId, setSelectedMethodId] = useState<number | null>(null);
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
+
+  // 현재 선택된 "새로운 은행"의 상세 정보 찾기 (로고 표시용)
+  const selectedNewBankInfo = BANKS.find(bank => bank.name === newBank);
 
   // Fetch accounts
   useEffect(() => {
@@ -124,8 +128,6 @@ export const PointWithdraw: React.FC = () => {
     );
   }
 
-
-
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
       <div className="flex items-center gap-4 mb-10">
@@ -171,8 +173,16 @@ export const PointWithdraw: React.FC = () => {
               {selectedMethod ? (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100">
-                      <Landmark className="w-6 h-6 text-indigo-600" />
+                    {/* 내 계좌 등록된 은행 로고 표시 부분 */}
+                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border border-gray-100 overflow-hidden">
+                      {(() => {
+                        const bankInfo = BANKS.find(b => b.name === selectedMethod.bankName);
+                        return bankInfo?.logo ? (
+                          <img src={bankInfo.logo} alt={selectedMethod.bankName} className="w-full h-full object-cover p-1" />
+                        ) : (
+                          <Landmark className="w-6 h-6 text-indigo-600" />
+                        );
+                      })()}
                     </div>
                     <div>
                       <p className="font-black text-gray-900">{selectedMethod.bankName}</p>
@@ -202,10 +212,10 @@ export const PointWithdraw: React.FC = () => {
             /* "새로운 계좌로" 선택 시 나타나는 섹션 */
             <div className="space-y-6">
               <h4 className="text-xl font-black text-gray-900 mb-2">어디로 보낼까요?</h4>
-              
+
               {!newBank ? (
                 /* 1단계: 은행 선택 그리드 */
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-4"
@@ -219,8 +229,12 @@ export const PointWithdraw: React.FC = () => {
                         onClick={() => setNewBank(bank.name)}
                         className="w-[calc(25%-8px)] sm:w-[88px] aspect-square flex flex-col items-center justify-center p-2 rounded-xl border border-gray-100 bg-gray-50 hover:border-gray-200 transition-all shadow-sm hover:bg-gray-100"
                       >
-                        <div className="w-8 h-8 rounded-full mb-1 bg-gray-200 flex items-center justify-center text-[10px] text-gray-400 font-black">
-                          {bank.name.substring(0, 1)}
+                        <div className={`w-8 h-8 rounded-full mb-1 flex items-center justify-center overflow-hidden ${bank.logo ? 'bg-white border border-gray-100' : 'bg-gray-200'}`}>
+                          {bank.logo ? (
+                            <img src={bank.logo} alt={bank.name} className="w-full h-full object-cover p-1" />
+                          ) : (
+                            <span className="text-[10px] text-gray-400 font-black">{bank.name.substring(0, 1)}</span>
+                          )}
                         </div>
                         <span className="text-[10px] font-bold text-center leading-tight text-gray-500">
                           {bank.name}
@@ -235,7 +249,7 @@ export const PointWithdraw: React.FC = () => {
                 </motion.div>
               ) : (
                 /* 2단계: 계좌 정보 입력 폼 */
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="space-y-6"
@@ -243,12 +257,16 @@ export const PointWithdraw: React.FC = () => {
                   {/* 선택된 은행 표시 및 변경 버튼 */}
                   <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-2xl border border-gray-100">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-[11px] text-gray-400 font-black">
-                        {newBank.substring(0, 1)}
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${selectedNewBankInfo?.logo ? 'bg-white border border-gray-100' : 'bg-gray-200'}`}>
+                        {selectedNewBankInfo?.logo ? (
+                          <img src={selectedNewBankInfo.logo} alt={newBank} className="w-full h-full object-cover p-1" />
+                        ) : (
+                          <span className="text-[11px] text-gray-400 font-black">{newBank.substring(0, 1)}</span>
+                        )}
                       </div>
                       <p className="text-lg font-black text-gray-900">{newBank}</p>
                     </div>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setNewBank('')}
                       className="px-3 py-1.5 text-[10px] font-black text-gray-400 border border-gray-200 rounded-lg hover:bg-white transition-all hover:text-gray-900"
@@ -261,8 +279,8 @@ export const PointWithdraw: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">예금주</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={newAccountHolder}
                         onChange={(e) => setNewAccountHolder(e.target.value)}
                         placeholder="예금주명 입력"
@@ -272,8 +290,8 @@ export const PointWithdraw: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">계좌번호</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={newAccount}
                         onChange={(e) => setNewAccount(e.target.value.replace(/\D/g, ''))}
                         placeholder="계좌번호 입력 (- 제외)"
@@ -286,8 +304,6 @@ export const PointWithdraw: React.FC = () => {
             </div>
           )}
         </div>
-
-
 
         {/* Amount Input */}
         <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm text-center">
@@ -356,26 +372,34 @@ export const PointWithdraw: React.FC = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {accounts.map(method => (
-                    <div
-                      key={method.accountNo}
-                      onClick={() => {
-                        setSelectedMethodId(method.accountNo);
-                        setIsMethodModalOpen(false);
-                      }}
-                      className={`flex items-center justify-between p-5 rounded-2xl border transition-all cursor-pointer ${selectedMethodId === method.accountNo ? 'border-indigo-600 bg-indigo-50/50' : 'border-gray-100 bg-white hover:border-gray-200'}`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${selectedMethodId === method.accountNo ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                          <Landmark className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <p className="font-bold text-gray-900">{method.bankName}</p>
-                          <p className="text-xs text-gray-400 font-medium">{method.accountNumber} · {method.accountHolder}</p>
+                  {accounts.map(method => {
+                    const bankInfo = BANKS.find(b => b.name === method.bankName);
+                    return (
+                      <div
+                        key={method.accountNo}
+                        onClick={() => {
+                          setSelectedMethodId(method.accountNo);
+                          setIsMethodModalOpen(false);
+                        }}
+                        className={`flex items-center justify-between p-5 rounded-2xl border transition-all cursor-pointer ${selectedMethodId === method.accountNo ? 'border-indigo-600 bg-indigo-50/50' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+                      >
+                        <div className="flex items-center gap-4">
+                          {/* 모달 내부의 내 계좌 목록 로고 이미지 */}
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden ${selectedMethodId === method.accountNo ? 'bg-indigo-600' : 'bg-white border border-gray-100'}`}>
+                            {bankInfo?.logo ? (
+                              <img src={bankInfo.logo} alt={method.bankName} className={`w-full h-full object-cover p-1 ${selectedMethodId === method.accountNo ? 'brightness-0 invert' : ''}`} />
+                            ) : (
+                              <Landmark className={`w-5 h-5 ${selectedMethodId === method.accountNo ? 'text-white' : 'text-gray-400'}`} />
+                            )}
+                          </div>
+                          <div>
+                            <p className={`font-bold ${selectedMethodId === method.accountNo ? 'text-indigo-900' : 'text-gray-900'}`}>{method.bankName}</p>
+                            <p className={`text-xs font-medium ${selectedMethodId === method.accountNo ? 'text-indigo-700' : 'text-gray-400'}`}>{method.accountNumber} · {method.accountHolder}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>
