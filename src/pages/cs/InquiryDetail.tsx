@@ -4,31 +4,50 @@ import { ChevronLeft, Calendar, Clock, CheckCircle2, MessageSquare, User, Shield
 import { format } from 'date-fns';
 import api from '@/services/api';
 import { Inquiry } from '@/types';
+import { useAppContext } from '@/context/AppContext';
 
 export const InquiryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAppContext();
   const [inquiry, setInquiry] = React.useState<Inquiry | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState(false);
+  const [error, setError] = React.useState<any>(null);
 
   React.useEffect(() => {
-    if (!id) return;
+    if (!id || !user) {
+      setIsLoading(false);
+      return;
+    }
 
     setIsLoading(true);
     api.get(`/inquiries/${id}`)
       .then(res => {
         setInquiry(res.data);
-        setError(false);
+        setError(null);
       })
       .catch(err => {
         console.error('Failed to fetch inquiry:', err);
-        setError(true);
+        setError(err);
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }, [id]);
+  }, [id, user]);
+
+  if (!user && !isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <p className="text-gray-400 font-bold">로그인이 필요한 서비스입니다.</p>
+        <button
+          onClick={() => navigate('/login')}
+          className="px-8 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+        >
+          로그인하러 가기
+        </button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -40,9 +59,10 @@ export const InquiryDetail: React.FC = () => {
   }
 
   if (error || !inquiry) {
+    const errorMessage = error?.response?.data?.message || '존재하지 않는 문의 내역입니다.';
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <p className="text-gray-400 font-bold">존재하지 않는 문의 내역입니다.</p>
+        <p className="text-gray-400 font-bold">{errorMessage}</p>
         <button
           onClick={() => navigate('/inquiry')}
           className="px-8 py-3 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200"

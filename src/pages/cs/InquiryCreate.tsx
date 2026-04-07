@@ -4,10 +4,23 @@ import { ChevronLeft, Camera, X, AlertCircle, CheckCircle2, Send, Info } from 'l
 import { InquiryType, BugType } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
+import { useAppContext } from '@/context/AppContext';
 
 
 export const InquiryCreate: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAppContext();
+
+  React.useEffect(() => {
+    if (!user) {
+      const confirmed = window.confirm('로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?');
+      if (confirmed) {
+        navigate('/login');
+      } else {
+        navigate('/');
+      }
+    }
+  }, [user, navigate]);
   const [type, setType] = useState<InquiryType | ''>('');
   const [bugType, setBugType] = useState<BugType | ''>('');
   const [title, setTitle] = useState('');

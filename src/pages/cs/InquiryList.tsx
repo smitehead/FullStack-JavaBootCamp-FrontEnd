@@ -16,7 +16,10 @@ export const InquiryList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
     api.get('/inquiries/my', { params: { page: 1, size: 20 } })
       .then(res => setInquiries(res.data.content || []))
       .catch(() => { })
