@@ -222,6 +222,11 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                     )}
                   </button>
                   {isNotiOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => { setIsNotiOpen(false); markAllNotificationsAsRead(); }}
+                      />
                     <div className="absolute right-0 mt-3 w-80 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-50">
                       <div className="flex border-b border-gray-50">
                         <button
@@ -270,6 +275,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                         전체보기
                       </Link>
                     </div>
+                    </>
                   )}
                 </div>
 
