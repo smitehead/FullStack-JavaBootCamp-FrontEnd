@@ -70,7 +70,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-200">
+    <div className="flex h-screen overflow-hidden bg-gray-200">
       {/* Sidebar */}
       <aside className="w-60 bg-[#1A1D21] text-white flex flex-col shrink-0">
         <div className="p-5 border-b border-white/5">

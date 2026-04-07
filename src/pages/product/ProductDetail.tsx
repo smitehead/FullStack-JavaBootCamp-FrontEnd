@@ -595,7 +595,7 @@ export const ProductDetail: React.FC = () => {
             </div>
             <div className="flex justify-between items-end mb-0.5">
               <div className="text-sm font-bold text-[#009678]">
-                매너온도 <span className="text-lg">{product.seller.mannerTemp}</span>
+                매너온도 <span className="text-lg">{Number(product.seller.mannerTemp).toFixed(1)}</span>
               </div>
               <div className="text-xs text-gray-400">100</div>
             </div>

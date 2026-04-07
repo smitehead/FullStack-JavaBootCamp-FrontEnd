@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { MOCK_REVIEW_TAGS } from '@/services/mockData';
-import { ChevronLeft, Star, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, CheckCircle2 } from 'lucide-react';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
 
@@ -13,8 +13,6 @@ export const ReviewCreate: React.FC = () => {
   const resultNo = queryParams.get('resultNo') || orderId;
 
   const [sellerNickname, setSellerNickname] = useState('판매자');
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,8 +27,8 @@ export const ReviewCreate: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (selectedTags.length === 0 && !content.trim() && rating === 0) {
-      showToast('별점, 태그, 또는 후기 내용 중 하나 이상 입력해주세요.', 'error');
+    if (selectedTags.length === 0 && !content.trim()) {
+      showToast('태그 또는 후기 내용 중 하나 이상 입력해주세요.', 'error');
       return;
     }
 
@@ -38,7 +36,6 @@ export const ReviewCreate: React.FC = () => {
     try {
       await api.post('/reviews', {
         resultNo: Number(resultNo),
-        rating: rating > 0 ? rating : null,
         tags: selectedTags.length > 0 ? selectedTags : null,
         content: content.trim() || null,
       });
@@ -68,34 +65,6 @@ export const ReviewCreate: React.FC = () => {
         </div>
 
         <section className="bg-white rounded-[40px] shadow-sm border border-gray-100 p-10 space-y-10">
-          {/* 별점 */}
-          <div>
-            <h3 className="text-lg font-black text-gray-900 mb-4">거래는 어떠셨나요?</h3>
-            <div className="flex items-center gap-2">
-              {[1, 2, 3, 4, 5].map(star => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setRating(star === rating ? 0 : star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                  className="transition-transform hover:scale-110 active:scale-95"
-                >
-                  <Star
-                    className={`w-10 h-10 ${
-                      star <= (hoverRating || rating)
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-200'
-                    } transition-colors`}
-                  />
-                </button>
-              ))}
-              {rating > 0 && (
-                <span className="ml-3 text-sm font-bold text-gray-500">{rating}점</span>
-              )}
-            </div>
-          </div>
-
           {/* 태그 */}
           <div>
             <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">

@@ -713,7 +713,7 @@ export const Settings: React.FC = () => {
                         <img src={user.profileImage || undefined} alt={user.nickname} className="w-10 h-10 rounded-full object-cover" />
                         <div>
                           <p className="font-bold text-gray-900">{user.nickname}</p>
-                          <p className="text-xs text-gray-400">매너온도 {user.mannerTemp}℃</p>
+                          <p className="text-xs text-gray-400">매너온도 {Number(user.mannerTemp).toFixed(1)}℃</p>
                         </div>
                       </div>
                       <button

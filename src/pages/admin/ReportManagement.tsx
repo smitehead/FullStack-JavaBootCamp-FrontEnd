@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { AlertTriangle, Search, Filter, CheckCircle2, MoreVertical, User, Gavel, MessageSquare, ShieldAlert, X } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { AlertTriangle, Search, Filter, CheckCircle2, User, Gavel, MessageSquare, ShieldAlert } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { Report } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { showToast } from '@/components/toastService';
+
+const ITEMS_PER_PAGE = 15;
 
 export const ReportManagement: React.FC = () => {
   const { reports, resolveReport, users, products } = useAppContext();
@@ -13,6 +15,8 @@ export const ReportManagement: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [resolveAction, setResolveAction] = useState('');
   const [showResolveModal, setShowResolveModal] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const filteredReports = reports.filter(r => {
     const matchesSearch = r.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -20,6 +24,22 @@ export const ReportManagement: React.FC = () => {
     const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchTerm, statusFilter]);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    if (entries[0].isIntersecting && visibleCount < filteredReports.length) {
+      setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+    }
+  }, [visibleCount, filteredReports.length]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   const handleResolve = () => {
     if (!selectedReport) return;
@@ -99,87 +119,82 @@ export const ReportManagement: React.FC = () => {
         </div>
       </header>
 
-      {/* Report List Table */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50/50 border-b border-gray-100">
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">신고 정보</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">신고 대상</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">신고 사유</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">신고 일시</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">상태</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">관리</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filteredReports.map((report) => {
-                const target = getTargetInfo(report);
-                const reporter = users.find(u => u.id === report.reporterId);
-                return (
-                  <tr key={report.id} className="hover:bg-gray-50/50 transition-colors group">
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">ID: {report.id}</span>
+        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-gray-400" /> 신고 목록
+          </h2>
+          <span className="text-xs font-bold text-gray-400">{filteredReports.length}건</span>
+        </div>
+
+        <div className="divide-y divide-gray-50">
+          {filteredReports.slice(0, visibleCount).map((report) => {
+            const target = getTargetInfo(report);
+            const TargetIcon = target.icon;
+            const reporter = users.find(u => u.id === report.reporterId);
+            return (
+              <div key={report.id} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-4 min-w-0 flex-1">
+                    <div className={`w-8 h-8 rounded-none ${target.bgColor} flex items-center justify-center shrink-0 mt-0.5`}>
+                      <TargetIcon className={`w-4 h-4 ${target.color}`} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${report.status === 'pending' ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'
+                          }`}>
+                          {report.status === 'pending' ? '대기중' : '처리됨'}
+                        </span>
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ID: {report.id}</span>
+                      </div>
+                      <p className="text-sm font-bold text-gray-900 mb-1">{report.reason}</p>
+                      <p className="text-[10px] text-gray-400 font-medium line-clamp-1 mb-1">{report.details}</p>
+                      <div className="flex items-center gap-3 flex-wrap text-xs">
                         <Link
                           to={`/admin/users?nickname=${reporter?.nickname}`}
-                          className="text-sm font-bold text-gray-700 hover:text-[#FF5A5A] transition-colors"
+                          className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
                         >
                           신고자: {reporter?.nickname || '알 수 없음'}
                         </Link>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-8 h-8 rounded-none ${target.bgColor} flex items-center justify-center shrink-0`}>
-                          <target.icon className={`w-4 h-4 ${target.color}`} />
-                        </div>
+                        <span className="text-gray-300">|</span>
                         <Link
                           to={target.link}
-                          className="text-sm font-bold text-gray-700 hover:text-[#FF5A5A] transition-colors line-clamp-1"
+                          className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
                         >
-                          {target.name}
+                          대상: {target.name}
                         </Link>
+                        <span className="text-gray-300">|</span>
+                        <span className="text-[10px] font-medium text-gray-400">{new Date(report.createdAt).toLocaleString()}</span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-bold text-gray-900">{report.reason}</p>
-                      <p className="text-[10px] text-gray-400 font-medium line-clamp-1">{report.details}</p>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-[10px] font-medium text-gray-400">{new Date(report.createdAt).toLocaleString()}</span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className={`inline-flex px-2 py-1 rounded-none text-[10px] font-black ${report.status === 'pending' ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'
-                        }`}>
-                        {report.status === 'pending' ? '대기중' : '처리됨'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      {report.status === 'pending' && (
-                        <button
-                          onClick={() => {
-                            setSelectedReport(report);
-                            setShowResolveModal(true);
-                          }}
-                          className="p-2 text-gray-400 hover:text-[#FF5A5A] hover:bg-red-50 rounded-none transition-all"
-                          title="신고 처리"
-                        >
-                          <ShieldAlert className="w-4 h-4" />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </div>
+                  </div>
+                  {report.status === 'pending' && (
+                    <button
+                      onClick={() => {
+                        setSelectedReport(report);
+                        setShowResolveModal(true);
+                      }}
+                      className="p-2 text-gray-400 hover:text-[#FF5A5A] hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0"
+                      title="신고 처리"
+                    >
+                      <ShieldAlert className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+          {filteredReports.length === 0 && (
+            <div className="px-8 py-20 text-center">
+              <AlertTriangle className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
+            </div>
+          )}
         </div>
-        {filteredReports.length === 0 && (
-          <div className="py-20 text-center">
-            <AlertTriangle className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-            <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
+
+        {visibleCount < filteredReports.length && (
+          <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
+            불러오는 중...
           </div>
         )}
       </div>

@@ -1,20 +1,39 @@
-import React, { useState } from 'react';
-import { Thermometer, Search, User, Calendar, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Thermometer, Search, User, Calendar, TrendingUp, TrendingDown } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
-import { motion } from 'framer-motion';
+
+const ITEMS_PER_PAGE = 15;
 
 export const MannerHistoryManagement: React.FC = () => {
   const { mannerHistory, users } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const getNickname = (userId: string) => {
     return users.find(u => u.id === userId)?.nickname || '알 수 없는 사용자';
   };
 
-  const filteredHistory = mannerHistory.filter(history => 
-    getNickname(history.userId).toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredHistory = mannerHistory.filter(history =>
+    getNickname(history.userId).toLowerCase().includes(searchTerm.toLowerCase()) ||
     history.reason.toLowerCase().includes(searchTerm.toLowerCase())
   ).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchTerm]);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    if (entries[0].isIntersecting && visibleCount < filteredHistory.length) {
+      setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+    }
+  }, [visibleCount, filteredHistory.length]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   return (
     <div className="space-y-6">
@@ -27,8 +46,8 @@ export const MannerHistoryManagement: React.FC = () => {
           <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
             <Search className="text-gray-400 w-4 h-4" />
           </div>
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="닉네임 또는 사유 검색"
             className="w-full pl-10 pr-4 h-full bg-white border border-gray-200 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] focus:border-transparent font-bold text-xs"
             value={searchTerm}
@@ -37,73 +56,66 @@ export const MannerHistoryManagement: React.FC = () => {
         </div>
       </header>
 
-      {/* History List */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50/50 border-b border-gray-100">
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">사용자</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">온도 변화</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">변경 사유</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">일시</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filteredHistory.length > 0 ? (
-                filteredHistory.map((history) => {
-                  const isIncrease = history.newTemp > history.previousTemp;
-                  return (
-                    <tr key={history.id} className="hover:bg-gray-50/50 transition-colors group">
-                      <td className="px-6 py-4">
+        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+            <Thermometer className="w-5 h-5 text-gray-400" /> 변경 이력
+          </h2>
+          <span className="text-xs font-bold text-gray-400">{filteredHistory.length}건</span>
+        </div>
+
+        <div className="divide-y divide-gray-50">
+          {filteredHistory.slice(0, visibleCount).map((history) => {
+            const isIncrease = history.newTemp > history.previousTemp;
+            return (
+              <div key={history.id} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-4 min-w-0 flex-1">
+                    <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <User className="w-4 h-4 text-gray-400" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-3 flex-wrap mb-1">
+                        <span className="text-sm font-black text-gray-900">{getNickname(history.userId)}</span>
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0">
-                            <User className="w-4 h-4 text-gray-400" />
-                          </div>
-                          <span className="text-sm font-bold text-gray-900">{getNickname(history.userId)}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-center gap-3">
                           <span className="text-xs font-medium text-gray-400">{history.previousTemp.toFixed(1)}°C</span>
-                          <ArrowRight className="w-3 h-3 text-gray-300" />
-                          <div className={`flex items-center gap-1 px-2 py-1 rounded-none text-xs font-black ${
-                            isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
-                          }`}>
+                          <span className="text-xs text-gray-300">→</span>
+                          <div className={`flex items-center gap-1 px-2 py-0.5 rounded-none text-xs font-black ${isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                            }`}>
                             {isIncrease ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                             {history.newTemp.toFixed(1)}°C
                           </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-sm font-medium text-gray-600">{history.reason}</p>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex flex-col items-end">
-                          <span className="text-xs font-bold text-gray-900">
-                            {new Date(history.createdAt).toLocaleDateString()}
-                          </span>
-                          <span className="text-[10px] text-gray-400 font-medium">
-                            {new Date(history.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <Thermometer className="w-8 h-8 text-gray-200" />
-                      <p className="text-gray-400 text-sm font-medium">검색 결과가 없습니다.</p>
+                      </div>
+                      <p className="text-sm font-medium text-gray-600">{history.reason}</p>
                     </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                  </div>
+                  <div className="flex flex-col items-end shrink-0">
+                    <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400">
+                      <Calendar className="w-3 h-3" />
+                      {new Date(history.createdAt).toLocaleDateString()}
+                    </div>
+                    <span className="text-[10px] text-gray-400 font-medium">
+                      {new Date(history.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {filteredHistory.length === 0 && (
+            <div className="px-8 py-20 text-center">
+              <Thermometer className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
+            </div>
+          )}
         </div>
+
+        {visibleCount < filteredHistory.length && (
+          <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
+            불러오는 중...
+          </div>
+        )}
       </div>
     </div>
   );

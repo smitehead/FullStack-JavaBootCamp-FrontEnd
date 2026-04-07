@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Bell, Send, Link as LinkIcon, Info, Plus, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/services/api';
@@ -13,6 +13,8 @@ interface AdminNotification {
   createdAt: string;
 }
 
+const ITEMS_PER_PAGE = 15;
+
 export const NotificationManagement: React.FC = () => {
   const [recentNotifications, setRecentNotifications] = useState<AdminNotification[]>([]);
   const [message, setMessage] = useState('');
@@ -20,6 +22,8 @@ export const NotificationManagement: React.FC = () => {
   const [type, setType] = useState('시스템');
   const [isSending, setIsSending] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const fetchRecentNotifications = async () => {
     try {
@@ -33,6 +37,18 @@ export const NotificationManagement: React.FC = () => {
   useEffect(() => {
     fetchRecentNotifications();
   }, []);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    if (entries[0].isIntersecting && visibleCount < recentNotifications.length) {
+      setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+    }
+  }, [visibleCount, recentNotifications.length]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,11 +178,11 @@ export const NotificationManagement: React.FC = () => {
           <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
             <Bell className="w-5 h-5 text-gray-400" /> 발송 내역
           </h2>
-          <span className="text-xs font-bold text-gray-400">최근 50건</span>
+          <span className="text-xs font-bold text-gray-400">{recentNotifications.length}건</span>
         </div>
 
-        <div className="divide-y divide-gray-50 max-h-[600px] overflow-y-auto">
-          {recentNotifications.map((noti) => (
+        <div className="divide-y divide-gray-50">
+          {recentNotifications.slice(0, visibleCount).map((noti) => (
             <div key={noti.notiNo} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
@@ -178,7 +194,7 @@ export const NotificationManagement: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 leading-relaxed">{noti.content}</p>
-                    <div className="flex items-center gap-3 mt-2">
+                    <div className="flex items-center gap-3 mt-2 flex-wrap">
                       <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
                         {noti.type}
                       </span>
@@ -204,6 +220,12 @@ export const NotificationManagement: React.FC = () => {
             </div>
           )}
         </div>
+
+        {visibleCount < recentNotifications.length && (
+          <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
+            불러오는 중...
+          </div>
+        )}
       </div>
     </div>
   );

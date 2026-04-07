@@ -554,13 +554,6 @@ export const MyPage: React.FC = () => {
                               <p className="font-bold text-gray-900">{review.writerNickname}</p>
                               <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</p>
                             </div>
-                            {review.rating && (
-                              <div className="flex items-center gap-1">
-                                {[1, 2, 3, 4, 5].map(s => (
-                                  <Star key={s} className={`w-4 h-4 ${s <= review.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
-                                ))}
-                              </div>
-                            )}
                           </div>
                           {review.tags && review.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-3">

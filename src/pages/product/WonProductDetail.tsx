@@ -450,7 +450,7 @@ export const WonProductDetail: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">판매자</p>
                     <p className="font-bold text-white truncate">{result.seller.nickname}</p>
-                    <p className="text-xs text-white/50">매너온도 {result.seller.mannerTemp}°</p>
+                    <p className="text-xs text-white/50">매너온도 {Number(result.seller.mannerTemp).toFixed(1)}°</p>
                   </div>
                   <Link to={`/seller/${result.seller.sellerNo}`} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors shrink-0">
                     <ChevronRight className="w-4 h-4" />
