@@ -156,7 +156,9 @@ export const InquiryDetail: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="text-sm font-black text-gray-900">운영팀 답변</div>
+                    <div className="text-sm font-black text-gray-900">
+                      {inquiry.adminNickname || '운영팀'} 답변
+                    </div>
                     {inquiry.answeredAt && (
                       <div className="text-xs text-gray-400 font-bold">
                         답변일: {format(new Date(inquiry.answeredAt), 'yyyy.MM.dd HH:mm')}
@@ -177,13 +179,21 @@ export const InquiryDetail: React.FC = () => {
           )}
           
           {inquiry.status === 0 && (
-            <div className="mt-12 p-8 bg-amber-50/50 rounded-3xl border border-dashed border-amber-200 flex flex-col items-center justify-center text-center gap-4">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                <Clock className="w-6 h-6 text-amber-500 animate-pulse" />
-              </div>
-              <div>
-                <p className="text-amber-800 font-bold mb-1">답변을 준비 중입니다.</p>
-                <p className="text-amber-600/70 text-xs font-medium">최대한 신속하게 확인하여 답변해 드리겠습니다.</p>
+            <div className="mt-12 p-8 bg-gray-50 rounded-2xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-gray-200 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5 text-gray-400" />
+                </div>
+                
+                <div className="flex-1">
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <div className="text-sm font-black text-gray-400">운영팀 답변</div>
+                  </div>
+                  
+                  <div className="text-gray-400 leading-relaxed font-bold italic">
+                    답변을 준비 중입니다.
+                  </div>
+                </div>
               </div>
             </div>
           )}
