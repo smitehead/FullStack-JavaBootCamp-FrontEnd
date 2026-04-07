@@ -1,15 +1,45 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Calendar, Clock, CheckCircle2, MessageSquare, User, ShieldCheck, AlertCircle, Info, List } from 'lucide-react';
-import { MOCK_INQUIRIES } from '@/services/mockData';
 import { format } from 'date-fns';
+import api from '@/services/api';
+import { Inquiry } from '@/types';
 
 export const InquiryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const inquiry = MOCK_INQUIRIES.find(inq => inq.inquiryNo === id);
+  const [inquiry, setInquiry] = React.useState<Inquiry | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
 
-  if (!inquiry) {
+  React.useEffect(() => {
+    if (!id) return;
+
+    setIsLoading(true);
+    api.get(`/inquiries/${id}`)
+      .then(res => {
+        setInquiry(res.data);
+        setError(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch inquiry:', err);
+        setError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-10 h-10 border-4 border-red-500/20 border-t-red-500 rounded-full animate-spin mb-4" />
+        <p className="text-gray-400 font-bold">내역을 불러오는 중...</p>
+      </div>
+    );
+  }
+
+  if (error || !inquiry) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <p className="text-gray-400 font-bold">존재하지 않는 문의 내역입니다.</p>
