@@ -80,6 +80,8 @@ export const ProductList: React.FC = () => {
         minPrice: minPrice ? parseInt(minPrice) : undefined,
         maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
         city: city || undefined,
+        district: district || undefined,
+        neighborhood: neighborhood || undefined,
         delivery: delivery || undefined,
         face: faceToFace || undefined,
         sort: sort,        // 'all' 포함 그대로 전송 → 백엔드 default 분기에서 처리
@@ -113,14 +115,14 @@ export const ProductList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, delivery, faceToFace, sort]);
+  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, district, neighborhood, delivery, faceToFace, sort]);
 
   // 필터 변경 시 초기화 + 첨 페이지 로드
   useEffect(() => {
     fetchedPageRef.current = 1;
     setPage(1);
     fetchProducts(1, true);
-  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, delivery, faceToFace, sort]);
+  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, district, neighborhood, delivery, faceToFace, sort]);
 
   // 페이지 변경 시(무한 스크롤) 추가 로드
   useEffect(() => {
@@ -156,8 +158,10 @@ export const ProductList: React.FC = () => {
   const selectedMedium = selectedLarge?.subCategories?.find(c => c.id === mediumCat);
   const selectedSmall = selectedMedium?.subCategories?.find(c => c.id === smallCat);
 
-  const selectedCity = LOCATION_DATA.find(l => l.name === city);
-  const selectedDistrict = selectedCity?.sub?.find(d => d.name === district);
+  const selectedCityData = LOCATION_DATA.find(l => l.name === city);
+  const districtOptions = selectedCityData?.sub || [];
+  const selectedDistrictData = districtOptions.find(d => d.name === district);
+  const neighborhoodOptions = selectedDistrictData?.sub || [];
 
   const updateParams = (newParams: any) => {
     const params = Object.fromEntries(searchParams.entries());
@@ -381,35 +385,55 @@ export const ProductList: React.FC = () => {
             <span className="text-sm font-bold text-gray-700">지역</span>
           </div>
           <div className="p-4 flex items-center space-x-2">
-            <select
-              value={city}
-              onChange={(e) => { setCity(e.target.value); setDistrict(''); setNeighborhood(''); }}
-              className="w-40 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-brand"
-            >
-              <option value="">시/도 선택</option>
-              {LOCATION_DATA.map(l => <option key={l.name} value={l.name}>{l.name}</option>)}
-            </select>
-            <select
-              value={district}
-              onChange={(e) => { setDistrict(e.target.value); setNeighborhood(''); }}
-              disabled={!city}
-              className="w-40 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-brand disabled:bg-gray-50 disabled:text-gray-400"
-            >
-              <option value="">시/군/구 선택</option>
-              {selectedCity?.sub?.map(d => <option key={d.name} value={d.name}>{d.name}</option>)}
-            </select>
-            <select
-              value={neighborhood}
-              onChange={(e) => setNeighborhood(e.target.value)}
-              disabled={!district}
-              className="w-40 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-brand disabled:bg-gray-50 disabled:text-gray-400"
-            >
-              <option value="">읍/면/동 선택</option>
-              {selectedDistrict?.sub?.map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
+            <div className="flex gap-2">
+              {/* 1. 시/도 선택 */}
+              <select
+                value={city}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                  setDistrict('');
+                  setNeighborhood('');
+                }}
+                className="w-32 border border-gray-300 rounded px-2 py-2 text-sm focus:outline-none focus:border-brand"
+              >
+                <option value="">시/도 선택</option>
+                {LOCATION_DATA.map(l => (
+                  <option key={l.name} value={l.name}>{l.short}</option>
+                ))}
+              </select>
+
+              {/* 2. 시/군/구 선택 */}
+              <select
+                value={district}
+                onChange={(e) => {
+                  setDistrict(e.target.value);
+                  setNeighborhood('');
+                }}
+                disabled={!city || districtOptions.length === 0}
+                className="w-32 border border-gray-300 rounded px-2 py-2 text-sm focus:outline-none disabled:bg-gray-50 disabled:text-gray-400"
+              >
+                <option value="">시/군/구 선택</option>
+                {districtOptions.map(sg => (
+                  <option key={sg.name} value={sg.name}>{sg.name || '전체'}</option>
+                ))}
+              </select>
+
+              {/* 3. 읍/면/동 선택 */}
+              <select
+                value={neighborhood}
+                onChange={(e) => setNeighborhood(e.target.value)}
+                disabled={!district || neighborhoodOptions.length === 0}
+                className="w-32 border border-gray-300 rounded px-2 py-2 text-sm focus:outline-none disabled:bg-gray-50 disabled:text-gray-400"
+              >
+                <option value="">읍/면/동 선택</option>
+                {neighborhoodOptions.map(emd => (
+                  <option key={emd} value={emd}>{emd}</option>
+                ))}
+              </select>
+            </div>
             <button
               onClick={() => updateParams({ city, district, neighborhood })}
-              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-brand-dark transition-colors shadow-sm"
+              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-brand-dark transition-colors shadow-sm ml-2"
             >
               적용
             </button>
@@ -473,10 +497,26 @@ export const ProductList: React.FC = () => {
                 <button onClick={() => removeFilter('price')} className="ml-2 hover:text-brand-dark"><X className="w-3 h-3" /></button>
               </div>
             )}
-            {searchParams.get('city') && (
+            {(searchParams.get('city') || searchParams.get('district') || searchParams.get('neighborhood')) && (
               <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
-                <span>{searchParams.get('city')} {searchParams.get('district')} {searchParams.get('neighborhood')}</span>
-                <button onClick={() => removeFilter('location')} className="ml-2 hover:text-brand-dark"><X className="w-3 h-3" /></button>
+                <span>
+                  {LOCATION_DATA.find(l => l.name === searchParams.get('city'))?.short || searchParams.get('city')}
+                  {searchParams.get('district') && ` ${searchParams.get('district')}`}
+                  {searchParams.get('neighborhood') && ` ${searchParams.get('neighborhood')}`}
+                </span>
+                <button onClick={() => {
+                  const newParams = new URLSearchParams(searchParams);
+                  newParams.delete('city');
+                  newParams.delete('district');
+                  newParams.delete('neighborhood');
+                  setSearchParams(newParams);
+                  
+                  setCity('');
+                  setDistrict('');
+                  setNeighborhood('');
+                }} className="ml-2 hover:text-brand-dark">
+                  <X className="w-3 h-3" />
+                </button>
               </div>
             )}
             {delivery && (

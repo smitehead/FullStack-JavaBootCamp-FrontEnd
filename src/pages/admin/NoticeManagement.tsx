@@ -1,15 +1,27 @@
-import React, { useState } from "react";
-import { Plus, Search, Edit2, Trash2, AlertCircle } from "lucide-react";
-import { MOCK_NOTICES } from "@/services/mockData";
-import { Notice, NoticeCategory } from "@/types";
+import React, { useState, useEffect, useCallback } from "react";
+import { Plus, Search, Edit2, Trash2 } from "lucide-react";
+import { NoticeCategory } from "@/types";
+import api from "@/services/api";
+import { showToast } from "@/components/toastService";
+
+interface NoticeItem {
+  id: number;
+  category: string;
+  title: string;
+  description: string;
+  content: string;
+  isImportant: boolean;
+  createdAt: string;
+  isDeleted: number;
+}
 
 export const NoticeManagement: React.FC = () => {
-  const [notices, setNotices] = useState<Notice[]>(MOCK_NOTICES);
+  const [notices, setNotices] = useState<NoticeItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
-  const [noticeToDelete, setNoticeToDelete] = useState<string | null>(null);
+  const [editingNotice, setEditingNotice] = useState<NoticeItem | null>(null);
+  const [noticeToDelete, setNoticeToDelete] = useState<number | null>(null);
 
   // Form States
   const [title, setTitle] = useState("");
@@ -18,70 +30,80 @@ export const NoticeManagement: React.FC = () => {
   const [content, setContent] = useState("");
   const [isImportant, setIsImportant] = useState(false);
 
+  const fetchNotices = useCallback(async () => {
+    try {
+      const res = await api.get("/notices/all");
+      setNotices(res.data || []);
+    } catch {
+      showToast("공지사항 목록을 불러오지 못했습니다.", "error");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotices();
+  }, [fetchNotices]);
+
   const filteredNotices = notices.filter(
     (n) =>
       n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       n.content.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const handleOpenModal = (notice?: Notice) => {
+  const handleOpenModal = (notice?: NoticeItem) => {
     if (notice) {
       setEditingNotice(notice);
       setTitle(notice.title);
-      setCategory(notice.category);
+      setCategory(notice.category as NoticeCategory);
+      setDescription(notice.description || "");
       setContent(notice.content);
       setIsImportant(notice.isImportant);
     } else {
       setEditingNotice(null);
       setTitle("");
       setCategory("업데이트");
+      setDescription("");
       setContent("");
       setIsImportant(false);
     }
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
-    if (editingNotice) {
-      setNotices((prev) =>
-        prev.map((n) =>
-          n.id === editingNotice.id
-            ? {
-              ...n,
-              title,
-              category,
-              description: "",
-              content,
-              isImportant,
-            }
-            : n,
-        ),
-      );
-    } else {
-      const newNotice: Notice = {
-        id: `notice_${Date.now()}`,
-        title,
-        category,
-        description: "",
-        content,
-        isImportant,
-        createdAt: new Date().toISOString(),
-      };
-      setNotices([newNotice, ...notices]);
+  const handleSave = async () => {
+    if (!title.trim() || !content.trim()) {
+      showToast("제목과 내용을 입력해주세요.", "error");
+      return;
     }
-    setIsModalOpen(false);
+    try {
+      const body = { category, title, description, content, isImportant };
+      if (editingNotice) {
+        await api.put(`/notices/${editingNotice.id}`, body);
+        showToast("공지사항이 수정되었습니다.", "success");
+      } else {
+        await api.post("/notices", body);
+        showToast("공지사항이 등록되었습니다.", "success");
+      }
+      setIsModalOpen(false);
+      fetchNotices();
+    } catch {
+      showToast("저장에 실패했습니다.", "error");
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     setNoticeToDelete(id);
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
-    if (noticeToDelete) {
-      setNotices((prev) => prev.filter((n) => n.id !== noticeToDelete));
-      setNoticeToDelete(null);
+  const confirmDelete = async () => {
+    if (noticeToDelete == null) return;
+    try {
+      await api.delete(`/notices/${noticeToDelete}`);
+      showToast("공지사항이 삭제되었습니다.", "success");
       setIsDeleteModalOpen(false);
+      setNoticeToDelete(null);
+      fetchNotices();
+    } catch {
+      showToast("삭제에 실패했습니다.", "error");
     }
   };
 
@@ -123,7 +145,7 @@ export const NoticeManagement: React.FC = () => {
         {filteredNotices.map((notice) => (
           <div
             key={notice.id}
-            className="bg-white p-5 rounded-none shadow-sm border border-gray-100 flex items-start justify-between group hover:shadow-md transition-all"
+            className={`bg-white p-5 rounded-none shadow-sm border border-gray-100 flex items-start justify-between group hover:shadow-md transition-all ${notice.isDeleted ? 'opacity-40' : ''}`}
           >
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-2">
@@ -144,8 +166,13 @@ export const NoticeManagement: React.FC = () => {
                     중요
                   </span>
                 )}
+                {notice.isDeleted === 1 && (
+                  <span className="flex items-center text-[10px] font-black text-gray-400 bg-gray-100 px-2 py-0.5 rounded-none">
+                    삭제됨
+                  </span>
+                )}
                 <span className="text-[10px] font-medium text-gray-400">
-                  {notice.createdAt.split("T")[0]}
+                  {notice.createdAt?.split("T")[0]}
                 </span>
               </div>
               <h3 className="text-base font-black text-gray-900 mb-1">
@@ -153,22 +180,27 @@ export const NoticeManagement: React.FC = () => {
               </h3>
             </div>
 
-            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                onClick={() => handleOpenModal(notice)}
-                className="p-2 hover:bg-gray-100 text-gray-600 rounded-none transition-colors"
-              >
-                <Edit2 className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => handleDelete(notice.id)}
-                className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
+            {!notice.isDeleted && (
+              <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => handleOpenModal(notice)}
+                  className="p-2 hover:bg-gray-100 text-gray-600 rounded-none transition-colors"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleDelete(notice.id)}
+                  className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         ))}
+        {filteredNotices.length === 0 && (
+          <div className="py-20 text-center text-gray-400 text-sm">공지사항이 없습니다.</div>
+        )}
       </div>
 
       {/* Editor Modal */}
@@ -228,6 +260,19 @@ export const NoticeManagement: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-black text-gray-700 mb-2">
+                  요약 설명
+                </label>
+                <input
+                  type="text"
+                  placeholder="목록에 표시될 간단한 설명 (선택)"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-sm"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black text-gray-700 mb-2">
                   상세 내용
                 </label>
                 <textarea
@@ -257,6 +302,7 @@ export const NoticeManagement: React.FC = () => {
           </div>
         </div>
       )}
+
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
@@ -268,9 +314,7 @@ export const NoticeManagement: React.FC = () => {
               정말 삭제하시겠습니까?
             </h2>
             <p className="text-gray-500 font-medium text-center mb-8 text-sm">
-              삭제된 공지사항은 복구할 수 없습니다.
-              <br />
-              신중하게 결정해주세요.
+              삭제된 공지사항은 목록에서 숨겨집니다.
             </p>
 
             <div className="flex gap-3">

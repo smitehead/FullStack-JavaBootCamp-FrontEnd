@@ -1,15 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Product } from '@/types';
+import { Product, CategoryItem } from '@/types';
 import { useAppContext } from '@/context/AppContext';
 import { Heart, Share2, AlertTriangle, Clock, MapPin, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, ArrowLeft, Package, Users, MessageSquare, Reply } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
+import { CATEGORY_DATA } from '@/constants';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { resolveImageUrls, resolveImageUrl } from '../../utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
+
+// 카테고리 ID로 전체 경로를 찾는 헬퍼 함수
+const findCategoryPath = (id: string | number): string[] => {
+  const targetId = String(id);
+  if (!targetId || targetId === '0') return ['기타'];
+
+  for (const large of CATEGORY_DATA) {
+    if (large.id === targetId) return [large.name];
+    if (large.subCategories) {
+      for (const medium of large.subCategories) {
+        if (medium.id === targetId) return [large.name, medium.name];
+        if (medium.subCategories) {
+          for (const small of medium.subCategories) {
+            if (small.id === targetId) return [large.name, medium.name, small.name];
+          }
+        }
+      }
+    }
+  }
+  return ['기타'];
+};
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -78,7 +100,7 @@ export const ProductDetail: React.FC = () => {
         id: String(data.productNo || id),
         title: data.title,
         description: data.description || '',
-        category: data.category || '기타',
+        category: data.categoryName || (data.categoryNo ? findCategoryPath(data.categoryNo).join(' > ') : (data.category || '기타')),
         seller: {
           id: String(data.seller?.sellerNo || 'seller_1'),
           nickname: data.seller?.nickname || '판매자',
@@ -508,13 +530,12 @@ export const ProductDetail: React.FC = () => {
               <nav className="flex items-center text-xs text-gray-400 space-x-1">
                 <span>홈</span>
                 <ChevronRight className="w-3 h-3" />
-                <span>{product.category.split('>')[0] || product.category}</span>
-                {product.category.includes('>') && (
-                  <>
-                    <ChevronRight className="w-3 h-3" />
-                    <span>{product.category.split('>')[1]}</span>
-                  </>
-                )}
+                {String(product.category).split(' > ').map((cat, index, array) => (
+                  <React.Fragment key={index}>
+                    <span>{cat}</span>
+                    {index < array.length - 1 && <ChevronRight className="w-3 h-3" />}
+                  </React.Fragment>
+                ))}
                 <span className="mx-1 text-gray-300">•</span>
                 <span className="flex items-center">
                   <Clock className="w-3 h-3 mr-1" />

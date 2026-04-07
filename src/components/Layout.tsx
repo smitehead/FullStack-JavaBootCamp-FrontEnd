@@ -65,9 +65,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
       <div className={`hidden md:block bg-gray-50 border-b border-gray-100 transition-all duration-300 overflow-hidden ${showTopBar ? 'h-10 opacity-100' : 'h-0 opacity-0'}`}>
         <div className="max-w-[1200px] mx-auto px-6 h-10 flex items-center justify-between text-[11px] font-bold text-gray-500">
           <div className="flex items-center gap-2">
-            <Link to="/notice" className="px-3 py-1 hover:bg-gray-200 rounded-lg transition-colors">공지사항</Link>
-            <Link to="/faq" className="px-3 py-1 hover:bg-gray-200 rounded-lg transition-colors">자주 묻는 질문</Link>
-            <Link to="/inquiry" className="px-3 py-1 hover:bg-gray-200 rounded-lg transition-colors">문의하기</Link>
+            <Link to="/notice" className="px-3 py-1 hover:bg-gray-200 rounded-lg transition-colors">도움이 필요하세요?</Link>
           </div>
           <div className="flex items-center gap-2">
             {!user ? (
@@ -333,10 +331,11 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
         <div className="flex items-center justify-between h-12 pb-2">
           <div className="relative group">
             <button
-              className="flex items-center text-sm font-bold text-gray-700 hover:text-[#FF5A5A] transition-colors"
+              className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
               onClick={() => setIsCategoryOpen(!isCategoryOpen)}
             >
-              카테고리 {isCategoryOpen ? <ChevronUp className="w-4 h-4 ml-1.5 opacity-50" /> : <ChevronDown className="w-4 h-4 ml-1.5 opacity-50" />}
+              <Menu className="w-5 h-5 mr-2.5 opacity-70" />
+              카테고리
             </button>
 
             {isCategoryOpen && (
@@ -463,9 +462,9 @@ const Footer: React.FC = () => {
           <div className="md:col-span-2">
             <h4 className="text-sm font-black text-gray-800 mb-6 uppercase tracking-wider">고객지원</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
-              <li className="flex items-center gap-2"><Sparkles className="w-4 h-4 opacity-50" /><Link to="/notice" className="hover:text-[#FF5A5A] transition-colors">공지사항</Link></li>
-              <li className="flex items-center gap-2"><Info className="w-4 h-4 opacity-50" /><Link to="/faq" className="hover:text-[#FF5A5A] transition-colors">자주 묻는 질문 (FAQ)</Link></li>
-              <li className="flex items-center gap-2"><ChevronDown className="w-4 h-4 opacity-50" /><Link to="/inquiry" className="hover:text-[#FF5A5A] transition-colors">1:1 문의하기</Link></li>
+              <li className="flex items-center gap-2"><Link to="/notice" className="hover:text-[#FF5A5A] transition-colors">공지사항</Link></li>
+              <li className="flex items-center gap-2"><Link to="/faq" className="hover:text-[#FF5A5A] transition-colors">자주 묻는 질문 (FAQ)</Link></li>
+              <li className="flex items-center gap-2"><Link to="/inquiry" className="hover:text-[#FF5A5A] transition-colors">1:1 문의하기</Link></li>
             </ul>
           </div>
 

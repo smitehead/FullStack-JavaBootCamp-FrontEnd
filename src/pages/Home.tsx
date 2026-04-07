@@ -46,7 +46,6 @@ export const Home: React.FC = () => {
   useEffect(() => {
     const fetchPopularProducts = async () => {
       try {
-        // 넉넉하게 가져와서 진행중인 경매만 필터링합니다.
         const response = await api.get('/products?page=1&size=20&sort=popular');
         const content = response.data.content || response.data;
         const mapped = content.map((item: any) => ({
@@ -94,7 +93,7 @@ export const Home: React.FC = () => {
     const timer = setInterval(() => {
       setDirection(1);
       setCurrentBanner((prev) => (prev + 1) % heroBanners.length);
-    }, 6000);
+    }, 8000);
     return () => clearInterval(timer);
   }, [heroBanners.length]);
 
@@ -102,7 +101,7 @@ export const Home: React.FC = () => {
     if (adBanners.length <= 1) return;
     const timer = setInterval(() => {
       setCurrentAdBanner((prev) => (prev + 1) % adBanners.length);
-    }, 7000);
+    }, 8000);
     return () => clearInterval(timer);
   }, [adBanners.length]);
 

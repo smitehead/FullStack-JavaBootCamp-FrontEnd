@@ -90,9 +90,6 @@ const App: React.FC = () => {
             </AdminLayout>
           } />
 
-          {/* Standalone User Routes */}
-          <Route path="/points/card-register" element={<CardRegistration />} />
-
           {/* User Routes */}
           <Route path="/*" element={
             <Layout>
@@ -111,6 +108,7 @@ const App: React.FC = () => {
                 <Route path="/inquiry/create" element={<InquiryCreate />} />
                 <Route path="/inquiry/:id" element={<InquiryDetail />} />
                 <Route path="/register" element={<ProductRegister />} />
+                <Route path="/points/card-register" element={<CardRegistration />} />
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/seller/:id" element={<SellerProfile />} />
                 <Route path="/settings" element={<Settings />} />

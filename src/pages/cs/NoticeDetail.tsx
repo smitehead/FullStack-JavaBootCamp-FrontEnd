@@ -1,18 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Calendar, Eye, Info, AlertTriangle, List } from 'lucide-react';
-import { MOCK_NOTICES } from '@/services/mockData';
+import { ChevronLeft, ChevronRight, Calendar, Info, AlertTriangle, List } from 'lucide-react';
 import { format } from 'date-fns';
+import api from '@/services/api';
+
+interface NoticeItem {
+  id: number;
+  category: string;
+  title: string;
+  description: string;
+  content: string;
+  isImportant: boolean;
+  createdAt: string;
+}
 
 export const NoticeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
-  const noticeIndex = MOCK_NOTICES.findIndex(n => n.id === id);
-  const notice = MOCK_NOTICES[noticeIndex];
-  
-  const prevNotice = noticeIndex > 0 ? MOCK_NOTICES[noticeIndex - 1] : null;
-  const nextNotice = noticeIndex < MOCK_NOTICES.length - 1 ? MOCK_NOTICES[noticeIndex + 1] : null;
+  const [notice, setNotice] = useState<NoticeItem | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNotice = async () => {
+      try {
+        const res = await api.get(`/notices/${id}`);
+        setNotice(res.data);
+      } catch {
+        setNotice(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotice();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <p className="text-gray-400">불러오는 중...</p>
+      </div>
+    );
+  }
 
   if (!notice) {
     return (
@@ -64,7 +92,7 @@ export const NoticeDetail: React.FC = () => {
             {notice.content}
           </div>
 
-          {/* Info Box (Example based on design) */}
+          {/* Info Box */}
           {notice.category === '점검' && (
             <div className="mt-10 p-8 bg-gray-50 rounded-2xl border border-gray-100">
               <div className="flex items-center gap-3 mb-4 text-blue-500">
@@ -74,21 +102,13 @@ export const NoticeDetail: React.FC = () => {
               <div className="space-y-3 text-sm">
                 <div className="flex gap-4">
                   <span className="w-20 text-gray-400 font-bold">점검 일시</span>
-                  <span className="text-gray-900">2024년 5월 22일(수) 오전 02:00 ~ 06:00 (약 4시간)</span>
-                </div>
-                <div className="flex gap-4">
-                  <span className="w-20 text-gray-400 font-bold">점검 대상</span>
-                  <span className="text-gray-900">웹사이트 전체 및 모바일 애플리케이션 전 서비스</span>
-                </div>
-                <div className="flex gap-4">
-                  <span className="w-20 text-gray-400 font-bold">점검 내용</span>
-                  <span className="text-gray-900">서버 안정화 작업, 데이터베이스 최적화 및 보안 업데이트</span>
+                  <span className="text-gray-900">공지사항 내용을 확인해주세요.</span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Warning Box (Example based on design) */}
+          {/* Warning Box */}
           {notice.category === '점검' && (
             <div className="mt-6 p-6 bg-amber-50 rounded-2xl border border-amber-100 flex items-start gap-4">
               <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
@@ -101,71 +121,14 @@ export const NoticeDetail: React.FC = () => {
 
         {/* Navigation Footer */}
         <div className="border-t border-gray-100">
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-            {/* Previous */}
-            <div className="p-6 flex items-center">
-              {prevNotice ? (
-                <Link to={`/notice/${prevNotice.id}`} className="group flex items-center gap-4 w-full">
-                  <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 group-hover:bg-red-50 group-hover:text-red-500 transition-all">
-                    <ChevronLeft className="w-5 h-5" />
-                  </div>
-                  <div className="flex flex-col gap-1 overflow-hidden">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">PREV</span>
-                    <span className="text-sm font-bold text-gray-900 group-hover:text-red-500 transition-colors line-clamp-1">
-                      {prevNotice.title}
-                    </span>
-                  </div>
-                </Link>
-              ) : (
-                <div className="flex items-center gap-4 opacity-30">
-                  <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
-                    <ChevronLeft className="w-5 h-5" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">PREV</span>
-                    <span className="text-sm font-bold text-gray-900">이전 글이 없습니다.</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Back to List */}
-            <div className="p-6 flex items-center justify-center bg-gray-50/30">
-              <Link
-                to="/notice"
-                className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
-              >
-                <List className="w-4 h-4" />
-                목록으로
-              </Link>
-            </div>
-
-            {/* Next */}
-            <div className="p-6 flex items-center justify-end">
-              {nextNotice ? (
-                <Link to={`/notice/${nextNotice.id}`} className="group flex items-center gap-4 w-full text-right justify-end">
-                  <div className="flex flex-col gap-1 overflow-hidden">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">NEXT</span>
-                    <span className="text-sm font-bold text-gray-900 group-hover:text-red-500 transition-colors line-clamp-1">
-                      {nextNotice.title}
-                    </span>
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 group-hover:bg-red-50 group-hover:text-red-500 transition-all">
-                    <ChevronRight className="w-5 h-5" />
-                  </div>
-                </Link>
-              ) : (
-                <div className="flex items-center gap-4 opacity-30 text-right justify-end">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">NEXT</span>
-                    <span className="text-sm font-bold text-gray-900">다음 글이 없습니다.</span>
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
-                    <ChevronRight className="w-5 h-5" />
-                  </div>
-                </div>
-              )}
-            </div>
+          <div className="p-6 flex items-center justify-center bg-gray-50/30">
+            <Link
+              to="/notice"
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
+            >
+              <List className="w-4 h-4" />
+              목록으로
+            </Link>
           </div>
         </div>
       </div>
