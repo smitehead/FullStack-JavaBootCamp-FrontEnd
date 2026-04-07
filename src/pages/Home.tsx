@@ -13,6 +13,10 @@ export const Home: React.FC = () => {
   const { user } = useAppContext();
 
   const handleBannerClick = (link: string) => {
+    if (link === '/search') {
+      navigate(link);
+      return;
+    }
     navigate(user ? link : '/login');
   };
   const scrollRef = useRef<HTMLDivElement>(null);
