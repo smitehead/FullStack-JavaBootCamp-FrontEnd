@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Wallet, CheckCircle2, Clock, XCircle, AlertTriangle, RefreshCw, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Search, Wallet, CheckCircle2, XCircle, AlertTriangle, RefreshCw, Filter } from 'lucide-react';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -26,7 +26,8 @@ export const WithdrawManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   // 확인 모달 상태
   const [confirmModal, setConfirmModal] = useState<{
@@ -37,23 +38,42 @@ export const WithdrawManagement: React.FC = () => {
   }>({ open: false, withdrawNo: null, action: '', item: null });
   const [rejectReason, setRejectReason] = useState('');
 
-  const fetchWithdraws = async () => {
+  const fetchWithdraws = useCallback(async (pageNum: number, reset: boolean) => {
     setIsLoading(true);
     try {
       const res = await api.get('/admin/withdraws', {
-        // 백엔드 서비스가 PageRequest.of(page - 1, size)로 자체 변환하므로 1-indexed 그대로 전송
-        params: { status: statusFilter, page: page, size: 20 },
+        params: { status: statusFilter, page: pageNum, size: 15 },
       });
-      setWithdraws(res.data.content || []);
-      setTotalPages(res.data.totalPages || 1);
+      const content = res.data.content || [];
+      setWithdraws(prev => reset ? content : [...prev, ...content]);
+      setHasMore(pageNum < (res.data.totalPages || 1));
     } catch (e) {
       showToast('출금 목록을 불러오는데 실패했습니다.', 'error');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [statusFilter]);
 
-  useEffect(() => { fetchWithdraws(); }, [statusFilter, page]);
+  useEffect(() => {
+    setPage(1);
+    setWithdraws([]);
+    setHasMore(true);
+    fetchWithdraws(1, true);
+  }, [statusFilter, fetchWithdraws]);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    if (entries[0].isIntersecting && hasMore && !isLoading) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchWithdraws(nextPage, false);
+    }
+  }, [hasMore, isLoading, page, fetchWithdraws]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   const filteredWithdraws = withdraws.filter(w =>
     w.memberNickname.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -93,7 +113,7 @@ export const WithdrawManagement: React.FC = () => {
 
       showToast(`출금 신청이 ${confirmModal.action} 처리되었습니다.`, 'success');
       setConfirmModal({ open: false, withdrawNo: null, action: '', item: null });
-      fetchWithdraws();
+      fetchWithdraws(1, true);
     } catch (e: any) {
       showToast(e.response?.data?.error || '처리 중 오류가 발생했습니다.', 'error');
     }
@@ -158,138 +178,98 @@ export const WithdrawManagement: React.FC = () => {
         </div>
       </header>
 
-      {/* 테이블 */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse table-fixed">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="w-[5%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider">번호</th>
-                <th className="w-[12%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider">신청자</th>
-                <th className="w-[8%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider text-right">출금 금액</th>
-                <th className="w-[16%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider">계좌 정보</th>
-                <th className="w-[7%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider text-center">상태</th>
-                <th className="w-[10%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider">처리 관리자</th>
-                <th className="w-[20%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider">거절 사유</th>
-                <th className="w-[8%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider">신청일시</th>
-                <th className="w-[8%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider">처리일시</th>
-                <th className="w-[6%] px-4 py-3 text-[11px] font-black text-gray-400 uppercase tracking-wider text-center">처리</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={10} className="py-20 text-center text-gray-400 text-sm font-medium">
-                    불러오는 중...
-                  </td>
-                </tr>
-              ) : filteredWithdraws.length === 0 ? (
-                <tr>
-                  <td colSpan={10} className="py-20 text-center">
-                    <Wallet className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-                    <p className="text-gray-400 font-bold text-sm">출금 신청 내역이 없습니다.</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredWithdraws.map(item => (
-                  <tr key={item.withdrawNo} className="hover:bg-gray-50 transition-colors group">
-                    <td className="px-4 py-3 text-xs text-gray-400 font-medium whitespace-nowrap">{item.withdrawNo}</td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="text-sm font-bold text-gray-900">{item.memberNickname}</span>
-                      <span className="text-[10px] text-gray-400 font-medium ml-1.5">#{item.memberNo}</span>
-                    </td>
-                    <td className="px-4 py-3 text-right whitespace-nowrap">
-                      <p className="text-sm font-black text-gray-900">{item.amount.toLocaleString()}원</p>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="text-[10px] font-black px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-none">{item.bankName}</span>
-                        <span className="text-xs font-bold text-gray-900">{item.accountNumber}</span>
-                      </div>
-                      <p className="text-[10px] text-gray-400 font-medium truncate">예금주: {item.accountHolder}</p>
-                    </td>
-                    <td className="px-4 py-3 text-center whitespace-nowrap">{getStatusBadge(item.status)}</td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      {item.adminNickname ? (
-                        <p className="text-xs font-bold text-gray-700">{item.adminNickname}</p>
-                      ) : (
-                        <p className="text-[10px] text-gray-300">-</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {item.rejectReason ? (
-                        <p className="text-[10px] text-rose-400 line-clamp-1 font-medium leading-relaxed" title={item.rejectReason}>{item.rejectReason}</p>
-                      ) : (
-                        <p className="text-[10px] text-gray-300">-</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-[11px] text-gray-400 font-medium whitespace-nowrap">{formatDate(item.createdAt)}</td>
-                    <td className="px-4 py-3 text-[11px] text-gray-400 font-medium whitespace-nowrap">{formatDate(item.processedAt)}</td>
-                    <td className="px-4 py-3 text-center whitespace-nowrap">
-                      {(item.status === '신청' || item.status === '처리중') ? (
-                        <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {item.status === '신청' && (
-                            <button
-                              onClick={() => openConfirm(item, '처리중')}
-                              className="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
-                              title="처리중으로 변경"
-                            >
-                              <RefreshCw className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                          <button
-                            onClick={() => openConfirm(item, '완료')}
-                            className="p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all"
-                            title="출금 완료"
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => openConfirm(item, '거절')}
-                            className="p-1.5 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all"
-                            title="신청 거절"
-                          >
-                            <XCircle className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-[10px] text-gray-300 font-medium">처리완료</span>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+            <Wallet className="w-5 h-5 text-gray-400" /> 출금 신청 목록
+          </h2>
+          <span className="text-xs font-bold text-gray-400">{filteredWithdraws.length}건</span>
         </div>
 
-        {/* 페이지네이션 */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-1 p-6 border-t border-gray-50">
-            <button
-              onClick={() => setPage(prev => Math.max(1, prev - 1))}
-              disabled={page === 1}
-              className="p-2 text-gray-400 hover:text-gray-900 disabled:opacity-30 transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-              <button
-                key={p}
-                onClick={() => setPage(p)}
-                className={`w-8 h-8 text-xs font-black transition-all ${page === p ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/20' : 'text-gray-400 hover:text-gray-900'
-                  }`}
-              >
-                {p}
-              </button>
-            ))}
-            <button
-              onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={page === totalPages}
-              className="p-2 text-gray-400 hover:text-gray-900 disabled:opacity-30 transition-colors"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+        <div className="divide-y divide-gray-50">
+          {filteredWithdraws.map(item => (
+            <div key={item.withdrawNo} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4 min-w-0 flex-1">
+                  <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                    <Wallet className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      {getStatusBadge(item.status)}
+                      <span className="text-sm font-black text-gray-900">{item.memberNickname}</span>
+                      <span className="text-[10px] text-gray-400 font-medium">#{item.memberNo}</span>
+                      <span className="text-sm font-black text-[#FF5A5A]">{item.amount.toLocaleString()}원</span>
+                    </div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-black px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-none">{item.bankName}</span>
+                      <span className="text-xs font-bold text-gray-900">{item.accountNumber}</span>
+                      <span className="text-[10px] text-gray-400 font-medium">예금주: {item.accountHolder}</span>
+                    </div>
+                    <div className="flex items-center gap-3 flex-wrap text-xs">
+                      <span className="text-[10px] font-medium text-gray-400">신청 {formatDate(item.createdAt)}</span>
+                      {item.processedAt && (
+                        <>
+                          <span className="text-gray-300">|</span>
+                          <span className="text-[10px] font-medium text-gray-400">처리 {formatDate(item.processedAt)}</span>
+                        </>
+                      )}
+                      {item.adminNickname && (
+                        <>
+                          <span className="text-gray-300">|</span>
+                          <span className="text-[10px] font-bold text-gray-500">처리자: {item.adminNickname}</span>
+                        </>
+                      )}
+                      {item.rejectReason && (
+                        <>
+                          <span className="text-gray-300">|</span>
+                          <span className="text-[10px] font-medium text-rose-400" title={item.rejectReason}>사유: {item.rejectReason}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {(item.status === '신청' || item.status === '처리중') && (
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    {item.status === '신청' && (
+                      <button
+                        onClick={() => openConfirm(item, '처리중')}
+                        className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-none transition-all"
+                        title="처리중으로 변경"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => openConfirm(item, '완료')}
+                      className="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-none transition-all"
+                      title="출금 완료"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => openConfirm(item, '거절')}
+                      className="p-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-none transition-all"
+                      title="신청 거절"
+                    >
+                      <XCircle className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+          {!isLoading && filteredWithdraws.length === 0 && (
+            <div className="px-8 py-20 text-center">
+              <Wallet className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <p className="text-gray-400 font-bold">출금 신청 내역이 없습니다.</p>
+            </div>
+          )}
+        </div>
+
+        {(hasMore || isLoading) && (
+          <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
+            불러오는 중...
           </div>
         )}
       </div>
