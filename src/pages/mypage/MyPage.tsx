@@ -146,9 +146,12 @@ export const MyPage: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.get('/products/my-bidding');
-      setBiddingProducts((res.data || []).map(mapToProduct));
+      const products = (res.data || []).map(mapToProduct);
+      setBiddingProducts(products);
+      return products;
     } catch (err) {
       console.error('입찰 목록 조회 실패', err);
+      return [];
     } finally {
       setLoading(false);
     }
@@ -191,8 +194,10 @@ export const MyPage: React.FC = () => {
   useEffect(() => {
     if (activeTab !== 'bidding' || !user) return;
 
+    const myMemberNo = getMemberNo(user);
+
     const onPriceUpdate = (e: Event) => {
-      const detail = (e as CustomEvent).detail as { productNo: number | string; currentPrice: number };
+      const detail = (e as CustomEvent).detail as { productNo: number | string; currentPrice: number; bidderNo?: number | string };
       const productId = String(detail.productNo);
       const inList = biddingProductsRef.current.find(p => p.id === productId);
       if (!inList) return;
@@ -202,19 +207,36 @@ export const MyPage: React.FC = () => {
         p.id === productId ? { ...p, currentPrice: detail.currentPrice } : p
       ));
 
-      // 내가 최고입찰자였으면 → 추월당함
-      setBidStatusOverrides(prev => {
-        const effective = prev[productId] || inList.bidStatus;
-        if (effective === 'bidding') {
-          return { ...prev, [productId]: 'outbid' };
-        }
-        return prev;
-      });
+      const bidderNo = detail.bidderNo != null ? Number(detail.bidderNo) : null;
+      if (bidderNo !== null && myMemberNo !== null && bidderNo === myMemberNo) {
+        // 내가 직접 입찰 → 상위입찰자
+        setBidStatusOverrides(prev => ({ ...prev, [productId]: 'bidding' }));
+      } else {
+        // 다른 사람이 입찰 → 내가 상위입찰자였다면 추월변동
+        setBidStatusOverrides(prev => {
+          const effective = prev[productId] || inList.bidStatus;
+          if (effective === 'bidding') {
+            return { ...prev, [productId]: 'outbid' };
+          }
+          return prev;
+        });
+      }
     };
 
     const onPointUpdate = () => {
-      // 내 포인트 변동 = 자동입찰 or 재입찰 → 서버 재조회로 정확한 상태 반영
-      fetchBiddingProducts().then(() => setBidStatusOverrides({}));
+      // 포인트 변동 후 서버 재조회 — 종료된 경매(won/lost)만 오버라이드 해제
+      fetchBiddingProducts().then(newProducts => {
+        setBidStatusOverrides(prev => {
+          if (Object.keys(prev).length === 0) return prev;
+          const next = { ...prev };
+          newProducts.forEach((p: Product & { bidStatus?: string }) => {
+            if (p.bidStatus === 'won' || p.bidStatus === 'lost') {
+              delete next[p.id];
+            }
+          });
+          return next;
+        });
+      });
     };
 
     const onNotification = (e: Event) => {
