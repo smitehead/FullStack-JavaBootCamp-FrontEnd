@@ -1,23 +1,38 @@
-import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Plus, ChevronRight, MessageSquare, Clock, CheckCircle2, Filter } from 'lucide-react';
-import { MOCK_INQUIRIES } from '@/services/mockData';
-import { InquiryCategory, InquiryStatus } from '@/types';
+import { Inquiry, InquiryType, InquiryStatus } from '@/types';
 import { format } from 'date-fns';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
+import api from '@/services/api';
+import { useAppContext } from '@/context/AppContext';
+import React, { useEffect, useState } from 'react';
 
 export const InquiryList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<InquiryCategory | '전체'>('전체');
+  const [selectedType, setSelectedType] = useState<InquiryType | '전체'>('전체');
   const navigate = useNavigate();
+  const { user } = useAppContext();
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const categories: (InquiryCategory | '전체')[] = ['전체', '버그 신고', '환불 문의', '계정 문의', '기타'];
+  useEffect(() => {
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
+    api.get('/inquiries/my', { params: { page: 1, size: 20 } })
+      .then(res => setInquiries(res.data.content || []))
+      .catch(() => { })
+      .finally(() => setIsLoading(false));
+  }, [user]);
 
-  const filteredInquiries = MOCK_INQUIRIES.filter(inquiry => {
+  const categories: (InquiryType | '전체')[] = ['전체', '버그 신고', '포인트 문의', '계정 문의', '기타'];
+
+  const filteredInquiries = inquiries.filter(inquiry => {
     const matchesSearch = inquiry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inquiry.content.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === '전체' || inquiry.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesType = selectedType === '전체' || inquiry.type === selectedType;
+    return matchesSearch && matchesType;
   });
 
   return (
@@ -58,13 +73,13 @@ export const InquiryList: React.FC = () => {
             </div>
           </div>
 
-          {/* Category Tabs */}
+          {/* type Tabs */}
           <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 no-scrollbar">
             {categories.map(cat => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${selectedCategory === cat
+                onClick={() => setSelectedType(cat)}
+                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${selectedType === cat
                   ? 'bg-red-500 text-white shadow-lg shadow-red-200'
                   : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'
                   }`}
@@ -80,20 +95,20 @@ export const InquiryList: React.FC = () => {
               <div className="divide-y divide-gray-50">
                 {filteredInquiries.map(inquiry => (
                   <Link
-                    key={inquiry.id}
-                    to={`/inquiry/${inquiry.id}`}
+                    key={inquiry.inquiryNo}
+                    to={`/inquiry/${inquiry.inquiryNo}`}
                     className="block px-8 py-5 transition-colors group"
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-20 shrink-0">
-                        <span className="text-xs font-bold text-gray-400">{inquiry.category}</span>
+                        <span className="text-xs font-bold text-gray-400">{inquiry.type}</span>
                       </div>
                       <div className="flex-1 flex items-center gap-4 min-w-0">
                         <h3 className="flex-1 text-sm text-gray-900 group-hover:underline underline-offset-4 transition-all line-clamp-1 font-bold">
                           {inquiry.title}
                         </h3>
                         <div className="w-20 shrink-0 text-center">
-                          {inquiry.status === '답변 완료' ? (
+                          {inquiry.status === 1 ? (
                             <span className="px-2 py-0.5 bg-green-50 text-green-600 text-[10px] font-bold rounded-md inline-block">답변완료</span>
                           ) : (
                             <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-bold rounded-md inline-block">답변대기</span>

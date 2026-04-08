@@ -199,7 +199,7 @@ export interface Notice {
   createdAt: string;
 }
 
-export type InquiryCategory = "버그 신고" | "계정 문의" | "기타";
+export type InquiryType = "버그 신고" | "계정 문의" | "포인트 문의" | "기타";
 export type BugType =
   | "기능 작동 오류"
   | "화면/UI 오류"
@@ -207,19 +207,21 @@ export type BugType =
   | "로그인/계정 문제"
   | "속도/접속 저하"
   | "기타";
-export type InquiryStatus = "답변 대기중" | "답변 완료";
+export type InquiryStatus = 0 | 1;
 
 export interface Inquiry {
-  id: string;
+  inquiryNo: string;
   userId: string;
-  category: InquiryCategory;
+  type: InquiryType;
   bugType?: BugType;
   title: string;
   content: string;
   images?: string[];
-  status: InquiryStatus;
+  status: 0 | 1;
   answer?: string;
   answeredAt?: string;
+  adminNo?: number;
+  adminNickname?: string;
   createdAt: string;
 }
 

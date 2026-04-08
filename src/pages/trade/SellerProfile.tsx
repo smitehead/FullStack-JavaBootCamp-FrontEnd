@@ -7,6 +7,8 @@ import { showToast } from '@/components/toastService';
 import api from '@/services/api';
 import { resolveImageUrl, resolveImageUrls } from '@/utils/imageUtils';
 
+import { useAppContext } from '@/context/AppContext';
+
 interface SellerInfo {
   sellerNo: number;
   nickname: string;
@@ -41,6 +43,7 @@ function mapToProduct(item: any): Product {
 export const SellerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAppContext();
   const [activeTab, setActiveTab] = useState<'selling' | 'reviews'>('selling');
   const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'completed'>('all');
   const [seller, setSeller] = useState<SellerInfo | null>(null);
@@ -50,8 +53,12 @@ export const SellerProfile: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
+    const memberNo = id.replace(/[^0-9]/g, '');
+    if (!memberNo) return;
+
     setLoading(true);
-    api.get(`/members/${id}/seller-profile`)
+    // 판매자 프로필 정보 조회
+    api.get(`/members/${memberNo}/seller-profile`)
       .then(res => {
         const data = res.data;
         setSeller({
@@ -65,7 +72,38 @@ export const SellerProfile: React.FC = () => {
       })
       .catch(() => showToast('판매자 정보를 불러오지 못했습니다.', 'error'))
       .finally(() => setLoading(false));
-  }, [id]);
+
+    // 차단 여부 조회
+    if (user) {
+      api.get(`/members/me/blocked/${memberNo}`)
+        .then(res => setIsBlocked(res.data.blocked))
+        .catch(() => { });
+    }
+  }, [id, user]);
+
+  const handleBlockToggle = async () => {
+    if (!user) {
+      showToast('로그인이 필요한 서비스입니다.', 'warning');
+      return;
+    }
+    const memberNo = id?.replace(/[^0-9]/g, '');
+    if (!memberNo) return;
+
+    try {
+      if (isBlocked) {
+        await api.delete(`/members/me/blocked/${memberNo}`);
+        setIsBlocked(false);
+        showToast(`${seller?.nickname}님 차단이 해제되었습니다.`, 'success');
+      } else {
+        await api.post(`/members/me/blocked/${memberNo}`);
+        setIsBlocked(true);
+        showToast(`${seller?.nickname}님을 차단했습니다.`, 'success');
+      }
+    } catch (e: any) {
+      showToast(e.response?.data?.message || '처리 중 오류가 발생했습니다.', 'error');
+    }
+  };
+
 
   const filteredProducts = sellerProducts.filter(p => {
     if (sellingFilter === 'all') return true;
@@ -116,10 +154,7 @@ export const SellerProfile: React.FC = () => {
                   <span>판매상품 {sellerProducts.length}개</span>
                   <div className="flex items-center gap-2 ml-2">
                     <button
-                      onClick={() => {
-                        setIsBlocked(!isBlocked);
-                        showToast(`${seller.nickname}님이 ${!isBlocked ? '차단' : '차단 해제'}되었습니다.`, 'success');
-                      }}
+                      onClick={handleBlockToggle}
                       className={`text-xs font-bold transition-colors flex items-center gap-1 ${isBlocked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
                     >
                       <Shield className={`w-3 h-3 ${isBlocked ? 'fill-blue-500' : ''}`} /> {isBlocked ? '차단풀기' : '차단하기'}

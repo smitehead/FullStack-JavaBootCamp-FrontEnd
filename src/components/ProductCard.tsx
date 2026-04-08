@@ -130,22 +130,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </button>
         )}
 
-        {/* Redesigned Auction Ended Overlay */}
+        {/* 경매 종료 오버레이 디자인 (일반 사용자 시점 & 입찰자 없음 공통) */}
         {product.status === 'completed' && !showBadge && (
           <div className="absolute inset-0 bg-gray-900/70 flex flex-col items-center justify-center backdrop-blur-[2px] p-4 text-center">
-            <div className="bg-white/20 backdrop-blur-md border border-white/30 px-4 py-1.5 rounded-full mb-3">
-              <span className="text-white font-black text-xs tracking-tight">경매 종료</span>
+            
+            {/* 상단 메인 칩: 낙찰 성공/판매 완료와 동일한 스타일 */}
+            <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-black text-sm mb-2 shadow-xl">
+              경매 종료
             </div>
+
             <div className="flex flex-col items-center gap-1.5">
-              <div className="flex items-center gap-1.5 text-white/90 text-[11px] font-bold">
-                <User className="w-3 h-3" />
-                <span>{product.seller.nickname}</span>
-              </div>
-              <div className="flex items-center gap-2 text-white/70 text-[10px] font-medium">
-                <span>관심 {product.participantCount + 2}</span>
-                <span className="w-0.5 h-0.5 bg-white/30 rounded-full"></span>
-                <span>입찰 {product.participantCount}명</span>
-              </div>
+              {/* 입찰자가 있을 때 (2번 디자인) */}
+              {product.participantCount > 0 ? (
+                <div className="text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30">
+                  관심 {product.participantCount + 2} · 입찰 {product.participantCount}명
+                </div>
+              ) : (
+                /* 입찰자가 없을 때 (6번 디자인) */
+                <div className="text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30">
+                  입찰자 없음
+                </div>
+              )}
             </div>
           </div>
         )}

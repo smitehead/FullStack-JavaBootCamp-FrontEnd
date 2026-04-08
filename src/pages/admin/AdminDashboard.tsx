@@ -33,11 +33,11 @@ export const AdminDashboard: React.FC = () => {
   useEffect(() => {
     api.get('/admin/withdraws', { params: { status: '신청', size: 1 } })
       .then(res => setUnprocessedWithdraws(res.data.totalElements || 0))
-      .catch(() => {});
+      .catch(() => { });
 
     api.get('/notices/all')
       .then(res => setRecentNotices((res.data || []).slice(0, 5)))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const unprocessedReports = reports.filter(r => r.status === 'pending').length;
@@ -148,11 +148,10 @@ export const AdminDashboard: React.FC = () => {
                     <p className="text-[10px] font-medium text-gray-400">{notice.createdAt?.split('T')[0]}</p>
                   </div>
                 </div>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-none shrink-0 ${
-                  notice.category === '점검' ? 'bg-orange-100 text-orange-700' :
-                  notice.category === '업데이트' ? 'bg-blue-100 text-blue-700' :
-                  'bg-gray-100 text-gray-700'
-                }`}>
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-none shrink-0 ${notice.category === '점검' ? 'bg-orange-100 text-orange-700' :
+                    notice.category === '업데이트' ? 'bg-blue-100 text-blue-700' :
+                      'bg-gray-100 text-gray-700'
+                  }`}>
                   {notice.category}
                 </span>
               </div>

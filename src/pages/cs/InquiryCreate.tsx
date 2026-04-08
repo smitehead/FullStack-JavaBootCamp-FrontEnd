@@ -1,12 +1,27 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, Camera, X, AlertCircle, CheckCircle2, Send, Info } from 'lucide-react';
-import { InquiryCategory, BugType } from '@/types';
+import { InquiryType, BugType } from '@/types';
 import { showToast } from '@/components/toastService';
+import api from '@/services/api';
+import { useAppContext } from '@/context/AppContext';
+
 
 export const InquiryCreate: React.FC = () => {
   const navigate = useNavigate();
-  const [category, setCategory] = useState<InquiryCategory | ''>('');
+  const { user } = useAppContext();
+
+  React.useEffect(() => {
+    if (!user) {
+      const confirmed = window.confirm('로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?');
+      if (confirmed) {
+        navigate('/login');
+      } else {
+        navigate('/');
+      }
+    }
+  }, [user, navigate]);
+  const [type, setType] = useState<InquiryType | ''>('');
   const [bugType, setBugType] = useState<BugType | ''>('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -14,7 +29,7 @@ export const InquiryCreate: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const categories: InquiryCategory[] = ['버그 신고', '계정 문의', '기타'];
+  const categories: InquiryType[] = ['버그 신고', '계정 문의', '기타'];
   const bugTypes: BugType[] = ['기능 작동 오류', '화면/UI 오류', '데이터/정보 오류', '로그인/계정 문제', '속도/접속 저하', '기타'];
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,18 +45,25 @@ export const InquiryCreate: React.FC = () => {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!category || !title || !content) return;
+    if (!type || !title || !content) return;
 
     setIsSubmitting(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      showToast('문의가 접수되었습니다. 최대한 빨리 답변해 드리겠습니다.', 'info');
+    try {
+      await api.post('/inquiries', {
+        type,
+        bugType: bugType || null,
+        title,
+        content,
+      });
+      showToast('문의가 접수되었습니다. 최대한 빨리 답변해 드리겠습니다.', 'success');
       navigate('/inquiry');
-    }, 1500);
+    } catch (e: any) {
+      showToast(e.response?.data?.message || '문의 접수 중 오류가 발생했습니다.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -58,7 +80,7 @@ export const InquiryCreate: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Category Selection */}
+        {/* type Selection */}
         <div className="space-y-4">
           <label className="block text-sm font-black text-gray-900 uppercase tracking-wider">문의 유형</label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -66,10 +88,10 @@ export const InquiryCreate: React.FC = () => {
               <button
                 key={cat}
                 type="button"
-                onClick={() => setCategory(cat)}
-                className={`px-4 py-3 rounded-2xl text-sm font-bold transition-all border ${category === cat
-                    ? 'bg-red-50 border-red-200 text-red-500 shadow-sm'
-                    : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200 hover:text-gray-600'
+                onClick={() => setType(cat)}
+                className={`px-4 py-3 rounded-2xl text-sm font-bold transition-all border ${type === cat
+                  ? 'bg-red-50 border-red-200 text-red-500 shadow-sm'
+                  : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200 hover:text-gray-600'
                   }`}
               >
                 {cat}
@@ -79,7 +101,7 @@ export const InquiryCreate: React.FC = () => {
         </div>
 
         {/* Bug Type Selection (Conditional) */}
-        {category === '버그 신고' && (
+        {type === '버그 신고' && (
           <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
             <label className="block text-sm font-black text-gray-900 uppercase tracking-wider">버그 유형</label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -89,8 +111,8 @@ export const InquiryCreate: React.FC = () => {
                   type="button"
                   onClick={() => setBugType(type)}
                   className={`px-4 py-3 rounded-2xl text-sm font-bold transition-all border ${bugType === type
-                      ? 'bg-blue-50 border-blue-200 text-blue-500 shadow-sm'
-                      : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200 hover:text-gray-600'
+                    ? 'bg-blue-50 border-blue-200 text-blue-500 shadow-sm'
+                    : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200 hover:text-gray-600'
                     }`}
                 >
                   {type}
@@ -172,10 +194,10 @@ export const InquiryCreate: React.FC = () => {
         <div className="pt-6">
           <button
             type="submit"
-            disabled={isSubmitting || !category || !title || !content}
-            className={`w-full py-5 rounded-2xl font-black text-lg shadow-xl transition-all flex items-center justify-center gap-3 ${isSubmitting || !category || !title || !content
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-red-500 text-white hover:bg-red-600 shadow-red-500/20 active:scale-[0.98]'
+            disabled={isSubmitting || !type || !title || !content}
+            className={`w-full py-5 rounded-2xl font-black text-lg shadow-xl transition-all flex items-center justify-center gap-3 ${isSubmitting || !type || !title || !content
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              : 'bg-red-500 text-white hover:bg-red-600 shadow-red-500/20 active:scale-[0.98]'
               }`}
           >
             {isSubmitting ? (

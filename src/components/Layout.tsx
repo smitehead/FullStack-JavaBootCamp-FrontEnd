@@ -61,24 +61,6 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
-      {/* Top Utility Bar - Disappears on scroll */}
-      <div className={`hidden md:block bg-gray-50 border-b border-gray-100 transition-all duration-300 overflow-hidden ${showTopBar ? 'h-10 opacity-100' : 'h-0 opacity-0'}`}>
-        <div className="max-w-[1200px] mx-auto px-6 h-10 flex items-center justify-between text-[11px] font-bold text-gray-500">
-          <div className="flex items-center gap-2">
-            <Link to="/notice" className="px-3 py-1 hover:bg-gray-200 rounded-lg transition-colors">도움이 필요하세요?</Link>
-          </div>
-          <div className="flex items-center gap-2">
-            {!user ? (
-              <div className="flex items-center gap-2">
-                <Link to="/login" className="px-3 py-1 hover:bg-gray-200 rounded-lg transition-colors">로그인/회원가입</Link>
-              </div>
-            ) : (
-              <span className="text-gray-400 mr-2">{user.nickname}님 환영합니다</span>
-            )}
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Main Header Row */}
         <div className="flex items-center justify-between h-20">

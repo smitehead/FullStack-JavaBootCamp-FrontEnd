@@ -1,18 +1,68 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Calendar, Clock, CheckCircle2, MessageSquare, User, ShieldCheck, AlertCircle, Info, List } from 'lucide-react';
-import { MOCK_INQUIRIES } from '@/services/mockData';
 import { format } from 'date-fns';
+import api from '@/services/api';
+import { Inquiry } from '@/types';
+import { useAppContext } from '@/context/AppContext';
 
 export const InquiryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const inquiry = MOCK_INQUIRIES.find(inq => inq.id === id);
+  const { user } = useAppContext();
+  const [inquiry, setInquiry] = React.useState<Inquiry | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<any>(null);
 
-  if (!inquiry) {
+  React.useEffect(() => {
+    if (!id || !user) {
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    api.get(`/inquiries/${id}`)
+      .then(res => {
+        setInquiry(res.data);
+        setError(null);
+      })
+      .catch(err => {
+        console.error('Failed to fetch inquiry:', err);
+        setError(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [id, user]);
+
+  if (!user && !isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <p className="text-gray-400 font-bold">존재하지 않는 문의 내역입니다.</p>
+        <p className="text-gray-400 font-bold">로그인이 필요한 서비스입니다.</p>
+        <button
+          onClick={() => navigate('/login')}
+          className="px-8 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+        >
+          로그인하러 가기
+        </button>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-10 h-10 border-4 border-red-500/20 border-t-red-500 rounded-full animate-spin mb-4" />
+        <p className="text-gray-400 font-bold">내역을 불러오는 중...</p>
+      </div>
+    );
+  }
+
+  if (error || !inquiry) {
+    const errorMessage = error?.response?.data?.message || '존재하지 않는 문의 내역입니다.';
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <p className="text-gray-400 font-bold">{errorMessage}</p>
         <button
           onClick={() => navigate('/inquiry')}
           className="px-8 py-3 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200"
@@ -37,7 +87,7 @@ export const InquiryDetail: React.FC = () => {
           <div className="flex items-center justify-between gap-4 mb-6">
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 text-xs font-black rounded-md uppercase tracking-wider bg-gray-50 text-gray-500">
-                {inquiry.category}
+                {inquiry.type}
               </span>
               {inquiry.bugType && (
                 <span className="px-3 py-1 bg-blue-50 text-blue-500 text-xs font-black rounded-md uppercase tracking-wider">
@@ -46,7 +96,7 @@ export const InquiryDetail: React.FC = () => {
               )}
             </div>
             
-            {inquiry.status === '답변 완료' ? (
+            {inquiry.status === 1 ? (
               <div className="flex items-center gap-1.5 px-4 py-2 bg-green-50 text-green-600 rounded-full text-xs font-black">
                 <CheckCircle2 className="w-4 h-4" />
                 답변 완료
@@ -98,7 +148,7 @@ export const InquiryDetail: React.FC = () => {
           </div>
 
           {/* Answer Section */}
-          {inquiry.status === '답변 완료' && inquiry.answer && (
+          {inquiry.status === 1 && inquiry.answer && (
             <div className="mt-12 p-8 bg-gray-50 rounded-3xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-red-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/20">
@@ -106,7 +156,9 @@ export const InquiryDetail: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="text-sm font-black text-gray-900">운영팀 답변</div>
+                    <div className="text-sm font-black text-gray-900">
+                      {inquiry.adminNickname || '운영팀'} 답변
+                    </div>
                     {inquiry.answeredAt && (
                       <div className="text-xs text-gray-400 font-bold">
                         답변일: {format(new Date(inquiry.answeredAt), 'yyyy.MM.dd HH:mm')}
@@ -126,14 +178,22 @@ export const InquiryDetail: React.FC = () => {
             </div>
           )}
           
-          {inquiry.status === '답변 대기중' && (
-            <div className="mt-12 p-8 bg-amber-50/50 rounded-3xl border border-dashed border-amber-200 flex flex-col items-center justify-center text-center gap-4">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                <Clock className="w-6 h-6 text-amber-500 animate-pulse" />
-              </div>
-              <div>
-                <p className="text-amber-800 font-bold mb-1">답변을 준비 중입니다.</p>
-                <p className="text-amber-600/70 text-xs font-medium">최대한 신속하게 확인하여 답변해 드리겠습니다.</p>
+          {inquiry.status === 0 && (
+            <div className="mt-12 p-8 bg-gray-50 rounded-2xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-gray-200 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5 text-gray-400" />
+                </div>
+                
+                <div className="flex-1">
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <div className="text-sm font-black text-gray-400">운영팀 답변</div>
+                  </div>
+                  
+                  <div className="text-gray-400 leading-relaxed font-bold italic">
+                    답변을 준비 중입니다.
+                  </div>
+                </div>
               </div>
             </div>
           )}
