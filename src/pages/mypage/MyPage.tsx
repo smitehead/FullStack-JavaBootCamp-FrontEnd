@@ -224,19 +224,8 @@ export const MyPage: React.FC = () => {
     };
 
     const onPointUpdate = () => {
-      // 포인트 변동 후 서버 재조회 — 종료된 경매(won/lost)만 오버라이드 해제
-      fetchBiddingProducts().then(newProducts => {
-        setBidStatusOverrides(prev => {
-          if (Object.keys(prev).length === 0) return prev;
-          const next = { ...prev };
-          newProducts.forEach((p: Product & { bidStatus?: string }) => {
-            if (p.bidStatus === 'won' || p.bidStatus === 'lost') {
-              delete next[p.id];
-            }
-          });
-          return next;
-        });
-      });
+      // 포인트 변동 후 서버 재조회 — 서버가 현재 최고입찰자 여부를 정확히 반환하므로 오버라이드 전체 해제
+      fetchBiddingProducts().then(() => setBidStatusOverrides({}));
     };
 
     const onNotification = (e: Event) => {
