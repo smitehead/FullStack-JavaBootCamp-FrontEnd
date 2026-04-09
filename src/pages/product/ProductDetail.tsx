@@ -126,7 +126,7 @@ export const ProductDetail: React.FC = () => {
         location: data.location || '알 수 없음',
         transactionMethod: data.tradeType === '직거래' ? 'face-to-face' : 'delivery',
         isWishlisted: data.isWishlisted || false,
-        wishlistCount: 0
+        wishlistCount: data.wishlistCount || 0
       };
 
       setProduct(mappedProduct);
@@ -425,9 +425,7 @@ export const ProductDetail: React.FC = () => {
       return;
     }
     try {
-      const memberNo = getMemberNo(user);
-      if (!memberNo) return;
-      const response = await api.post(`/wishlists/toggle?memberNo=${memberNo}&productNo=${product?.id}`);
+      const response = await api.post(`/wishlists/toggle?productNo=${product?.id}`);
       const newState = response.data;
 
       setIsWishlisted(newState);

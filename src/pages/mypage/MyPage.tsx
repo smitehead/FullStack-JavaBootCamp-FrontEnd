@@ -181,6 +181,13 @@ export const MyPage: React.FC = () => {
     }
   }, []);
 
+  // 로그인 시 카운트 표시용 사전 로드 (탭 클릭 전에도 갯수 표시)
+  useEffect(() => {
+    if (!user) return;
+    fetchBiddingProducts();
+    fetchWishlistProducts();
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // 탭 변경 시 해당 데이터 로드
   useEffect(() => {
     if (!user) return;
