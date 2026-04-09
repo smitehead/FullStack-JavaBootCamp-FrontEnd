@@ -1,8 +1,8 @@
 name: Frontend CI/CD (Docker)
-on:
-  workflow_dispatch:
+  
 #test
 on:
+  workflow_dispatch:
   push:
     branches: [ "master" ]
 
