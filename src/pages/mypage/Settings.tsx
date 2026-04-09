@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CURRENT_USER, BLOCKED_USERS, MOCK_PRODUCTS } from '@/services/mockData';
 import { Bell, Shield, ShieldCheck, UserMinus, X, AlertCircle, CheckCircle2, User, CreditCard, Landmark } from 'lucide-react';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
+import { useAppContext } from '@/context/AppContext';
+import { MOCK_PRODUCTS } from '@/services/mockData';
 
 // 카카오 우편번호 서비스 타입 선언
 declare global {
@@ -24,18 +25,49 @@ export const Settings: React.FC = () => {
       setActiveTab(initialTab);
     }
   }, [initialTab]);
-  const [settings, setSettings] = useState(CURRENT_USER.settings || {
+  const { user, logout } = useAppContext();
+  const [settings, setSettings] = useState({
     auctionEnd: true,
     newBid: true,
     marketing: false,
     chat: true
   });
-  const [blockedUsers, setBlockedUsers] = useState(BLOCKED_USERS);
+  const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
+
+  // 프로필 초기 데이터를 API에서 로드
+  useEffect(() => {
+    if (!user) return;
+    api.get(`/members/me`).then(res => {
+      setFormData({
+        nickname: res.data.nickname,
+        email: res.data.email,
+        phoneNum: res.data.phoneNum || '',
+        addrRoad: res.data.addrRoad || '',
+        addrDetail: res.data.addrDetail || '',
+        addrShort: res.data.addrShort || '',
+      });
+      setSettings({
+        auctionEnd: res.data.notifyAuctionEnd === 1,
+        newBid: res.data.notifyNewBid === 1,
+        chat: res.data.notifyChat === 1,
+        marketing: res.data.marketingAgree === 1,
+      });
+    }).catch(() => { });
+  }, [user]);
+
+  // 차단 사용자 목록 로드
+  useEffect(() => {
+    if (activeTab !== 'block' || !user) return;
+    api.get('/members/me/blocked')
+      .then(res => setBlockedUsers(res.data))
+      .catch(() => { });
+  }, [activeTab, user]);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [isProfileSaveModalOpen, setIsProfileSaveModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [withdrawStep, setWithdrawStep] = useState<'confirm' | 'reason' | 'input' | 'success'>('confirm');
+  const [withdrawPassword, setWithdrawPassword] = useState('');
   const [withdrawReason, setWithdrawReason] = useState('');
   const [withdrawReasonDetail, setWithdrawReasonDetail] = useState('');
   const [emailStep, setEmailStep] = useState<'input' | 'verify' | 'success'>('input');
@@ -71,10 +103,10 @@ export const Settings: React.FC = () => {
 
   // Profile Edit state
   const [formData, setFormData] = useState({
-    nickname: CURRENT_USER.nickname,
-    email: CURRENT_USER.email,
-    phoneNum: CURRENT_USER.phoneNum || '',
-    addrRoad: CURRENT_USER.address || '',
+    nickname: '',
+    email: '',
+    phoneNum: '',
+    addrRoad: '',
     addrDetail: '',
     addrShort: '',
   });
@@ -136,21 +168,32 @@ export const Settings: React.FC = () => {
     return () => clearInterval(interval);
   }, [timer]);
 
-  const handleProfileSave = () => {
+  const handleProfileSave = async () => {
     setIsProfileSaving(true);
-    setTimeout(() => {
-      setIsProfileSaving(false);
+    try {
+      await api.put('/members/me/profile', {
+        nickname: formData.nickname,
+        phoneNum: formData.phoneNum,
+        addrRoad: formData.addrRoad,
+        addrDetail: formData.addrDetail,
+        addrShort: formData.addrShort,
+      });
       setIsProfileSaveModalOpen(true);
-    }, 1000);
+      setIsProfileEditMode(false);
+    } catch (e: any) {
+      showToast(e.response?.data?.message || '저장에 실패했습니다.', 'error');
+    } finally {
+      setIsProfileSaving(false);
+    }
   };
 
-  const handlePasswordChange = () => {
+  const handlePasswordChange = async () => {
     if (passwordStep === 'verify') {
-      if (passwordData.current === '1234') {
-        setPasswordStep('input');
-      } else {
-        showToast('현재 비밀번호가 일치하지 않습니다.', 'error');
+      if (!passwordData.current) {
+        showToast('현재 비밀번호를 입력해주세요.', 'warning');
+        return;
       }
+      setPasswordStep('input');
       return;
     }
 
@@ -158,56 +201,92 @@ export const Settings: React.FC = () => {
       showToast('새 비밀번호가 일치하지 않습니다.', 'error');
       return;
     }
-    if (!passwordData.new) {
-      showToast('새 비밀번호를 입력해주세요.', 'error');
+    if (passwordData.new.length < 8) {
+      showToast('비밀번호는 8자 이상이어야 합니다.', 'warning');
       return;
     }
-    // Mock password change
-    setPasswordStep('success');
-    setTimeout(() => {
-      setIsPasswordModalOpen(false);
-      setPasswordStep('verify');
-      setPasswordData({ current: '', new: '', confirm: '' });
-      setVerificationCode('');
-      setIsCodeSent(false);
-    }, 2000);
-  };
 
-  const sendVerificationCode = (type: 'email' | 'password') => {
-    setIsCodeSent(true);
-    setTimer(180); // 3 minutes
-    showToast('인증번호가 발송되었습니다. (테스트용: 123456)', 'success');
-  };
-
-  const verifyCode = (type: 'email' | 'password') => {
-    if (verificationCode === '123456') {
-      if (type === 'email') {
-        setEmailStep('success');
-        setFormData({ ...formData, email: newEmail });
-        setTimeout(() => {
-          setIsEmailModalOpen(false);
-          setEmailStep('input');
-          setNewEmail('');
-          setVerificationCode('');
-          setIsCodeSent(false);
-        }, 2000);
-      } else {
-        setPasswordStep('input');
-        setVerificationCode('');
-        setIsCodeSent(false);
-      }
-    } else {
-      showToast('인증번호가 올바르지 않습니다.', 'error');
+    try {
+      await api.put('/members/me/password', {
+        currentPassword: passwordData.current,
+        newPassword: passwordData.new,
+      });
+      setPasswordStep('success');
+      setTimeout(() => {
+        setIsPasswordModalOpen(false);
+        setPasswordStep('verify');
+        setPasswordData({ current: '', new: '', confirm: '' });
+      }, 2000);
+    } catch (e: any) {
+      showToast(e.response?.data?.message || '비밀번호 변경에 실패했습니다.', 'error');
     }
   };
 
-  const toggleSetting = (key: keyof typeof settings) => {
-    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+  const sendVerificationCode = async (type: 'email' | 'password') => {
+    if (type === 'email') {
+      try {
+        await api.post('/auth/send-email-code', { email: newEmail });
+        setIsCodeSent(true);
+        setTimer(180);
+        showToast('인증번호가 발송되었습니다.', 'success');
+      } catch (e) {
+        showToast('인증번호 발송에 실패했습니다.', 'error');
+      }
+    }
   };
 
-  const unblockUser = (userId: string) => {
-    // For unblock, we can just do it or add another modal, but for now let's just do it to avoid too many modals
-    setBlockedUsers(prev => prev.filter(u => u.id !== userId));
+  const verifyCode = async (type: 'email' | 'password') => {
+    try {
+      const res = await api.post('/auth/verify-email-code', {
+        email: newEmail,
+        code: verificationCode,
+      });
+      if (res.data.verified) {
+        if (type === 'email') {
+          // 이메일 변경 확정 API 호출
+          await api.put('/members/me/email', { email: newEmail });
+          setEmailStep('success');
+          setFormData(prev => ({ ...prev, email: newEmail }));
+          setTimeout(() => {
+            setIsEmailModalOpen(false);
+            setEmailStep('input');
+            setNewEmail('');
+            setVerificationCode('');
+            setIsCodeSent(false);
+          }, 2000);
+        }
+      } else {
+        showToast('인증번호가 올바르지 않습니다.', 'error');
+      }
+    } catch (e) {
+      showToast('인증 확인에 실패했습니다.', 'error');
+    }
+  };
+
+  const toggleSetting = async (key: keyof typeof settings) => {
+    const newVal = !settings[key];
+    setSettings(prev => ({ ...prev, [key]: newVal }));
+
+    try {
+      await api.put('/members/me/notification', {
+        [key === 'auctionEnd' ? 'auctionEnd' :
+          key === 'newBid' ? 'newBid' :
+            key === 'chat' ? 'chat' : 'marketing']: newVal,
+      });
+    } catch (e) {
+      setSettings(prev => ({ ...prev, [key]: !newVal }));
+      showToast('설정 변경에 실패했습니다.', 'error');
+    }
+  };
+
+  const unblockUser = async (memberNo: number) => {
+    try {
+      await api.delete(`/members/me/blocked/${memberNo}`);
+      setBlockedUsers(prev => prev.filter(u => u.memberNo !== memberNo));
+      showToast('차단이 해제되었습니다.', 'success');
+    } catch (e) {
+      showToast('차단 해제에 실패했습니다.', 'error');
+    }
   };
 
   const [accounts, setAccounts] = useState<{
@@ -242,30 +321,9 @@ export const Settings: React.FC = () => {
   };
 
   const validateWithdrawal = () => {
-    // (1) Points must be 0
-    if (CURRENT_USER.points > 0) {
-      return '보유 중인 포인트가 0원이어야 탈퇴할 수 있습니다.';
+    if ((user?.points || 0) > 0) {
+      return `포인트를 먼저 출금해 주세요. 현재 잔액: ${user?.points?.toLocaleString()}P`;
     }
-
-    // (2) No items currently being sold
-    const activeProducts = MOCK_PRODUCTS.filter(p => p.seller.id === CURRENT_USER.id && p.status === 'active');
-    if (activeProducts.length > 0) {
-      return '진행 중인 경매 물품이 있어 탈퇴할 수 없습니다.';
-    }
-
-    // (3) No items currently being traded (buying/selling in progress)
-    // Trading means status is 'paid' or 'shipped' but not 'completed' or 'canceled'
-    const tradingProducts = MOCK_PRODUCTS.filter(p => {
-      const isSeller = p.seller.id === CURRENT_USER.id;
-      const isBuyer = p.bids.some(b => b.bidderName === CURRENT_USER.nickname && p.winnerId === CURRENT_USER.id);
-      const isTrading = ['paid', 'shipped'].includes(p.status);
-      return (isSeller || isBuyer) && isTrading;
-    });
-
-    if (tradingProducts.length > 0) {
-      return '거래 중인 물품이 있어 탈퇴할 수 없습니다.';
-    }
-
     return null;
   };
 
@@ -274,16 +332,27 @@ export const Settings: React.FC = () => {
     setWithdrawStep('confirm');
   };
 
-  const handleWithdraw = () => {
-    if (withdrawInput !== '탈퇴하겠습니다') {
-      setWithdrawError('문구를 정확히 입력해주세요.');
+  const handleWithdraw = async () => {
+    if (withdrawInput !== user?.nickname) {
+      setWithdrawError('닉네임이 일치하지 않습니다.');
       return;
     }
-    // In a real app, update DB (is_active = false)
-    setWithdrawStep('success');
-    setTimeout(() => {
-      navigate('/');
-    }, 3000);
+
+    try {
+      await api.delete('/members/me', {
+        data: {
+          password: withdrawPassword,
+          reason: withdrawReason,
+          reasonDetail: withdrawReasonDetail,
+        }
+      });
+      setWithdrawStep('success');
+      setTimeout(() => {
+        logout();
+      }, 2000);
+    } catch (e: any) {
+      setWithdrawError(e.response?.data?.message || '탈퇴 처리에 실패했습니다.');
+    }
   };
 
   return (
@@ -970,29 +1039,29 @@ export const Settings: React.FC = () => {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-red-700">보유 포인트 0원</span>
-                        {CURRENT_USER.points === 0 ? (
+                        {(user?.points || 0) === 0 ? (
                           <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                         ) : (
                           <span className="text-[10px] font-bold text-red-500 bg-white px-2 py-0.5 rounded-md shadow-sm">
-                            {CURRENT_USER.points.toLocaleString()}P 보유 중
+                            {user?.points?.toLocaleString()}P 보유 중
                           </span>
                         )}
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-red-700">판매 중인 물건 없음</span>
-                        {MOCK_PRODUCTS.filter(p => p.seller.id === CURRENT_USER.id && p.status === 'active').length === 0 ? (
+                        {MOCK_PRODUCTS.filter(p => String(p.seller.id) === String(user?.id) && p.status === 'active').length === 0 ? (
                           <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                         ) : (
                           <span className="text-[10px] font-bold text-red-500 bg-white px-2 py-0.5 rounded-md shadow-sm">
-                            {MOCK_PRODUCTS.filter(p => p.seller.id === CURRENT_USER.id && p.status === 'active').length}건 진행 중
+                            {MOCK_PRODUCTS.filter(p => String(p.seller.id) === String(user?.id) && p.status === 'active').length}건 진행 중
                           </span>
                         )}
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-red-700">거래 중인 물품 없음</span>
                         {MOCK_PRODUCTS.filter(p => {
-                          const isSeller = p.seller.id === CURRENT_USER.id;
-                          const isBuyer = p.bids.some(b => b.bidderName === CURRENT_USER.nickname && p.winnerId === CURRENT_USER.id);
+                          const isSeller = String(p.seller.id) === String(user?.id);
+                          const isBuyer = p.bids.some(b => b.bidderName === user?.nickname && String(p.winnerId) === String(user?.id));
                           const isTrading = ['paid', 'shipped'].includes(p.status);
                           return (isSeller || isBuyer) && isTrading;
                         }).length === 0 ? (
@@ -1000,8 +1069,8 @@ export const Settings: React.FC = () => {
                         ) : (
                           <span className="text-[10px] font-bold text-red-500 bg-white px-2 py-0.5 rounded-md shadow-sm">
                             {MOCK_PRODUCTS.filter(p => {
-                              const isSeller = p.seller.id === CURRENT_USER.id;
-                              const isBuyer = p.bids.some(b => b.bidderName === CURRENT_USER.nickname && p.winnerId === CURRENT_USER.id);
+                              const isSeller = String(p.seller.id) === String(user?.id);
+                              const isBuyer = p.bids.some(b => b.bidderName === user?.nickname && String(p.winnerId) === String(user?.id));
                               const isTrading = ['paid', 'shipped'].includes(p.status);
                               return (isSeller || isBuyer) && isTrading;
                             }).length}건 거래 중
@@ -1088,13 +1157,14 @@ export const Settings: React.FC = () => {
                 </div>
               )}
 
-              {withdrawStep === 'input' && (
+               {withdrawStep === 'input' && (
                 <div>
-                  <h3 className="text-2xl font-black text-gray-900 mb-2">확인 문구 입력</h3>
-                  <p className="text-sm text-gray-500 mb-8">안전한 탈퇴를 위해 아래 문구를 정확히 입력해주세요.</p>
+                  <h3 className="text-2xl font-black text-gray-900 mb-2">필수 정보 입력</h3>
+                  <p className="text-sm text-gray-500 mb-8">안전한 탈퇴를 위해 본인 확인이 필요합니다.</p>
 
                   <div className="bg-gray-50 p-4 rounded-2xl text-center mb-6 border border-gray-100">
-                    <p className="text-lg font-black text-emerald-600 tracking-wider">탈퇴하겠습니다</p>
+                    <p className="text-xs text-gray-400 mb-1">인증 문구 (닉네임)</p>
+                    <p className="text-lg font-black text-red-600 tracking-wider font-mono">{user?.nickname}</p>
                   </div>
 
                   <input
@@ -1104,14 +1174,23 @@ export const Settings: React.FC = () => {
                       setWithdrawInput(e.target.value);
                       setWithdrawError(null);
                     }}
-                    placeholder="위 문구를 입력하세요"
-                    className={`w-full p-4 bg-gray-50 border rounded-2xl mb-2 focus:outline-none transition-all ${withdrawError ? 'border-red-500' : 'border-gray-100 focus:border-emerald-500'}`}
+                    placeholder="닉네임을 정확히 입력하세요"
+                    className={`block w-full px-5 py-4 bg-gray-50 border rounded-2xl text-sm outline-none mb-4 transition-all ${withdrawError ? 'border-red-500' : 'border-gray-100 focus:border-red-500'}`}
                   />
+
+                  <input
+                    type="password"
+                    placeholder="비밀번호 확인"
+                    value={withdrawPassword}
+                    onChange={(e) => setWithdrawPassword(e.target.value)}
+                    className="block w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none mb-4 focus:border-red-500 transition-all"
+                  />
+                  
                   {withdrawError && <p className="text-xs text-red-500 mb-6 ml-2">{withdrawError}</p>}
 
                   <button
                     onClick={handleWithdraw}
-                    className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg"
+                    className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg active:scale-95"
                   >
                     회원 탈퇴 완료
                   </button>
