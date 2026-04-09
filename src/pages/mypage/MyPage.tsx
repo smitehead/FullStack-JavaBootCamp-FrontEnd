@@ -46,6 +46,7 @@ export const MyPage: React.FC = () => {
       ? tab as TabType : 'selling';
   });
   const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [biddingFilter, setBiddingFilter] = useState<'all' | 'leader' | 'outbid' | 'lost'>('all');
 
   interface ReviewItem {
     reviewNo: number;
@@ -282,6 +283,13 @@ export const MyPage: React.FC = () => {
     return p.status === sellingFilter;
   });
 
+  const filteredBiddingProducts = biddingProducts.filter(p => {
+    const status = bidStatusOverrides[p.id] || p.bidStatus;
+    if (biddingFilter === 'all') return true;
+    if (biddingFilter === 'leader') return status === 'bidding' || status === 'won';
+    return status === biddingFilter;
+  });
+
   // 입찰 상태별 뱃지
   // bidding  → 상위입찰자 (경매 진행 중, 내가 최고 입찰자)
   // outbid   → 추월변동   (경매 진행 중, 다른 사람에게 추월당함) — SSE 오버라이드
@@ -308,6 +316,11 @@ export const MyPage: React.FC = () => {
           </span>
         );
       case 'lost':
+        return (
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-50 text-gray-500 rounded-full text-xs font-bold">
+            <XCircle className="w-3 h-3" /> 낙찰실패
+          </span>
+        );
       default:
         return null;
     }
@@ -470,6 +483,17 @@ export const MyPage: React.FC = () => {
                 ))}
               </div>
             )}
+
+            {activeTab === 'bidding' && (
+              <div className="flex bg-gray-100 p-1 rounded-xl">
+                {(['all', 'leader', 'outbid', 'lost'] as const).map(filter => (
+                  <button key={filter} onClick={() => setBiddingFilter(filter)}
+                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${biddingFilter === filter ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    {filter === 'all' ? '전체' : filter === 'leader' ? '상위입찰' : filter === 'outbid' ? '추월변동' : '낙찰실패'}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {loading ? (
@@ -494,8 +518,8 @@ export const MyPage: React.FC = () => {
                 ))}
 
                 {/* 입찰 내역 */}
-                {activeTab === 'bidding' && biddingProducts.map(p => {
-                  const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
+                {activeTab === 'bidding' && filteredBiddingProducts.map(p => {
+                    const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
                   return (
                     <div key={p.id} className="flex flex-col gap-2">
                       <ProductCard
@@ -537,7 +561,9 @@ export const MyPage: React.FC = () => {
               </div>
 
               {activeTab === 'selling' && filteredSellingProducts.length === 0 && <EmptyState message="해당하는 판매 상품이 없습니다." />}
-              {activeTab === 'bidding' && biddingProducts.length === 0 && <EmptyState message="입찰 참여 내역이 없습니다." />}
+              {activeTab === 'bidding' && filteredBiddingProducts.length === 0 && (
+                <EmptyState message={biddingFilter === 'all' ? "입찰 참여 내역이 없습니다." : "조건에 맞는 입찰 내역이 없습니다."} />
+              )}
               {activeTab === 'purchased' && purchasedProducts.length === 0 && <EmptyState message="구매 완료된 상품이 없습니다." />}
               {activeTab === 'wishlist' && wishlistProducts.length === 0 && <EmptyState message="찜한 상품이 없습니다." />}
               {activeTab === 'reviews' && (
