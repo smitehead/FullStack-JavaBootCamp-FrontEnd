@@ -575,7 +575,7 @@ export const ProductDetail: React.FC = () => {
           {/* Seller Profile */}
           <div className="mb-8">
             <div className="flex justify-between items-start mb-1">
-              <Link to={`/seller/${product.seller.id}`} className="font-bold text-lg text-gray-900 hover:text-orange-500 transition-colors">{product.seller.nickname}</Link>
+              <Link to={`/seller/${product.seller.id}`} className="font-bold text-lg text-gray-900 hover:text-gray-600 transition-colors">{product.seller.nickname}</Link>
               <div className="flex items-center gap-2">
                 {(isFinished && product.winnerId === user?.id) && (
                   <button
@@ -588,7 +588,7 @@ export const ProductDetail: React.FC = () => {
                 )}
                 <Link to={`/seller/${product.seller.id}`}>
                   {product.seller.profileImage ? (
-                    <img src={product.seller.profileImage} alt="Seller" className="w-10 h-10 rounded-full object-cover border border-gray-100 hover:border-orange-500 transition-all" />
+                    <img src={product.seller.profileImage} alt="Seller" className="w-10 h-10 rounded-full object-cover border border-gray-100 hover:border-gray-300 transition-all" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border border-gray-100">
                       <Users className="w-6 h-6 text-gray-300" />

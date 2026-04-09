@@ -131,7 +131,6 @@ export const SellerProfile: React.FC = () => {
 
       {/* Profile Header */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10 mb-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full -mr-32 -mt-32 opacity-50 z-0"></div>
 
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
           {/* Profile Image */}
@@ -215,13 +214,13 @@ export const SellerProfile: React.FC = () => {
           <nav className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
             <button
               onClick={() => setActiveTab('selling')}
-              className={`w-full flex items-center px-6 py-4 font-bold text-sm border-l-4 transition-colors ${activeTab === 'selling' ? 'border-emerald-600 bg-emerald-50 text-emerald-900' : 'border-transparent text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-emerald-50 text-emerald-900' : 'text-gray-600 hover:bg-gray-50'}`}
             >
               <Package className="w-5 h-5 mr-3" /> 판매 상품
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`w-full flex items-center px-6 py-4 font-bold text-sm border-l-4 transition-colors ${activeTab === 'reviews' ? 'border-emerald-600 bg-emerald-50 text-emerald-900' : 'border-transparent text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-emerald-50 text-emerald-900' : 'text-gray-600 hover:bg-gray-50'}`}
             >
               <MessageSquare className="w-5 h-5 mr-3" /> 거래 후기
             </button>

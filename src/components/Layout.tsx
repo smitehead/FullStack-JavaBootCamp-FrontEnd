@@ -267,7 +267,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                       <img
                         src={user.profileImage || undefined}
                         alt="Profile"
-                        className="w-10 h-10 rounded-full border-2 border-white shadow-md hover:ring-2 hover:ring-[#FF5A5A]/30 transition-all object-cover"
+                        className="w-10 h-10 rounded-full border-2 border-white shadow-md hover:ring-2 hover:ring-gray-200 transition-all object-cover"
                       />
                     </button>
 
