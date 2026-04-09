@@ -4,7 +4,7 @@ import api from '@/services/api';
 import { ProductCard } from '@/components/ProductCard';
 import { CATEGORY_DATA, LOCATION_DATA } from '@/constants';
 import { showToast } from '@/components/toastService';
-import { ChevronRight, Search, RotateCcw, X, Plus, Minus, Loader2, MapPin } from 'lucide-react';
+import { ChevronRight, Search, RotateCcw, X, Plus, Minus, Loader2, MapPin, LocateFixed } from 'lucide-react';
 import { Product } from '@/types';
 import { resolveImageUrls } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
@@ -232,7 +232,7 @@ export const ProductList: React.FC = () => {
       const foundDistrict = foundCity.sub.find(d => d.name === sigunguPart);
       if (foundDistrict) {
         targetDistrict = foundDistrict.name;
-        
+
         // 3. 읍/면/동 찾기
         if (bnamePart && foundDistrict.sub.includes(bnamePart)) {
           targetNeighborhood = bnamePart;
@@ -480,14 +480,15 @@ export const ProductList: React.FC = () => {
             >
               적용
             </button>
+            <div className="flex-grow"></div>
             <button
               onClick={handleCurrentLocationFilter}
-              className="ml-2 p-2.5 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors group relative"
-              title="내 현재 위치로 필터링"
+              className="p-2 text-gray-400 hover:text-[#FF5A5A] transition-colors group relative"
+              title="내 위치로 필터링"
             >
-              <MapPin className="w-4 h-4 text-[#FF5A5A]" />
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                현재 위치로 찾기
+              <LocateFixed className="w-5 h-5" />
+              <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                내 위치로 찾기
               </div>
             </button>
           </div>
@@ -563,7 +564,7 @@ export const ProductList: React.FC = () => {
                   newParams.delete('district');
                   newParams.delete('neighborhood');
                   setSearchParams(newParams);
-                  
+
                   setCity('');
                   setDistrict('');
                   setNeighborhood('');
