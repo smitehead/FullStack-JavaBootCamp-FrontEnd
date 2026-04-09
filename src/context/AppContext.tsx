@@ -195,6 +195,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     const eventSource = new EventSource(`/api/sse/subscribe?clientId=${String(memberNo)}`);
 
+    // 최초 연결 및 재연결 감지 — 재연결 시 누락 이벤트를 보정하기 위해 window 이벤트 발행
+    let isFirstConnect = true;
+    eventSource.addEventListener('connect', () => {
+      if (isFirstConnect) {
+        isFirstConnect = false;
+        return; // 최초 연결은 무시 (컴포넌트가 마운트 시 이미 fetch)
+      }
+      window.dispatchEvent(new CustomEvent('sse:reconnected'));
+    });
+
     eventSource.addEventListener('pointUpdate', (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);

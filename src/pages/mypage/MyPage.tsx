@@ -244,13 +244,20 @@ export const MyPage: React.FC = () => {
       }
     };
 
+    const onReconnected = () => {
+      // SSE 재연결 시 누락된 이벤트 보정 — 서버에서 최신 상태 재조회
+      fetchBiddingProducts().then(() => setBidStatusOverrides({}));
+    };
+
     window.addEventListener('sse:priceUpdate', onPriceUpdate);
     window.addEventListener('sse:pointUpdate', onPointUpdate);
     window.addEventListener('sse:notification', onNotification);
+    window.addEventListener('sse:reconnected', onReconnected);
     return () => {
       window.removeEventListener('sse:priceUpdate', onPriceUpdate);
       window.removeEventListener('sse:pointUpdate', onPointUpdate);
       window.removeEventListener('sse:notification', onNotification);
+      window.removeEventListener('sse:reconnected', onReconnected);
     };
   }, [activeTab, user, fetchBiddingProducts]);
 
