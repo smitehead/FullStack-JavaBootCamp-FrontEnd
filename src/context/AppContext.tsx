@@ -118,6 +118,7 @@ interface AppContextType {
   updateUserPoints: (userId: string, points: number) => void;
   updateCurrentUserPoints: (points: number) => void;
   updateCurrentUserProfileImage: (profileImageUrl: string) => void;
+  updateCurrentUserAddress: (address: string) => void;
   registerAccount: (account: Account) => Promise<void>;
   sendAdminMessage: (userId: string, content: string) => void;
   toggleMaintenanceMode: (enabled: boolean, message?: string) => void;
@@ -568,6 +569,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const updateCurrentUserAddress = (address: string) => {
+    if (user) {
+      const updated = { ...user, address };
+      setUser(updated);
+      sessionStorage.setItem('java_user', JSON.stringify(updated));
+    }
+  };
+
   const registerAccount = async (account: Account) => {
     try {
       await api.post('/points/accounts', account);
@@ -619,6 +628,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       updateUserPoints,
       updateCurrentUserPoints,
       updateCurrentUserProfileImage,
+      updateCurrentUserAddress,
       registerAccount,
       sendAdminMessage,
       toggleMaintenanceMode,

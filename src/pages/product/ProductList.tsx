@@ -3,7 +3,8 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 import { ProductCard } from '@/components/ProductCard';
 import { CATEGORY_DATA, LOCATION_DATA } from '@/constants';
-import { ChevronRight, Search, RotateCcw, X, Plus, Minus, Loader2 } from 'lucide-react';
+import { showToast } from '@/components/toastService';
+import { ChevronRight, Search, RotateCcw, X, Plus, Minus, Loader2, MapPin } from 'lucide-react';
 import { Product } from '@/types';
 import { resolveImageUrls } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
@@ -201,8 +202,50 @@ export const ProductList: React.FC = () => {
 
   const resetAll = () => {
     setSearchParams({});
-    setExpandedLarge(null);
     setExpandedMedium(null);
+  };
+
+  const handleCurrentLocationFilter = () => {
+    if (!user?.address) {
+      showToast('로그인 후 주소를 등록해주세요.', 'warning');
+      return;
+    }
+
+    // 주소 형식: "서울 강남구 역삼동"
+    const parts = user.address.split(' ');
+    if (parts.length < 1) return;
+
+    const sidoPart = parts[0];
+    const sigunguPart = parts[1] || '';
+    const bnamePart = parts[2] || '';
+
+    // 1. 시/도 찾기
+    const foundCity = LOCATION_DATA.find(l => l.short === sidoPart || l.name === sidoPart);
+    if (!foundCity) return;
+
+    let targetCity = foundCity.name;
+    let targetDistrict = '';
+    let targetNeighborhood = '';
+
+    // 2. 시/군/구 찾기
+    if (sigunguPart) {
+      const foundDistrict = foundCity.sub.find(d => d.name === sigunguPart);
+      if (foundDistrict) {
+        targetDistrict = foundDistrict.name;
+        
+        // 3. 읍/면/동 찾기
+        if (bnamePart && foundDistrict.sub.includes(bnamePart)) {
+          targetNeighborhood = bnamePart;
+        }
+      }
+    }
+
+    // 상태 업데이트 및 실제 검색 실행
+    setCity(targetCity);
+    setDistrict(targetDistrict);
+    setNeighborhood(targetNeighborhood);
+    updateParams({ city: targetCity, district: targetDistrict, neighborhood: targetNeighborhood });
+    showToast(`내 동네(${user.address})로 필터링되었습니다.`, 'success');
   };
 
   const removeFilter = (key: string) => {
@@ -436,6 +479,16 @@ export const ProductList: React.FC = () => {
               className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-brand-dark transition-colors shadow-sm ml-2"
             >
               적용
+            </button>
+            <button
+              onClick={handleCurrentLocationFilter}
+              className="ml-2 p-2.5 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors group relative"
+              title="내 현재 위치로 필터링"
+            >
+              <MapPin className="w-4 h-4 text-[#FF5A5A]" />
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                현재 위치로 찾기
+              </div>
             </button>
           </div>
         </div>

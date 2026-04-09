@@ -25,7 +25,7 @@ export const Settings: React.FC = () => {
       setActiveTab(initialTab);
     }
   }, [initialTab]);
-  const { user, logout } = useAppContext();
+  const { user, logout, updateCurrentUserAddress } = useAppContext();
   const [settings, setSettings] = useState({
     auctionEnd: true,
     newBid: true,
@@ -37,6 +37,14 @@ export const Settings: React.FC = () => {
   // 프로필 초기 데이터를 API에서 로드
   useEffect(() => {
     if (!user) return;
+    
+    // API 로드 전 초기값 설정 (user context 기반)
+    setFormData(prev => ({
+      ...prev,
+      nickname: user.nickname,
+      addrShort: user.address || '',
+    }));
+
     api.get(`/members/me`).then(res => {
       setFormData({
         nickname: res.data.nickname,
@@ -178,6 +186,12 @@ export const Settings: React.FC = () => {
         addrDetail: formData.addrDetail,
         addrShort: formData.addrShort,
       });
+      
+      // 전역 상태(Header 등) 업데이트를 위해 호출
+      if (updateCurrentUserAddress) {
+        updateCurrentUserAddress(formData.addrShort);
+      }
+      
       setIsProfileSaveModalOpen(true);
       setIsProfileEditMode(false);
     } catch (e: any) {
@@ -348,6 +362,7 @@ export const Settings: React.FC = () => {
       });
       setWithdrawStep('success');
       setTimeout(() => {
+        navigate('/');
         logout();
       }, 2000);
     } catch (e: any) {
@@ -401,7 +416,7 @@ export const Settings: React.FC = () => {
               </button>
               <button
                 onClick={openWithdrawModal}
-                className="w-full flex items-center px-6 py-4 font-bold text-sm text-red-500 hover:bg-red-50 transition-colors"
+                className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 <UserMinus className="w-5 h-5 mr-3" /> 회원 탈퇴
               </button>
@@ -1019,12 +1034,14 @@ export const Settings: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsWithdrawModalOpen(false)}></div>
           <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
-            <button
-              onClick={() => setIsWithdrawModalOpen(false)}
-              className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            {withdrawStep !== 'success' && (
+              <button
+                onClick={() => setIsWithdrawModalOpen(false)}
+                className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            )}
 
             <div className="p-10">
               {withdrawStep === 'confirm' && (
