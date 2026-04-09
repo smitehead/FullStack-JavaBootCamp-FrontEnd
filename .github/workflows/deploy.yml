@@ -1,4 +1,6 @@
 name: Frontend CI/CD (Docker)
+on:
+  workflow_dispatch:
 #test
 on:
   push:
