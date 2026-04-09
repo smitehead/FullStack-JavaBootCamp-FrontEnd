@@ -244,11 +244,17 @@ export const ProductDetail: React.FC = () => {
       // 로그인 사용자: AppContext SSE가 이미 연결됨 → window custom event만 수신 (중복 연결 방지)
       const onPriceUpdate = (e: Event) => handlePriceUpdate((e as CustomEvent).detail);
       const onPointUpdate = (e: Event) => handlePointUpdate((e as CustomEvent).detail);
+      const onReconnected = () => {
+        // SSE 재연결 시 누락된 가격/입찰 정보 보정
+        fetchProduct();
+      };
       window.addEventListener('sse:priceUpdate', onPriceUpdate);
       window.addEventListener('sse:pointUpdate', onPointUpdate);
+      window.addEventListener('sse:reconnected', onReconnected);
       return () => {
         window.removeEventListener('sse:priceUpdate', onPriceUpdate);
         window.removeEventListener('sse:pointUpdate', onPointUpdate);
+        window.removeEventListener('sse:reconnected', onReconnected);
       };
     } else {
       // 비로그인 사용자: priceUpdate 수신을 위해 SSE 직접 연결
