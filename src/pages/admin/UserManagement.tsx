@@ -264,8 +264,8 @@ export const UserManagement: React.FC = () => {
                         {user.nickname}
                       </button>
                       {!user.isWithdrawn && (
-                        <div className="relative inline-block group/role">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-none text-[10px] font-black cursor-pointer ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                        <div className="relative inline-flex group/role">
+                          <span className={`inline-flex items-center h-[18px] px-2 rounded-none text-[10px] font-black cursor-pointer ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
                             {user.isAdmin ? <Shield className="w-2.5 h-2.5 mr-1" /> : <UserIcon className="w-2.5 h-2.5 mr-1" />}
                             {user.isAdmin ? '관리자' : '일반'}
                           </span>
@@ -285,7 +285,7 @@ export const UserManagement: React.FC = () => {
                           </div>
                         </div>
                       )}
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-none text-[10px] font-black ${user.status === '영구정지' ? 'bg-black text-white' :
+                      <span className={`inline-flex items-center h-[18px] px-2 rounded-none text-[10px] font-black ${user.status === '영구정지' ? 'bg-black text-white' :
                         user.status === '정지' ? 'bg-red-100 text-red-700' :
                           'bg-green-100 text-green-700'
                         }`}>

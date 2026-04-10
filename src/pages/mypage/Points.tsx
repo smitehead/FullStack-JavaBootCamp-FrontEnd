@@ -89,24 +89,36 @@ export const Points: React.FC = () => {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
+    const y = date.getFullYear().toString().slice(-2);
     const m = (date.getMonth() + 1).toString().padStart(2, '0');
     const d = date.getDate().toString().padStart(2, '0');
     const h = date.getHours().toString().padStart(2, '0');
     const min = date.getMinutes().toString().padStart(2, '0');
-    return `${m}.${d} ${h}:${min}`;
+    return `${y}.${m}.${d} ${h}:${min}`;
   };
 
   const getTypeLabel = (type: string) => {
     switch (type) {
+      case 'all': return '전체유형';
+      case 'charge': return '충전';
+      case 'withdraw': return '출금';
+      case 'use': return '입찰정산';
       case '충전': return '충전';
       case '출금': return '출금';
-      case '낙찰차감': return '입찰사용';
+      case '낙찰차감': return '입찰차감';
+      case '입찰차감': return '입찰참여';
+      case '입찰환불': return '입찰환불';
       case '판매정산': return '판매정산';
+      case '낙찰대금수령': return '판매정산';
+      case '거래취소환불': return '거래취소환불';
+      case '거래취소회수': return '거래취소회수';
+      case '관리자추가': return '관리자추가';
+      case '관리자회수': return '관리자회수';
       default: return type;
     }
   };
 
-  const isIncome = (type: string) => type === '충전' || type === '판매정산';
+  const isIncome = (item: PointHistoryItem) => item.amount > 0;
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
@@ -164,10 +176,10 @@ export const Points: React.FC = () => {
               {showTypeFilters && (
                 <div className="absolute right-0 mt-2 w-28 bg-white border border-gray-100 rounded-xl shadow-xl z-10 overflow-hidden">
                   {[
-                    { label: '전체', value: 'all' },
+                    { label: '전체유형', value: 'all' },
                     { label: '충전', value: 'charge' },
                     { label: '출금', value: 'withdraw' },
-                    { label: '입찰/정산', value: 'use' },
+                    { label: '입찰정산', value: 'use' },
                   ].map((opt) => (
                     <button
                       key={opt.value}
@@ -222,8 +234,8 @@ export const Points: React.FC = () => {
                     {item.reason && <p className="text-xs text-gray-400">{item.reason}</p>}
                   </div>
                   <div className="text-right flex flex-col gap-1">
-                    <p className={`text-xl font-bold ${isIncome(item.type) ? 'text-blue-500' : 'text-gray-900'}`}>
-                      {isIncome(item.type) ? '+' : '-'}{Math.abs(item.amount).toLocaleString()}P
+                    <p className={`text-xl font-bold ${isIncome(item) ? 'text-blue-500' : 'text-gray-900'}`}>
+                      {isIncome(item) ? '+' : ''}{item.amount.toLocaleString()}P
                     </p>
                     <p className="text-sm text-gray-400 font-medium">{item.balance.toLocaleString()}P</p>
                   </div>

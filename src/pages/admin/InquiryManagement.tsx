@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Search, MessageSquare, CheckCircle2, Trash2, Send, User } from 'lucide-react';
 import { MOCK_INQUIRIES, MOCK_USERS } from '@/services/mockData';
 import { Inquiry } from '@/types';
@@ -24,6 +24,12 @@ export const InquiryManagement: React.FC = () => {
     const matchesType = selectedType === '전체' || i.type === selectedType;
     return matchesSearch && matchesTab && matchesType;
   });
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleString();
+  };
 
   const handleSelectInquiry = (inquiry: Inquiry) => {
     setSelectedInquiry(inquiry);
@@ -65,8 +71,8 @@ export const InquiryManagement: React.FC = () => {
     setIsDeleteModalOpen(false);
   };
 
-  const getUserNickname = (userId: string) => {
-    return MOCK_USERS.find(u => u.id === userId)?.nickname || '알 수 없는 사용자';
+  const getUserNickname = (inquiry: Inquiry) => {
+    return inquiry.memberNickname || '알 수 없는 사용자';
   };
 
   return (
@@ -154,22 +160,21 @@ export const InquiryManagement: React.FC = () => {
                   }`}>
                   {inquiry.status === 1 ? '답변 완료' : '답변 대기중'}
                 </span>
-                <span className="text-[10px] font-medium text-gray-400">{inquiry.createdAt.split('T')[0]}</span>
+                <span className="text-[10px] font-medium text-gray-400">{inquiry.inquiryNo}</span>
               </div>
               <h3 className="text-sm font-black text-gray-900 mb-1 line-clamp-1">{inquiry.title}</h3>
-              <div className="flex items-center space-x-2 text-[11px] text-gray-500 font-medium">
-                <User className="w-3 h-3" />
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/admin/users?nickname=${getUserNickname(inquiry.userId)}`);
-                  }}
-                  className="hover:text-[#FF5A5A] hover:underline transition-colors"
+              <div className="flex items-center gap-3 flex-wrap text-xs">
+                <Link
+                  to={`/admin/users?nickname=${getUserNickname(inquiry)}`}
+                  className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  {getUserNickname(inquiry.userId)}
-                </button>
-                <span>•</span>
-                <span>{inquiry.type}</span>
+                  작성자: {getUserNickname(inquiry)}
+                </Link>
+                <span className="text-gray-300">|</span>
+                <span className="font-bold text-gray-500">{inquiry.type}</span>
+                <span className="text-gray-300">|</span>
+                <span className="text-[10px] font-medium text-gray-400">{formatDate(inquiry.createdAt)}</span>
               </div>
             </button>
           ))}
@@ -197,13 +202,13 @@ export const InquiryManagement: React.FC = () => {
                     <User className="w-4 h-4 text-gray-400" />
                   </div>
                   <div>
-                    <button
-                      onClick={() => navigate(`/admin/users?nickname=${getUserNickname(selectedInquiry.userId)}`)}
+                    <Link
+                      to={`/admin/users?nickname=${getUserNickname(selectedInquiry)}`}
                       className="text-sm font-black text-gray-900 hover:text-[#FF5A5A] hover:underline transition-colors block text-left"
                     >
-                      {getUserNickname(selectedInquiry.userId)}
-                    </button>
-                    <p className="text-[10px] font-medium text-gray-500">{selectedInquiry.createdAt}</p>
+                      작성자: {getUserNickname(selectedInquiry)}
+                    </Link>
+                    <p className="text-[10px] font-medium text-gray-500">{formatDate(selectedInquiry.createdAt)}</p>
                   </div>
                 </div>
                 <h4 className="text-base font-black text-gray-900 mb-1">{selectedInquiry.title}</h4>
@@ -217,8 +222,10 @@ export const InquiryManagement: React.FC = () => {
                       <CheckCircle2 className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-gray-900">관리자 답변</p>
-                      <p className="text-[10px] font-medium text-gray-500">{selectedInquiry.answeredAt}</p>
+                      <p className="text-sm font-black text-gray-900">
+                        관리자 답변 {selectedInquiry.adminNickname && `(${selectedInquiry.adminNickname})`}
+                      </p>
+                      <p className="text-[10px] font-medium text-gray-500">{formatDate(selectedInquiry.answeredAt || '')}</p>
                     </div>
                   </div>
                   <p className="text-sm text-gray-700 font-medium leading-relaxed whitespace-pre-wrap">{selectedInquiry.answer}</p>

@@ -212,6 +212,7 @@ export type InquiryStatus = 0 | 1;
 export interface Inquiry {
   inquiryNo: string;
   userId: string;
+  memberNickname?: string;
   type: InquiryType;
   bugType?: BugType;
   title: string;
