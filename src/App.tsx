@@ -58,6 +58,7 @@ import { ReportManagement } from '@/pages/admin/ReportManagement';
 import { ActivityLogManagement } from '@/pages/admin/ActivityLogManagement';
 import { MannerHistoryManagement } from '@/pages/admin/MannerHistoryManagement';
 import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
+// ㅎㅇ요
 
 const App: React.FC = () => {
   return (
