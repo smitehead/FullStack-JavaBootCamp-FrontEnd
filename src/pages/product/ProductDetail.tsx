@@ -129,9 +129,12 @@ export const ProductDetail: React.FC = () => {
         wishlistCount: data.wishlistCount || 0
       };
 
-      setProduct(mappedProduct);
-      setBidAmount((mappedProduct.currentPrice || 0) + (mappedProduct.minBidIncrement || 0));
-      setAutoBidMaxAmount((mappedProduct.currentPrice || 0) + (mappedProduct.minBidIncrement || 0) * 5);
+      // SSE가 이미 더 높은 가격을 수신했다면 되돌리지 않음 (fetchProduct 경쟁 조건 방지)
+      const priceToUse = Math.max(mappedProduct.currentPrice, latestSsePriceRef.current);
+      const finalProduct = { ...mappedProduct, currentPrice: priceToUse };
+      setProduct(finalProduct);
+      setBidAmount((priceToUse || 0) + (mappedProduct.minBidIncrement || 0));
+      setAutoBidMaxAmount((priceToUse || 0) + (mappedProduct.minBidIncrement || 0) * 5);
       setIsWishlisted(mappedProduct.isWishlisted || false);
 
       // 입찰 참여 여부 및 최고입찰자 여부 계산 (timestamp 기준 정렬 후 마지막 입찰자 확인)
@@ -140,12 +143,17 @@ export const ProductDetail: React.FC = () => {
           (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
         const userHasBid = sortedBids.some(b => b.bidderName === user.nickname);
-        const userIsHighest = sortedBids.length > 0 && sortedBids[0].bidderName === user.nickname;
         setHasBid(userHasBid);
-        setIsHighestBidder(userIsHighest);
+        // SSE가 이미 최고입찰자 여부를 판단했다면 fetchProduct가 덮어쓰지 않음
+        if (!sseHasRunRef.current) {
+          const userIsHighest = sortedBids.length > 0 && sortedBids[0].bidderName === user.nickname;
+          setIsHighestBidder(userIsHighest);
+        }
       } else {
         setHasBid(false);
-        setIsHighestBidder(false);
+        if (!sseHasRunRef.current) {
+          setIsHighestBidder(false);
+        }
       }
 
       // 활성 자동입찰 조회 (로그인 사용자만)
@@ -207,16 +215,34 @@ export const ProductDetail: React.FC = () => {
   useEffect(() => {
     if (!product || !product.id) return;
 
-    const handlePriceUpdate = (detail: { productNo: number | string; currentPrice: number }) => {
+    const handlePriceUpdate = (detail: { productNo: number | string; currentPrice: number; bidderNo?: number | null }) => {
       if (String(detail.productNo) !== String(product.id)) return;
+
+      // SSE 수신 가격을 ref에 기록 — fetchProduct 경쟁 조건 방지
+      latestSsePriceRef.current = Math.max(latestSsePriceRef.current, detail.currentPrice);
+      sseHasRunRef.current = true;
+
       setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
-      if (!justBidRef.current) {
-        // 타인이 입찰 → 내가 최고입찰자였어도 추월당함
+
+      // bidderNo로 입찰자 식별 → justBidRef와 관계없이 정확한 뱃지 업데이트
+      const myMemberNo = getMemberNo(user);
+      const bidderNo = detail.bidderNo != null ? Number(detail.bidderNo) : null;
+      const isMyBid = bidderNo !== null && myMemberNo !== null && bidderNo === myMemberNo;
+
+      if (isMyBid) {
+        // 내 입찰 SSE 확인 — 최고입찰자로 확정
+        setIsHighestBidder(true);
+        setHasBid(true);
+      } else {
+        // 타인 입찰 → 추월당함 (justBidRef 관계없이 뱃지 즉시 반영)
         setIsHighestBidder(false);
-        const title = product?.title || '이 상품';
-        const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
-        showToast(`'${truncatedTitle}' 상품에 새로운 입찰이 생겼습니다!`, 'bid');
+        if (!justBidRef.current) {
+          const title = product?.title || '이 상품';
+          const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
+          showToast(`'${truncatedTitle}' 상품에 새로운 입찰이 생겼습니다!`, 'bid');
+        }
       }
+
       const loginMemberNo = getMemberNo(user);
       if (loginMemberNo) {
         api.get(`/auto-bid/active?productNo=${detail.productNo}`)
@@ -245,7 +271,9 @@ export const ProductDetail: React.FC = () => {
       const onPriceUpdate = (e: Event) => handlePriceUpdate((e as CustomEvent).detail);
       const onPointUpdate = (e: Event) => handlePointUpdate((e as CustomEvent).detail);
       const onReconnected = () => {
-        // SSE 재연결 시 누락된 가격/입찰 정보 보정
+        // SSE 재연결 시 누락된 정보 보정 — SSE 플래그 초기화 후 fetchProduct가 권위 있는 출처로 동작
+        sseHasRunRef.current = false;
+        latestSsePriceRef.current = 0;
         fetchProduct();
       };
       window.addEventListener('sse:priceUpdate', onPriceUpdate);
@@ -272,6 +300,10 @@ export const ProductDetail: React.FC = () => {
   const prevPriceRef = React.useRef<number>(0);
   // 내가 직접 입찰한 직후 SSE priceUpdate 토스트 중복 방지용 플래그
   const justBidRef = React.useRef(false);
+  // SSE로 수신한 가장 최근 가격 — fetchProduct 경쟁 조건으로 인한 가격 역행 방지
+  const latestSsePriceRef = React.useRef<number>(0);
+  // SSE가 최고입찰자 여부를 결정했는지 여부 — fetchProduct가 덮어쓰지 못하도록 보호
+  const sseHasRunRef = React.useRef(false);
 
   useEffect(() => {
     if (product && prevPriceRef.current > 0 && product.currentPrice > prevPriceRef.current) {
