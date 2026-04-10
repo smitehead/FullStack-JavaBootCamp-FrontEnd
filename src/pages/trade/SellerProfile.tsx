@@ -50,6 +50,7 @@ export const SellerProfile: React.FC = () => {
   const [sellerProducts, setSellerProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isBlocked, setIsBlocked] = useState(false);
+  const [reviews, setReviews] = useState<any[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -57,10 +58,12 @@ export const SellerProfile: React.FC = () => {
     if (!memberNo) return;
 
     setLoading(true);
-    // 판매자 프로필 정보 조회
-    api.get(`/members/${memberNo}/seller-profile`)
-      .then(res => {
-        const data = res.data;
+    Promise.all([
+      api.get(`/members/${memberNo}/seller-profile`),
+      api.get(`/reviews/target/${memberNo}`),
+    ])
+      .then(([profileRes, reviewRes]) => {
+        const data = profileRes.data;
         setSeller({
           sellerNo: data.sellerNo,
           nickname: data.nickname,
@@ -69,6 +72,7 @@ export const SellerProfile: React.FC = () => {
           joinedAt: data.joinedAt ? new Date(data.joinedAt).toLocaleDateString() : '-',
         });
         setSellerProducts((data.products || []).map(mapToProduct));
+        setReviews(reviewRes.data || []);
       })
       .catch(() => showToast('판매자 정보를 불러오지 못했습니다.', 'error'))
       .finally(() => setLoading(false));
@@ -199,7 +203,7 @@ export const SellerProfile: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">받은 후기</p>
-                  <p className="text-xl font-black text-gray-900">0<span className="text-sm font-medium ml-1">건</span></p>
+                  <p className="text-xl font-black text-gray-900">{reviews.length}<span className="text-sm font-medium ml-1">건</span></p>
                 </div>
               </div>
             </div>
@@ -260,10 +264,44 @@ export const SellerProfile: React.FC = () => {
           )}
 
           {activeTab === 'reviews' && (
-            <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
-              <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-gray-500 font-medium">받은 후기가 없습니다.</p>
-            </div>
+            reviews.length === 0 ? (
+              <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
+                <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <p className="text-gray-500 font-medium">받은 후기가 없습니다.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {reviews.map((review: any) => (
+                  <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 p-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-bold text-gray-700">{review.writerNickname}</span>
+                      <span className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    {review.tags && review.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {review.tags.map((tag: string) => (
+                          <span key={tag} className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-xl">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {review.content && (
+                      <p className="text-sm text-gray-600 leading-relaxed mb-3">{review.content}</p>
+                    )}
+                    {review.productTitle && (
+                      <Link
+                        to={`/products/${review.productNo}`}
+                        className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
+                      >
+                        <Package className="w-3.5 h-3.5" />
+                        {review.productTitle}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )
           )}
         </div>
       </div>
