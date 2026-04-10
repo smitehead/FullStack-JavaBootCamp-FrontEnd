@@ -235,7 +235,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       }
     });
 
-    // 실시간 알림 수신
+    // 실시간 알림수신입니다
     eventSource.addEventListener('notification', (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
