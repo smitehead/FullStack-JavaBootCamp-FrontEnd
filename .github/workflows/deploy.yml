@@ -52,6 +52,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
             cd /home/ubuntu/app
-            sudo docker-compose stop frontend
-            sudo docker-compose rm -f frontend
-            sudo docker-compose up -d --build frontend
+            # 🔥 V1(docker-compose)에서 V2(docker compose) 최신 문법으로 변경
+            sudo docker compose stop frontend
+            sudo docker compose rm -f frontend
+            sudo docker compose up -d --build frontend
