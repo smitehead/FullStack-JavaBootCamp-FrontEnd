@@ -54,7 +54,8 @@ export const MyPage: React.FC = () => {
     writerNo: number;
     writerNickname: string;
     targetNo: number;
-    rating: number | null;
+    productNo: number | null;
+    productTitle: string | null;
     tags: string[];
     content: string;
     createdAt: string;
@@ -614,9 +615,18 @@ export const MyPage: React.FC = () => {
                             </div>
                           )}
                           {review.content && (
-                            <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="bg-gray-50 rounded-xl p-4 mb-3">
                               <p className="text-sm text-gray-700 leading-relaxed">{review.content}</p>
                             </div>
+                          )}
+                          {review.productTitle && (
+                            <Link
+                              to={`/products/${review.productNo}`}
+                              className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
+                            >
+                              <Package className="w-3.5 h-3.5" />
+                              {review.productTitle}
+                            </Link>
                           )}
                         </div>
                       ))
