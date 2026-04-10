@@ -8,7 +8,6 @@ interface NoticeItem {
   id: number;
   category: string;
   title: string;
-  description: string;
   content: string;
   isImportant: boolean;
   createdAt: string;

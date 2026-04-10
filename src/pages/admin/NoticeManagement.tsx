@@ -8,7 +8,6 @@ interface NoticeItem {
   id: number;
   category: string;
   title: string;
-  description: string;
   content: string;
   isImportant: boolean;
   createdAt: string;
@@ -30,7 +29,6 @@ export const NoticeManagement: React.FC = () => {
   // Form States
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<NoticeCategory>("업데이트");
-  const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [isImportant, setIsImportant] = useState(false);
 
@@ -74,14 +72,12 @@ export const NoticeManagement: React.FC = () => {
       setEditingNotice(notice);
       setTitle(notice.title);
       setCategory(notice.category as NoticeCategory);
-      setDescription(notice.description || "");
       setContent(notice.content);
       setIsImportant(notice.isImportant);
     } else {
       setEditingNotice(null);
       setTitle("");
       setCategory("업데이트");
-      setDescription("");
       setContent("");
       setIsImportant(false);
     }
@@ -94,7 +90,7 @@ export const NoticeManagement: React.FC = () => {
       return;
     }
     try {
-      const body = { category, title, description, content, isImportant };
+      const body = { category, title, content, isImportant };
       if (editingNotice) {
         await api.put(`/notices/${editingNotice.id}`, body);
         showToast("공지사항이 수정되었습니다.", "success");
@@ -293,19 +289,6 @@ export const NoticeManagement: React.FC = () => {
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-sm"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black text-gray-700 mb-2">
-                  요약 설명
-                </label>
-                <input
-                  type="text"
-                  placeholder="목록에 표시될 간단한 설명 (선택)"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-sm"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
 
