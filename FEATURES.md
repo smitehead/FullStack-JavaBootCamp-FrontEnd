@@ -133,12 +133,3 @@
 
 ---
 
-## DB 적용 필요 쿼리
-
-```sql
--- 별점 컬럼 제거
-ALTER TABLE REVIEW DROP COLUMN RATING;
-
--- 공지 요약설명 컬럼 제거
-ALTER TABLE NOTICE DROP COLUMN DESCRIPTION;
-```
