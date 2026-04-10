@@ -522,7 +522,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       {/* 강제 로그아웃 알림 모달 (다른 기기에서 로그인 감지) */}
       {forceLogoutModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+          <div className="absolute inset-0 bg-black/40"></div>
           <div className="relative bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -549,7 +549,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       {/* Logout Confirmation Modal */}
       {isLogoutModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsLogoutModalOpen(false)}></div>
+          <div className="absolute inset-0 bg-black/40" onClick={() => setIsLogoutModalOpen(false)}></div>
           <div className="relative bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6">

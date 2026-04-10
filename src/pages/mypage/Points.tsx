@@ -78,10 +78,14 @@ export const Points: React.FC = () => {
   };
 
   const filteredHistory = history.filter((item) => {
-    const matchType = typeFilter === 'all' || item.type === typeFilter ||
-      (typeFilter === 'charge' && item.type === '충전') ||
-      (typeFilter === 'withdraw' && item.type === '출금') ||
-      (typeFilter === 'use' && (item.type === '낙찰차감' || item.type === '판매정산'));
+    const matchType = typeFilter === 'all' || 
+      (typeFilter === 'charge' && (item.type === '충전' || item.type === '관리자추가')) ||
+      (typeFilter === 'withdraw' && (item.type === '출금' || item.type === '관리자회수' || item.type === '거래취소회수')) ||
+      (typeFilter === 'use' && (
+        item.type === '입찰정산' || item.type === '낙찰차감' || item.type === '입찰차감' || 
+        item.type === '입찰참여' || item.type === '입찰환불' || item.type === '판매정산' || 
+        item.type === '낙찰대금수령' || item.type === '거래취소환불' || item.type === '입찰취소환불'
+      ));
     const cutoff = getDateCutoff();
     const matchDate = !cutoff || new Date(item.createdAt) >= cutoff;
     return matchType && matchDate;
@@ -102,12 +106,12 @@ export const Points: React.FC = () => {
       case 'all': return '전체유형';
       case 'charge': return '충전';
       case 'withdraw': return '출금';
-      case 'use': return '입찰정산';
-      case '충전': return '충전';
-      case '출금': return '출금';
-      case '낙찰차감': return '입찰차감';
-      case '입찰차감': return '입찰참여';
+      case '입찰정산': return '입찰정산';
+      case '낙찰차감': return '낙찰대금결제';
+      case '입찰차감': return '입찰보증금';
+      case '입찰참여': return '입찰보증금';
       case '입찰환불': return '입찰환불';
+      case '입찰취소환불': return '입찰취소환불';
       case '판매정산': return '판매정산';
       case '낙찰대금수령': return '판매정산';
       case '거래취소환불': return '거래취소환불';

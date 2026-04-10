@@ -556,7 +556,7 @@ export const MyPage: React.FC = () => {
                     <ProductCard product={p} isSold />
                     <div className="flex items-center px-1">
                       <span className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold">
-                        <CheckCircle2 className="w-3 h-3" /> 구매완료
+                        구매완료
                       </span>
                     </div>
                   </div>
