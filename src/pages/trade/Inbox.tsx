@@ -56,7 +56,7 @@ export const Inbox: React.FC = () => {
   const filteredChats = chats.filter(c => {
     // Filter out blocked users
     if (CURRENT_USER.blockedUserIds?.includes(c.otherUser.id)) return false;
-    
+
     if (chatFilter === 'all') return true;
     return c.otherUser.role === chatFilter;
   });
@@ -64,16 +64,15 @@ export const Inbox: React.FC = () => {
   return (
     <div className="max-w-[800px] mx-auto px-6 py-12">
       <div className="flex items-center justify-center mb-10">
-        <h2 className="text-3xl font-black text-gray-900 tracking-tight">알림함</h2>
+        <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">알림함</h2>
       </div>
 
       {/* Main Tabs */}
       <div className="flex border-b border-gray-100 mb-8">
         <button
           onClick={() => setActiveTab('noti')}
-          className={`flex-1 py-4 text-lg font-black transition-all relative ${
-            activeTab === 'noti' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
-          }`}
+          className={`flex-1 py-4 text-lg font-semibold transition-all relative ${activeTab === 'noti' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
+            }`}
         >
           알림
           {activeTab === 'noti' && (
@@ -82,9 +81,8 @@ export const Inbox: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveTab('chat')}
-          className={`flex-1 py-4 text-lg font-black transition-all relative ${
-            activeTab === 'chat' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
-          }`}
+          className={`flex-1 py-4 text-lg font-semibold transition-all relative ${activeTab === 'chat' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
+            }`}
         >
           대화
           {activeTab === 'chat' && (
@@ -99,25 +97,22 @@ export const Inbox: React.FC = () => {
           <>
             <button
               onClick={() => setNotiFilter('all')}
-              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-                notiFilter === 'all' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${notiFilter === 'all' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
             >
               전체
             </button>
             <button
               onClick={() => setNotiFilter('bid')}
-              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-                notiFilter === 'bid' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${notiFilter === 'bid' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
             >
               입찰소식
             </button>
             <button
               onClick={() => setNotiFilter('activity')}
-              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-                notiFilter === 'activity' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${notiFilter === 'activity' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
             >
               활동알림
             </button>
@@ -126,25 +121,22 @@ export const Inbox: React.FC = () => {
           <>
             <button
               onClick={() => setChatFilter('all')}
-              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-                chatFilter === 'all' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${chatFilter === 'all' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
             >
               전체
             </button>
             <button
               onClick={() => setChatFilter('seller')}
-              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-                chatFilter === 'seller' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${chatFilter === 'seller' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
             >
               판매자
             </button>
             <button
               onClick={() => setChatFilter('buyer')}
-              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-                chatFilter === 'buyer' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${chatFilter === 'buyer' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
             >
               구매자
             </button>
@@ -161,15 +153,13 @@ export const Inbox: React.FC = () => {
                 key={noti.id}
                 to={noti.link}
                 onClick={() => markNotificationAsRead(noti.id)}
-                className={`flex items-start gap-4 p-5 rounded-3xl border transition-all hover:shadow-md ${
-                  noti.read ? 'bg-white border-gray-100' : 'bg-indigo-50/30 border-indigo-100'
-                }`}
+                className={`flex items-start gap-4 p-5 rounded-3xl border transition-all hover:shadow-md ${noti.read ? 'bg-white border-gray-100' : 'bg-indigo-50/30 border-indigo-100'
+                  }`}
               >
-                <div className={`p-3 rounded-2xl ${
-                  noti.type === 'bid' ? 'bg-emerald-50 text-emerald-600' :
-                  noti.type === 'activity' ? 'bg-indigo-50 text-indigo-600' :
-                  'bg-gray-50 text-gray-600'
-                }`}>
+                <div className={`p-3 rounded-2xl ${noti.type === 'bid' ? 'bg-emerald-50 text-emerald-600' :
+                    noti.type === 'activity' ? 'bg-indigo-50 text-indigo-600' :
+                      'bg-gray-50 text-gray-600'
+                  }`}>
                   <Bell className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
@@ -212,9 +202,8 @@ export const Inbox: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-black text-gray-900 truncate">{chat.otherUser.nickname}</span>
-                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest ${
-                      chat.otherUser.role === 'seller' ? 'bg-indigo-100 text-indigo-600' : 'bg-emerald-100 text-emerald-600'
-                    }`}>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest ${chat.otherUser.role === 'seller' ? 'bg-indigo-100 text-indigo-600' : 'bg-emerald-100 text-emerald-600'
+                      }`}>
                       {chat.otherUser.role === 'seller' ? '판매자' : '구매자'}
                     </span>
                   </div>

@@ -399,7 +399,7 @@ export const MyPage: React.FC = () => {
                     <Gavel className="w-5 h-5 text-blue-500" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">입찰내역</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">입찰내역</p>
                     <p className="text-lg font-black text-gray-900">{biddingProducts.length}<span className="text-xs font-medium ml-0.5">건</span></p>
                   </div>
                 </button>
@@ -408,7 +408,7 @@ export const MyPage: React.FC = () => {
                     <Heart className="w-5 h-5 text-pink-500 fill-pink-500" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">찜목록</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">찜목록</p>
                     <p className="text-lg font-black text-gray-900">{wishlistProducts.length}<span className="text-xs font-medium ml-0.5">개</span></p>
                   </div>
                 </button>
@@ -423,16 +423,16 @@ export const MyPage: React.FC = () => {
                     <div className="bg-white/10 p-2 rounded-xl group-hover:bg-white/20 transition-colors">
                       <Wallet className="w-5 h-5 text-indigo-400" />
                     </div>
-                    <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest group-hover:text-white transition-colors">보유 포인트</p>
+                    <p className="text-xs font-bold text-indigo-300 uppercase tracking-widest group-hover:text-white transition-colors">보유 포인트</p>
                   </Link>
                   <h3 className="text-3xl font-black tracking-tight">{(user.points || 0).toLocaleString()}<span className="text-lg ml-1 text-indigo-400">P</span></h3>
                 </div>
 
                 <div className="flex gap-2 mt-4">
-                  <Link to="/points/charge" className="flex-1 flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-2xl text-xs font-bold transition-all active:scale-95">
+                  <Link to="/points/charge" className="flex-1 flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-2xl text-sm font-bold transition-all active:scale-95">
                     <span>충전</span>
                   </Link>
-                  <Link to="/points/withdraw" className="flex-1 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white py-3 rounded-2xl text-xs font-bold transition-all active:scale-95 border border-white/10">
+                  <Link to="/points/withdraw" className="flex-1 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white py-3 rounded-2xl text-sm font-bold transition-all active:scale-95 border border-white/10">
                     <span>출금</span>
                   </Link>
                 </div>

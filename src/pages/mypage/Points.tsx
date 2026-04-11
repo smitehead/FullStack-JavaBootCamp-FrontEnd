@@ -127,7 +127,7 @@ export const Points: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
       {/* 헤더 */}
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-6 h-6 text-gray-900" />
@@ -146,17 +146,17 @@ export const Points: React.FC = () => {
       <div className="bg-gray-900 rounded-[32px] p-8 text-white mb-10 shadow-2xl shadow-indigo-100 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <p className="text-xs font-bold text-indigo-300 uppercase tracking-widest mb-2">현재 보유 포인트</p>
+            <p className="text-sm font-bold text-indigo-300 uppercase tracking-widest mb-2">현재 보유 포인트</p>
             <h3 className="text-4xl font-black tracking-tight">
               {(user?.points || 0).toLocaleString()}
               <span className="text-xl ml-1 text-indigo-400">P</span>
             </h3>
           </div>
           <div className="flex gap-2">
-            <Link to="/points/charge" className="px-6 py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/10">
+            <Link to="/points/charge" className="px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/10">
               충전
             </Link>
-            <Link to="/points/withdraw" className="px-6 py-2.5 bg-white/10 border border-white/10 text-white text-xs font-bold rounded-xl hover:bg-white/20 transition-all">
+            <Link to="/points/withdraw" className="px-6 py-2.5 bg-white/10 border border-white/10 text-white text-sm font-bold rounded-xl hover:bg-white/20 transition-all">
               출금
             </Link>
           </div>
