@@ -1,10 +1,26 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { AlertTriangle, Search, Filter, CheckCircle2, User, Gavel, MessageSquare, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, Search, Filter, CheckCircle2, User, Gavel, MessageSquare, ShieldAlert, X, FileText } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { Report } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { showToast } from '@/components/toastService';
+import api from '@/services/api';
+
+interface ReportDetail {
+  reportNo: number;
+  reporterNo: number;
+  reporterNickname?: string;
+  targetMemberNo?: number;
+  targetMemberNickname?: string;
+  targetProductNo?: number;
+  type: string;
+  content: string;
+  status: string;
+  penaltyMsg?: string;
+  createdAt: string;
+  imageUrls?: string[];
+}
 
 const ITEMS_PER_PAGE = 15;
 
@@ -15,6 +31,9 @@ export const ReportManagement: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [resolveAction, setResolveAction] = useState('');
   const [showResolveModal, setShowResolveModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [detailReport, setDetailReport] = useState<ReportDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +59,21 @@ export const ReportManagement: React.FC = () => {
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
   }, [handleObserver]);
+
+  const handleViewDetail = async (reportId: string) => {
+    setDetailReport(null);
+    setDetailLoading(true);
+    setShowDetailModal(true);
+    try {
+      const res = await api.get(`/admin/reports/${reportId}`);
+      setDetailReport(res.data);
+    } catch {
+      showToast('신고 상세 조회에 실패했습니다.', 'error');
+      setShowDetailModal(false);
+    } finally {
+      setDetailLoading(false);
+    }
+  };
 
   const handleResolve = () => {
     if (!selectedReport) return;
@@ -147,7 +181,12 @@ export const ReportManagement: React.FC = () => {
                         </span>
                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ID: {report.id}</span>
                       </div>
-                      <p className="text-sm font-bold text-gray-900 mb-1">{report.reason}</p>
+                      <button
+                        onClick={() => handleViewDetail(report.id)}
+                        className="text-sm font-bold text-gray-900 mb-1 text-left hover:text-[#FF5A5A] transition-colors cursor-pointer"
+                      >
+                        {report.reason}
+                      </button>
                       <p className="text-[10px] text-gray-400 font-medium line-clamp-1 mb-1">{report.details}</p>
                       <div className="flex items-center gap-3 flex-wrap text-xs">
                         <Link
@@ -198,6 +237,122 @@ export const ReportManagement: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Report Detail Modal */}
+      <AnimatePresence>
+        {showDetailModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowDetailModal(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-2 bg-[#FF5A5A]" />
+              <div className="flex items-center justify-between px-8 pt-8 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-none bg-red-50 flex items-center justify-center shrink-0">
+                    <FileText className="w-5 h-5 text-[#FF5A5A]" />
+                  </div>
+                  <h3 className="text-xl font-black text-gray-900">신고 상세</h3>
+                </div>
+                <button
+                  onClick={() => setShowDetailModal(false)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+
+              {detailLoading && (
+                <div className="flex items-center justify-center py-16">
+                  <div className="w-8 h-8 border-4 border-red-500/20 border-t-red-500 rounded-full animate-spin" />
+                </div>
+              )}
+
+              {!detailLoading && detailReport && (
+                <div className="px-8 pb-8 space-y-4 max-h-[70vh] overflow-y-auto">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-gray-50 rounded-none p-4">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고 번호</p>
+                      <p className="text-sm font-bold text-gray-900">#{detailReport.reportNo}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-none p-4">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고 유형</p>
+                      <p className="text-sm font-bold text-gray-900">{detailReport.type}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-none p-4">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">처리 상태</p>
+                      <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${detailReport.status === '접수' ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'}`}>
+                        {detailReport.status}
+                      </span>
+                    </div>
+                    <div className="bg-gray-50 rounded-none p-4">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고 일시</p>
+                      <p className="text-xs font-bold text-gray-900">{new Date(detailReport.createdAt).toLocaleString()}</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-none p-4">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고자</p>
+                    <p className="text-sm font-bold text-gray-900">{detailReport.reporterNickname || `#${detailReport.reporterNo}`}</p>
+                  </div>
+
+                  {(detailReport.targetMemberNickname || detailReport.targetMemberNo) && (
+                    <div className="bg-gray-50 rounded-none p-4">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">피신고 사용자</p>
+                      <p className="text-sm font-bold text-gray-900">{detailReport.targetMemberNickname || `#${detailReport.targetMemberNo}`}</p>
+                    </div>
+                  )}
+
+                  {detailReport.targetProductNo && (
+                    <div className="bg-gray-50 rounded-none p-4">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고 상품 번호</p>
+                      <p className="text-sm font-bold text-gray-900">#{detailReport.targetProductNo}</p>
+                    </div>
+                  )}
+
+                  <div className="bg-gray-50 rounded-none p-4">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">신고 내용</p>
+                    <p className="text-sm font-medium text-gray-700 whitespace-pre-wrap leading-relaxed">{detailReport.content}</p>
+                  </div>
+
+                  {detailReport.penaltyMsg && (
+                    <div className="bg-red-50 rounded-none p-4 border border-red-100">
+                      <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2">처리 내용 / 제재 사유</p>
+                      <p className="text-sm font-medium text-red-700 whitespace-pre-wrap leading-relaxed">{detailReport.penaltyMsg}</p>
+                    </div>
+                  )}
+
+                  {detailReport.imageUrls && detailReport.imageUrls.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">첨부 이미지</p>
+                      <div className="flex flex-wrap gap-3">
+                        {detailReport.imageUrls.map((url, idx) => (
+                          <img
+                            key={idx}
+                            src={url}
+                            alt={`report-img-${idx}`}
+                            className="w-28 h-28 object-cover rounded-xl border border-gray-100 hover:scale-105 transition-transform cursor-pointer"
+                            onClick={() => window.open(url, '_blank')}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Resolve Report Modal */}
       <AnimatePresence>
