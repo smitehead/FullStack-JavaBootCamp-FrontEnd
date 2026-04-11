@@ -42,6 +42,7 @@ export const ProductDetail: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'detail' | 'history' | 'shipping' | 'qna'>('detail');
   const [isWishlisted, setIsWishlisted] = useState(false);
 
+
   useEffect(() => {
     if (product) {
       setIsWishlisted(product.isWishlisted || false);
@@ -74,6 +75,7 @@ export const ProductDetail: React.FC = () => {
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'bid' | 'auto'>('bid');
   const [autoBidMaxAmount, setAutoBidMaxAmount] = useState<number>(0);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showRechargePrompt, setShowRechargePrompt] = useState(false);
   const [activeAutoBid, setActiveAutoBid] = useState<{ autoBidNo: number; maxPrice: number } | null>(null);
 
@@ -112,6 +114,7 @@ export const ProductDetail: React.FC = () => {
         startPrice: data.startPrice || 0,
         currentPrice: data.currentPrice || 0,
         minBidIncrement: data.minBidUnit || 1000,
+        instantPrice: data.buyoutPrice || null,
         startTime: new Date().toISOString(),
         endTime: data.endTime,
         images: resolveImageUrls(data.images || []),
@@ -388,6 +391,11 @@ export const ProductDetail: React.FC = () => {
   };
 
   const handleBidSubmit = async () => {
+    if (product?.seller.id === user?.id) {
+      showToast('본인이 등록한 상품에는 입찰할 수 없습니다.', 'error');
+      setIsBidModalOpen(false);
+      return;
+    }
     if (user?.isSuspended) {
       showToast("'계정이 정지된 상태'에서는 입찰에 참여할 수 없습니다.", 'error');
       setIsBidModalOpen(false);
@@ -610,26 +618,40 @@ export const ProductDetail: React.FC = () => {
                   <MapPin className="w-3 h-3 mr-1" /> {product.location}
                 </div>
                 <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => setIsShareModalOpen(true)}
+                    className="flex items-center hover:text-gray-600 transition-colors font-medium"
+                  >
+                    <Share2 className="w-3 h-3 mr-1" /> 공유하기
+                  </button>
                   <Link to={`/report?productId=${product.id}`} className="flex items-center hover:text-red-500 transition-colors font-medium">
                     <Flag className="w-3 h-3 mr-1" /> 신고하기
                   </Link>
-                  <button className="flex items-center hover:text-gray-600 transition-colors font-medium">
-                    <Share2 className="w-3 h-3 mr-1" /> 공유하기
-                  </button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Seller Profile */}
-          <div className="mb-8">
-            <div className="flex justify-between items-start mb-1">
-              <Link to={`/seller/${product.seller.id}`} className="font-bold text-lg text-gray-900 hover:text-gray-600 transition-colors">{product.seller.nickname}</Link>
-              <div className="flex items-center gap-2">
+          {/* Seller Profile - Compact single line */}
+          <div className="mb-4 pb-4 border-b border-gray-50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div>
+                  <Link to={`/seller/${product.seller.id}`} className="font-bold text-base text-gray-900 block">{product.seller.nickname}</Link>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <div className="text-xs font-bold text-[#009678]">매너온도 {Number(product.seller.mannerTemp).toFixed(1)}</div>
+                    <div className="w-24 h-1 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-[#009678]" style={{ width: `${product.seller.mannerTemp}%` }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
                 {(isFinished && product.winnerId === user?.id) && (
                   <button
                     onClick={() => navigate(`/chat?id=chat_1`)}
-                    className="px-3 py-1.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-lg border border-gray-200 hover:border-orange-200 transition-all flex items-center gap-1.5"
+                    className="px-3 py-1.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-lg border border-gray-200 transition-all flex items-center gap-1.5"
                   >
                     <MessageSquare className="w-4 h-4" />
                     <span className="text-xs font-bold">채팅하기</span>
@@ -637,26 +659,14 @@ export const ProductDetail: React.FC = () => {
                 )}
                 <Link to={`/seller/${product.seller.id}`}>
                   {product.seller.profileImage ? (
-                    <img src={product.seller.profileImage} alt="Seller" className="w-10 h-10 rounded-full object-cover border border-gray-100 hover:border-gray-300 transition-all" />
+                    <img src={product.seller.profileImage} alt="Seller" className="w-12 h-12 rounded-full object-cover border border-gray-100" />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border border-gray-100">
+                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center border border-gray-100">
                       <Users className="w-6 h-6 text-gray-300" />
                     </div>
                   )}
                 </Link>
               </div>
-            </div>
-            <div className="flex justify-between items-end mb-0.5">
-              <div className="text-sm font-bold text-[#009678]">
-                매너온도 <span className="text-lg">{Number(product.seller.mannerTemp).toFixed(1)}</span>
-              </div>
-              <div className="text-xs text-gray-400">100</div>
-            </div>
-            <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#009678] rounded-full"
-                style={{ width: `${product.seller.mannerTemp}%` }}
-              ></div>
             </div>
           </div>
 
@@ -687,6 +697,12 @@ export const ProductDetail: React.FC = () => {
                 <span className="text-gray-500">최소 입찰 단위</span>
                 <span className="font-bold text-gray-900">{(product.minBidIncrement || 0).toLocaleString()} 원</span>
               </div>
+              {product.instantPrice && (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-500">즉시 구매가</span>
+                  <span className="font-bold text-emerald-600">{(product.instantPrice || 0).toLocaleString()} 원</span>
+                </div>
+              )}
               <div className="flex justify-between items-center">
                 <span className="text-gray-500 font-bold">{isFinished ? '최종 낙찰가' : '현재 입찰가'}</span>
                 <span className={`text-3xl font-black ${isFinished ? 'text-gray-900' : 'text-orange-500'}`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
@@ -1003,7 +1019,14 @@ export const ProductDetail: React.FC = () => {
               <div className="space-y-4">
                 {modalType === 'bid' ? (
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">입찰 금액</label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-bold text-gray-700">입찰 금액</label>
+                      {product.instantPrice && (
+                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                          즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
+                        </span>
+                      )}
+                    </div>
                     <div className="relative flex items-center">
                       <input
                         type="number"
@@ -1020,7 +1043,14 @@ export const ProductDetail: React.FC = () => {
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">자동 입찰 한도</label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-bold text-gray-700">자동 입찰 한도</label>
+                      {product.instantPrice && (
+                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                          즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
+                        </span>
+                      )}
+                    </div>
                     <div className="relative flex items-center">
                       <input
                         type="number"
@@ -1051,12 +1081,31 @@ export const ProductDetail: React.FC = () => {
                     입찰 취소하기
                   </button>
                 ) : (
-                  <button
-                    onClick={handleBidSubmit}
-                    className="w-full py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
-                  >
-                    입찰하기
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleBidSubmit}
+                      className="flex-1 py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                    >
+                      입찰하기
+                    </button>
+                    {product.instantPrice && (
+                      <button
+                        onClick={() => {
+                          if ((user?.points || 0) < Number(product.instantPrice)) {
+                            setShowRechargePrompt(true);
+                            return;
+                          }
+                          if (window.confirm(`${Number(product.instantPrice).toLocaleString()}원에 즉시 구매하시겠습니까?`)) {
+                            showToast('즉시 구매가 완료되었습니다!', 'success');
+                            setIsBidModalOpen(false);
+                          }
+                        }}
+                        className="flex-1 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-[0.98]"
+                      >
+                        즉시 구매하기
+                      </button>
+                    )}
+                  </div>
                 )
               ) : (
                 activeAutoBid ? (
@@ -1095,6 +1144,37 @@ export const ProductDetail: React.FC = () => {
                   </button>
                 )
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal */}
+      {isShareModalOpen && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-gray-50 flex items-center justify-between">
+              <h3 className="text-lg font-black text-gray-900">공유하기</h3>
+              <button onClick={() => setIsShareModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            <div className="p-8">
+              <p className="text-sm text-gray-500 mb-4 font-bold">상품 링크 복사</p>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex items-center justify-between gap-3">
+                <p className="text-xs text-gray-400 truncate flex-1 font-medium">
+                  {window.location.href}
+                </p>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    showToast('링크가 복사되었습니다!', 'success');
+                  }}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 shrink-0"
+                >
+                  복사
+                </button>
+              </div>
             </div>
           </div>
         </div>
