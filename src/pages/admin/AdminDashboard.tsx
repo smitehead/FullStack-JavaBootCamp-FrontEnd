@@ -5,16 +5,12 @@ import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useAppContext } from '@/context/AppContext';
-import { Category } from '@/types';
 import api from '@/services/api';
 
-const CATEGORY_COLORS: Record<string, string> = {
-  [Category.DIGITAL]: '#FF5A5A',
-  [Category.CLOTHING]: '#4F46E5',
-  [Category.FURNITURE]: '#10B981',
-  [Category.BOOKS]: '#F59E0B',
-  [Category.ETC]: '#9CA3AF',
-};
+const PALETTE = [
+  '#FF5A5A', '#4F46E5', '#10B981', '#F59E0B', '#9CA3AF',
+  '#EF4444', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16',
+];
 
 interface CategoryStat {
   name: string;
@@ -69,10 +65,10 @@ export const AdminDashboard: React.FC = () => {
     api.get('/admin/products/category-stats')
       .then(res => {
         setPopularCategories(
-          (res.data || []).map((item: { name: string; count: number }) => ({
+          (res.data || []).map((item: { name: string; count: number }, index: number) => ({
             name: item.name,
             count: Number(item.count),
-            color: CATEGORY_COLORS[item.name] ?? '#9CA3AF',
+            color: PALETTE[index % PALETTE.length],
           }))
         );
       })
@@ -116,7 +112,7 @@ export const AdminDashboard: React.FC = () => {
         })}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {/* Popular Categories */}
         <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
           <h2 className="text-lg font-black text-gray-900 mb-6">인기 카테고리</h2>
