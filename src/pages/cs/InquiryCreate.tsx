@@ -25,7 +25,8 @@ export const InquiryCreate: React.FC = () => {
   const [bugType, setBugType] = useState<BugType | ''>('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [images, setImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,15 +35,17 @@ export const InquiryCreate: React.FC = () => {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files && files.length > 0) {
-      // In a real app, we would upload to a server. Here we just create object URLs.
-      const newImages = Array.from(files).map(file => URL.createObjectURL(file as File));
-      setImages(prev => [...prev, ...newImages].slice(0, 5)); // Limit to 5 images
-    }
+    if (!files || files.length === 0) return;
+    const newFiles = Array.from(files);
+    const combined = [...imageFiles, ...newFiles].slice(0, 5);
+    setImageFiles(combined);
+    setImagePreviews(combined.map(f => URL.createObjectURL(f)));
   };
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    const newFiles = imageFiles.filter((_, i) => i !== index);
+    setImageFiles(newFiles);
+    setImagePreviews(newFiles.map(f => URL.createObjectURL(f)));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,12 +54,12 @@ export const InquiryCreate: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await api.post('/inquiries', {
-        type,
-        bugType: bugType || null,
-        title,
-        content,
-      });
+      const body = { type, bugType: bugType || null, title, content };
+      const formData = new FormData();
+      formData.append('data', new Blob([JSON.stringify(body)], { type: 'application/json' }));
+      imageFiles.forEach(file => formData.append('images', file));
+
+      await api.post('/inquiries', formData);
       showToast('문의가 접수되었습니다. 최대한 빨리 답변해 드리겠습니다.', 'success');
       navigate('/inquiry');
     } catch (e: any) {
@@ -150,11 +153,11 @@ export const InquiryCreate: React.FC = () => {
 
         {/* Image Attachment */}
         <div className="space-y-4">
-          <label className="block text-sm font-black text-gray-900 uppercase tracking-wider">사진 첨부 (최대 5장)</label>
+          <label className="block text-sm font-black text-gray-900 uppercase tracking-wider">사진 첨부 ({imageFiles.length}/5)</label>
           <div className="flex flex-wrap gap-4">
-            {images.map((img, index) => (
+            {imagePreviews.map((preview, index) => (
               <div key={index} className="relative w-24 h-24 rounded-2xl overflow-hidden border border-gray-100 group">
-                <img src={img || undefined} alt={`upload-${index}`} className="w-full h-full object-cover" />
+                <img src={preview} alt={`upload-${index}`} className="w-full h-full object-cover" />
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
@@ -165,7 +168,7 @@ export const InquiryCreate: React.FC = () => {
               </div>
             ))}
 
-            {images.length < 5 && (
+            {imageFiles.length < 5 && (
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}

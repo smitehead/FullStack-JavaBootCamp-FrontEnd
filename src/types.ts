@@ -224,7 +224,7 @@ export interface Inquiry {
   bugType?: BugType;
   title: string;
   content: string;
-  images?: string[];
+  imageUrls?: string[]; // 백엔드 INQUIRY_IMAGE 테이블 연동
   status: 0 | 1;
   answer?: string;
   answeredAt?: string;

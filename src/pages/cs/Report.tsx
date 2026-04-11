@@ -67,16 +67,16 @@ export const Report: React.FC = () => {
         content: details || null,
       };
 
-      // 상품 신고: targetProductNo 설정 (판매자도 자동 연결은 백엔드에서 처리)
-      if (productId) {
-        body.targetProductNo = Number(productId);
-      }
+      // 상품 신고: targetProductNo 설정
+      if (productId) body.targetProductNo = Number(productId);
       // 판매자 신고: targetMemberNo 설정
-      if (sellerId) {
-        body.targetMemberNo = Number(sellerId);
-      }
+      if (sellerId) body.targetMemberNo = Number(sellerId);
 
-      await api.post('/reports', body);
+      const formData = new FormData();
+      formData.append('data', new Blob([JSON.stringify(body)], { type: 'application/json' }));
+      images.forEach(file => formData.append('images', file));
+
+      await api.post('/reports', formData);
       setIsSubmitted(true);
       setTimeout(() => {
         navigate(-1);

@@ -132,9 +132,9 @@ export const InquiryDetail: React.FC = () => {
               </div>
               
               {/* Images (if any) */}
-              {inquiry.images && inquiry.images.length > 0 && (
+              {inquiry.imageUrls && inquiry.imageUrls.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-4">
-                  {inquiry.images.map((img, index) => (
+                  {inquiry.imageUrls.map((img, index) => (
                     <img
                       key={index}
                       src={img || undefined}
