@@ -16,6 +16,12 @@ const CATEGORY_COLORS: Record<string, string> = {
   [Category.ETC]: '#9CA3AF',
 };
 
+interface CategoryStat {
+  name: string;
+  count: number;
+  color: string;
+}
+
 interface NoticeItem {
   id: number;
   category: string;
@@ -33,11 +39,12 @@ interface InquiryItem {
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { reports, products } = useAppContext();
+  const { reports } = useAppContext();
   const [unprocessedWithdraws, setUnprocessedWithdraws] = useState(0);
   const [unprocessedInquiries, setUnprocessedInquiries] = useState(0);
   const [recentNotices, setRecentNotices] = useState<NoticeItem[]>([]);
   const [recentInquiries, setRecentInquiries] = useState<InquiryItem[]>([]);
+  const [popularCategories, setPopularCategories] = useState<CategoryStat[]>([]);
 
   useEffect(() => {
     // 미처리 출금 건수 조회
@@ -57,6 +64,19 @@ export const AdminDashboard: React.FC = () => {
         setRecentInquiries(res.data.content || []);
       })
       .catch(() => { });
+
+    // 대분류별 상품 건수 조회
+    api.get('/admin/products/category-stats')
+      .then(res => {
+        setPopularCategories(
+          (res.data || []).map((item: { name: string; count: number }) => ({
+            name: item.name,
+            count: Number(item.count),
+            color: CATEGORY_COLORS[item.name] ?? '#9CA3AF',
+          }))
+        );
+      })
+      .catch(() => { });
   }, []);
 
   const unprocessedReports = reports.filter(r => r.status === 'pending').length;
@@ -67,12 +87,6 @@ export const AdminDashboard: React.FC = () => {
     { label: '미처리 출금', value: unprocessedWithdraws, icon: DollarSign, color: 'bg-emerald-500', path: '/admin/withdraws' },
   ];
 
-  const popularCategories = Object.values(Category).map(cat => ({
-    name: cat,
-    count: products.filter(p => p.category === cat).length,
-    color: CATEGORY_COLORS[cat],
-  })).filter(c => c.count > 0);
-
   return (
     <div className="space-y-6 pb-10">
       <header>
@@ -81,7 +95,7 @@ export const AdminDashboard: React.FC = () => {
       </header>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
