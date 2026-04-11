@@ -140,6 +140,7 @@ export const Signup: React.FC = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [verificationError, setVerificationError] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -150,6 +151,16 @@ export const Signup: React.FC = () => {
     }
     return () => clearInterval(interval);
   }, [timer]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (cooldown > 0) {
+      interval = setInterval(() => {
+        setCooldown(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [cooldown]);
 
   const isAllRequiredTermsChecked =
     terms.service && terms.privacy && terms.purpose &&
@@ -191,8 +202,9 @@ export const Signup: React.FC = () => {
     // 백엔드로 인증번호 발송 요청
     try {
       await api.post('/auth/send-email-code', { email: formData.email });
-      setShowCodeInput(true); // 발송 완료 표시용
+      setShowCodeInput(true);
       setTimer(180); // 3분
+      setCooldown(60); // 1분 재전송 쿨다운
       showToast("'인증번호'가 발송되었습니다. 이메일을 확인해주세요.", 'success');
     } catch {
       showToast('인증번호 발송에 실패했습니다. 잠시 후 다시 시도해주세요.', 'error');
@@ -509,10 +521,10 @@ export const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={sendVerificationCode}
-                      disabled={isEmailVerified}
-                      className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200"
+                      disabled={isEmailVerified || cooldown > 0}
+                      className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
                     >
-                      코드전송
+                      {cooldown > 0 ? `${cooldown}초 후 재전송` : '코드전송'}
                     </button>
                   </div>
 
@@ -552,9 +564,10 @@ export const Signup: React.FC = () => {
                           <button
                             type="button"
                             onClick={sendVerificationCode}
-                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                            disabled={cooldown > 0}
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
                           >
-                            재요청
+                            {cooldown > 0 ? `${cooldown}초 후 가능` : '재요청'}
                           </button>
                         </div>
                       </div>
