@@ -489,7 +489,7 @@ export const ProductRegister: React.FC = () => {
                 </div>
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">경매 마감 예정</span>
               </div>
-              <span className="text-lg font-black text-brand">{endTime || '일시를 선택해주세요'}</span>
+              <span className="text-lg font-bold text-brand">{endTime || '일시를 선택해주세요'}</span>
             </div>
           </div>
         </section>
@@ -506,7 +506,7 @@ export const ProductRegister: React.FC = () => {
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.face ? 'bg-brand text-black' : 'bg-gray-100 text-gray-400'}`}>
                 <MapPin className="w-5 h-5" />
               </div>
-              <p className={`font-black ${methods.face ? 'text-brand-dark' : 'text-gray-900'}`}>대면 거래</p>
+              <p className={`font-bold ${methods.face ? 'text-brand-dark' : 'text-gray-900'}`}>대면 거래</p>
               <p className="text-xs text-gray-400 font-medium mt-1">직접 만나서 거래</p>
             </button>
             <button
@@ -517,7 +517,7 @@ export const ProductRegister: React.FC = () => {
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.delivery ? 'bg-brand text-black' : 'bg-gray-100 text-gray-400'}`}>
                 <Truck className="w-5 h-5" />
               </div>
-              <p className={`font-black ${methods.delivery ? 'text-brand-dark' : 'text-gray-900'}`}>택배 거래</p>
+              <p className={`font-bold ${methods.delivery ? 'text-brand-dark' : 'text-gray-900'}`}>택배 거래</p>
               <p className="text-xs text-gray-400 font-medium mt-1">택배를 통한 비대면 거래</p>
             </button>
           </div>

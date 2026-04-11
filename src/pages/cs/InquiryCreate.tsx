@@ -85,7 +85,7 @@ export const InquiryCreate: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* type Selection */}
         <div className="space-y-4">
-          <label className="block text-sm font-black text-gray-900 uppercase tracking-wider">문의 유형</label>
+          <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">문의 유형</label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {categories.map(cat => (
               <button
@@ -106,7 +106,7 @@ export const InquiryCreate: React.FC = () => {
         {/* Bug Type Selection (Conditional) */}
         {type === '버그 신고' && (
           <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
-            <label className="block text-sm font-black text-gray-900 uppercase tracking-wider">버그 유형</label>
+            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">버그 유형</label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {bugTypes.map(type => (
                 <button
@@ -128,7 +128,7 @@ export const InquiryCreate: React.FC = () => {
         {/* Title and Content */}
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="block text-sm font-black text-gray-900 uppercase tracking-wider">제목</label>
+            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">제목</label>
             <input
               type="text"
               placeholder="문의 제목을 입력해주세요"
@@ -140,7 +140,7 @@ export const InquiryCreate: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-black text-gray-900 uppercase tracking-wider">내용</label>
+            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">내용</label>
             <textarea
               placeholder="문의 내용을 상세히 입력해주세요. (예: 발생 일시, 발생 경로, 오류 메시지 등)"
               className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none font-medium min-h-[200px] resize-none"
@@ -153,7 +153,7 @@ export const InquiryCreate: React.FC = () => {
 
         {/* Image Attachment */}
         <div className="space-y-4">
-          <label className="block text-sm font-black text-gray-900 uppercase tracking-wider">사진 첨부 ({imageFiles.length}/5)</label>
+          <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">사진 첨부 ({imageFiles.length}/5)</label>
           <div className="flex flex-wrap gap-4">
             {imagePreviews.map((preview, index) => (
               <div key={index} className="relative w-24 h-24 rounded-2xl overflow-hidden border border-gray-100 group">

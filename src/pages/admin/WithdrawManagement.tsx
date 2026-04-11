@@ -122,15 +122,15 @@ export const WithdrawManagement: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case '신청':
-        return <span className="inline-flex items-center px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-black rounded-none border border-amber-100">신청</span>;
+        return <span className="inline-flex items-center px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-bold rounded-none border border-amber-100">신청</span>;
       case '처리중':
-        return <span className="inline-flex items-center px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-black rounded-none border border-blue-100">처리중</span>;
+        return <span className="inline-flex items-center px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold rounded-none border border-blue-100">처리중</span>;
       case '완료':
-        return <span className="inline-flex items-center px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-none border border-emerald-100">완료</span>;
+        return <span className="inline-flex items-center px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-none border border-emerald-100">완료</span>;
       case '거절':
-        return <span className="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 text-[10px] font-black rounded-none border border-rose-100">거절</span>;
+        return <span className="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 text-[10px] font-bold rounded-none border border-rose-100">거절</span>;
       default:
-        return <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-black rounded-none">{status}</span>;
+        return <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded-none">{status}</span>;
     }
   };
 
@@ -140,11 +140,11 @@ export const WithdrawManagement: React.FC = () => {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-black text-gray-900 tracking-tight">출금 신청 관리</h1>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">출금 신청 관리</h1>
           <div className="flex items-center gap-2 mt-1">
             <p className="text-gray-500 text-[11px] font-medium">포인트 출금 신청 목록을 확인하고 처리합니다.</p>
             <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-            <p className="text-[#FF5A5A] text-[11px] font-black">총 {withdraws.length}건</p>
+            <p className="text-[#FF5A5A] text-[11px] font-bold">총 {withdraws.length}건</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3">
@@ -180,7 +180,7 @@ export const WithdrawManagement: React.FC = () => {
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <Wallet className="w-5 h-5 text-gray-400" /> 출금 신청 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredWithdraws.length}건</span>
@@ -197,12 +197,12 @@ export const WithdrawManagement: React.FC = () => {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       {getStatusBadge(item.status)}
-                      <span className="text-sm font-black text-gray-900">{item.memberNickname}</span>
+                      <span className="text-sm font-bold text-gray-900">{item.memberNickname}</span>
                       <span className="text-[10px] text-gray-400 font-medium">#{item.memberNo}</span>
-                      <span className="text-sm font-black text-[#FF5A5A]">{item.amount.toLocaleString()}원</span>
+                      <span className="text-sm font-bold text-[#FF5A5A]">{item.amount.toLocaleString()}원</span>
                     </div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-black px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-none">{item.bankName}</span>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-none">{item.bankName}</span>
                       <span className="text-xs font-bold text-gray-900">{item.accountNumber}</span>
                       <span className="text-[10px] text-gray-400 font-medium">예금주: {item.accountHolder}</span>
                     </div>
@@ -288,7 +288,7 @@ export const WithdrawManagement: React.FC = () => {
                     <AlertTriangle className="w-6 h-6 text-rose-500" />}
               </div>
               <div>
-                <h3 className="text-lg font-black text-gray-900 tracking-tight">출금 {confirmModal.action} 처리</h3>
+                <h3 className="text-lg font-bold text-gray-900 tracking-tight">출금 {confirmModal.action} 처리</h3>
                 <p className="text-xs text-gray-400 font-medium">이 작업은 되돌릴 수 없습니다.</p>
               </div>
             </div>
@@ -298,19 +298,19 @@ export const WithdrawManagement: React.FC = () => {
               <div className="bg-gray-50 rounded-none p-5 space-y-3 border border-gray-100">
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-400 font-bold uppercase tracking-wider">신청자</span>
-                  <span className="font-black text-gray-900">{confirmModal.item.memberNickname}</span>
+                  <span className="font-bold text-gray-900">{confirmModal.item.memberNickname}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-400 font-bold uppercase tracking-wider">출금 금액</span>
-                  <span className="font-black text-[#FF5A5A] text-sm">{confirmModal.item.amount.toLocaleString()}원</span>
+                  <span className="font-bold text-[#FF5A5A] text-sm">{confirmModal.item.amount.toLocaleString()}원</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-400 font-bold uppercase tracking-wider">계좌 정보</span>
-                  <span className="font-black text-gray-900">{confirmModal.item.bankName} {confirmModal.item.accountNumber}</span>
+                  <span className="font-bold text-gray-900">{confirmModal.item.bankName} {confirmModal.item.accountNumber}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-400 font-bold uppercase tracking-wider">예금주</span>
-                  <span className="font-black text-gray-900">{confirmModal.item.accountHolder}</span>
+                  <span className="font-bold text-gray-900">{confirmModal.item.accountHolder}</span>
                 </div>
               </div>
 
@@ -327,7 +327,7 @@ export const WithdrawManagement: React.FC = () => {
               {/* 거절 시 사유 입력 */}
               {confirmModal.action === '거절' && (
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider">거절 사유 <span className="text-rose-400">*</span></label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">거절 사유 <span className="text-rose-400">*</span></label>
                   <textarea
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
@@ -346,13 +346,13 @@ export const WithdrawManagement: React.FC = () => {
             <div className="p-8 pt-0 flex gap-3">
               <button
                 onClick={() => setConfirmModal({ open: false, withdrawNo: null, action: '', item: null })}
-                className="flex-1 py-4 bg-gray-100 text-gray-500 text-sm font-black rounded-none hover:bg-gray-200 transition-all"
+                className="flex-1 py-4 bg-gray-100 text-gray-500 text-sm font-bold rounded-none hover:bg-gray-200 transition-all"
               >
                 취소
               </button>
               <button
                 onClick={handleProcess}
-                className={`flex-1 py-4 text-white text-sm font-black rounded-none transition-all shadow-lg ${confirmModal.action === '완료' ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20' :
+                className={`flex-1 py-4 text-white text-sm font-bold rounded-none transition-all shadow-lg ${confirmModal.action === '완료' ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20' :
                     confirmModal.action === '처리중' ? 'bg-blue-500 hover:bg-blue-600 shadow-blue-500/20' :
                       'bg-rose-500 hover:bg-rose-600 shadow-rose-500/20'
                   }`}

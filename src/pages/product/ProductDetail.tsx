@@ -394,7 +394,7 @@ export const ProductDetail: React.FC = () => {
     <div className="max-w-[1200px] mx-auto px-10 py-32 text-center">
       <div className="bg-white rounded-2xl border border-gray-100 p-20 shadow-sm">
         <Package className="w-20 h-20 text-gray-200 mx-auto mb-8" />
-        <h2 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">상품을 찾을 수 없거나 접근 권한이 없습니다.</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight">상품을 찾을 수 없거나 접근 권한이 없습니다.</h2>
         <p className="text-gray-400 font-medium mb-10 leading-relaxed">
           해당 상품이 삭제되었거나, 종료된 경매로 접근이 제한되었습니다.<br />
           판매자 또는 입찰 참여자만 종료된 상품을 확인할 수 있습니다.
@@ -775,7 +775,7 @@ export const ProductDetail: React.FC = () => {
               </div>
               <div className="flex justify-between items-end pt-2 border-t border-gray-50">
                 <span className="text-gray-500 font-bold mb-1">{isFinished ? '최종 낙찰가' : '현재 입찰가'}</span>
-                <span className={`text-3xl font-black ${isFinished ? 'text-gray-900' : 'text-orange-500'}`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
+                <span className={`text-3xl font-bold ${isFinished ? 'text-gray-900' : 'text-orange-500'}`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
               </div>
             </div>
 
@@ -867,7 +867,7 @@ export const ProductDetail: React.FC = () => {
                   </h3>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-gray-400">시작가 대비</span>
-                    <span className="text-sm font-black text-orange-500">
+                    <span className="text-sm font-bold text-orange-500">
                       +{(((product.currentPrice - product.startPrice) / product.startPrice) * 100).toFixed(1)}%
                     </span>
                   </div>
@@ -1063,7 +1063,7 @@ export const ProductDetail: React.FC = () => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="text-xl font-black text-gray-900">
+              <h3 className="text-xl font-bold text-gray-900">
                 {modalType === 'bid' ? '입찰 참여하기' : '자동 입찰 설정'}
               </h3>
               <button onClick={() => setIsBidModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -1086,7 +1086,7 @@ export const ProductDetail: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">나의 입찰가</span>
-                      <span className="text-sm font-black text-gray-900">{myHighestBid.toLocaleString()}원</span>
+                      <span className="text-sm font-bold text-gray-900">{myHighestBid.toLocaleString()}원</span>
                     </div>
                   </div>
                 </div>
@@ -1100,18 +1100,18 @@ export const ProductDetail: React.FC = () => {
                   </div>
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">보유 포인트</span>
                 </div>
-                <span className="text-xl font-black text-orange-400">{(user?.points || 0).toLocaleString()} P</span>
+                <span className="text-xl font-bold text-orange-400">{(user?.points || 0).toLocaleString()} P</span>
               </div>
 
               {/* Price Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">현재가</p>
-                  <p className="text-lg font-black text-gray-900">{(product.currentPrice || 0).toLocaleString()}원</p>
+                  <p className="text-lg font-bold text-gray-900">{(product.currentPrice || 0).toLocaleString()}원</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">최소 입찰 단위</p>
-                  <p className="text-lg font-black text-gray-900">{(product.minBidIncrement || 0).toLocaleString()}원</p>
+                  <p className="text-lg font-bold text-gray-900">{(product.minBidIncrement || 0).toLocaleString()}원</p>
                 </div>
               </div>
 
@@ -1133,7 +1133,7 @@ export const ProductDetail: React.FC = () => {
                         value={bidAmount}
                         step={product.minBidIncrement}
                         onChange={(e) => setBidAmount(Number(e.target.value))}
-                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-black focus:border-orange-500 focus:bg-white outline-none transition-all pr-12"
+                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-orange-500 focus:bg-white outline-none transition-all pr-12"
                       />
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
                     </div>
@@ -1157,7 +1157,7 @@ export const ProductDetail: React.FC = () => {
                         value={autoBidMaxAmount}
                         step={product.minBidIncrement}
                         onChange={(e) => setAutoBidMaxAmount(Number(e.target.value))}
-                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-black focus:border-orange-500 focus:bg-white outline-none transition-all pr-12"
+                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-orange-500 focus:bg-white outline-none transition-all pr-12"
                       />
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
                     </div>
@@ -1176,7 +1176,7 @@ export const ProductDetail: React.FC = () => {
                       showToast("입찰이 취소되었습니다.", 'success');
                       setIsBidModalOpen(false);
                     }}
-                    className="w-full py-5 bg-gray-100 text-gray-600 font-black rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98]"
+                    className="w-full py-5 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98]"
                   >
                     입찰 취소하기
                   </button>
@@ -1184,7 +1184,7 @@ export const ProductDetail: React.FC = () => {
                   <div className="flex gap-3">
                     <button
                       onClick={handleBidSubmit}
-                      className="flex-1 py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                      className="flex-1 py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
                     >
                       입찰하기
                     </button>
@@ -1200,7 +1200,7 @@ export const ProductDetail: React.FC = () => {
                             setIsBidModalOpen(false);
                           }
                         }}
-                        className="flex-1 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-[0.98]"
+                        className="flex-1 py-5 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-[0.98]"
                       >
                         즉시 구매하기
                       </button>
@@ -1224,13 +1224,13 @@ export const ProductDetail: React.FC = () => {
                         showToast("자동 입찰이 취소되었습니다.", 'success');
                         setIsBidModalOpen(false);
                       }}
-                      className="flex-1 py-5 bg-gray-100 text-gray-600 font-black rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98]"
+                      className="flex-1 py-5 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98]"
                     >
                       취소하기
                     </button>
                     <button
                       onClick={handleBidSubmit}
-                      className="flex-1 py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                      className="flex-1 py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
                     >
                       변경하기
                     </button>
@@ -1238,7 +1238,7 @@ export const ProductDetail: React.FC = () => {
                 ) : (
                   <button
                     onClick={handleBidSubmit}
-                    className="w-full py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                    className="w-full py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
                   >
                     자동 입찰 설정하기
                   </button>
@@ -1254,7 +1254,7 @@ export const ProductDetail: React.FC = () => {
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-gray-50 flex items-center justify-between">
-              <h3 className="text-lg font-black text-gray-900">공유하기</h3>
+              <h3 className="text-lg font-bold text-gray-900">공유하기</h3>
               <button onClick={() => setIsShareModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
@@ -1287,7 +1287,7 @@ export const ProductDetail: React.FC = () => {
             <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6">
               <AlertTriangle className="w-10 h-10 text-orange-500" />
             </div>
-            <h3 className="text-2xl font-black text-gray-900 mb-3">포인트가 부족합니다</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">포인트가 부족합니다</h3>
             <p className="text-gray-500 mb-8 leading-relaxed">
               입찰을 진행하기 위해 포인트 충전이 필요합니다.<br />
               현재 보유 포인트: <span className="text-indigo-600 font-bold">{(user?.points || 0).toLocaleString()}P</span><br />

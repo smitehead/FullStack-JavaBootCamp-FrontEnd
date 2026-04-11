@@ -104,12 +104,12 @@ export const PointWithdraw: React.FC = () => {
         <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8">
           <CheckCircle2 className="w-12 h-12 text-emerald-500" />
         </div>
-        <h2 className="text-3xl font-black text-gray-900 mb-4">출금 신청 완료!</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">출금 신청 완료!</h2>
         <p className="text-gray-500 font-medium mb-6">{result.message}</p>
 
         {/* 안내 박스 */}
         <div className="bg-amber-50 rounded-2xl p-5 mb-8 text-left border border-amber-100">
-          <p className="text-sm font-black text-amber-800 mb-2">출금 처리 안내</p>
+          <p className="text-sm font-bold text-amber-800 mb-2">출금 처리 안내</p>
           <ul className="text-xs text-amber-700 space-y-1.5 font-medium">
             <li>• 출금 신청은 관리자 확인 후 처리됩니다.</li>
             <li>• 포인트는 관리자 완료 처리 시 차감됩니다.</li>
@@ -120,7 +120,7 @@ export const PointWithdraw: React.FC = () => {
 
         <button
           onClick={() => navigate('/points')}
-          className="w-full py-4 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl"
+          className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl"
         >
           확인
         </button>
@@ -137,7 +137,7 @@ export const PointWithdraw: React.FC = () => {
         >
           <ArrowLeft className="w-6 h-6 text-gray-900" />
         </button>
-        <h2 className="text-3xl font-black text-gray-900 tracking-normal">포인트 출금</h2>
+        <h2 className="text-3xl font-bold text-gray-900 tracking-normal">포인트 출금</h2>
       </div>
 
       <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -150,7 +150,7 @@ export const PointWithdraw: React.FC = () => {
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${withdrawType === 'my' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
               <Landmark className="w-5 h-5" />
             </div>
-            <p className={`font-black ${withdrawType === 'my' ? 'text-indigo-900' : 'text-gray-900'}`}>내 계좌로</p>
+            <p className={`font-bold ${withdrawType === 'my' ? 'text-indigo-900' : 'text-gray-900'}`}>내 계좌로</p>
             <p className="text-xs text-gray-400 font-medium mt-1">등록된 계좌로 출금</p>
           </button>
           <button
@@ -160,7 +160,7 @@ export const PointWithdraw: React.FC = () => {
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${withdrawType === 'new' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
               <Plus className="w-5 h-5" />
             </div>
-            <p className={`font-black ${withdrawType === 'new' ? 'text-indigo-900' : 'text-gray-900'}`}>새로운 계좌로</p>
+            <p className={`font-bold ${withdrawType === 'new' ? 'text-indigo-900' : 'text-gray-900'}`}>새로운 계좌로</p>
             <p className="text-xs text-gray-400 font-medium mt-1">직접 입력하여 출금</p>
           </button>
         </div>
@@ -185,7 +185,7 @@ export const PointWithdraw: React.FC = () => {
                       })()}
                     </div>
                     <div>
-                      <p className="font-black text-gray-900">{selectedMethod.bankName}</p>
+                      <p className="font-bold text-gray-900">{selectedMethod.bankName}</p>
                       <p className="text-sm text-gray-400 font-medium">{selectedMethod.accountNumber}</p>
                     </div>
                   </div>
@@ -211,7 +211,7 @@ export const PointWithdraw: React.FC = () => {
           ) : (
             /* "새로운 계좌로" 선택 시 나타나는 섹션 */
             <div className="space-y-6">
-              <h4 className="text-xl font-black text-gray-900 mb-2">어디로 보낼까요?</h4>
+              <h4 className="text-xl font-bold text-gray-900 mb-2">어디로 보낼까요?</h4>
 
               {!newBank ? (
                 /* 1단계: 은행 선택 그리드 */
@@ -233,7 +233,7 @@ export const PointWithdraw: React.FC = () => {
                           {bank.logo ? (
                             <img src={bank.logo} alt={bank.name} className="w-full h-full object-cover p-1" />
                           ) : (
-                            <span className="text-[10px] text-gray-400 font-black">{bank.name.substring(0, 1)}</span>
+                            <span className="text-[10px] text-gray-400 font-bold">{bank.name.substring(0, 1)}</span>
                           )}
                         </div>
                         <span className="text-[10px] font-bold text-center leading-tight text-gray-500">
@@ -261,15 +261,15 @@ export const PointWithdraw: React.FC = () => {
                         {selectedNewBankInfo?.logo ? (
                           <img src={selectedNewBankInfo.logo} alt={newBank} className="w-full h-full object-cover p-1" />
                         ) : (
-                          <span className="text-[11px] text-gray-400 font-black">{newBank.substring(0, 1)}</span>
+                          <span className="text-[11px] text-gray-400 font-bold">{newBank.substring(0, 1)}</span>
                         )}
                       </div>
-                      <p className="text-lg font-black text-gray-900">{newBank}</p>
+                      <p className="text-lg font-bold text-gray-900">{newBank}</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setNewBank('')}
-                      className="px-3 py-1.5 text-[10px] font-black text-gray-400 border border-gray-200 rounded-lg hover:bg-white transition-all hover:text-gray-900"
+                      className="px-3 py-1.5 text-[10px] font-bold text-gray-400 border border-gray-200 rounded-lg hover:bg-white transition-all hover:text-gray-900"
                     >
                       변경
                     </button>
@@ -307,7 +307,7 @@ export const PointWithdraw: React.FC = () => {
 
         {/* Amount Input */}
         <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm text-center">
-          <h4 className="text-xl font-black text-gray-900 mb-8">얼마를 출금할까요?</h4>
+          <h4 className="text-xl font-bold text-gray-900 mb-8">얼마를 출금할까요?</h4>
 
           <div className="flex flex-col items-center mb-10">
             <div className="relative w-full max-w-[240px]">
@@ -316,9 +316,9 @@ export const PointWithdraw: React.FC = () => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ''))}
                 placeholder="0"
-                className="w-full text-4xl font-black py-4 border-b-4 border-gray-100 focus:border-indigo-600 outline-none transition-all placeholder:text-gray-200 text-center pr-8"
+                className="w-full text-4xl font-bold py-4 border-b-4 border-gray-100 focus:border-indigo-600 outline-none transition-all placeholder:text-gray-200 text-center pr-8"
               />
-              <span className="absolute right-0 bottom-5 text-2xl font-black text-gray-300">P</span>
+              <span className="absolute right-0 bottom-5 text-2xl font-bold text-gray-300">P</span>
             </div>
 
             {/* Available Points Display - Centered below input */}
@@ -331,7 +331,7 @@ export const PointWithdraw: React.FC = () => {
           <button
             onClick={handleWithdraw}
             disabled={!amount || Number(amount) <= 0 || Number(amount) > (user?.points || 0) || (withdrawType === 'new' && (!newBank || !newAccount))}
-            className="w-full py-4 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl disabled:opacity-50"
+            className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl disabled:opacity-50"
           >
             출금 신청하기
           </button>

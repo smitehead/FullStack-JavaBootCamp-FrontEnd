@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Bell, Shield, ShieldCheck, UserMinus, X, AlertCircle, CheckCircle2, User, CreditCard, Landmark } from 'lucide-react';
+import { Bell, Shield, ShieldCheck, UserMinus, X, AlertCircle, CheckCircle2, User, CreditCard, Landmark, ChevronDown } from 'lucide-react';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
@@ -121,16 +121,27 @@ export const Settings: React.FC = () => {
   });
 
 
-  const [newEmail, setNewEmail] = useState('');
+  const [newEmailId, setNewEmailId] = useState('');
+  const [newEmailDomain, setNewEmailDomain] = useState('');
+  const [newCustomDomain, setNewCustomDomain] = useState('');
+  const [isNewCustomDomain, setIsNewCustomDomain] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [timer, setTimer] = useState(0);
+  const [cooldown, setCooldown] = useState(0);
+
+  const getFullNewEmail = () => {
+    const domain = isNewCustomDomain ? newCustomDomain : newEmailDomain;
+    return domain ? `${newEmailId}@${domain}` : `${newEmailId}@`;
+  };
 
   const [passwordData, setPasswordData] = useState({
     current: '',
     new: '',
     confirm: ''
   });
+
+  const [emailVerificationError, setEmailVerificationError] = useState<string | null>(null);
 
   const [registeredCard, setRegisteredCard] = useState<{
     cardName: string;
@@ -176,6 +187,16 @@ export const Settings: React.FC = () => {
     }
     return () => clearInterval(interval);
   }, [timer]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (cooldown > 0) {
+      interval = setInterval(() => {
+        setCooldown(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [cooldown]);
 
   const handleProfileSave = async () => {
     setIsProfileSaving(true);
@@ -238,11 +259,18 @@ export const Settings: React.FC = () => {
   };
 
   const sendVerificationCode = async (type: 'email' | 'password') => {
+    if (cooldown > 0) return;
     if (type === 'email') {
+      const fullEmail = getFullNewEmail();
+      if (!fullEmail.includes('@') || fullEmail.endsWith('@')) {
+        showToast('올바른 이메일 형식을 입력해주세요.', 'error');
+        return;
+      }
       try {
-        await api.post('/auth/send-email-code', { email: newEmail });
+        await api.post('/auth/send-email-code', { email: fullEmail });
         setIsCodeSent(true);
         setTimer(180);
+        setCooldown(60);
         showToast('인증번호가 발송되었습니다.', 'success');
       } catch (e) {
         showToast('인증번호 발송에 실패했습니다.', 'error');
@@ -252,28 +280,35 @@ export const Settings: React.FC = () => {
 
   const verifyCode = async (type: 'email' | 'password') => {
     try {
+      const fullEmail = getFullNewEmail();
       const res = await api.post('/auth/verify-email-code', {
-        email: newEmail,
+        email: fullEmail,
         code: verificationCode,
       });
       if (res.data.verified) {
         if (type === 'email') {
           // 이메일 변경 확정 API 호출
-          await api.put('/members/me/email', { email: newEmail });
+          await api.put('/members/me/email', { email: fullEmail });
           setEmailStep('success');
-          setFormData(prev => ({ ...prev, email: newEmail }));
+          setFormData(prev => ({ ...prev, email: fullEmail }));
+          setEmailVerificationError(null);
           setTimeout(() => {
             setIsEmailModalOpen(false);
             setEmailStep('input');
-            setNewEmail('');
+            setNewEmailId('');
+            setNewEmailDomain('');
+            setNewCustomDomain('');
+            setIsNewCustomDomain(false);
             setVerificationCode('');
             setIsCodeSent(false);
           }, 2000);
         }
       } else {
+        setEmailVerificationError('인증번호가 올바르지 않습니다.');
         showToast('인증번호가 올바르지 않습니다.', 'error');
       }
     } catch (e) {
+      setEmailVerificationError('인증 확인에 실패했습니다.');
       showToast('인증 확인에 실패했습니다.', 'error');
     }
   };
@@ -586,7 +621,7 @@ export const Settings: React.FC = () => {
                           setIsProfileEditMode(false);
                         }}
                         disabled={isProfileSaving}
-                        className="flex-1 h-[56px] bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50"
+                        className="flex-1 h-[56px] bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50"
                       >
                         {isProfileSaving ? '저장 중...' : '프로필 정보 저장'}
                       </button>
@@ -826,7 +861,7 @@ export const Settings: React.FC = () => {
               <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="w-8 h-8 text-emerald-500" />
               </div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">수정 완료</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">수정 완료</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium">프로필 정보가 성공적으로 수정되었습니다.</p>
 
               <button
@@ -847,7 +882,7 @@ export const Settings: React.FC = () => {
           <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-black text-gray-900">비밀번호 변경</h3>
+                <h3 className="text-2xl font-bold text-gray-900">비밀번호 변경</h3>
                 <button onClick={() => setIsPasswordModalOpen(false)} className="text-gray-400 hover:text-gray-600">
                   <X className="w-6 h-6" />
                 </button>
@@ -868,7 +903,7 @@ export const Settings: React.FC = () => {
                     </div>
                     <button
                       onClick={handlePasswordChange}
-                      className="w-full py-4 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl"
+                      className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl"
                     >
                       확인
                     </button>
@@ -910,7 +945,7 @@ export const Settings: React.FC = () => {
                   <div className="pt-4">
                     <button
                       onClick={handlePasswordChange}
-                      className="w-full py-4 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl"
+                      className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl"
                     >
                       비밀번호 변경 완료
                     </button>
@@ -923,7 +958,7 @@ export const Settings: React.FC = () => {
                   <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                   </div>
-                  <h3 className="text-2xl font-black text-gray-900 mb-2">변경 완료</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">변경 완료</h3>
                   <p className="text-sm text-gray-500">비밀번호가 성공적으로 변경되었습니다.</p>
                 </div>
               )}
@@ -939,7 +974,7 @@ export const Settings: React.FC = () => {
           <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-black text-gray-900">이메일 변경</h3>
+                <h3 className="text-2xl font-bold text-gray-900">이메일 변경</h3>
                 <button onClick={() => setIsEmailModalOpen(false)} className="text-gray-400 hover:text-gray-600">
                   <X className="w-6 h-6" />
                 </button>
@@ -948,22 +983,72 @@ export const Settings: React.FC = () => {
               {emailStep === 'input' && (
                 <div className="space-y-6">
                   <div className="space-y-4">
-                    <input
-                      type="email"
-                      placeholder="새 이메일 주소 입력"
-                      className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-gray-200 outline-none"
-                      value={newEmail}
-                      onChange={(e) => setNewEmail(e.target.value)}
-                    />
-                    {!isCodeSent && (
-                      <button
-                        onClick={() => sendVerificationCode('email')}
-                        disabled={!newEmail}
-                        className="w-full py-4 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-black transition-all disabled:opacity-50"
-                      >
-                        인증번호 발송
-                      </button>
-                    )}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex-1">
+                          <input
+                            type="text"
+                            required
+                            disabled={isCodeSent}
+                            className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50 font-bold"
+                            placeholder="이메일 아이디"
+                            value={newEmailId}
+                            onChange={(e) => setNewEmailId(e.target.value)}
+                          />
+                        </div>
+                        <span className="text-gray-400 font-bold">@</span>
+                        <div className="relative flex-1">
+                          <select
+                            disabled={isCodeSent}
+                            className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50 appearance-none font-bold"
+                            value={isNewCustomDomain ? 'custom' : newEmailDomain}
+                            onChange={(e) => {
+                              if (e.target.value === 'custom') {
+                                setIsNewCustomDomain(true);
+                              } else {
+                                setIsNewCustomDomain(false);
+                                setNewEmailDomain(e.target.value);
+                              }
+                            }}
+                          >
+                            <option value="">선택</option>
+                            <option value="naver.com">naver.com</option>
+                            <option value="gmail.com">gmail.com</option>
+                            <option value="daum.net">daum.net</option>
+                            <option value="hanmail.net">hanmail.net</option>
+                            <option value="nate.com">nate.com</option>
+                            <option value="outlook.com">outlook.com</option>
+                            <option value="custom">직접 입력</option>
+                          </select>
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 font-bold">
+                            <ChevronDown className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {isNewCustomDomain && !isCodeSent && (
+                        <div className="animate-in slide-in-from-top-1 duration-200">
+                          <input
+                            type="text"
+                            required
+                            className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold"
+                            placeholder="도메인을 입력해주세요"
+                            value={newCustomDomain}
+                            onChange={(e) => setNewCustomDomain(e.target.value)}
+                          />
+                        </div>
+                      )}
+
+                      {!isCodeSent && (
+                        <button
+                          onClick={() => sendVerificationCode('email')}
+                          disabled={!newEmailId || (isNewCustomDomain ? !newCustomDomain : !newEmailDomain)}
+                          className="w-full py-4 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-black transition-all disabled:opacity-50"
+                        >
+                          인증번호 발송
+                        </button>
+                      )}
+                    </div>
 
                     {/* 인증번호 입력 섹션 (중앙 정렬 스타일) */}
                     {isCodeSent && (
@@ -989,21 +1074,27 @@ export const Settings: React.FC = () => {
                                 </span>
                               )}
                             </div>
+                            {emailVerificationError && (
+                              <p className="text-[10px] text-red-500 mt-1 font-bold flex items-center justify-center gap-1 animate-in fade-in slide-in-from-top-1">
+                                <AlertCircle className="w-3 h-3" /> {emailVerificationError}
+                              </p>
+                            )}
                           </div>
                           <div className="flex gap-2">
                             <button
                               type="button"
                               onClick={() => verifyCode('email')}
-                              className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                              className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
                             >
                               인증 확인
                             </button>
                             <button
                               type="button"
                               onClick={() => sendVerificationCode('email')}
-                              className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                              disabled={cooldown > 0}
+                              className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-50"
                             >
-                              재요청
+                              {cooldown > 0 ? `${cooldown}초 후 재요청` : '재요청'}
                             </button>
                           </div>
                         </div>
@@ -1018,7 +1109,7 @@ export const Settings: React.FC = () => {
                   <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                   </div>
-                  <h3 className="text-2xl font-black text-gray-900 mb-2">변경 완료</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">변경 완료</h3>
                   <p className="text-sm text-gray-500">이메일 주소가 성공적으로 변경되었습니다.</p>
                 </div>
               )}
@@ -1047,7 +1138,7 @@ export const Settings: React.FC = () => {
                   <div className="w-20 h-20 bg-red-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
                     <AlertCircle className="w-10 h-10 text-red-500" />
                   </div>
-                  <h3 className="text-2xl font-black text-gray-900 mb-4">정말 탈퇴하시겠습니까?</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">정말 탈퇴하시겠습니까?</h3>
 
                   <div className="bg-red-50 p-6 rounded-2xl text-left mb-8">
                     <p className="text-sm font-bold text-red-800 mb-4">탈퇴 조건 확인</p>
@@ -1121,7 +1212,7 @@ export const Settings: React.FC = () => {
 
               {withdrawStep === 'reason' && (
                 <div>
-                  <h3 className="text-2xl font-black text-gray-900 mb-2">탈퇴 사유</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">탈퇴 사유</h3>
                   <p className="text-sm text-gray-500 mb-8">탈퇴하시는 이유를 알려주시면 서비스 개선에 큰 도움이 됩니다.</p>
 
                   <div className="space-y-3 mb-8">
@@ -1174,12 +1265,12 @@ export const Settings: React.FC = () => {
 
                {withdrawStep === 'input' && (
                 <div>
-                  <h3 className="text-2xl font-black text-gray-900 mb-2">필수 정보 입력</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">필수 정보 입력</h3>
                   <p className="text-sm text-gray-500 mb-8">안전한 탈퇴를 위해 본인 확인이 필요합니다.</p>
 
                   <div className="bg-gray-50 p-4 rounded-2xl text-center mb-6 border border-gray-100">
                     <p className="text-xs text-gray-400 mb-1">인증 문구 (닉네임)</p>
-                    <p className="text-lg font-black text-red-600 tracking-wider font-mono">{user?.nickname}</p>
+                    <p className="text-lg font-bold text-red-600 tracking-wider font-mono">{user?.nickname}</p>
                   </div>
 
                   <input
@@ -1217,7 +1308,7 @@ export const Settings: React.FC = () => {
                   <div className="w-20 h-20 bg-emerald-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                   </div>
-                  <h3 className="text-2xl font-black text-gray-900 mb-2">탈퇴 처리가 완료되었습니다</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">탈퇴 처리가 완료되었습니다</h3>
                   <p className="text-sm text-gray-500">그동안 이용해주셔서 감사합니다.<br />잠시 후 메인 화면으로 이동합니다.</p>
                 </div>
               )}

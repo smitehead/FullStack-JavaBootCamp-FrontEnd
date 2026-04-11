@@ -107,7 +107,7 @@ export const InquiryDetail: React.FC = () => {
             )}
           </div>
 
-          <h1 className="text-3xl font-black text-gray-900 mb-6 tracking-tight leading-tight">{inquiry.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">{inquiry.title}</h1>
           
           <div className="flex items-center gap-6 text-sm text-gray-400 font-bold">
             <div className="flex items-center gap-2">
@@ -154,7 +154,7 @@ export const InquiryDetail: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="text-sm font-black text-gray-900">
+                    <div className="text-sm font-bold text-gray-900">
                       {inquiry.adminNickname || '운영팀'} 답변
                     </div>
                     {inquiry.answeredAt && (
@@ -185,7 +185,7 @@ export const InquiryDetail: React.FC = () => {
                 
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="text-sm font-black text-gray-400">운영팀 답변</div>
+                    <div className="text-sm font-bold text-gray-400">운영팀 답변</div>
                   </div>
                   
                   <div className="text-gray-400 leading-relaxed font-bold italic">

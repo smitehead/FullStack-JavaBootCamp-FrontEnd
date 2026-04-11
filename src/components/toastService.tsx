@@ -24,7 +24,7 @@ export const showToast = (message: string, type: ToastType = 'info') => {
       className="bg-white border border-gray-100 shadow-2xl rounded-full py-3 px-6 flex items-center gap-3 relative min-w-[300px]"
     >
       <div className="flex items-center justify-center shrink-0">{icon}</div>
-      <p className="text-sm font-black text-gray-900 leading-none whitespace-nowrap">
+      <p className="text-sm font-bold text-gray-900 leading-none whitespace-nowrap">
         {message.split("'").map((part, i) =>
           i % 2 === 1 ? <span key={i} className={color}>'{part}'</span> : part
         )}

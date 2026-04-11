@@ -196,7 +196,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <p className="text-[10px] text-gray-400 mb-0.5">
               {product.status === 'completed' ? '최종 낙찰가' : '현재 입찰가'}
             </p>
-            <p className={`text-lg font-black transition-colors duration-500 ${priceHighlight ? 'text-red-600 animate-pulse' : (showBadge ? 'text-indigo-600' : 'text-gray-900')}`}>
+            <p className={`text-lg font-bold transition-colors duration-500 ${priceHighlight ? 'text-red-600 animate-pulse' : (showBadge ? 'text-indigo-600' : 'text-gray-900')}`}>
               {product.currentPrice.toLocaleString()}원
             </p>
           </div>

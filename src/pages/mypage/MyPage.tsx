@@ -382,7 +382,7 @@ export const MyPage: React.FC = () => {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-sm font-bold text-emerald-600">매너온도</span>
-                      <span className="text-xl font-black text-emerald-600">{Number(user.mannerTemp).toFixed(1)}</span>
+                      <span className="text-xl font-bold text-emerald-600">{Number(user.mannerTemp).toFixed(1)}</span>
                     </div>
                     <span className="text-xs font-medium text-gray-300">100</span>
                   </div>
@@ -400,7 +400,7 @@ export const MyPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">입찰내역</p>
-                    <p className="text-lg font-black text-gray-900">{biddingProducts.length}<span className="text-xs font-medium ml-0.5">건</span></p>
+                    <p className="text-lg font-bold text-gray-900">{biddingProducts.length}<span className="text-xs font-medium ml-0.5">건</span></p>
                   </div>
                 </button>
                 <button onClick={() => setActiveTab('wishlist')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group text-left">
@@ -409,7 +409,7 @@ export const MyPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">찜목록</p>
-                    <p className="text-lg font-black text-gray-900">{wishlistProducts.length}<span className="text-xs font-medium ml-0.5">개</span></p>
+                    <p className="text-lg font-bold text-gray-900">{wishlistProducts.length}<span className="text-xs font-medium ml-0.5">개</span></p>
                   </div>
                 </button>
               </div>
@@ -425,7 +425,7 @@ export const MyPage: React.FC = () => {
                     </div>
                     <p className="text-xs font-bold text-indigo-300 uppercase tracking-widest group-hover:text-white transition-colors">보유 포인트</p>
                   </Link>
-                  <h3 className="text-3xl font-black tracking-tight">{(user.points || 0).toLocaleString()}<span className="text-lg ml-1 text-indigo-400">P</span></h3>
+                  <h3 className="text-3xl font-bold tracking-tight">{(user.points || 0).toLocaleString()}<span className="text-lg ml-1 text-indigo-400">P</span></h3>
                 </div>
 
                 <div className="flex gap-2 mt-4">
@@ -588,7 +588,7 @@ export const MyPage: React.FC = () => {
                           return Object.entries(tagCounts).map(([tag, count]) => (
                             <div key={tag} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
                               <span className="text-sm font-medium text-gray-700">{tag}</span>
-                              <span className="bg-indigo-100 text-indigo-600 text-xs font-black px-2 py-0.5 rounded-full">{count}</span>
+                              <span className="bg-indigo-100 text-indigo-600 text-xs font-bold px-2 py-0.5 rounded-full">{count}</span>
                             </div>
                           ));
                         })()}
@@ -657,7 +657,7 @@ export const MyPage: React.FC = () => {
                 </button>
               </div>
 
-              <h3 className="text-xl font-black text-gray-900 mb-2">게시글을 삭제하시겠습니까?</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">게시글을 삭제하시겠습니까?</h3>
 
               {deleteProduct.participantCount > 0 && deleteProduct.status !== 'completed' ? (
                 <div className="bg-red-50 p-4 rounded-2xl mb-6">

@@ -86,7 +86,7 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-6 pb-10">
       <header>
-        <h1 className="text-2xl font-black text-gray-900 tracking-tight">관리자 대시보드</h1>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">관리자 대시보드</h1>
         <p className="text-gray-500 mt-1 text-xs font-medium">서비스 현황을 확인하세요.</p>
       </header>
 
@@ -105,7 +105,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <div>
                 <p className="text-[11px] font-bold text-gray-500 mb-0.5">{stat.label}</p>
-                <p className="text-xl font-black text-gray-900">{stat.value}</p>
+                <p className="text-xl font-bold text-gray-900">{stat.value}</p>
               </div>
             </button>
           );
@@ -115,7 +115,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-3 gap-4">
         {/* Popular Categories */}
         <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
-          <h2 className="text-lg font-black text-gray-900 mb-6">인기 카테고리</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-6">인기 카테고리</h2>
           {popularCategories.length > 0 ? (
             <>
               <div className="h-[200px] w-full">
@@ -161,7 +161,7 @@ export const AdminDashboard: React.FC = () => {
         {/* Recent Inquiries */}
         <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-black text-gray-900">최근 문의사항</h2>
+            <h2 className="text-lg font-bold text-gray-900">최근 문의사항</h2>
             <button
               onClick={() => navigate('/admin/inquiries')}
               className="text-xs font-bold text-[#FF5A5A] hover:underline"
@@ -181,7 +181,7 @@ export const AdminDashboard: React.FC = () => {
                     <p className="text-[10px] font-medium text-gray-400">{inquiry?.createdAt?.split('T')[0] || '-'}</p>
                   </div>
                 </div>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-none shrink-0 ${inquiry.status === 1 ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-none shrink-0 ${inquiry.status === 1 ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                   }`}>
                   {inquiry.status === 1 ? '답변 완료' : '답변 대기중'}
                 </span>
@@ -198,7 +198,7 @@ export const AdminDashboard: React.FC = () => {
         {/* Recent Notices */}
         <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-black text-gray-900">최근 공지사항</h2>
+            <h2 className="text-lg font-bold text-gray-900">최근 공지사항</h2>
             <button
               onClick={() => navigate('/admin/notices')}
               className="text-xs font-bold text-[#FF5A5A] hover:underline"
@@ -218,7 +218,7 @@ export const AdminDashboard: React.FC = () => {
                     <p className="text-[10px] font-medium text-gray-400">{notice.createdAt?.split('T')[0]}</p>
                   </div>
                 </div>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-none shrink-0 ${notice.category === '점검' ? 'bg-orange-100 text-orange-700' :
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-none shrink-0 ${notice.category === '점검' ? 'bg-orange-100 text-orange-700' :
                   notice.category === '업데이트' ? 'bg-blue-100 text-blue-700' :
                     'bg-gray-100 text-gray-700'
                   }`}>

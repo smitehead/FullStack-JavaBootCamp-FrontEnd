@@ -80,7 +80,7 @@ export const Chat: React.FC = () => {
       {/* Sidebar: Chat Rooms */}
       <div className={`w-full md:w-80 flex-shrink-0 border-r border-gray-100 flex flex-col ${selectedRoom ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-6 border-b border-gray-100">
-          <h2 className="text-xl font-black text-gray-900 tracking-tight mb-4">채팅</h2>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight mb-4">채팅</h2>
           
           {/* Filter Chips */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
@@ -122,14 +122,14 @@ export const Chat: React.FC = () => {
                 <div className="relative flex-shrink-0">
                   <img src={getProfileImageUrl(room.otherUser.profileImage)} alt={room.otherUser.nickname} className="w-12 h-12 rounded-2xl object-cover" />
                   {room.unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
                       {room.unreadCount}
                     </span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0 text-left">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-black text-gray-900 truncate">{room.otherUser.nickname}</span>
+                    <span className="text-sm font-bold text-gray-900 truncate">{room.otherUser.nickname}</span>
                     <span className="text-[10px] text-gray-400 font-medium">
                       {format(new Date(room.lastMessageAt), 'HH:mm', { locale: ko })}
                     </span>
@@ -155,8 +155,8 @@ export const Chat: React.FC = () => {
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <img src={selectedRoom.productImage} alt={selectedRoom.productTitle} className="w-10 h-10 rounded-xl object-cover flex-shrink-0" />
                   <div className="min-w-0">
-                    <h3 className="text-sm font-black text-gray-900 truncate">{selectedRoom.productTitle}</h3>
-                    <p className="text-xs font-black text-orange-500">{selectedRoom.productPrice.toLocaleString()}원</p>
+                    <h3 className="text-sm font-bold text-gray-900 truncate">{selectedRoom.productTitle}</h3>
+                    <p className="text-xs font-bold text-orange-500">{selectedRoom.productPrice.toLocaleString()}원</p>
                   </div>
                 </div>
               </div>
@@ -267,7 +267,7 @@ export const Chat: React.FC = () => {
             <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-gray-100">
               <MessageSquare className="w-10 h-10 text-gray-200" />
             </div>
-            <h3 className="text-xl font-black text-gray-900 mb-2 tracking-tight">채팅을 시작해보세요</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2 tracking-tight">채팅을 시작해보세요</h3>
             <p className="text-sm text-gray-400 font-medium leading-relaxed">
               왼쪽 목록에서 대화 상대를 선택하거나<br/>
               상품 상세 페이지에서 문의하기를 눌러보세요.

@@ -64,7 +64,7 @@ export const AuctionManagement: React.FC = () => {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-black text-gray-900 tracking-tight">경매 관리</h1>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">경매 관리</h1>
           <p className="text-gray-500 mt-1 text-[11px] font-medium">진행 중인 경매를 모니터링하고 필요한 경우 강제 종료 처리합니다.</p>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3">
@@ -99,7 +99,7 @@ export const AuctionManagement: React.FC = () => {
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <Gavel className="w-5 h-5 text-gray-400" /> 경매 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredProducts.length}건</span>
@@ -119,7 +119,7 @@ export const AuctionManagement: React.FC = () => {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <p className="text-sm font-bold text-gray-900 truncate">{product.title}</p>
-                      <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${product.status === 'active' ? 'bg-green-50 text-green-600' :
+                      <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-bold ${product.status === 'active' ? 'bg-green-50 text-green-600' :
                         product.status === 'completed' ? 'bg-gray-100 text-gray-500' :
                           'bg-red-50 text-red-600'
                         }`}>
@@ -135,7 +135,7 @@ export const AuctionManagement: React.FC = () => {
                         {product.seller.nickname}
                       </Link>
                       <span className="text-gray-300">|</span>
-                      <span className="font-black text-gray-900">{product.currentPrice.toLocaleString()}원</span>
+                      <span className="font-bold text-gray-900">{product.currentPrice.toLocaleString()}원</span>
                       <span className="text-[10px] text-gray-400">시작 {product.startPrice.toLocaleString()}원</span>
                       <span className="text-gray-300">|</span>
                       <span className="inline-flex items-center gap-1 text-blue-600 font-bold">
@@ -202,26 +202,26 @@ export const AuctionManagement: React.FC = () => {
                   <AlertCircle className="w-6 h-6 text-red-500" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-gray-900">경매 강제 종료</h3>
+                  <h3 className="text-xl font-bold text-gray-900">경매 강제 종료</h3>
                   <p className="text-sm text-gray-500 font-medium">경매를 중단하고 취소 처리합니다.</p>
                 </div>
               </div>
 
               <div className="bg-gray-50 rounded-none p-4 mb-8">
-                <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">대상 상품</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">대상 상품</p>
                 <p className="text-sm font-bold text-gray-900">{selectedProduct.title}</p>
               </div>
 
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowCancelModal(false)}
-                  className="flex-1 py-4 bg-gray-100 text-gray-500 font-black rounded-none hover:bg-gray-200 transition-all active:scale-95"
+                  className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-none hover:bg-gray-200 transition-all active:scale-95"
                 >
                   취소
                 </button>
                 <button
                   onClick={handleCancelAuction}
-                  className="flex-1 py-4 bg-red-500 text-white font-black rounded-none hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 active:scale-95"
+                  className="flex-1 py-4 bg-red-500 text-white font-bold rounded-none hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 active:scale-95"
                 >
                   강제 종료 실행
                 </button>

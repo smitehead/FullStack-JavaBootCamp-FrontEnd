@@ -117,7 +117,7 @@ export const CardRegistration: React.FC = () => {
           <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-emerald-500" />
           </div>
-          <h2 className="text-2xl font-black text-gray-900 mb-2">카드 등록 완료</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">카드 등록 완료</h2>
           <p className="text-gray-500 font-medium">결제 카드가 성공적으로 등록되었습니다.</p>
           <p className="text-gray-400 text-sm mt-3">잠시 후 충전 페이지로 이동합니다...</p>
         </div>
@@ -156,7 +156,7 @@ export const CardRegistration: React.FC = () => {
               <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
                 <Lock className="w-4 h-4 text-indigo-600" />
               </div>
-              <h1 className="text-2xl font-black text-gray-900 tracking-tight">카드 등록</h1>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">카드 등록</h1>
             </div>
             <p className="text-sm text-gray-400 font-medium mt-2 ml-12">
               카드를 한 번 등록하면 간편하게 포인트를 충전할 수 있습니다.
@@ -168,7 +168,7 @@ export const CardRegistration: React.FC = () => {
 
             {/* 카드번호 */}
             <div className="space-y-2">
-              <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                 카드 번호
               </label>
               <div className="grid grid-cols-4 gap-2">
@@ -196,7 +196,7 @@ export const CardRegistration: React.FC = () => {
             {/* 유효기간 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                   유효기간 (월)
                 </label>
                 <input
@@ -211,7 +211,7 @@ export const CardRegistration: React.FC = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                   유효기간 (연)
                 </label>
                 <input
@@ -230,7 +230,7 @@ export const CardRegistration: React.FC = () => {
             {/* 생년월일 / 비밀번호 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                   생년월일 (6자리)
                 </label>
                 <input
@@ -245,7 +245,7 @@ export const CardRegistration: React.FC = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                   비밀번호 앞 2자리
                 </label>
                 <input
@@ -266,7 +266,7 @@ export const CardRegistration: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
               >
                 {isSubmitting
                   ? <><Loader2 className="w-5 h-5 animate-spin" />등록 중...</>

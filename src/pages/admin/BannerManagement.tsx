@@ -150,12 +150,12 @@ export const BannerManagement: React.FC = () => {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-black text-gray-900 tracking-tight">배너 관리</h1>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">배너 관리</h1>
           <p className="text-gray-500 mt-1 text-[11px] font-medium">메인 화면의 히어로 배너와 하단 광고 배너를 관리합니다.</p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-[#FF5A5A] text-white px-6 py-2 rounded-none font-black hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-sm"
+          className="bg-[#FF5A5A] text-white px-6 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-sm"
         >
           <Plus className="w-4 h-4 mr-2" /> 새 배너 등록
         </button>
@@ -166,7 +166,7 @@ export const BannerManagement: React.FC = () => {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-3 text-xs font-black transition-all relative ${activeTab === tab
+            className={`pb-3 text-xs font-bold transition-all relative ${activeTab === tab
               ? 'text-[#FF5A5A]'
               : 'text-gray-400 hover:text-gray-600'
               }`}
@@ -182,12 +182,12 @@ export const BannerManagement: React.FC = () => {
       {/* Carousel Preview */}
       <section className="overflow-hidden relative">
         <div className="flex items-center justify-between mb-4 relative z-10 px-1">
-          <h2 className="text-lg font-black text-gray-900 tracking-tight">
+          <h2 className="text-lg font-bold text-gray-900 tracking-tight">
             {activeTab === 'hero' ? '메인 히어로 미리보기' : '하단 광고 미리보기'}
           </h2>
           <div className="flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded-none border border-gray-200">
             <span className="w-1.5 h-1.5 bg-green-500 rounded-none animate-pulse"></span>
-            <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Live Preview</span>
+            <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Live Preview</span>
           </div>
         </div>
 
@@ -226,7 +226,7 @@ export const BannerManagement: React.FC = () => {
                 )}
               </motion.div>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-400 font-black text-sm">
+              <div className="h-full flex items-center justify-center text-gray-400 font-bold text-sm">
                 활성화된 배너가 없습니다.
               </div>
             )}
@@ -300,11 +300,11 @@ export const BannerManagement: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-1.5">
                   {banner.isActive === 1 ? (
-                    <span className="flex items-center text-[9px] font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-none">
+                    <span className="flex items-center text-[9px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-none">
                       <CheckCircle2 className="w-2.5 h-2.5 mr-1" /> 활성
                     </span>
                   ) : (
-                    <span className="flex items-center text-[9px] font-black text-gray-400 bg-gray-50 px-2 py-0.5 rounded-none">
+                    <span className="flex items-center text-[9px] font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-none">
                       <XCircle className="w-2.5 h-2.5 mr-1" /> 비활성
                     </span>
                   )}
@@ -312,7 +312,7 @@ export const BannerManagement: React.FC = () => {
               </div>
               <button
                 onClick={() => toggleActive(banner.bannerNo)}
-                className={`text-[10px] font-black px-4 py-1.5 rounded-none transition-all ${banner.isActive === 1
+                className={`text-[10px] font-bold px-4 py-1.5 rounded-none transition-all ${banner.isActive === 1
                   ? 'text-red-600 bg-red-50 hover:bg-red-100'
                   : 'text-green-600 bg-green-50 hover:bg-green-100'
                   }`}
@@ -329,18 +329,18 @@ export const BannerManagement: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-w-lg rounded-2xl p-10 shadow-2xl animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-black text-gray-900 tracking-tight">
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
                 {editingBanner ? '배너 수정' : '새 배너 등록'}
               </h2>
             </div>
 
             <div className="space-y-8 mb-10">
               <div>
-                <label className="block text-xs font-black text-gray-700 mb-3 uppercase tracking-widest">배너 타입</label>
+                <label className="block text-xs font-bold text-gray-700 mb-3 uppercase tracking-widest">배너 타입</label>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setBannerType('hero')}
-                    className={`flex-1 py-3 rounded-none font-black text-sm transition-all ${bannerType === 'hero'
+                    className={`flex-1 py-3 rounded-none font-bold text-sm transition-all ${bannerType === 'hero'
                       ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/20'
                       : 'bg-gray-50 text-gray-400 border border-gray-100 hover:bg-gray-100'
                       }`}
@@ -349,7 +349,7 @@ export const BannerManagement: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setBannerType('ad')}
-                    className={`flex-1 py-3 rounded-none font-black text-sm transition-all ${bannerType === 'ad'
+                    className={`flex-1 py-3 rounded-none font-bold text-sm transition-all ${bannerType === 'ad'
                       ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/20'
                       : 'bg-gray-50 text-gray-400 border border-gray-100 hover:bg-gray-100'
                       }`}
@@ -360,7 +360,7 @@ export const BannerManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-black text-gray-700 mb-2">이미지</label>
+                <label className="block text-xs font-bold text-gray-700 mb-2">이미지</label>
                 {/* 파일 업로드 */}
                 <div className="mb-2">
                   <label
@@ -413,7 +413,7 @@ export const BannerManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-black text-gray-700 mb-2">연결 링크 (URL)</label>
+                <label className="block text-xs font-bold text-gray-700 mb-2">연결 링크 (URL)</label>
                 <div className="relative flex items-center">
                   <LinkIcon className="absolute left-3 text-gray-400 w-4 h-4" />
                   <input
@@ -428,7 +428,7 @@ export const BannerManagement: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-black text-gray-700 mb-2">노출 순서</label>
+                  <label className="block text-xs font-bold text-gray-700 mb-2">노출 순서</label>
                   <input
                     type="number"
                     min={0}
@@ -440,7 +440,7 @@ export const BannerManagement: React.FC = () => {
                   <p className="text-[10px] text-gray-400 mt-1">숫자가 작을수록 먼저 노출</p>
                 </div>
                 <div>
-                  <label className="block text-xs font-black text-gray-700 mb-2">종료 일시</label>
+                  <label className="block text-xs font-bold text-gray-700 mb-2">종료 일시</label>
                   <input
                     type="datetime-local"
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-medium text-sm"
@@ -459,7 +459,7 @@ export const BannerManagement: React.FC = () => {
                     checked={isActive === 1}
                     onChange={(e) => setIsActive(e.target.checked ? 1 : 0)}
                   />
-                  <span className="text-xs font-black text-gray-700 group-hover:text-[#FF5A5A] transition-colors">배너 활성화</span>
+                  <span className="text-xs font-bold text-gray-700 group-hover:text-[#FF5A5A] transition-colors">배너 활성화</span>
                 </label>
               </div>
             </div>
@@ -467,13 +467,13 @@ export const BannerManagement: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="flex-1 py-3 rounded-none font-black text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all active:scale-95 text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all active:scale-95 text-sm"
               >
                 취소
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 py-3 rounded-none font-black text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all active:scale-95 shadow-lg shadow-red-500/10 text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all active:scale-95 shadow-lg shadow-red-500/10 text-sm"
               >
                 확인
               </button>
@@ -488,7 +488,7 @@ export const BannerManagement: React.FC = () => {
             <div className="w-16 h-16 bg-red-50 rounded-none flex items-center justify-center mb-4 mx-auto">
               <Trash2 className="w-8 h-8 text-red-500" />
             </div>
-            <h2 className="text-xl font-black text-gray-900 mb-2 text-center tracking-tight">
+            <h2 className="text-xl font-bold text-gray-900 mb-2 text-center tracking-tight">
               정말 삭제하시겠습니까?
             </h2>
             <p className="text-gray-500 font-medium text-center mb-8 text-sm">
@@ -498,13 +498,13 @@ export const BannerManagement: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 py-3 rounded-none font-black text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all active:scale-95 text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all active:scale-95 text-sm"
               >
                 취소
               </button>
               <button
                 onClick={confirmDelete}
-                className="flex-1 py-3 rounded-none font-black text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all active:scale-95 shadow-lg shadow-red-500/20 text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all active:scale-95 shadow-lg shadow-red-500/20 text-sm"
               >
                 확인
               </button>

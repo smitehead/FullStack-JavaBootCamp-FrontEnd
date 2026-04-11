@@ -103,19 +103,19 @@ export const PointCharge: React.FC = () => {
         <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8">
           <CheckCircle2 className="w-12 h-12 text-emerald-500" />
         </div>
-        <h2 className="text-3xl font-black text-gray-900 mb-4">충전 완료!</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">충전 완료!</h2>
         <p className="text-gray-500 font-medium mb-10">{result.message}</p>
         <div className="bg-gray-50 rounded-3xl p-6 mb-10">
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-400 font-bold">충전 후 잔액</span>
-            <span className="text-xl font-black text-gray-900">
+            <span className="text-xl font-bold text-gray-900">
               {result.newBalance?.toLocaleString()}P
             </span>
           </div>
         </div>
         <button
           onClick={() => navigate('/points')}
-          className="w-full py-4 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl"
+          className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl"
         >
           확인
         </button>
@@ -130,11 +130,11 @@ export const PointCharge: React.FC = () => {
         <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-8">
           <AlertCircle className="w-12 h-12 text-red-500" />
         </div>
-        <h2 className="text-3xl font-black text-gray-900 mb-4">충전 실패</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">충전 실패</h2>
         <p className="text-gray-500 font-medium mb-10">{result.message}</p>
         <button
           onClick={() => setResult(null)}
-          className="w-full py-4 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl"
+          className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl"
         >
           다시 시도
         </button>
@@ -149,7 +149,7 @@ export const PointCharge: React.FC = () => {
         <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
           <ArrowLeft className="w-6 h-6 text-gray-900" />
         </button>
-        <h2 className="text-3xl font-black text-gray-900 tracking-normal">포인트 충전</h2>
+        <h2 className="text-3xl font-bold text-gray-900 tracking-normal">포인트 충전</h2>
       </div>
 
       <div className="space-y-8">
@@ -170,7 +170,7 @@ export const PointCharge: React.FC = () => {
                   <CreditCard className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
-                  <p className="font-black text-gray-900">{registeredCard.cardName || '등록된 카드'}</p>
+                  <p className="font-bold text-gray-900">{registeredCard.cardName || '등록된 카드'}</p>
                   <p className="text-sm text-gray-400 font-medium">{registeredCard.cardNo || '카드번호 정보 없음'}</p>
                 </div>
               </div>
@@ -190,7 +190,7 @@ export const PointCharge: React.FC = () => {
                     <CreditCard className="w-6 h-6 text-gray-400" />
                   </div>
                   <div>
-                    <p className="font-black text-gray-500">등록된 카드 없음</p>
+                    <p className="font-bold text-gray-500">등록된 카드 없음</p>
                     <p className="text-sm text-gray-400">카드를 등록하면 간편하게 충전할 수 있습니다</p>
                   </div>
                 </div>
@@ -207,7 +207,7 @@ export const PointCharge: React.FC = () => {
 
         {/* 금액 입력 */}
         <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm text-center">
-          <h4 className="text-xl font-black text-gray-900 mb-8">얼마를 충전할까요?</h4>
+          <h4 className="text-xl font-bold text-gray-900 mb-8">얼마를 충전할까요?</h4>
 
           <div className="flex flex-col items-center mb-6">
             <div className="relative w-full max-w-[240px]">
@@ -216,9 +216,9 @@ export const PointCharge: React.FC = () => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ''))}
                 placeholder="0"
-                className="w-full text-4xl font-black py-4 border-b-4 border-gray-100 focus:border-indigo-600 outline-none transition-all placeholder:text-gray-200 text-center pr-8"
+                className="w-full text-4xl font-bold py-4 border-b-4 border-gray-100 focus:border-indigo-600 outline-none transition-all placeholder:text-gray-200 text-center pr-8"
               />
-              <span className="absolute right-0 bottom-5 text-2xl font-black text-gray-300">원</span>
+              <span className="absolute right-0 bottom-5 text-2xl font-bold text-gray-300">원</span>
             </div>
             {amount && Number(amount) > 0 && (
               <p className="mt-4 text-sm font-bold text-gray-400">
@@ -246,7 +246,7 @@ export const PointCharge: React.FC = () => {
           <button
             onClick={handleCharge}
             disabled={isLoading || !amount || Number(amount) <= 0 || !registeredCard}
-            className="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
+            className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>

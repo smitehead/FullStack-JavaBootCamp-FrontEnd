@@ -211,7 +211,7 @@ export const WonProductDetail: React.FC = () => {
             뒤로가기
           </button>
           <div className="flex items-center gap-2">
-            <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider ${statusClass}`}>
+            <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${statusClass}`}>
               {statusLabel}
             </span>
           </div>
@@ -223,7 +223,7 @@ export const WonProductDetail: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               {/* Product Summary */}
               <section className="p-8">
-                <h3 className="text-lg font-black text-gray-900 mb-6 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                   <Package className="w-5 h-5 text-emerald-500" /> 낙찰 상품 정보
                 </h3>
                 <div className="flex gap-6">
@@ -255,7 +255,7 @@ export const WonProductDetail: React.FC = () => {
                     <p className="text-sm text-gray-500 mb-4 line-clamp-1">{result.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">최종 낙찰가</span>
-                      <span className="text-2xl font-black text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
+                      <span className="text-2xl font-bold text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
                     </div>
                   </div>
                 </div>
@@ -285,7 +285,7 @@ export const WonProductDetail: React.FC = () => {
                 <div className="bg-gray-50/50 rounded-2xl border border-gray-100 p-6">
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-black text-gray-900">
+                      <h3 className="text-lg font-bold text-gray-900">
                         {activeTransactionTab === 'face-to-face' ? '거래 방식 및 장소' : '배송지 정보'}
                       </h3>
                       <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">
@@ -364,7 +364,7 @@ export const WonProductDetail: React.FC = () => {
 
               {/* Payment Summary */}
               <section className="p-8">
-                <h3 className="text-lg font-black text-gray-900 mb-6 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                    <CreditCard className="w-5 h-5 text-indigo-500" /> 결제 정보
                 </h3>
                 <div className="space-y-4">
@@ -377,8 +377,8 @@ export const WonProductDetail: React.FC = () => {
                     <span className="text-gray-900 font-bold">0원 (무료배송)</span>
                   </div>
                   <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
-                    <span className="text-base font-black text-gray-900">총 결제 금액</span>
-                    <span className="text-2xl font-black text-[#FF5A5A]">{result.finalPrice.toLocaleString()}원</span>
+                    <span className="text-base font-bold text-gray-900">총 결제 금액</span>
+                    <span className="text-2xl font-bold text-[#FF5A5A]">{result.finalPrice.toLocaleString()}원</span>
                   </div>
                 </div>
 
@@ -389,7 +389,7 @@ export const WonProductDetail: React.FC = () => {
                       <button 
                         onClick={handlePayment}
                         disabled={isProcessing}
-                        className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50"
+                        className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50"
                       >
                         {isProcessing ? '처리 중...' : '입찰 구매 확정 (결제)'}
                       </button>
@@ -406,7 +406,7 @@ export const WonProductDetail: React.FC = () => {
                     <div className="grid grid-cols-1 gap-3">
                       <button 
                         onClick={() => setShowPurchaseConfirm(true)}
-                        className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
+                        className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
                       >
                         구매 확정하기
                       </button>
@@ -458,7 +458,7 @@ export const WonProductDetail: React.FC = () => {
                   <div className="space-y-3">
                     <button 
                       onClick={handleChatWithSeller}
-                      className="w-full py-5 bg-white text-gray-900 font-black rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
+                      className="w-full py-5 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
                     >
                       <MessageSquare className="w-5 h-5 text-gray-900" />
                       판매자와 채팅하기
@@ -491,7 +491,7 @@ export const WonProductDetail: React.FC = () => {
             <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
               <CreditCard className="w-8 h-8 text-indigo-600" />
             </div>
-            <h3 className="text-xl font-black text-gray-900 mb-2">결제를 진행할까요?</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">결제를 진행할까요?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-8">
               낙찰된 금액만큼 포인트가 차감됩니다.<br/>
               결제 후에는 취소가 어려울 수 있습니다.
@@ -505,7 +505,7 @@ export const WonProductDetail: React.FC = () => {
               </button>
               <button 
                 onClick={executePayment}
-                className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/10 active:scale-95"
+                className="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/10 active:scale-95"
               >
                 결제하기
               </button>
@@ -520,7 +520,7 @@ export const WonProductDetail: React.FC = () => {
             <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
               <CheckCircle2 className="w-8 h-8 text-emerald-600" />
             </div>
-            <h3 className="text-xl font-black text-gray-900 mb-2">구매를 확정하시겠습니까?</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">구매를 확정하시겠습니까?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
               물건을 정상적으로 수령하셨나요?
             </p>
@@ -536,7 +536,7 @@ export const WonProductDetail: React.FC = () => {
               </button>
               <button 
                 onClick={executeConfirmPurchase}
-                className="flex-1 py-4 bg-emerald-500 text-white font-black rounded-2xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
+                className="flex-1 py-4 bg-emerald-500 text-white font-bold rounded-2xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
               >
                 확정하기
               </button>
@@ -551,7 +551,7 @@ export const WonProductDetail: React.FC = () => {
             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
               <XCircle className="w-8 h-8 text-red-600" />
             </div>
-            <h3 className="text-xl font-black text-gray-900 mb-2">낙찰을 취소하시겠습니까?</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">낙찰을 취소하시겠습니까?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
               정말 취소하시겠습니까?
             </p>
@@ -567,7 +567,7 @@ export const WonProductDetail: React.FC = () => {
               </button>
               <button 
                 onClick={executeCancel}
-                className="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-400 transition-all shadow-lg shadow-red-500/10 active:scale-95"
+                className="flex-1 py-4 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-400 transition-all shadow-lg shadow-red-500/10 active:scale-95"
               >
                 취소하기
               </button>
@@ -585,7 +585,7 @@ export const WonProductDetail: React.FC = () => {
                 <img src={images[0]} alt={result.title} className="w-full h-full object-cover" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-gray-900 leading-tight">
+                <h3 className="text-xl font-bold text-gray-900 leading-tight">
                   <span className="text-indigo-600">{result.seller.nickname}</span>님과의 거래<br/>
                   어떤 점이 좋았나요?
                 </h3>
@@ -614,7 +614,7 @@ export const WonProductDetail: React.FC = () => {
               </div>
 
               <div>
-                <h4 className="text-sm font-black text-gray-900 mb-3 ml-1">상세 후기 남기기</h4>
+                <h4 className="text-sm font-bold text-gray-900 mb-3 ml-1">상세 후기 남기기</h4>
                 <textarea
                   value={reviewContent}
                   onChange={(e) => setReviewContent(e.target.value)}
@@ -626,14 +626,14 @@ export const WonProductDetail: React.FC = () => {
               <div className="flex gap-3 pt-2">
                 <button 
                   onClick={() => { setShowReviewModal(false); navigate('/mypage'); }}
-                  className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all font-black"
+                  className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all font-bold"
                 >
                   나중에 하기
                 </button>
                 <button 
                   onClick={handleSubmitReview}
                   disabled={isSubmittingReview}
-                  className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/10 disabled:opacity-50 active:scale-95"
+                  className="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/10 disabled:opacity-50 active:scale-95"
                 >
                   {isSubmittingReview ? '등록 중...' : '후기 등록하기'}
                 </button>
@@ -650,7 +650,7 @@ export const WonProductDetail: React.FC = () => {
             <div className="w-20 h-20 bg-emerald-50 rounded-[24px] flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-emerald-500" />
             </div>
-            <h3 className="text-2xl font-black text-gray-900 mb-2">후기 등록 완료!</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">후기 등록 완료!</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed">
               소중한 후기가 등록되었습니다.<br/>
               마이페이지로 이동합니다.

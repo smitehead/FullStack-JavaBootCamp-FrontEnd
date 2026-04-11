@@ -81,7 +81,7 @@ export const InquiryManagement: React.FC = () => {
       <div className="w-1/2 flex flex-col space-y-4">
         <header className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-black text-gray-900 tracking-tight">문의사항 관리</h1>
+            <h1 className="text-xl font-bold text-gray-900 tracking-tight">문의사항 관리</h1>
             <p className="text-gray-500 mt-1 text-[11px] font-medium">사용자들의 문의에 답변을 작성합니다.</p>
           </div>
         </header>
@@ -95,7 +95,7 @@ export const InquiryManagement: React.FC = () => {
                   setActiveTab(tab);
                   setSelectedType('전체');
                 }}
-                className={`pb-3 text-xs font-black transition-all relative ${activeTab === tab
+                className={`pb-3 text-xs font-bold transition-all relative ${activeTab === tab
                   ? 'text-[#FF5A5A]'
                   : 'text-gray-400 hover:text-gray-600'
                   }`}
@@ -118,7 +118,7 @@ export const InquiryManagement: React.FC = () => {
                     e.stopPropagation();
                     setSelectedType(cat);
                   }}
-                  className={`px-3 py-1.5 rounded-none text-[10px] font-black whitespace-nowrap transition-all border ${selectedType === cat
+                  className={`px-3 py-1.5 rounded-none text-[10px] font-bold whitespace-nowrap transition-all border ${selectedType === cat
                     ? 'bg-[#FF5A5A] text-white border-[#FF5A5A] shadow-sm'
                     : 'bg-white text-gray-500 border-gray-100 hover:border-gray-200'
                     }`}
@@ -156,13 +156,13 @@ export const InquiryManagement: React.FC = () => {
                 }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className={`px-2 py-0.5 rounded-none text-[10px] font-black ${inquiry.status === 1 ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                <span className={`px-2 py-0.5 rounded-none text-[10px] font-bold ${inquiry.status === 1 ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                   }`}>
                   {inquiry.status === 1 ? '답변 완료' : '답변 대기중'}
                 </span>
                 <span className="text-[10px] font-medium text-gray-400">{inquiry.inquiryNo}</span>
               </div>
-              <h3 className="text-sm font-black text-gray-900 mb-1 line-clamp-1">{inquiry.title}</h3>
+              <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-1">{inquiry.title}</h3>
               <div className="flex items-center gap-3 flex-wrap text-xs">
                 <Link
                   to={`/admin/users?nickname=${getUserNickname(inquiry)}`}
@@ -186,7 +186,7 @@ export const InquiryManagement: React.FC = () => {
         {selectedInquiry ? (
           <div className="flex-1 flex flex-col p-8 overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-black text-gray-900">문의 상세 내용</h2>
+              <h2 className="text-xl font-bold text-gray-900">문의 상세 내용</h2>
               <button
                 onClick={() => handleDelete(selectedInquiry.inquiryNo)}
                 className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
@@ -204,14 +204,14 @@ export const InquiryManagement: React.FC = () => {
                   <div>
                     <Link
                       to={`/admin/users?nickname=${getUserNickname(selectedInquiry)}`}
-                      className="text-sm font-black text-gray-900 hover:text-[#FF5A5A] hover:underline transition-colors block text-left"
+                      className="text-sm font-bold text-gray-900 hover:text-[#FF5A5A] hover:underline transition-colors block text-left"
                     >
                       작성자: {getUserNickname(selectedInquiry)}
                     </Link>
                     <p className="text-[10px] font-medium text-gray-500">{formatDate(selectedInquiry.createdAt)}</p>
                   </div>
                 </div>
-                <h4 className="text-base font-black text-gray-900 mb-1">{selectedInquiry.title}</h4>
+                <h4 className="text-base font-bold text-gray-900 mb-1">{selectedInquiry.title}</h4>
                 <p className="text-sm text-gray-700 font-medium leading-relaxed whitespace-pre-wrap">{selectedInquiry.content}</p>
               </div>
 
@@ -222,7 +222,7 @@ export const InquiryManagement: React.FC = () => {
                       <CheckCircle2 className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-gray-900">
+                      <p className="text-sm font-bold text-gray-900">
                         관리자 답변 {selectedInquiry.adminNickname && `(${selectedInquiry.adminNickname})`}
                       </p>
                       <p className="text-[10px] font-medium text-gray-500">{formatDate(selectedInquiry.answeredAt || '')}</p>
@@ -234,7 +234,7 @@ export const InquiryManagement: React.FC = () => {
             </div>
 
             <div className="mt-auto pt-6 border-t border-gray-100">
-              <h3 className="text-base font-black text-gray-900 mb-3">답변 작성</h3>
+              <h3 className="text-base font-bold text-gray-900 mb-3">답변 작성</h3>
               <textarea
                 rows={4}
                 placeholder="답변 내용을 입력하세요"
@@ -245,7 +245,7 @@ export const InquiryManagement: React.FC = () => {
               <button
                 onClick={handleSaveAnswer}
                 disabled={!answer.trim()}
-                className="w-full py-3 rounded-none font-black text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-500/10 active:scale-95 disabled:opacity-50 disabled:active:scale-100 text-sm"
+                className="w-full py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-500/10 active:scale-95 disabled:opacity-50 disabled:active:scale-100 text-sm"
               >
                 <Send className="w-4 h-4 mr-2" /> 확인
               </button>
@@ -256,7 +256,7 @@ export const InquiryManagement: React.FC = () => {
             <div className="w-20 h-20 bg-gray-50 rounded-none flex items-center justify-center mb-4">
               <MessageSquare className="w-8 h-8 text-gray-300" />
             </div>
-            <h3 className="text-lg font-black text-gray-900 mb-1">문의를 선택해주세요</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-1">문의를 선택해주세요</h3>
             <p className="text-gray-400 text-sm font-medium">왼쪽 목록에서 답변할 문의사항을 선택하세요.</p>
           </div>
         )}
@@ -268,7 +268,7 @@ export const InquiryManagement: React.FC = () => {
             <div className="w-16 h-16 bg-red-50 rounded-none flex items-center justify-center mb-4 mx-auto">
               <Trash2 className="w-8 h-8 text-red-500" />
             </div>
-            <h2 className="text-xl font-black text-gray-900 mb-2 text-center tracking-tight">
+            <h2 className="text-xl font-bold text-gray-900 mb-2 text-center tracking-tight">
               정말 삭제하시겠습니까?
             </h2>
             <p className="text-gray-500 font-medium text-center mb-8 text-sm">
@@ -278,13 +278,13 @@ export const InquiryManagement: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 py-3 rounded-none font-black text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
               >
                 취소
               </button>
               <button
                 onClick={confirmDelete}
-                className="flex-1 py-3 rounded-none font-black text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 text-sm"
               >
                 확인
               </button>

@@ -123,7 +123,7 @@ export const NoticeList: React.FC = () => {
                           <span className="text-xs font-semibold text-gray-400">{notice.category}</span>
                         )}
                       </div>
-                      <h3 className={`flex-1 text-sm text-gray-900 group-hover:underline underline-offset-4 transition-all line-clamp-1 ${notice.isImportant ? 'font-black' : 'font-bold'}`}>
+                      <h3 className={`flex-1 text-sm text-gray-900 group-hover:underline underline-offset-4 transition-all line-clamp-1 ${notice.isImportant ? 'font-bold' : 'font-bold'}`}>
                         {notice.title}
                       </h3>
                       <span className="w-24 text-sm text-gray-400 font-medium shrink-0 text-right">

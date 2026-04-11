@@ -86,7 +86,7 @@ export const AccountRegistration: React.FC = () => {
               </svg>
             </motion.div>
           </div>
-          <h2 className="text-2xl font-black text-gray-900 mb-2">계좌 등록 완료</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">계좌 등록 완료</h2>
           <p className="text-gray-500 font-medium">출금 계좌가 성공적으로 등록되었습니다.</p>
           <p className="text-gray-400 text-sm mt-4">잠시 후 설정 페이지로 이동합니다...</p>
         </motion.div>
@@ -106,14 +106,14 @@ export const AccountRegistration: React.FC = () => {
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
           <div className="p-8 border-b border-gray-50">
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight">계좌 등록</h1>
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">계좌 등록</h1>
             <p className="text-sm text-gray-500 mt-1 font-medium">출금을 위한 본인 명의의 계좌를 등록해주세요.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-8 space-y-8">
             {!selectedBank ? (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">은행 선택</label>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">은행 선택</label>
                 <div className="grid grid-cols-4 gap-2">
                   {BANKS.map((bank) => (
                     <button
@@ -135,7 +135,7 @@ export const AccountRegistration: React.FC = () => {
                             }}
                           />
                         ) : null}
-                        <span className={`text-[10px] text-gray-400 font-black ${bank.logo ? 'hidden' : ''}`}>{bank.name.substring(0, 1)}</span>
+                        <span className={`text-[10px] text-gray-400 font-bold ${bank.logo ? 'hidden' : ''}`}>{bank.name.substring(0, 1)}</span>
                       </div>
                       <span className="text-[10px] font-bold text-center leading-tight text-gray-500">{bank.name}</span>
                     </button>
@@ -158,18 +158,18 @@ export const AccountRegistration: React.FC = () => {
                           }}
                         />
                       ) : null}
-                      <span className={`text-[11px] text-gray-400 font-black ${selectedBankInfo?.logo ? 'hidden' : ''}`}>{selectedBank.substring(0, 1)}</span>
+                      <span className={`text-[11px] text-gray-400 font-bold ${selectedBankInfo?.logo ? 'hidden' : ''}`}>{selectedBank.substring(0, 1)}</span>
                     </div>
-                    <p className="text-lg font-black text-gray-900">{selectedBank}</p>
+                    <p className="text-lg font-bold text-gray-900">{selectedBank}</p>
                   </div>
-                  <button type="button" onClick={() => setSelectedBank(null)} className="px-3 py-1.5 text-[10px] font-black text-gray-400 border border-gray-200 rounded-lg hover:bg-white transition-all hover:text-gray-900">
+                  <button type="button" onClick={() => setSelectedBank(null)} className="px-3 py-1.5 text-[10px] font-bold text-gray-400 border border-gray-200 rounded-lg hover:bg-white transition-all hover:text-gray-900">
                     변경
                   </button>
                 </div>
 
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">계좌번호</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">계좌번호</label>
                     <input
                       type="text"
                       value={accountNumber}
@@ -181,7 +181,7 @@ export const AccountRegistration: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">예금주</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">예금주</label>
                     <input
                       type="text"
                       value={accountHolder}
@@ -194,7 +194,7 @@ export const AccountRegistration: React.FC = () => {
                 </div>
 
                 <div className="pt-4">
-                  <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2">
+                  <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2">
                     {isSubmitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

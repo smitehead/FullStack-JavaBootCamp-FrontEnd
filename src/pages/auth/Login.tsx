@@ -50,7 +50,7 @@ export const Login: React.FC = () => {
           <div className="mx-auto h-16 w-16 bg-[#FF5A5A] rounded-2xl flex items-center justify-center shadow-lg shadow-red-100">
             <Sparkles className="h-10 w-10 text-white" />
           </div>
-          <h2 className="mt-6 text-3xl font-black text-gray-900 tracking-tight">
+          <h2 className="mt-6 text-3xl font-bold text-gray-900 tracking-tight">
             로그인
           </h2>
           <p className="mt-2 text-sm text-gray-500 font-medium">
@@ -112,7 +112,7 @@ export const Login: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black rounded-2xl text-white bg-[#FF5A5A] hover:bg-[#FF4545] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF5A5A] transition-all shadow-lg shadow-red-500/10 active:scale-95"
+              className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-bold rounded-2xl text-white bg-[#FF5A5A] hover:bg-[#FF4545] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF5A5A] transition-all shadow-lg shadow-red-500/10 active:scale-95"
             >
               로그인
             </button>

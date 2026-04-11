@@ -127,7 +127,7 @@ export const NoticeManagement: React.FC = () => {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-black text-gray-900 tracking-tight">
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
             공지사항 관리
           </h1>
           <p className="text-gray-500 mt-1 text-[11px] font-medium">
@@ -149,7 +149,7 @@ export const NoticeManagement: React.FC = () => {
           </div>
           <button
             onClick={() => handleOpenModal()}
-            className="bg-[#FF5A5A] text-white px-6 py-2 rounded-none font-black hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-sm"
+            className="bg-[#FF5A5A] text-white px-6 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-sm"
           >
             <Plus className="w-4 h-4 mr-2" /> 새 공지 등록
           </button>
@@ -158,7 +158,7 @@ export const NoticeManagement: React.FC = () => {
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <FileText className="w-5 h-5 text-gray-400" /> 공지 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredNotices.length}건</span>
@@ -174,7 +174,7 @@ export const NoticeManagement: React.FC = () => {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap mb-2">
                     <span
-                      className={`px-2 py-0.5 rounded-none text-[10px] font-black ${notice.category === "점검"
+                      className={`px-2 py-0.5 rounded-none text-[10px] font-bold ${notice.category === "점검"
                         ? "bg-orange-100 text-orange-700"
                         : notice.category === "업데이트"
                           ? "bg-blue-100 text-blue-700"
@@ -186,12 +186,12 @@ export const NoticeManagement: React.FC = () => {
                       {notice.category}
                     </span>
                     {notice.isImportant && (
-                      <span className="text-[10px] font-black text-red-600 bg-red-50 px-2 py-0.5 rounded-none">
+                      <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-none">
                         중요
                       </span>
                     )}
                     {notice.isDeleted === 1 && (
-                      <span className="text-[10px] font-black text-gray-400 bg-gray-100 px-2 py-0.5 rounded-none">
+                      <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-none">
                         삭제됨
                       </span>
                     )}
@@ -199,7 +199,7 @@ export const NoticeManagement: React.FC = () => {
                       {notice.createdAt?.split("T")[0]}
                     </span>
                   </div>
-                  <h3 className="text-sm font-black text-gray-900">
+                  <h3 className="text-sm font-bold text-gray-900">
                     {notice.title}
                   </h3>
                 </div>
@@ -241,14 +241,14 @@ export const NoticeManagement: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-w-2xl rounded-2xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-black text-gray-900 mb-6 tracking-tight">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight">
               {editingNotice ? "공지사항 수정" : "새 공지사항 등록"}
             </h2>
 
             <div className="space-y-4 mb-8">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-black text-gray-700 mb-2">
+                  <label className="block text-xs font-bold text-gray-700 mb-2">
                     카테고리
                   </label>
                   <select
@@ -272,7 +272,7 @@ export const NoticeManagement: React.FC = () => {
                       checked={isImportant}
                       onChange={(e) => setIsImportant(e.target.checked)}
                     />
-                    <span className="text-sm font-black text-gray-700 group-hover:text-[#FF5A5A] transition-colors">
+                    <span className="text-sm font-bold text-gray-700 group-hover:text-[#FF5A5A] transition-colors">
                       중요 공지로 설정
                     </span>
                   </label>
@@ -280,7 +280,7 @@ export const NoticeManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-black text-gray-700 mb-2">
+                <label className="block text-xs font-bold text-gray-700 mb-2">
                   제목
                 </label>
                 <input
@@ -293,7 +293,7 @@ export const NoticeManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-black text-gray-700 mb-2">
+                <label className="block text-xs font-bold text-gray-700 mb-2">
                   상세 내용
                 </label>
                 <textarea
@@ -309,13 +309,13 @@ export const NoticeManagement: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="flex-1 py-3 rounded-none font-black text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
               >
                 취소
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 py-3 rounded-none font-black text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 text-sm"
               >
                 확인
               </button>
@@ -331,7 +331,7 @@ export const NoticeManagement: React.FC = () => {
             <div className="w-16 h-16 bg-red-50 rounded-none flex items-center justify-center mb-4 mx-auto">
               <Trash2 className="w-8 h-8 text-red-500" />
             </div>
-            <h2 className="text-xl font-black text-gray-900 mb-2 text-center tracking-tight">
+            <h2 className="text-xl font-bold text-gray-900 mb-2 text-center tracking-tight">
               정말 삭제하시겠습니까?
             </h2>
             <p className="text-gray-500 font-medium text-center mb-8 text-sm">
@@ -341,13 +341,13 @@ export const NoticeManagement: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 py-3 rounded-none font-black text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
               >
                 취소
               </button>
               <button
                 onClick={confirmDelete}
-                className="flex-1 py-3 rounded-none font-black text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 text-sm"
+                className="flex-1 py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 text-sm"
               >
                 확인
               </button>

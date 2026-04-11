@@ -177,11 +177,11 @@ export const UserManagement: React.FC = () => {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-black text-gray-900 tracking-tight">사용자 관리</h1>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">사용자 관리</h1>
           <div className="flex items-center gap-2 mt-1">
             <p className="text-gray-500 text-[11px] font-medium">회원 정보 조회 및 제재 조치를 관리합니다.</p>
             <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-            <p className="text-[#FF5A5A] text-[11px] font-black">총 {allUsers.length}명</p>
+            <p className="text-[#FF5A5A] text-[11px] font-bold">총 {allUsers.length}명</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3">
@@ -227,7 +227,7 @@ export const UserManagement: React.FC = () => {
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <UserIcon className="w-5 h-5 text-gray-400" /> 사용자 목록
           </h2>
           <div className="flex items-center gap-3">
@@ -238,7 +238,7 @@ export const UserManagement: React.FC = () => {
                   <button
                     key={field}
                     onClick={() => toggleSort(field)}
-                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-none text-[10px] font-black transition-colors ${sortField === field ? 'bg-[#FF5A5A] text-white' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-none text-[10px] font-bold transition-colors ${sortField === field ? 'bg-[#FF5A5A] text-white' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
                   >
                     {labels[field]}
                     <ArrowUpDown className="w-2.5 h-2.5" />
@@ -260,13 +260,13 @@ export const UserManagement: React.FC = () => {
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <button
                         onClick={() => handleUserClick(user.nickname)}
-                        className="text-sm font-black text-gray-900 hover:text-[#FF5A5A] transition-colors"
+                        className="text-sm font-bold text-gray-900 hover:text-[#FF5A5A] transition-colors"
                       >
                         {user.nickname}
                       </button>
                       {!user.isWithdrawn && (
                         <div className="relative inline-flex group/role">
-                          <span className={`inline-flex items-center h-[18px] px-2 rounded-none text-[10px] font-black cursor-pointer ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                          <span className={`inline-flex items-center h-[18px] px-2 rounded-none text-[10px] font-bold cursor-pointer ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
                             {user.isAdmin ? <Shield className="w-2.5 h-2.5 mr-1" /> : <UserIcon className="w-2.5 h-2.5 mr-1" />}
                             {user.isAdmin ? '관리자' : '일반'}
                           </span>
@@ -286,7 +286,7 @@ export const UserManagement: React.FC = () => {
                           </div>
                         </div>
                       )}
-                      <span className={`inline-flex items-center h-[18px] px-2 rounded-none text-[10px] font-black ${user.status === '영구정지' ? 'bg-black text-white' :
+                      <span className={`inline-flex items-center h-[18px] px-2 rounded-none text-[10px] font-bold ${user.status === '영구정지' ? 'bg-black text-white' :
                         user.status === '정지' ? 'bg-red-100 text-red-700' :
                           'bg-green-100 text-green-700'
                         }`}>
@@ -358,13 +358,13 @@ export const UserManagement: React.FC = () => {
       {isModalOpen && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-sm rounded-2xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
-            <h2 className="text-2xl font-black text-gray-900 mb-1 tracking-tight">
+            <h2 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">
               {modalType === 'manner' && '매너온도 조절'}
               {modalType === 'suspend' && '계정 정지 처리'}
               {modalType === 'points' && '포인트 증감/차감'}
             </h2>
             <p className="text-gray-500 text-sm font-medium mb-6">
-              <span className="text-[#FF5A5A] font-black">{selectedUser.nickname}</span> 회원님 처리
+              <span className="text-[#FF5A5A] font-bold">{selectedUser.nickname}</span> 회원님 처리
             </p>
 
             <div className="space-y-4 mb-8">
@@ -372,11 +372,11 @@ export const UserManagement: React.FC = () => {
                 <div className="space-y-6">
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-black text-gray-700 mb-2">새 매너온도 (°C)</label>
+                      <label className="block text-xs font-bold text-gray-700 mb-2">새 매너온도 (°C)</label>
                       <input
                         type="number"
                         step="0.1"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-black text-lg"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-lg"
                         value={mannerValue}
                         onChange={(e) => {
                           const val = parseFloat(e.target.value);
@@ -385,7 +385,7 @@ export const UserManagement: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-black text-gray-700 mb-2">변경 사유</label>
+                      <label className="block text-xs font-bold text-gray-700 mb-2">변경 사유</label>
                       <textarea
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-medium text-sm resize-none h-24"
                         placeholder="온도 조절 사유를 입력하세요"
@@ -397,7 +397,7 @@ export const UserManagement: React.FC = () => {
 
                   {/* Manner History Section */}
                   <div className="pt-6 border-t border-gray-100">
-                    <h3 className="text-xs font-black text-gray-900 mb-3 flex items-center gap-2">
+                    <h3 className="text-xs font-bold text-gray-900 mb-3 flex items-center gap-2">
                       <Thermometer className="w-3 h-3 text-orange-500" />
                       매너온도 히스토리
                     </h3>
@@ -409,11 +409,11 @@ export const UserManagement: React.FC = () => {
                           .map((history) => (
                             <div key={history.id} className="p-3 bg-gray-50 border border-gray-100 rounded-none space-y-1">
                               <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-black text-gray-400">{history.createdAt.split('T')[0]}</span>
+                                <span className="text-[10px] font-bold text-gray-400">{history.createdAt.split('T')[0]}</span>
                                 <div className="flex items-center gap-1">
                                   <span className="text-[10px] font-bold text-gray-500">{history.previousTemp}°C</span>
                                   <span className="text-[10px] text-gray-300">→</span>
-                                  <span className="text-[10px] font-black text-[#FF5A5A]">{history.newTemp}°C</span>
+                                  <span className="text-[10px] font-bold text-[#FF5A5A]">{history.newTemp}°C</span>
                                 </div>
                               </div>
                               <p className="text-[11px] font-medium text-gray-600 leading-relaxed">{history.reason}</p>
@@ -431,9 +431,9 @@ export const UserManagement: React.FC = () => {
               {modalType === 'suspend' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-black text-gray-700 mb-2">정지 기간 (일)</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-2">정지 기간 (일)</label>
                     <select
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-black text-lg appearance-none"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-lg appearance-none"
                       value={suspendDays}
                       onChange={(e) => setSuspendDays(parseInt(e.target.value))}
                     >
@@ -445,7 +445,7 @@ export const UserManagement: React.FC = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-black text-gray-700 mb-2">정지 사유</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-2">정지 사유</label>
                     <textarea
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-medium text-sm resize-none h-24"
                       placeholder="정지 사유를 입력하세요"
@@ -457,11 +457,11 @@ export const UserManagement: React.FC = () => {
               )}
               {modalType === 'points' && (
                 <div>
-                  <label className="block text-xs font-black text-gray-700 mb-2">증감/차감 금액 (P)</label>
+                  <label className="block text-xs font-bold text-gray-700 mb-2">증감/차감 금액 (P)</label>
                   <input
                     type="number"
                     placeholder="예: 10000 또는 -5000"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-black text-lg"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-lg"
                     value={pointAmount}
                     onChange={(e) => setPointAmount(e.target.value === '' ? 0 : parseInt(e.target.value, 10))}
                   />
@@ -472,13 +472,13 @@ export const UserManagement: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="flex-1 py-3 rounded-none font-black text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all"
+                className="flex-1 py-3 rounded-none font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all"
               >
                 취소
               </button>
               <button
                 onClick={handleAction}
-                className="flex-1 py-3 rounded-none font-black text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20"
+                className="flex-1 py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20"
               >
                 확인
               </button>

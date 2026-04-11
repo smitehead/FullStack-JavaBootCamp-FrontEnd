@@ -75,7 +75,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       <aside className="w-60 bg-[#1A1D21] text-white flex flex-col shrink-0">
         <div className="p-5 border-b border-white/5">
           <Link to="/" className="flex items-center space-x-2">
-            <span className="text-xl font-black text-[#FF5A5A] tracking-tighter">JAVAJAVA</span>
+            <span className="text-xl font-bold text-[#FF5A5A] tracking-tighter">JAVAJAVA</span>
             <span className="text-[10px] font-bold bg-white/10 px-1.5 py-0.5 rounded-none text-gray-300">ADMIN</span>
           </Link>
         </div>

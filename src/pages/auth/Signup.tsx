@@ -328,25 +328,25 @@ export const Signup: React.FC = () => {
         {/* Progress Header */}
         <div className="flex items-center justify-between mb-6 px-4">
           <div className="flex flex-col items-center gap-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'terms' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>1</div>
-            <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'terms' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>약관동의</span>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step === 'terms' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>1</div>
+            <span className={`text-[12px] font-bold uppercase tracking-wider ${step === 'terms' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>약관동의</span>
           </div>
           <div className="flex-1 h-px mx-4"></div>
           <div className="flex flex-col items-center gap-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'info' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>2</div>
-            <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'info' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>정보입력</span>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step === 'info' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>2</div>
+            <span className={`text-[12px] font-bold uppercase tracking-wider ${step === 'info' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>정보입력</span>
           </div>
           <div className="flex-1 h-px mx-4"></div>
           <div className="flex flex-col items-center gap-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'success' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>3</div>
-            <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'success' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>가입완료</span>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step === 'success' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>3</div>
+            <span className={`text-[12px] font-bold uppercase tracking-wider ${step === 'success' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>가입완료</span>
           </div>
         </div>
 
         {step === 'terms' && (
           <div className="bg-white p-10 rounded-[32px] shadow-xl border border-gray-100">
             <div className="text-left mb-6">
-              <h2 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">약관 동의</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">약관 동의</h2>
               <p className="mt-2 text-sm text-gray-500 font-medium">JAVAJAVA 서비스 이용을 위해 약관에 동의해주세요.</p>
             </div>
 
@@ -359,7 +359,7 @@ export const Signup: React.FC = () => {
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${Object.values(terms).every(v => v) ? 'bg-[#FF5A5A] text-white' : 'bg-white text-gray-200 border border-gray-200'}`}>
                     <Check className="w-4 h-4" />
                   </div>
-                  <span className="font-black text-gray-800">전체 동의하기</span>
+                  <span className="font-bold text-gray-800">전체 동의하기</span>
                 </div>
               </button>
 
@@ -388,7 +388,7 @@ export const Signup: React.FC = () => {
                       </div>
                       <button
                         onClick={() => toggleTermExpand(item.key)}
-                        className="text-[10px] font-black text-gray-300 uppercase tracking-widest hover:text-[#FF5A5A] transition-colors"
+                        className="text-[10px] font-bold text-gray-300 uppercase tracking-widest hover:text-[#FF5A5A] transition-colors"
                       >
                         {expandedTerm === item.key ? '닫기' : '보기'}
                       </button>
@@ -406,7 +406,7 @@ export const Signup: React.FC = () => {
             <button
               disabled={!isAllRequiredTermsChecked}
               onClick={() => setStep('info')}
-              className={`w-full mt-10 py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+              className={`w-full mt-10 py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
             >
               다음 단계로
               <ChevronRight className="w-4 h-4" />
@@ -416,7 +416,7 @@ export const Signup: React.FC = () => {
 
         {step === 'info' && (
           <div className="bg-white p-10 rounded-[32px] shadow-xl border border-gray-100">
-            <h2 className="text-2xl font-black text-gray-900 mb-6 tracking-tight">회원정보</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight">회원정보</h2>
 
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* ID & PW */}
@@ -615,7 +615,7 @@ export const Signup: React.FC = () => {
                           <button
                             type="button"
                             onClick={verifyCode}
-                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
                           >
                             인증 확인
                           </button>
@@ -623,7 +623,7 @@ export const Signup: React.FC = () => {
                             type="button"
                             onClick={() => sendVerificationCode(true)}
                             disabled={cooldown > 0 || !emailId || (isCustomDomain ? !customDomain : !emailDomain)}
-                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             {cooldown > 0 ? `${cooldown}초 후 가능` : '재요청'}
                           </button>
@@ -730,7 +730,7 @@ export const Signup: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-4 bg-[#FF5A5A] text-white font-black text-sm rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-[#FF5A5A] text-white font-bold text-sm rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 flex items-center justify-center gap-2"
               >
                 가입 완료하기
               </button>
@@ -742,7 +742,7 @@ export const Signup: React.FC = () => {
           <div className="bg-white p-12 rounded-[40px] shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-500">
             <div className="flex flex-col items-center mb-10 text-center">
               
-              <h3 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">회원가입이 성공적으로 완료되었습니다.</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">회원가입이 성공적으로 완료되었습니다.</h3>
               <p className="text-gray-500 font-medium leading-relaxed">
                 지금 바로 JAVAJAVA의 실시간 중고 경매를 시작해보세요.
               </p>
@@ -750,13 +750,13 @@ export const Signup: React.FC = () => {
             <div className="flex gap-3">
               <Link
                 to="/login"
-                className="flex-1 py-5 bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 text-center"
+                className="flex-1 py-5 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 text-center"
               >
                 로그인 하러가기
               </Link>
               <Link
                 to="/"
-                className="flex-1 py-5 bg-gray-50 text-gray-600 font-black rounded-2xl hover:bg-gray-100 transition-all text-center"
+                className="flex-1 py-5 bg-gray-50 text-gray-600 font-bold rounded-2xl hover:bg-gray-100 transition-all text-center"
               >
                 메인으로 이동
               </Link>

@@ -172,7 +172,7 @@ export const SellerProfile: React.FC = () => {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-sm font-bold text-emerald-600">매너온도</span>
-                    <span className="text-xl font-black text-emerald-600">{Number(seller.mannerTemp).toFixed(1)}</span>
+                    <span className="text-xl font-bold text-emerald-600">{Number(seller.mannerTemp).toFixed(1)}</span>
                   </div>
                   <span className="text-xs font-medium text-gray-300">100</span>
                 </div>
@@ -190,7 +190,7 @@ export const SellerProfile: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">전체 판매</p>
-                  <p className="text-xl font-black text-gray-900">{sellerProducts.length}<span className="text-sm font-medium ml-1">건</span></p>
+                  <p className="text-xl font-bold text-gray-900">{sellerProducts.length}<span className="text-sm font-medium ml-1">건</span></p>
                 </div>
               </div>
               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
@@ -199,7 +199,7 @@ export const SellerProfile: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">받은 후기</p>
-                  <p className="text-xl font-black text-gray-900">{reviews.length}<span className="text-sm font-medium ml-1">건</span></p>
+                  <p className="text-xl font-bold text-gray-900">{reviews.length}<span className="text-sm font-medium ml-1">건</span></p>
                 </div>
               </div>
             </div>

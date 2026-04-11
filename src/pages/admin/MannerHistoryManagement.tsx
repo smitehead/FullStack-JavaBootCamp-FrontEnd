@@ -39,7 +39,7 @@ export const MannerHistoryManagement: React.FC = () => {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-black text-gray-900 tracking-tight">매너온도 히스토리</h1>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">매너온도 히스토리</h1>
           <p className="text-gray-500 mt-1 text-[11px] font-medium">사용자들의 매너온도 변경 이력을 모니터링합니다.</p>
         </div>
         <div className="relative w-64 flex items-center h-10">
@@ -58,7 +58,7 @@ export const MannerHistoryManagement: React.FC = () => {
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <Thermometer className="w-5 h-5 text-gray-400" /> 변경 이력
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredHistory.length}건</span>
@@ -76,11 +76,11 @@ export const MannerHistoryManagement: React.FC = () => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-3 flex-wrap mb-1">
-                        <span className="text-sm font-black text-gray-900">{getNickname(history.userId)}</span>
+                        <span className="text-sm font-bold text-gray-900">{getNickname(history.userId)}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-gray-400">{history.previousTemp.toFixed(1)}°C</span>
                           <span className="text-xs text-gray-300">→</span>
-                          <div className={`flex items-center gap-1 px-2 py-0.5 rounded-none text-xs font-black ${isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                          <div className={`flex items-center gap-1 px-2 py-0.5 rounded-none text-xs font-bold ${isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
                             }`}>
                             {isIncrease ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                             {history.newTemp.toFixed(1)}°C

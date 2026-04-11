@@ -77,7 +77,7 @@ export const AboutUs: React.FC = () => {
             ))}
           </div>
         </div>
-        <h1 className="text-6xl font-black text-gray-900 mb-6 tracking-tighter uppercase italic">About Us</h1>
+        <h1 className="text-6xl font-bold text-gray-900 mb-6 tracking-tighter uppercase italic">About Us</h1>
         <p className="text-gray-500 font-bold text-lg">JAVAJAVA 서비스와 정책을 안내해 드립니다.</p>
       </div>
 
@@ -88,7 +88,7 @@ export const AboutUs: React.FC = () => {
             <React.Fragment key={tab.id}>
               <button
                 onClick={() => handleTabChange(tab.id as AboutTab)}
-                className={`flex-1 py-2.5 rounded-[22px] text-[13px] font-black transition-all flex items-center justify-center ${
+                className={`flex-1 py-2.5 rounded-[22px] text-[13px] font-bold transition-all flex items-center justify-center ${
                   activeTab === tab.id
                     ? 'bg-gray-900 text-white shadow-md'
                     : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
@@ -112,12 +112,12 @@ export const AboutUs: React.FC = () => {
                 <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight">서비스 소개</h2>
+                <h2 className="text-3xl font-bold text-gray-900 tracking-tight">서비스 소개</h2>
               </div>
               
               <div className="prose prose-gray max-w-none">
                 <p className="text-lg text-gray-500 font-medium leading-relaxed mb-12 whitespace-nowrap">
-                  JAVAJAVA는 누구나 쉽고 안전하게 참여할 수 있는 <span className="text-gray-900 font-black underline decoration-[#FF5A5A] decoration-4 underline-offset-4">실시간 경매 마켓플레이스</span>입니다.
+                  JAVAJAVA는 누구나 쉽고 안전하게 참여할 수 있는 <span className="text-gray-900 font-bold underline decoration-[#FF5A5A] decoration-4 underline-offset-4">실시간 경매 마켓플레이스</span>입니다.
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -129,7 +129,7 @@ export const AboutUs: React.FC = () => {
                       <div className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform`}>
                         <feature.icon className={`w-6 h-6 ${feature.iconColor}`} />
                       </div>
-                      <h3 className="text-xl font-black text-gray-900 mb-3 tracking-tight">{feature.title}</h3>
+                      <h3 className="text-xl font-bold text-gray-900 mb-3 tracking-tight">{feature.title}</h3>
                       <p className="text-gray-600 font-bold leading-relaxed text-base opacity-80 group-hover:opacity-100 transition-opacity">
                         {feature.description}
                       </p>
@@ -142,18 +142,18 @@ export const AboutUs: React.FC = () => {
 
           {activeTab === 'privacy' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-3xl font-black text-gray-900 mb-8">개인정보처리방침</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">개인정보처리방침</h2>
               <div className="bg-gray-50 p-8 rounded-[32px] text-gray-600 text-sm leading-relaxed space-y-6">
                 <p>JAVAJAVA(이하 '회사')는 고객님의 개인정보를 중요시하며, "정보통신망 이용촉진 및 정보보호"에 관한 법률을 준수하고 있습니다.</p>
                 <div>
-                  <h4 className="font-black text-gray-900 mb-2">1. 수집하는 개인정보 항목</h4>
+                  <h4 className="font-bold text-gray-900 mb-2">1. 수집하는 개인정보 항목</h4>
                   <p>회사는 회원가입, 상담, 서비스 신청 등등을 위해 아래와 같은 개인정보를 수집하고 있습니다.</p>
                   <ul className="list-disc ml-5 mt-2">
                     <li>수집항목: 이름, 생년월일, 성별, 로그인ID, 비밀번호, 휴대전화번호, 이메일, 주소</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-black text-gray-900 mb-2">2. 개인정보의 수집 및 이용목적</h4>
+                  <h4 className="font-bold text-gray-900 mb-2">2. 개인정보의 수집 및 이용목적</h4>
                   <p>회사는 수집한 개인정보를 다음의 목적을 위해 활용합니다.</p>
                   <ul className="list-disc ml-5 mt-2">
                     <li>서비스 제공에 관한 계약 이행 및 서비스 제공에 따른 요금정산</li>
@@ -166,14 +166,14 @@ export const AboutUs: React.FC = () => {
 
           {activeTab === 'terms' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-3xl font-black text-gray-900 mb-8">이용약관</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">이용약관</h2>
               <div className="bg-gray-50 p-8 rounded-[32px] text-gray-600 text-sm leading-relaxed space-y-6">
                 <div>
-                  <h4 className="font-black text-gray-900 mb-2">제1조 (목적)</h4>
+                  <h4 className="font-bold text-gray-900 mb-2">제1조 (목적)</h4>
                   <p>이 약관은 JAVAJAVA가 운영하는 웹사이트에서 제공하는 인터넷 관련 서비스(이하 "서비스"라 한다)를 이용함에 있어 사이버 몰과 이용자의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.</p>
                 </div>
                 <div>
-                  <h4 className="font-black text-gray-900 mb-2">제2조 (정의)</h4>
+                  <h4 className="font-bold text-gray-900 mb-2">제2조 (정의)</h4>
                   <p>1. "몰"이란 회사가 재화 또는 용역을 이용자에게 제공하기 위하여 컴퓨터 등 정보통신설비를 이용하여 재화 등을 거래할 수 있도록 설정한 가상의 영업장을 말하며, 아울러 사이버몰을 운영하는 사업자의 의미로도 사용합니다.</p>
                 </div>
               </div>
@@ -182,14 +182,14 @@ export const AboutUs: React.FC = () => {
 
           {activeTab === 'policy' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-3xl font-black text-gray-900 mb-8">운영정책</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">운영정책</h2>
               <div className="bg-gray-50 p-8 rounded-[32px] text-gray-600 text-sm leading-relaxed space-y-6">
                 <div>
-                  <h4 className="font-black text-gray-900 mb-2">1. 경매 운영 원칙</h4>
+                  <h4 className="font-bold text-gray-900 mb-2">1. 경매 운영 원칙</h4>
                   <p>모든 경매는 공정하게 진행되어야 하며, 허위 입찰이나 담합 행위는 엄격히 금지됩니다.</p>
                 </div>
                 <div>
-                  <h4 className="font-black text-gray-900 mb-2">2. 판매자 준수사항</h4>
+                  <h4 className="font-bold text-gray-900 mb-2">2. 판매자 준수사항</h4>
                   <p>판매자는 상품의 상태를 정확하게 기재해야 하며, 낙찰된 상품은 정해진 기한 내에 발송해야 합니다.</p>
                 </div>
               </div>

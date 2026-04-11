@@ -147,7 +147,7 @@ export const Points: React.FC = () => {
         <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <p className="text-sm font-bold text-indigo-300 uppercase tracking-widest mb-2">현재 보유 포인트</p>
-            <h3 className="text-4xl font-black tracking-tight">
+            <h3 className="text-4xl font-bold tracking-tight">
               {(user?.points || 0).toLocaleString()}
               <span className="text-xl ml-1 text-indigo-400">P</span>
             </h3>

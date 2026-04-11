@@ -88,12 +88,12 @@ export const NotificationManagement: React.FC = () => {
     <div className="space-y-6">
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-black text-gray-900 tracking-tight">알림 관리</h1>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">알림 관리</h1>
           <p className="text-gray-500 mt-1 text-[11px] font-medium">사용자에게 새로운 알림을 발송하고 내역을 확인합니다.</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-black rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-sm"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-sm"
         >
           {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
           {showForm ? '닫기' : '새 알림 등록'}
@@ -108,20 +108,20 @@ export const NotificationManagement: React.FC = () => {
             exit={{ opacity: 0, y: -20 }}
             className="bg-white rounded-none p-8 shadow-sm border border-gray-100"
           >
-            <h2 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
               <Send className="w-5 h-5 text-[#FF5A5A]" /> 새 알림 발송
             </h2>
 
             <form onSubmit={handleSend} className="flex flex-col lg:flex-row items-end gap-6">
               <div className="w-full lg:w-48 shrink-0">
-                <label className="block text-xs font-black text-gray-700 mb-2 uppercase tracking-widest">알림 유형</label>
+                <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">알림 유형</label>
                 <div className="grid grid-cols-3 gap-2">
                   {typeOptions.map((t) => (
                     <button
                       key={t.value}
                       type="button"
                       onClick={() => setType(t.value)}
-                      className={`py-2 text-[10px] font-black rounded-none transition-all ${type === t.value
+                      className={`py-2 text-[10px] font-bold rounded-none transition-all ${type === t.value
                         ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100'
                         : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
                         }`}
@@ -133,7 +133,7 @@ export const NotificationManagement: React.FC = () => {
               </div>
 
               <div className="flex-1 w-full">
-                <label className="block text-xs font-black text-gray-700 mb-2 uppercase tracking-widest">알림 메시지</label>
+                <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">알림 메시지</label>
                 <input
                   type="text"
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-medium text-sm"
@@ -144,7 +144,7 @@ export const NotificationManagement: React.FC = () => {
               </div>
 
               <div className="w-full lg:w-72 shrink-0">
-                <label className="block text-xs font-black text-gray-700 mb-2 uppercase tracking-widest">이동 링크 (URL)</label>
+                <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">이동 링크 (URL)</label>
                 <div className="relative">
                   <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
@@ -160,7 +160,7 @@ export const NotificationManagement: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSending}
-                className="w-full lg:w-40 py-3 bg-[#FF5A5A] text-white font-black rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 disabled:opacity-50 disabled:scale-100"
+                className="w-full lg:w-40 py-3 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 disabled:opacity-50 disabled:scale-100"
               >
                 {isSending ? '발송 중...' : '발송하기'}
               </button>
@@ -175,7 +175,7 @@ export const NotificationManagement: React.FC = () => {
       {/* Notification History */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <Bell className="w-5 h-5 text-gray-400" /> 발송 내역
           </h2>
           <span className="text-xs font-bold text-gray-400">{recentNotifications.length}건</span>
@@ -195,7 +195,7 @@ export const NotificationManagement: React.FC = () => {
                   <div>
                     <p className="text-sm font-bold text-gray-900 leading-relaxed">{noti.content}</p>
                     <div className="flex items-center gap-3 mt-2 flex-wrap">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                         {noti.type}
                       </span>
                       {noti.linkUrl && (

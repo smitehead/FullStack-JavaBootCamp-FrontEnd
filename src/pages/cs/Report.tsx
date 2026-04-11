@@ -112,7 +112,7 @@ export const Report: React.FC = () => {
           <div className="w-24 h-24 bg-emerald-100 rounded-3xl flex items-center justify-center mx-auto mb-8">
             <CheckCircle2 className="w-12 h-12 text-emerald-600" />
           </div>
-          <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">신고 접수 완료</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">신고 접수 완료</h2>
           <p className="text-gray-500 font-medium leading-relaxed">
             신고가 정상적으로 접수되었습니다.<br />
             운영팀에서 검토 후 조치하겠습니다.<br />
@@ -141,7 +141,7 @@ export const Report: React.FC = () => {
                 <AlertTriangle className="w-8 h-8 text-red-500" />
               </div>
               <div>
-                <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
                   {sellerId ? `${sellerNickname}님 신고하기` : '상품 신고하기'}
                 </h1>
                 <p className="text-sm text-gray-500 font-medium">
@@ -236,7 +236,7 @@ export const Report: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-5 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <Send className="w-5 h-5" />
                 {isSubmitting ? '접수 중...' : '신고 접수하기'}

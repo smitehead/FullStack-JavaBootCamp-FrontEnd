@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Search, Lock, ChevronLeft, User, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Search, Lock, ChevronLeft, User, Send, CheckCircle2, ChevronDown, AlertCircle } from 'lucide-react';
 import { showToast } from '@/components/toastService';
 
 type Tab = 'id' | 'pw';
@@ -16,11 +16,23 @@ export const FindAccount: React.FC = () => {
 
   // 비밀번호 찾기 상태
   const [pwUserId, setPwUserId] = useState('');
+  const [pwEmailId, setPwEmailId] = useState('');
+  const [pwEmailDomain, setPwEmailDomain] = useState('');
+  const [pwCustomDomain, setPwCustomDomain] = useState('');
+  const [isPwCustomDomain, setIsPwCustomDomain] = useState(false);
   const [pwEmailCode, setPwEmailCode] = useState('');
   const [pwSentCode, setPwSentCode] = useState<string | null>(null);
   const [isPwVerified, setIsPwVerified] = useState(false);
   const [isPwSuccess, setIsPwSuccess] = useState(false);
+  const [pwVerificationError, setPwVerificationError] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
+  const [cooldown, setCooldown] = useState(0);
+
+  const getFullPwEmail = () => {
+    const domain = isPwCustomDomain ? pwCustomDomain : pwEmailDomain;
+    return domain ? `${pwEmailId}@${domain}` : pwEmailId;
+  };
+
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -31,6 +43,16 @@ export const FindAccount: React.FC = () => {
     }
     return () => clearInterval(interval);
   }, [timer]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (cooldown > 0) {
+      interval = setInterval(() => {
+        setCooldown(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [cooldown]);
 
   useEffect(() => {
     if (location.pathname === '/find-pw') {
@@ -50,25 +72,35 @@ export const FindAccount: React.FC = () => {
   };
 
   const handleSendCode = () => {
+    if (cooldown > 0) return;
     if (!pwUserId.trim()) {
       showToast('아이디를 먼저 입력해주세요.', 'error');
       return;
     }
+    const fullEmail = getFullPwEmail();
+    if (!fullEmail.includes('@') || fullEmail.endsWith('@')) {
+      showToast('올바른 이메일 형식을 입력해주세요.', 'error');
+      return;
+    }
+
     if (pwUserId === 'testuser') {
-      const code = Math.floor(1000 + Math.random() * 9000).toString();
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
       setPwSentCode(code);
       setTimer(180); // 3 minutes
-      showToast(`인증번호가 발송되었습니다: ${code} (실제 서비스에서는 등록된 이메일로 발송됩니다)`, 'info');
+      setCooldown(60);
+      showToast(`인증번호가 발송되었습니다: ${code}`, 'info');
     } else {
-      showToast('일치하는 아이디 정보가 없습니다.', 'error');
+      showToast('일치하는 회원 정보가 없습니다.', 'error');
     }
   };
 
   const handleVerifyCode = () => {
     if (pwEmailCode === pwSentCode) {
       setIsPwVerified(true);
+      setPwVerificationError(null);
       showToast('이메일 인증이 완료되었습니다.', 'success');
     } else {
+      setPwVerificationError('인증번호가 틀렸습니다.');
       showToast('인증번호가 틀렸습니다.', 'error');
     }
   };
@@ -89,13 +121,13 @@ export const FindAccount: React.FC = () => {
         <div className="flex border-b border-gray-100">
           <button
             onClick={() => setActiveTab('id')}
-            className={`flex-1 py-5 text-sm font-black transition-all ${activeTab === 'id' ? 'text-gray-900 bg-white border-b-2 border-[#FF5A5A]' : 'text-gray-400 bg-gray-50/50 hover:bg-gray-50'}`}
+            className={`flex-1 py-5 text-sm font-bold transition-all ${activeTab === 'id' ? 'text-gray-900 bg-white border-b-2 border-[#FF5A5A]' : 'text-gray-400 bg-gray-50/50 hover:bg-gray-50'}`}
           >
             아이디 찾기
           </button>
           <button
             onClick={() => setActiveTab('pw')}
-            className={`flex-1 py-5 text-sm font-black transition-all ${activeTab === 'pw' ? 'text-gray-900 bg-white border-b-2 border-[#FF5A5A]' : 'text-gray-400 bg-gray-50/50 hover:bg-gray-50'}`}
+            className={`flex-1 py-5 text-sm font-bold transition-all ${activeTab === 'pw' ? 'text-gray-900 bg-white border-b-2 border-[#FF5A5A]' : 'text-gray-400 bg-gray-50/50 hover:bg-gray-50'}`}
           >
             비밀번호 찾기
           </button>
@@ -105,7 +137,7 @@ export const FindAccount: React.FC = () => {
           {activeTab === 'id' ? (
             <div className="animate-in fade-in duration-300">
               <div className="text-left mb-8">
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight">아이디 찾기</h2>
+                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">아이디 찾기</h2>
                 <p className="mt-2 text-sm text-gray-500 font-medium leading-relaxed">가입 시 등록한 이메일을 입력해주세요.</p>
               </div>
 
@@ -127,7 +159,7 @@ export const FindAccount: React.FC = () => {
 
                   <button
                     type="submit"
-                    className="w-full py-4 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-lg active:scale-95"
+                    className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg active:scale-95"
                   >
                     아이디 찾기
                   </button>
@@ -136,18 +168,18 @@ export const FindAccount: React.FC = () => {
                 <div className="space-y-8 animate-in zoom-in-95 duration-300 text-left">
                   <div className="bg-red-50 p-8 rounded-2xl text-left border border-red-100">
                     <p className="text-xs font-bold text-red-400 uppercase tracking-widest mb-2">찾으시는 아이디는</p>
-                    <p className="text-2xl font-black text-[#FF5A5A] tracking-wider">{foundId}</p>
+                    <p className="text-2xl font-bold text-[#FF5A5A] tracking-wider">{foundId}</p>
                   </div>
                   <div className="space-y-3">
                     <Link
                       to="/login"
-                      className="block w-full py-4 bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 text-center"
+                      className="block w-full py-4 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 text-center"
                     >
                       로그인 하러가기
                     </Link>
                     <button
                       onClick={() => setActiveTab('pw')}
-                      className="block w-full py-4 bg-gray-50 text-gray-600 font-black rounded-2xl hover:bg-gray-100 transition-all text-center"
+                      className="block w-full py-4 bg-gray-50 text-gray-600 font-bold rounded-2xl hover:bg-gray-100 transition-all text-center"
                     >
                       비밀번호 찾기
                     </button>
@@ -158,7 +190,7 @@ export const FindAccount: React.FC = () => {
           ) : (
             <div className="animate-in fade-in duration-300">
               <div className="text-left mb-8">
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight">비밀번호 찾기</h2>
+                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">비밀번호 찾기</h2>
                 <p className="mt-2 text-sm text-gray-500 font-medium leading-relaxed">아이디와 이메일 인증을 진행해주세요.</p>
               </div>
 
@@ -182,24 +214,72 @@ export const FindAccount: React.FC = () => {
 
                     <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 인증</label>
-                      <div className="flex gap-2 mb-2">
-                        <div className="relative flex-1">
-                          <input
-                            type="text"
-                            disabled
-                            className="block w-full px-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none opacity-50 hover:border-[#FF5A5A]/30 transition-all"
-                            placeholder="등록된 이메일로 인증"
-                          />
+                      <div className="flex flex-col gap-2 mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="relative flex-1">
+                            <input
+                              type="text"
+                              required
+                              disabled={isPwVerified}
+                              className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50"
+                              placeholder="이메일 아이디"
+                              value={pwEmailId}
+                              onChange={(e) => setPwEmailId(e.target.value)}
+                            />
+                          </div>
+                          <span className="text-gray-400 font-bold">@</span>
+                          <div className="relative flex-1">
+                            <select
+                              disabled={isPwVerified}
+                              className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50 appearance-none"
+                              value={isPwCustomDomain ? 'custom' : pwEmailDomain}
+                              onChange={(e) => {
+                                if (e.target.value === 'custom') {
+                                  setIsPwCustomDomain(true);
+                                } else {
+                                  setIsPwCustomDomain(false);
+                                  setPwEmailDomain(e.target.value);
+                                }
+                              }}
+                            >
+                              <option value="">선택</option>
+                              <option value="naver.com">naver.com</option>
+                              <option value="gmail.com">gmail.com</option>
+                              <option value="daum.net">daum.net</option>
+                              <option value="hanmail.net">hanmail.net</option>
+                              <option value="nate.com">nate.com</option>
+                              <option value="outlook.com">outlook.com</option>
+                              <option value="custom">직접 입력</option>
+                            </select>
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 font-bold">
+                              <ChevronDown className="w-4 h-4" />
+                            </div>
+                          </div>
                         </div>
+
+                        {isPwCustomDomain && !isPwVerified && (
+                          <div className="animate-in slide-in-from-top-1 duration-200">
+                            <input
+                              type="text"
+                              required
+                              className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
+                              placeholder="도메인을 입력해주세요"
+                              value={pwCustomDomain}
+                              onChange={(e) => setPwCustomDomain(e.target.value)}
+                            />
+                          </div>
+                        )}
+
                         <button
                           type="button"
                           onClick={handleSendCode}
-                          disabled={isPwVerified}
-                          className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200"
+                          disabled={isPwVerified || !pwEmailId || (isPwCustomDomain ? !pwCustomDomain : !pwEmailDomain)}
+                          className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
                         >
                           인증번호 전송
                         </button>
                       </div>
+
                       {/* 인증번호 입력 섹션 (중앙 정렬 스타일) */}
                       {!isPwVerified && pwSentCode && (
                         <div className="mt-8 space-y-3 animate-in fade-in slide-in-from-top-2">
@@ -209,9 +289,9 @@ export const FindAccount: React.FC = () => {
                               <div className="relative border-b border-gray-200 pb-1.5 flex items-center focus-within:border-[#FF5A5A] transition-colors">
                                 <input
                                   type="text"
-                                  maxLength={4}
+                                  maxLength={6}
                                   className="block w-full bg-transparent text-xl font-bold placeholder:text-gray-200 outline-none tracking-[0.3em] text-center"
-                                  placeholder="0000"
+                                  placeholder="000000"
                                   value={pwEmailCode}
                                   onChange={(e) => {
                                     const val = e.target.value.replace(/[^0-9]/g, '');
@@ -224,34 +304,44 @@ export const FindAccount: React.FC = () => {
                                   </span>
                                 )}
                               </div>
+                              {pwVerificationError && (
+                                <p className="text-[10px] text-red-500 mt-1 font-bold flex items-center justify-center gap-1 animate-in fade-in slide-in-from-top-1">
+                                  <AlertCircle className="w-3 h-3" /> {pwVerificationError}
+                                </p>
+                              )}
                             </div>
                             <div className="flex gap-2">
                               <button
                                 type="button"
                                 onClick={handleVerifyCode}
-                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
                               >
                                 인증 확인
                               </button>
                               <button
                                 type="button"
                                 onClick={handleSendCode}
-                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                                disabled={cooldown > 0}
+                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-50"
                               >
-                                재요청
+                                {cooldown > 0 ? `${cooldown}초 후 재요청` : '재요청'}
                               </button>
                             </div>
                           </div>
                         </div>
                       )}
-                      {isPwVerified && <p className="text-[10px] text-emerald-500 mt-1 ml-1 font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> 인증이 완료되었습니다.</p>}
+                      {isPwVerified && (
+                        <p className="text-[10px] text-emerald-500 mt-1 ml-1 font-bold flex items-center justify-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" /> 인증이 완료되었습니다.
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <button
                     type="submit"
                     disabled={!isPwVerified}
-                    className={`w-full py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 ${isPwVerified ? 'bg-gray-900 text-white shadow-lg hover:bg-black active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+                    className={`w-full py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isPwVerified ? 'bg-gray-900 text-white shadow-lg hover:bg-black active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
                   >
                     임시 비밀번호 전송
                   </button>
@@ -270,7 +360,7 @@ export const FindAccount: React.FC = () => {
                   </div>
                   <Link
                     to="/login"
-                    className="block w-full py-4 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-lg text-center"
+                    className="block w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg text-center"
                   >
                     로그인 하러가기
                   </Link>

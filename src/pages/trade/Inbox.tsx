@@ -194,15 +194,15 @@ export const Inbox: React.FC = () => {
                     className="w-14 h-14 rounded-2xl object-cover border border-gray-100"
                   />
                   {chat.unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-[#FF5A5A] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white">
+                    <span className="absolute -top-1 -right-1 bg-[#FF5A5A] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
                       {chat.unreadCount}
                     </span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-black text-gray-900 truncate">{chat.otherUser.nickname}</span>
-                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest ${chat.otherUser.role === 'seller' ? 'bg-indigo-100 text-indigo-600' : 'bg-emerald-100 text-emerald-600'
+                    <span className="font-bold text-gray-900 truncate">{chat.otherUser.nickname}</span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${chat.otherUser.role === 'seller' ? 'bg-indigo-100 text-indigo-600' : 'bg-emerald-100 text-emerald-600'
                       }`}>
                       {chat.otherUser.role === 'seller' ? '판매자' : '구매자'}
                     </span>

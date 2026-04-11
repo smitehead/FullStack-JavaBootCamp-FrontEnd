@@ -61,7 +61,7 @@ export const ReviewCreate: React.FC = () => {
             <ChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
             뒤로가기
           </button>
-          <h2 className="text-2xl font-black text-gray-900">거래 후기 작성</h2>
+          <h2 className="text-2xl font-bold text-gray-900">거래 후기 작성</h2>
         </div>
 
         <section className="bg-white rounded-[40px] shadow-sm border border-gray-100 p-10 space-y-10">
@@ -89,7 +89,7 @@ export const ReviewCreate: React.FC = () => {
 
           {/* 텍스트 후기 */}
           <div>
-            <h3 className="text-lg font-black text-gray-900 mb-4">직접 후기 남기기</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">직접 후기 남기기</h3>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -101,7 +101,7 @@ export const ReviewCreate: React.FC = () => {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="w-full py-5 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
+            className="w-full py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
           >
             {isSubmitting ? '등록 중...' : '후기 등록하기'}
           </button>
@@ -115,7 +115,7 @@ export const ReviewCreate: React.FC = () => {
             <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-emerald-500" />
             </div>
-            <h3 className="text-2xl font-black text-gray-900 mb-2">후기 등록 완료!</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">후기 등록 완료!</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed">
               소중한 후기가 등록되었습니다.<br />
               마이페이지로 이동합니다.

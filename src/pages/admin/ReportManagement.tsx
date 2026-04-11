@@ -152,7 +152,7 @@ export const ReportManagement: React.FC = () => {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-black text-gray-900 tracking-tight">신고 관리</h1>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">신고 관리</h1>
           <p className="text-gray-500 mt-1 text-[11px] font-medium">사용자 및 상품에 대한 신고 내역을 검토하고 처리합니다.</p>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3">
@@ -186,7 +186,7 @@ export const ReportManagement: React.FC = () => {
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-gray-400" /> 신고 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredReports.length}건</span>
@@ -213,10 +213,10 @@ export const ReportManagement: React.FC = () => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${resolved ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
+                          <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-bold ${resolved ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
                             {resolved ? '처리됨' : '대기중'}
                           </span>
-                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">#{report.reportNo}</span>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">#{report.reportNo}</span>
                         </div>
                         <button
                           onClick={() => handleViewDetail(report.reportNo)}
@@ -298,7 +298,7 @@ export const ReportManagement: React.FC = () => {
                   <div className="w-10 h-10 rounded-none bg-red-50 flex items-center justify-center shrink-0">
                     <FileText className="w-5 h-5 text-[#FF5A5A]" />
                   </div>
-                  <h3 className="text-xl font-black text-gray-900">신고 상세</h3>
+                  <h3 className="text-xl font-bold text-gray-900">신고 상세</h3>
                 </div>
                 <button
                   onClick={() => setShowDetailModal(false)}
@@ -318,59 +318,59 @@ export const ReportManagement: React.FC = () => {
                 <div className="px-8 pb-8 space-y-4 max-h-[70vh] overflow-y-auto">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-gray-50 rounded-none p-4">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고 번호</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">신고 번호</p>
                       <p className="text-sm font-bold text-gray-900">#{detailReport.reportNo}</p>
                     </div>
                     <div className="bg-gray-50 rounded-none p-4">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고 유형</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">신고 유형</p>
                       <p className="text-sm font-bold text-gray-900">{detailReport.type}</p>
                     </div>
                     <div className="bg-gray-50 rounded-none p-4">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">처리 상태</p>
-                      <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${isResolved(detailReport.status) ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">처리 상태</p>
+                      <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-bold ${isResolved(detailReport.status) ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
                         {detailReport.status}
                       </span>
                     </div>
                     <div className="bg-gray-50 rounded-none p-4">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고 일시</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">신고 일시</p>
                       <p className="text-xs font-bold text-gray-900">{detailReport.createdAt ? new Date(detailReport.createdAt).toLocaleString() : '-'}</p>
                     </div>
                   </div>
 
                   <div className="bg-gray-50 rounded-none p-4">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고자</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">신고자</p>
                     <p className="text-sm font-bold text-gray-900">{detailReport.reporterNickname || `#${detailReport.reporterNo}`}</p>
                   </div>
 
                   {(detailReport.targetMemberNickname || detailReport.targetMemberNo) && (
                     <div className="bg-gray-50 rounded-none p-4">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">피신고 사용자</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">피신고 사용자</p>
                       <p className="text-sm font-bold text-gray-900">{detailReport.targetMemberNickname || `#${detailReport.targetMemberNo}`}</p>
                     </div>
                   )}
 
                   {detailReport.targetProductNo && (
                     <div className="bg-gray-50 rounded-none p-4">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고 상품 번호</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">신고 상품 번호</p>
                       <p className="text-sm font-bold text-gray-900">#{detailReport.targetProductNo}</p>
                     </div>
                   )}
 
                   <div className="bg-gray-50 rounded-none p-4">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">신고 내용</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">신고 내용</p>
                     <p className="text-sm font-medium text-gray-700 whitespace-pre-wrap leading-relaxed">{detailReport.content}</p>
                   </div>
 
                   {detailReport.penaltyMsg && (
                     <div className="bg-red-50 rounded-none p-4 border border-red-100">
-                      <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2">처리 내용 / 제재 사유</p>
+                      <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-2">처리 내용 / 제재 사유</p>
                       <p className="text-sm font-medium text-red-700 whitespace-pre-wrap leading-relaxed">{detailReport.penaltyMsg}</p>
                     </div>
                   )}
 
                   {detailReport.imageUrls && detailReport.imageUrls.length > 0 && (
                     <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">첨부 이미지</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">첨부 이미지</p>
                       <div className="flex flex-wrap gap-3">
                         {detailReport.imageUrls.map((url, idx) => (
                           <img
@@ -415,22 +415,22 @@ export const ReportManagement: React.FC = () => {
                   <ShieldAlert className="w-6 h-6 text-[#FF5A5A]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-gray-900">신고 처리</h3>
+                  <h3 className="text-xl font-bold text-gray-900">신고 처리</h3>
                   <p className="text-sm text-gray-500 font-medium">신고 내용을 검토하고 조치를 취합니다.</p>
                 </div>
               </div>
 
               <div className="space-y-4 mb-6">
                 <div className="bg-gray-50 rounded-none p-4">
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">신고 유형</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">신고 유형</p>
                   <p className="text-sm font-bold text-gray-900">{selectedReport.type}</p>
                 </div>
                 <div className="bg-gray-50 rounded-none p-4">
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">신고 내용</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">신고 내용</p>
                   <p className="text-sm font-medium text-gray-600 line-clamp-3">{selectedReport.content}</p>
                 </div>
                 <div>
-                  <label className="block text-xs font-black text-gray-700 mb-2">처리 내용 / 제재 사유 <span className="text-[#FF5A5A]">*</span></label>
+                  <label className="block text-xs font-bold text-gray-700 mb-2">처리 내용 / 제재 사유 <span className="text-[#FF5A5A]">*</span></label>
                   <textarea
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-medium text-sm resize-none h-24"
                     placeholder="처리 내용 및 피신고자에게 전달할 제재 사유를 입력하세요"
@@ -443,13 +443,13 @@ export const ReportManagement: React.FC = () => {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => { setShowResolveModal(false); setResolveAction(''); }}
-                  className="flex-1 py-4 bg-gray-100 text-gray-500 font-black rounded-none hover:bg-gray-200 transition-all active:scale-95"
+                  className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-none hover:bg-gray-200 transition-all active:scale-95"
                 >
                   취소
                 </button>
                 <button
                   onClick={handleResolve}
-                  className="flex-1 py-4 bg-[#FF5A5A] text-white font-black rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95"
+                  className="flex-1 py-4 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95"
                 >
                   처리 완료
                 </button>
