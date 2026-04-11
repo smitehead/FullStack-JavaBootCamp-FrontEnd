@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { AlertTriangle, Search, Filter, CheckCircle2, User, Gavel, MessageSquare, ShieldAlert, X, FileText } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
-import { Report } from '@/types';
+import { AlertTriangle, Search, Filter, User, Gavel, MessageSquare, ShieldAlert, X, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { showToast } from '@/components/toastService';
@@ -25,10 +23,11 @@ interface ReportDetail {
 const ITEMS_PER_PAGE = 15;
 
 export const ReportManagement: React.FC = () => {
-  const { reports, resolveReport, users, products } = useAppContext();
+  const [reports, setReports] = useState<ReportDetail[]>([]);
+  const [listLoading, setListLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'resolved'>('all');
-  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const [selectedReport, setSelectedReport] = useState<ReportDetail | null>(null);
   const [resolveAction, setResolveAction] = useState('');
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -37,10 +36,28 @@ export const ReportManagement: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
 
+  // 신고 목록 fetch (실제 API)
+  useEffect(() => {
+    setListLoading(true);
+    api.get('/admin/reports')
+      .then(res => setReports(res.data))
+      .catch(() => showToast('신고 목록 조회에 실패했습니다.', 'error'))
+      .finally(() => setListLoading(false));
+  }, []);
+
+  const isResolved = (status: string) =>
+    status !== '접수' && status !== 'PENDING' && status !== 'pending';
+
   const filteredReports = reports.filter(r => {
-    const matchesSearch = r.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.reason.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
+    const matchesSearch =
+      String(r.reportNo).includes(searchTerm) ||
+      r.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (r.reporterNickname || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'pending' && !isResolved(r.status)) ||
+      (statusFilter === 'resolved' && isResolved(r.status));
     return matchesSearch && matchesStatus;
   });
 
@@ -60,12 +77,13 @@ export const ReportManagement: React.FC = () => {
     return () => observer.disconnect();
   }, [handleObserver]);
 
-  const handleViewDetail = async (reportId: string) => {
+  const handleViewDetail = async (reportNo: number) => {
+    // 이미 목록에 있는 데이터를 먼저 활용 (이미지 포함 최신 데이터는 API로 보강)
     setDetailReport(null);
     setDetailLoading(true);
     setShowDetailModal(true);
     try {
-      const res = await api.get(`/admin/reports/${reportId}`);
+      const res = await api.get(`/admin/reports/${reportNo}`);
       setDetailReport(res.data);
     } catch {
       showToast('신고 상세 조회에 실패했습니다.', 'error');
@@ -75,37 +93,49 @@ export const ReportManagement: React.FC = () => {
     }
   };
 
-  const handleResolve = () => {
+  const handleResolve = async () => {
     if (!selectedReport) return;
     if (!resolveAction.trim()) {
       showToast('처리 내용 및 제재 사유를 입력해주세요.', 'error');
       return;
     }
-    resolveReport(selectedReport.id, resolveAction.trim());
-    setShowResolveModal(false);
-    setSelectedReport(null);
-    setResolveAction('');
-    showToast('신고 처리가 완료되었습니다.', 'success');
+    try {
+      await api.put(`/admin/reports/${selectedReport.reportNo}/resolve`, {
+        status: '처리완료',
+        penaltyMsg: resolveAction.trim(),
+      });
+      setReports(prev =>
+        prev.map(r =>
+          r.reportNo === selectedReport.reportNo
+            ? { ...r, status: '처리완료', penaltyMsg: resolveAction.trim() }
+            : r
+        )
+      );
+      setShowResolveModal(false);
+      setSelectedReport(null);
+      setResolveAction('');
+      showToast('신고 처리가 완료되었습니다.', 'success');
+    } catch {
+      showToast('신고 처리에 실패했습니다.', 'error');
+    }
   };
 
-  const getTargetInfo = (report: Report) => {
-    if (report.targetType === 'user') {
-      const user = users.find(u => u.id === report.targetId);
+  const getTargetInfo = (report: ReportDetail) => {
+    if (report.targetMemberNo) {
       return {
-        name: user?.nickname || '알 수 없는 사용자',
+        name: report.targetMemberNickname || `사용자 #${report.targetMemberNo}`,
         icon: User,
         color: 'text-blue-500',
         bgColor: 'bg-blue-50',
-        link: `/admin/users?nickname=${user?.nickname}`
+        link: `/admin/users?nickname=${report.targetMemberNickname || ''}`,
       };
-    } else if (report.targetType === 'product') {
-      const product = products.find(p => p.id === report.targetId);
+    } else if (report.targetProductNo) {
       return {
-        name: product?.title || '알 수 없는 상품',
+        name: `상품 #${report.targetProductNo}`,
         icon: Gavel,
         color: 'text-orange-500',
         bgColor: 'bg-orange-50',
-        link: `/admin/auctions?search=${product?.title}`
+        link: `/admin/auctions`,
       };
     }
     return {
@@ -113,7 +143,7 @@ export const ReportManagement: React.FC = () => {
       icon: MessageSquare,
       color: 'text-gray-500',
       bgColor: 'bg-gray-50',
-      link: '#'
+      link: '#',
     };
   };
 
@@ -131,7 +161,7 @@ export const ReportManagement: React.FC = () => {
             </div>
             <input
               type="text"
-              placeholder="신고 ID 또는 사유 검색"
+              placeholder="신고번호, 유형, 내용 검색"
               className="w-full pl-10 pr-4 h-full bg-white border border-gray-200 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] focus:border-transparent font-bold text-xs"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -161,75 +191,81 @@ export const ReportManagement: React.FC = () => {
           <span className="text-xs font-bold text-gray-400">{filteredReports.length}건</span>
         </div>
 
-        <div className="divide-y divide-gray-50">
-          {filteredReports.slice(0, visibleCount).map((report) => {
-            const target = getTargetInfo(report);
-            const TargetIcon = target.icon;
-            const reporter = users.find(u => u.id === report.reporterId);
-            return (
-              <div key={report.id} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-4 min-w-0 flex-1">
-                    <div className={`w-8 h-8 rounded-none ${target.bgColor} flex items-center justify-center shrink-0 mt-0.5`}>
-                      <TargetIcon className={`w-4 h-4 ${target.color}`} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${report.status === 'pending' ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'
-                          }`}>
-                          {report.status === 'pending' ? '대기중' : '처리됨'}
-                        </span>
-                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ID: {report.id}</span>
+        {listLoading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-4 border-red-500/20 border-t-red-500 rounded-full animate-spin" />
+          </div>
+        )}
+
+        {!listLoading && (
+          <div className="divide-y divide-gray-50">
+            {filteredReports.slice(0, visibleCount).map((report) => {
+              const target = getTargetInfo(report);
+              const TargetIcon = target.icon;
+              const resolved = isResolved(report.status);
+              return (
+                <div key={report.reportNo} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4 min-w-0 flex-1">
+                      <div className={`w-8 h-8 rounded-none ${target.bgColor} flex items-center justify-center shrink-0 mt-0.5`}>
+                        <TargetIcon className={`w-4 h-4 ${target.color}`} />
                       </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${resolved ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
+                            {resolved ? '처리됨' : '대기중'}
+                          </span>
+                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">#{report.reportNo}</span>
+                        </div>
+                        <button
+                          onClick={() => handleViewDetail(report.reportNo)}
+                          className="text-sm font-bold text-gray-900 mb-1 text-left hover:text-[#FF5A5A] transition-colors cursor-pointer"
+                        >
+                          [{report.type}] {report.content.length > 40 ? report.content.slice(0, 40) + '…' : report.content}
+                        </button>
+                        <div className="flex items-center gap-3 flex-wrap text-xs">
+                          <Link
+                            to={`/admin/users?nickname=${report.reporterNickname || ''}`}
+                            className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
+                          >
+                            신고자: {report.reporterNickname || `#${report.reporterNo}`}
+                          </Link>
+                          <span className="text-gray-300">|</span>
+                          <Link
+                            to={target.link}
+                            className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
+                          >
+                            대상: {target.name}
+                          </Link>
+                          <span className="text-gray-300">|</span>
+                          <span className="text-[10px] font-medium text-gray-400">{new Date(report.createdAt).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    {!resolved && (
                       <button
-                        onClick={() => handleViewDetail(report.id)}
-                        className="text-sm font-bold text-gray-900 mb-1 text-left hover:text-[#FF5A5A] transition-colors cursor-pointer"
+                        onClick={() => {
+                          setSelectedReport(report);
+                          setShowResolveModal(true);
+                        }}
+                        className="p-2 text-gray-400 hover:text-[#FF5A5A] hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0"
+                        title="신고 처리"
                       >
-                        {report.reason}
+                        <ShieldAlert className="w-4 h-4" />
                       </button>
-                      <p className="text-[10px] text-gray-400 font-medium line-clamp-1 mb-1">{report.details}</p>
-                      <div className="flex items-center gap-3 flex-wrap text-xs">
-                        <Link
-                          to={`/admin/users?nickname=${reporter?.nickname}`}
-                          className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
-                        >
-                          신고자: {reporter?.nickname || '알 수 없음'}
-                        </Link>
-                        <span className="text-gray-300">|</span>
-                        <Link
-                          to={target.link}
-                          className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
-                        >
-                          대상: {target.name}
-                        </Link>
-                        <span className="text-gray-300">|</span>
-                        <span className="text-[10px] font-medium text-gray-400">{new Date(report.createdAt).toLocaleString()}</span>
-                      </div>
-                    </div>
+                    )}
                   </div>
-                  {report.status === 'pending' && (
-                    <button
-                      onClick={() => {
-                        setSelectedReport(report);
-                        setShowResolveModal(true);
-                      }}
-                      className="p-2 text-gray-400 hover:text-[#FF5A5A] hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0"
-                      title="신고 처리"
-                    >
-                      <ShieldAlert className="w-4 h-4" />
-                    </button>
-                  )}
                 </div>
+              );
+            })}
+            {filteredReports.length === 0 && (
+              <div className="px-8 py-20 text-center">
+                <AlertTriangle className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+                <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
               </div>
-            );
-          })}
-          {filteredReports.length === 0 && (
-            <div className="px-8 py-20 text-center">
-              <AlertTriangle className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-              <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {visibleCount < filteredReports.length && (
           <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
@@ -290,7 +326,7 @@ export const ReportManagement: React.FC = () => {
                     </div>
                     <div className="bg-gray-50 rounded-none p-4">
                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">처리 상태</p>
-                      <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${detailReport.status === '접수' ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'}`}>
+                      <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-black ${isResolved(detailReport.status) ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
                         {detailReport.status}
                       </span>
                     </div>
@@ -385,12 +421,12 @@ export const ReportManagement: React.FC = () => {
 
               <div className="space-y-4 mb-6">
                 <div className="bg-gray-50 rounded-none p-4">
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">신고 사유</p>
-                  <p className="text-sm font-bold text-gray-900">{selectedReport.reason}</p>
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">신고 유형</p>
+                  <p className="text-sm font-bold text-gray-900">{selectedReport.type}</p>
                 </div>
                 <div className="bg-gray-50 rounded-none p-4">
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">상세 내용</p>
-                  <p className="text-sm font-medium text-gray-600">{selectedReport.details}</p>
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">신고 내용</p>
+                  <p className="text-sm font-medium text-gray-600 line-clamp-3">{selectedReport.content}</p>
                 </div>
                 <div>
                   <label className="block text-xs font-black text-gray-700 mb-2">처리 내용 / 제재 사유 <span className="text-[#FF5A5A]">*</span></label>
