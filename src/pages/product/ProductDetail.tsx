@@ -167,7 +167,7 @@ export const ProductDetail: React.FC = () => {
         description: data.description || '',
         category: data.categoryName || (data.categoryNo ? findCategoryPath(data.categoryNo).join(' > ') : (data.category || '기타')),
         seller: {
-          id: String(data.seller?.sellerNo || 'seller_1'),
+          id: data.seller?.sellerNo ? `user_${data.seller.sellerNo}` : 'seller_1',
           nickname: data.seller?.nickname || '판매자',
           profileImage: getProfileImageUrl(data.seller?.profileImgUrl),
           points: 0,
