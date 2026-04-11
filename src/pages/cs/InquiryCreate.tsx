@@ -78,7 +78,7 @@ export const InquiryCreate: React.FC = () => {
       </Link>
 
       <div className="mb-10">
-        <h1 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">새 문의 작성</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">새 문의 작성</h1>
         <p className="text-gray-500 font-medium">불편하신 사항을 상세히 남겨주시면 신속히 확인하겠습니다.</p>
       </div>
 

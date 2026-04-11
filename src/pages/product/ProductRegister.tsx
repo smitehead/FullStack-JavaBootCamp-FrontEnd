@@ -263,7 +263,7 @@ export const ProductRegister: React.FC = () => {
           <Package className="w-8 h-8 text-emerald-600" />
         </div>
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">경매 상품 등록</h1>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">경매 상품 등록</h1>
           <p className="text-sm text-gray-500 font-medium">새로운 경매를 시작해보세요!</p>
         </div>
       </div>

@@ -132,7 +132,7 @@ export const Points: React.FC = () => {
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-6 h-6 text-gray-900" />
           </button>
-          <h2 className="text-3xl font-black text-gray-900 tracking-normal">포인트</h2>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">포인트</h1>
         </div>
         <Link
           to="/points/charge"

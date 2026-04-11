@@ -21,7 +21,14 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showTopBar, setShowTopBar] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string | null>(CATEGORY_DATA[0].id);
-  const [recentSearches, setRecentSearches] = useState<string[]>(['아이폰 15', '맥북 프로', '에어팟']);
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('recentSearches');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -43,13 +50,34 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const saveRecentSearch = (term: string) => {
+    setRecentSearches(prev => {
+      const filtered = prev.filter(s => s !== term);
+      const updated = [term, ...filtered].slice(0, 6); // 최대 6개로 제한
+      localStorage.setItem('recentSearches', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const clearRecentSearches = () => {
+    setRecentSearches([]);
+    localStorage.removeItem('recentSearches');
+  };
+
+  const removeRecentSearch = (idx: number) => {
+    setRecentSearches(prev => {
+      const updated = prev.filter((_, i) => i !== idx);
+      localStorage.setItem('recentSearches', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
-      if (!recentSearches.includes(searchTerm.trim())) {
-        setRecentSearches(prev => [searchTerm.trim(), ...prev].slice(0, 5));
-      }
-      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+    const trimmed = searchTerm.trim();
+    if (trimmed) {
+      saveRecentSearch(trimmed);
+      navigate(`/search?q=${encodeURIComponent(trimmed)}`);
       setIsSearchFocused(false);
     }
   };
@@ -97,7 +125,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                     <div className="px-6 flex items-center justify-between mb-3">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">최근 검색어</p>
                       <button
-                        onClick={() => setRecentSearches([])}
+                        onClick={clearRecentSearches}
                         className="text-[10px] font-bold text-gray-300 hover:text-gray-500"
                       >
                         전체 삭제
@@ -110,6 +138,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                             key={idx}
                             onClick={() => {
                               setSearchTerm(term);
+                              saveRecentSearch(term);
                               navigate(`/search?q=${encodeURIComponent(term)}`);
                               setIsSearchFocused(false);
                             }}
@@ -123,7 +152,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               className="w-3 h-3 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setRecentSearches(prev => prev.filter((_, i) => i !== idx));
+                                removeRecentSearch(idx);
                               }}
                             />
                           </button>
@@ -143,6 +172,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                             key={idx}
                             onClick={() => {
                               setSearchTerm(term);
+                              saveRecentSearch(term);
                               navigate(`/search?q=${encodeURIComponent(term)}`);
                               setIsSearchFocused(false);
                             }}
@@ -361,7 +391,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                 navigate(`/search?large=${activeCategory}&medium=${sub.id}`);
                                 setIsCategoryOpen(false);
                               }}
-                              className="text-base font-black text-gray-900 hover:text-[#FF5A5A] transition-colors border-b-2 border-transparent hover:border-[#FF5A5A] pb-1 inline-block"
+                              className="text-base font-semibold text-gray-900 hover:text-[#FF5A5A] transition-colors border-b-2 border-transparent hover:border-[#FF5A5A] pb-1 inline-block"
                             >
                               {sub.name}
                             </button>
@@ -374,7 +404,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                       navigate(`/search?large=${activeCategory}&medium=${sub.id}&small=${item.id}`);
                                       setIsCategoryOpen(false);
                                     }}
-                                    className="text-sm font-bold text-gray-400 hover:text-[#FF5A5A] transition-colors text-left"
+                                    className="text-sm font-semibold text-gray-400 hover:text-[#FF5A5A] transition-colors text-left"
                                   >
                                     {item.name}
                                   </button>

@@ -44,6 +44,7 @@ export const ProductList: React.FC = () => {
   const [faceToFace, setFaceToFace] = useState(searchParams.get('face') === 'true');
 
   const [sort, setSort] = useState<SortOption>((searchParams.get('sort') as SortOption) || 'all');
+  const [keyword, setKeyword] = useState(searchParams.get('q') || '');
 
   // UI 상태
   const [isCategoryExpanded, setIsCategoryExpanded] = useState(true);
@@ -86,6 +87,7 @@ export const ProductList: React.FC = () => {
         delivery: delivery || undefined,
         face: faceToFace || undefined,
         sort: sort,        // 'all' 포함 그대로 전송 → 백엔드 default 분기에서 처리
+        keyword: keyword || undefined,
         memberNo: memberNo || undefined, // 찜 여부 확인용
       };
 
@@ -116,14 +118,14 @@ export const ProductList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, district, neighborhood, delivery, faceToFace, sort]);
+  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, district, neighborhood, delivery, faceToFace, sort, keyword]);
 
   // 필터 변경 시 초기화 + 첨 페이지 로드
   useEffect(() => {
     fetchedPageRef.current = 1;
     setPage(1);
     fetchProducts(1, true);
-  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, district, neighborhood, delivery, faceToFace, sort]);
+  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, district, neighborhood, delivery, faceToFace, sort, keyword]);
 
   // 페이지 변경 시(무한 스크롤) 추가 로드
   useEffect(() => {
@@ -152,6 +154,7 @@ export const ProductList: React.FC = () => {
     setDelivery(searchParams.get('delivery') === 'true');
     setFaceToFace(searchParams.get('face') === 'true');
     setSort((searchParams.get('sort') as SortOption) || 'all');
+    setKeyword(searchParams.get('q') || '');
   }, [searchParams]);
 
   // 파생 데이터 (선택된 카테고리·지역 정보)
@@ -266,6 +269,9 @@ export const ProductList: React.FC = () => {
       setExpandedMedium(null);
     } else if (key === 'small') {
       updateParams({ small: '' });
+    } else if (key === 'q') {
+      setKeyword('');
+      updateParams({ q: '' });
     }
   };
 
@@ -583,6 +589,18 @@ export const ProductList: React.FC = () => {
               <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>대면거래</span>
                 <button onClick={() => removeFilter('face')} className="ml-2 hover:text-brand-dark"><X className="w-3 h-3" /></button>
+              </div>
+            )}
+            {searchParams.get('q') && (
+              <div className="flex items-center bg-white border border-blue-200 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
+                <Search className="w-3 h-3 mr-1" />
+                <span>"{searchParams.get('q')}"</span>
+                <button
+                  onClick={() => removeFilter('q')}
+                  className="ml-2 hover:text-blue-800"
+                >
+                  <X className="w-3 h-3" />
+                </button>
               </div>
             )}
           </div>

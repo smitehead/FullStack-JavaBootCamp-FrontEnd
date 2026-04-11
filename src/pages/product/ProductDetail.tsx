@@ -365,6 +365,11 @@ export const ProductDetail: React.FC = () => {
       return;
     }
 
+    if (product?.seller.id === user?.id) {
+      showToast('본인이 등록한 상품에는 입찰할 수 없습니다.', 'error');
+      return;
+    }
+
     if (type === 'bid' && activeAutoBid) {
       showToast("'자동 입찰이 활성화'된 상태입니다. 자동 입찰 설정을 먼저 종료하거나 수정해 주세요.", 'warning');
       return;

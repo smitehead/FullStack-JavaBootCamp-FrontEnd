@@ -374,16 +374,13 @@ export const Settings: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">
       <div className="flex items-center gap-4 mb-6">
-        <h2 className="text-xl font-black text-gray-900 tracking-normal">계정 설정</h2>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">계정 설정</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Navigation/Categories */}
         <div className="lg:col-span-1 space-y-4">
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">계정 관리</p>
-            </div>
             <div className="">
               <button
                 onClick={() => setActiveTab('notification')}
