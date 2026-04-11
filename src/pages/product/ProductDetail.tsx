@@ -126,8 +126,8 @@ export const ProductDetail: React.FC = () => {
           timestamp: b.bidTime
         })),
         status: isFinished ? 'completed' : 'active',
-        location: data.location || '알 수 없음',
-        transactionMethod: data.tradeType === '직거래' ? 'face-to-face' : 'delivery',
+        location: data.location || '',
+        transactionMethod: data.tradeType === '혼합' ? 'both' : (data.tradeType === '직거래' ? 'face-to-face' : 'delivery'),
         isWishlisted: data.isWishlisted || false,
         wishlistCount: data.wishlistCount || 0,
         categoryPath: data.categoryPath || []
@@ -609,13 +609,21 @@ export const ProductDetail: React.FC = () => {
             <div className="flex flex-col mb-3">
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">{product.title}</h1>
               <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">직거래</span>
-                <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">택배거래</span>
+                {(product.transactionMethod === 'face-to-face' || product.transactionMethod === 'both') && (
+                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">직거래</span>
+                )}
+                {(product.transactionMethod === 'delivery' || product.transactionMethod === 'both') && (
+                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">택배거래</span>
+                )}
               </div>
 
               <div className="flex items-center justify-between text-xs text-gray-400">
                 <div className="flex items-center">
-                  <MapPin className="w-3 h-3 mr-1" /> {product.location}
+                  {(product.transactionMethod !== 'delivery' && product.location) && (
+                    <>
+                      <MapPin className="w-3 h-3 mr-1" /> {product.location}
+                    </>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   <button 
@@ -1021,9 +1029,11 @@ export const ProductDetail: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-sm font-bold text-gray-700">입찰 금액</label>
-                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                        즉시 구매가: {product.instantPrice ? `${Number(product.instantPrice).toLocaleString()}원` : '-'}
-                      </span>
+                      {product.instantPrice ? (
+                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                          즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
+                        </span>
+                      ) : null}
                     </div>
                     <div className="relative flex items-center">
                       <input
@@ -1043,9 +1053,11 @@ export const ProductDetail: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-sm font-bold text-gray-700">자동 입찰 한도</label>
-                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                        즉시 구매가: {product.instantPrice ? `${Number(product.instantPrice).toLocaleString()}원` : '-'}
-                      </span>
+                      {product.instantPrice ? (
+                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                          즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
+                        </span>
+                      ) : null}
                     </div>
                     <div className="relative flex items-center">
                       <input
