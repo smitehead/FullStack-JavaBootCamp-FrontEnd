@@ -255,7 +255,7 @@ export const Chat: React.FC = () => {
                 <button
                   type="submit"
                   disabled={!newMessage.trim()}
-                  className="p-3 bg-orange-500 text-white rounded-2xl hover:bg-orange-600 transition-all disabled:opacity-50 disabled:hover:bg-orange-500 shadow-lg shadow-orange-100"
+                  className="p-3 bg-orange-500 text-white rounded-2xl hover:bg-orange-600 transition-all disabled:opacity-50 disabled:hover:bg-orange-500 shadow-lg shadow-orange-500/10"
                 >
                   <Send className="w-5 h-5" />
                 </button>

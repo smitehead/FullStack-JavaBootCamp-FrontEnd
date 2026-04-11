@@ -135,19 +135,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="absolute inset-0 bg-gray-900/70 flex flex-col items-center justify-center backdrop-blur-[2px] p-4 text-center">
             
             {/* 상단 메인 칩: 낙찰 성공/판매 완료와 동일한 스타일 */}
-            <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-black text-sm mb-2 shadow-xl">
+            <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               경매 종료
             </div>
 
             <div className="flex flex-col items-center gap-1.5">
               {/* 입찰자가 있을 때 (2번 디자인) */}
               {product.participantCount > 0 ? (
-                <div className="text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30">
+                <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30">
                   관심 {product.participantCount + 2} · 입찰 {product.participantCount}명
                 </div>
               ) : (
                 /* 입찰자가 없을 때 (6번 디자인) */
-                <div className="text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30">
+                <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30">
                   입찰자 없음
                 </div>
               )}
@@ -158,10 +158,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Won Success Badge */}
         {isWon && (
           <div className="absolute inset-0 bg-emerald-600/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-emerald-500/90 transition-colors cursor-pointer rounded-[inherit]">
-            <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-black text-sm mb-2 shadow-xl">
+            <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               낙찰 성공!
             </div>
-            <div className="text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-emerald-600 transition-all">
+            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-emerald-600 transition-all">
               판매자와 대화하기
             </div>
           </div>
@@ -171,11 +171,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {isSold && (
           <div className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 transition-colors cursor-pointer rounded-[inherit] ${isConfirmed ? 'bg-indigo-600/80 group-hover:bg-indigo-500/90' : 'bg-gray-800/80 group-hover:bg-gray-700/90'
             }`}>
-            <div className={`px-5 py-2 rounded-full font-black text-sm mb-2 shadow-xl ${isConfirmed ? 'bg-white text-indigo-600' : 'bg-white text-gray-800'
+            <div className={`px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl ${isConfirmed ? 'bg-white text-indigo-600' : 'bg-white text-gray-800'
               }`}>
               {isConfirmed ? '판매 완료!' : '낙찰 발생'}
             </div>
-            <div className={`text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white transition-all ${isConfirmed ? 'group-hover:text-indigo-600' : 'group-hover:text-gray-800'
+            <div className={`text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white transition-all ${isConfirmed ? 'group-hover:text-indigo-600' : 'group-hover:text-gray-800'
               }`}>
               {isConfirmed ? '구매자와 대화하기' : '구매자 구매 확정 대기'}
             </div>

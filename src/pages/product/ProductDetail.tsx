@@ -402,7 +402,7 @@ export const ProductDetail: React.FC = () => {
         <div className="flex flex-col items-center gap-4">
           <button
             onClick={() => navigate('/search')}
-            className="px-10 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-95"
+            className="px-10 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/10 active:scale-95"
           >
             다른 상품 둘러보기
           </button>
@@ -591,7 +591,7 @@ export const ProductDetail: React.FC = () => {
                   ? 'bg-emerald-600 text-white'
                   : 'bg-orange-500 text-white'
                   }`}>
-                  <span className="text-xs font-bold tracking-tight">
+                  <span className="text-xs font-semibold tracking-tight">
                     입찰 중 <span className="mx-1.5 opacity-50">|</span> {isHighestBidder ? '최고 입찰' : '추월 변동'}
                   </span>
                 </div>
@@ -798,7 +798,7 @@ export const ProductDetail: React.FC = () => {
               <button
                 onClick={() => openBidModal('bid')}
                 disabled={isFinished}
-                className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
               >
                 입찰 참여하기
               </button>

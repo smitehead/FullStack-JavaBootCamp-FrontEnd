@@ -53,7 +53,7 @@ export const InquiryList: React.FC = () => {
             </div>
             <button
               onClick={() => navigate('/inquiry/create')}
-              className="px-6 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center shrink-0 text-sm"
+              className="px-6 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 flex items-center justify-center shrink-0 text-sm"
             >
               문의 작성하기
             </button>
@@ -79,8 +79,8 @@ export const InquiryList: React.FC = () => {
               <button
                 key={cat}
                 onClick={() => setSelectedType(cat)}
-                className={`px-6 py-2.5 rounded-full text-sm font-black transition-all whitespace-nowrap ${selectedType === cat
-                  ? 'bg-red-500 text-white border border-transparent shadow-md shadow-red-500/10'
+                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${selectedType === cat
+                  ? 'bg-red-500 text-white border border-transparent shadow-lg shadow-red-500/10'
                   : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'
                   }`}
               >
@@ -109,9 +109,9 @@ export const InquiryList: React.FC = () => {
                         </h3>
                         <div className="w-20 shrink-0 text-center">
                           {inquiry.status === 1 ? (
-                            <span className="px-2 py-0.5 bg-green-50 text-green-600 text-[10px] font-bold rounded-md inline-block">답변완료</span>
+                            <span className="px-2 py-0.5 bg-green-50 text-green-600 text-[10px] font-semibold rounded-md inline-block">답변완료</span>
                           ) : (
-                            <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-bold rounded-md inline-block">답변대기</span>
+                            <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-semibold rounded-md inline-block">답변대기</span>
                           )}
                         </div>
                       </div>
