@@ -91,8 +91,8 @@ export const NoticeList: React.FC = () => {
                   setActiveCategory(category);
                   setCurrentPage(1);
                 }}
-                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${activeCategory === category
-                  ? 'bg-red-500 text-white shadow-md shadow-red-500/10'
+                className={`px-6 py-2.5 rounded-full text-sm font-black transition-all ${activeCategory === category
+                  ? 'bg-red-500 text-white border border-transparent shadow-md shadow-red-500/10'
                   : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
                   }`}
               >
@@ -154,8 +154,8 @@ export const NoticeList: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${page === currentPage
-                    ? 'bg-red-500 text-white shadow-md shadow-red-500/10'
+                  className={`w-10 h-10 rounded-xl text-sm font-black transition-all ${page === currentPage
+                    ? 'bg-red-500 text-white border border-transparent shadow-md shadow-red-500/10'
                     : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
                     }`}
                 >

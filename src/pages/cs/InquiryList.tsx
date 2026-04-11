@@ -79,8 +79,8 @@ export const InquiryList: React.FC = () => {
               <button
                 key={cat}
                 onClick={() => setSelectedType(cat)}
-                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${selectedType === cat
-                  ? 'bg-red-500 text-white shadow-md shadow-red-500/10'
+                className={`px-6 py-2.5 rounded-full text-sm font-black transition-all whitespace-nowrap ${selectedType === cat
+                  ? 'bg-red-500 text-white border border-transparent shadow-md shadow-red-500/10'
                   : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'
                   }`}
               >
