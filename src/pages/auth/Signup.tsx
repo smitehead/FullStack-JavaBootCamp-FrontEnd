@@ -522,7 +522,7 @@ export const Signup: React.FC = () => {
                     </div>
                     <button
                       type="button"
-                      onClick={sendVerificationCode}
+                      onClick={() => sendVerificationCode(false)}
                       disabled={isEmailVerified}
                       className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
                     >
