@@ -697,14 +697,14 @@ export const ProductDetail: React.FC = () => {
                 <span className="text-gray-500">최소 입찰 단위</span>
                 <span className="font-bold text-gray-900">{(product.minBidIncrement || 0).toLocaleString()} 원</span>
               </div>
-              {product.instantPrice && (
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-500">즉시 구매가</span>
-                  <span className="font-bold text-emerald-600">{(product.instantPrice || 0).toLocaleString()} 원</span>
-                </div>
-              )}
-              <div className="flex justify-between items-center">
-                <span className="text-gray-500 font-bold">{isFinished ? '최종 낙찰가' : '현재 입찰가'}</span>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-500">즉시 구매가</span>
+                <span className="font-bold text-emerald-600">
+                  {product.instantPrice ? `${Number(product.instantPrice).toLocaleString()} 원` : '-'}
+                </span>
+              </div>
+              <div className="flex justify-between items-end pt-2 border-t border-gray-50">
+                <span className="text-gray-500 font-bold mb-1">{isFinished ? '최종 낙찰가' : '현재 입찰가'}</span>
                 <span className={`text-3xl font-black ${isFinished ? 'text-gray-900' : 'text-orange-500'}`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
               </div>
             </div>
@@ -1021,11 +1021,9 @@ export const ProductDetail: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-sm font-bold text-gray-700">입찰 금액</label>
-                      {product.instantPrice && (
-                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                          즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
-                        </span>
-                      )}
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                        즉시 구매가: {product.instantPrice ? `${Number(product.instantPrice).toLocaleString()}원` : '-'}
+                      </span>
                     </div>
                     <div className="relative flex items-center">
                       <input
@@ -1045,11 +1043,9 @@ export const ProductDetail: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-sm font-bold text-gray-700">자동 입찰 한도</label>
-                      {product.instantPrice && (
-                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                          즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
-                        </span>
-                      )}
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                        즉시 구매가: {product.instantPrice ? `${Number(product.instantPrice).toLocaleString()}원` : '-'}
+                      </span>
                     </div>
                     <div className="relative flex items-center">
                       <input
