@@ -129,6 +129,7 @@ export const AdminDashboard: React.FC = () => {
                       outerRadius={70}
                       paddingAngle={5}
                       dataKey="count"
+                      nameKey="name"
                     >
                       {popularCategories.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -136,7 +137,7 @@ export const AdminDashboard: React.FC = () => {
                     </Pie>
                     <Tooltip
                       contentStyle={{ borderRadius: '0px', border: '1px solid #e5e7eb', fontWeight: 'bold', fontSize: '12px' }}
-                      formatter={(value: number) => [`${value}건`, '']}
+                      formatter={(value: number, name: string) => [`${value}건`, name]}
                     />
                   </PieChart>
                 </ResponsiveContainer>
