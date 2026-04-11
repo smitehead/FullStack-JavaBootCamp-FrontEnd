@@ -187,8 +187,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <h3 className="font-bold text-gray-900 text-base mb-1 truncate text-left">{product.title}</h3>
 
         {/* Address - Aligned Left */}
-        <div className="text-[11px] text-gray-400 mb-3 text-left">
-          {product.location}
+        <div className="text-[11px] text-gray-400 mb-3 text-left min-h-[1.25rem]">
+          {product.location && product.location !== '택배거래 상품' ? product.location : ''}
         </div>
 
         <div className="flex justify-between items-end">
