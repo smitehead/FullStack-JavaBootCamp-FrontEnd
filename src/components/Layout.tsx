@@ -5,6 +5,7 @@ import { CURRENT_USER } from '@/services/mockData';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
+import { getProfileImageUrl } from '@/utils/imageUtils';
 
 interface HeaderProps {
   onLogout: () => void;
@@ -183,7 +184,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               <>
                 <Link
                   to="/register"
-                  className="hidden lg:flex items-center space-x-1.5 bg-[#FF5A5A] text-white px-5 py-3 rounded-2xl text-sm font-bold hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 active:scale-95"
+                  className="hidden lg:flex items-center space-x-1.5 bg-[#FF5A5A] text-white px-5 py-3 rounded-2xl text-sm font-semibold hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 active:scale-95"
                 >
                   <span>경매 등록</span>
                 </Link>
@@ -265,7 +266,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                   <div className="relative group">
                     <button className="flex items-center gap-2 shrink-0">
                       <img
-                        src={user.profileImage || undefined}
+                        src={getProfileImageUrl(user.profileImage)}
                         alt="Profile"
                         className="w-10 h-10 rounded-full border-2 border-white shadow-md hover:ring-2 hover:ring-gray-200 transition-all object-cover"
                       />
@@ -340,7 +341,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                         key={cat.id}
                         onMouseEnter={() => setActiveCategory(cat.id)}
                         onClick={() => {
-                          navigate(`/search?category=${encodeURIComponent(cat.name)}`);
+                          navigate(`/search?large=${cat.id}`);
                           setIsCategoryOpen(false);
                         }}
                         className={`w-full text-left px-6 py-4 text-sm font-bold transition-all flex items-center justify-between group ${activeCategory === cat.id
@@ -361,7 +362,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                           <div key={sub.id} className="space-y-4">
                             <button
                               onClick={() => {
-                                navigate(`/search?category=${encodeURIComponent(sub.name)}`);
+                                navigate(`/search?large=${activeCategory}&medium=${sub.id}`);
                                 setIsCategoryOpen(false);
                               }}
                               className="text-base font-black text-gray-900 hover:text-[#FF5A5A] transition-colors border-b-2 border-transparent hover:border-[#FF5A5A] pb-1 inline-block"
@@ -374,7 +375,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                   <button
                                     key={item.id}
                                     onClick={() => {
-                                      navigate(`/search?category=${encodeURIComponent(item.name)}`);
+                                      navigate(`/search?large=${activeCategory}&medium=${sub.id}&small=${item.id}`);
                                       setIsCategoryOpen(false);
                                     }}
                                     className="text-sm font-bold text-gray-400 hover:text-[#FF5A5A] transition-colors text-left"
@@ -398,7 +399,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             {user?.isAdmin && (
               <Link
                 to="/admin"
-                className="flex items-center text-xs font-black text-white bg-black px-4 py-1.5 rounded-full shadow-lg hover:bg-gray-800 transition-all active:scale-95"
+                className="flex items-center text-xs font-bold text-white bg-black px-4 py-1.5 rounded-full shadow-lg hover:bg-gray-800 transition-all active:scale-95"
               >
                 관리자모드
               </Link>

@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { User, WithdrawnUser } from '@/types';
 import { showToast } from '@/components/toastService';
+import { getProfileImageUrl } from '@/utils/imageUtils';
 
 type UserStatus = '정상' | '정지' | '영구정지' | '탈퇴';
 type SortField = 'mannerTemp' | 'points' | 'joinedAt' | 'role' | 'status' | 'postCount';
@@ -254,7 +255,7 @@ export const UserManagement: React.FC = () => {
             <div key={user.id} className={`px-8 py-5 hover:bg-gray-50 transition-colors group ${user.isWithdrawn ? 'opacity-60' : ''}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 min-w-0 flex-1">
-                  <img src={user.profileImage || undefined} alt={user.nickname} className="w-10 h-10 rounded-none object-cover bg-gray-100 shrink-0" />
+                  <img src={getProfileImageUrl(user.profileImage)} alt={user.nickname} className="w-10 h-10 rounded-none object-cover bg-gray-100 shrink-0" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <button

@@ -599,7 +599,7 @@ export const ProductRegister: React.FC = () => {
           </button>
           <button
             type="submit"
-            className="px-12 py-4 rounded-2xl bg-brand text-black font-black hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-95"
+            className="px-12 py-4 rounded-2xl bg-brand text-white font-bold hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-95"
           >
             등록하기
           </button>

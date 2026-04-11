@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
-import { resolveImageUrl } from '@/utils/imageUtils';
+import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { 
   ChevronLeft, ChevronRight, MapPin, Truck, CreditCard, MessageSquare, 
   CheckCircle2, XCircle, Package, Info, AlertCircle
@@ -438,11 +438,11 @@ export const WonProductDetail: React.FC = () => {
               <div className="bg-gray-900 rounded-[32px] p-8 text-white shadow-2xl shadow-indigo-100">
                 <div className="flex items-center gap-4 mb-8">
                   <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white/20 flex-shrink-0 bg-white/10 flex items-center justify-center">
-                    {result.seller.profileImage ? (
-                      <img src={resolveImageUrl(result.seller.profileImage)} alt={result.seller.nickname} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-white font-bold text-lg">{result.seller.nickname[0]}</span>
-                    )}
+                    <img 
+                      src={getProfileImageUrl(result.seller.profileImage)} 
+                      alt={result.seller.nickname} 
+                      className="w-full h-full object-cover" 
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">판매자</p>
