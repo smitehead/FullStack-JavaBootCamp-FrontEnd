@@ -115,7 +115,7 @@ export const ProductDetail: React.FC = () => {
         currentPrice: data.currentPrice || 0,
         minBidIncrement: data.minBidUnit || 1000,
         instantPrice: data.buyoutPrice || null,
-        startTime: new Date().toISOString(),
+        startTime: data.createdAt || new Date().toISOString(),
         endTime: data.endTime,
         images: resolveImageUrls(data.images || []),
         participantCount: data.participantCount || 0,
@@ -581,11 +581,11 @@ export const ProductDetail: React.FC = () => {
                     if (index >= 0) queryParams.set('large', String(product.categoryPath![0].id));
                     if (index >= 1) queryParams.set('medium', String(product.categoryPath![1].id));
                     if (index >= 2) queryParams.set('small', String(product.categoryPath![2].id));
-                    
+
                     return (
                       <React.Fragment key={cat.id}>
-                        <Link 
-                          to={`/search?${queryParams.toString()}`} 
+                        <Link
+                          to={`/search?${queryParams.toString()}`}
                           className="hover:text-gray-900 transition-colors font-medium"
                         >
                           {cat.name}
@@ -618,7 +618,7 @@ export const ProductDetail: React.FC = () => {
                   <MapPin className="w-3 h-3 mr-1" /> {product.location}
                 </div>
                 <div className="flex items-center gap-3">
-                  <button 
+                  <button
                     onClick={() => setIsShareModalOpen(true)}
                     className="flex items-center hover:text-gray-600 transition-colors font-medium"
                   >
@@ -1161,7 +1161,7 @@ export const ProductDetail: React.FC = () => {
                 <p className="text-xs text-gray-400 truncate flex-1 font-medium">
                   {window.location.href}
                 </p>
-                <button 
+                <button
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
                     showToast('링크가 복사되었습니다!', 'success');
