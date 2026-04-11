@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
-import { Package, Check, ChevronRight, Mail, User, Lock, ShieldCheck, MapPin, Phone, Calendar, AlertCircle, Send, CheckCircle2, X } from 'lucide-react';
+import { Package, Check, ChevronRight, Mail, User, Lock, ShieldCheck, MapPin, Phone, Calendar, AlertCircle, Send, CheckCircle2, X, Sparkles, ChevronDown } from 'lucide-react';
 import { showToast } from '@/components/toastService';
 
 declare global {
@@ -72,6 +72,18 @@ export const Signup: React.FC = () => {
   // 닉네임 중복확인 상태
   const [nicknameCheckMessage, setNicknameCheckMessage] = useState<{ text: string; isError: boolean } | null>(null);
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  
+  // 이메일 분리 입력 상태
+  const [emailId, setEmailId] = useState('');
+  const [emailDomain, setEmailDomain] = useState('naver.com');
+  const [customDomain, setCustomDomain] = useState('');
+  const [isCustomDomain, setIsCustomDomain] = useState(false);
+
+  // 이메일 상태 동기화
+  useEffect(() => {
+    const domain = isCustomDomain ? customDomain : emailDomain;
+    setFormData(prev => ({ ...prev, email: `${emailId}@${domain}` }));
+  }, [emailId, emailDomain, customDomain, isCustomDomain]);
 
   // 약관 아코디언 펼침 상태
   const [expandedTerm, setExpandedTerm] = useState<string | null>(null);
@@ -508,22 +520,65 @@ export const Signup: React.FC = () => {
 
                 <div>
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 인증</label>
-                  <div className="flex gap-2 mb-2">
-                    <div className="relative flex-1">
-                      <input
-                        type="email"
-                        required
-                        disabled={isEmailVerified}
-                        className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50"
-                        placeholder="example@email.com"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      />
+                  <div className="flex flex-col gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <input
+                          type="text"
+                          required
+                          disabled={isEmailVerified}
+                          className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50"
+                          placeholder="이메일 아이디"
+                          value={emailId}
+                          onChange={(e) => setEmailId(e.target.value)}
+                        />
+                      </div>
+                      <span className="text-gray-400 font-bold">@</span>
+                      <div className="relative flex-1">
+                        <select
+                          disabled={isEmailVerified}
+                          className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50 appearance-none"
+                          value={isCustomDomain ? 'custom' : emailDomain}
+                          onChange={(e) => {
+                            if (e.target.value === 'custom') {
+                              setIsCustomDomain(true);
+                            } else {
+                              setIsCustomDomain(false);
+                              setEmailDomain(e.target.value);
+                            }
+                          }}
+                        >
+                          <option value="naver.com">naver.com</option>
+                          <option value="gmail.com">gmail.com</option>
+                          <option value="daum.net">daum.net</option>
+                          <option value="hanmail.net">hanmail.net</option>
+                          <option value="nate.com">nate.com</option>
+                          <option value="outlook.com">outlook.com</option>
+                          <option value="custom">직접 입력</option>
+                        </select>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                          <ChevronDown className="w-4 h-4" />
+                        </div>
+                      </div>
                     </div>
+                    
+                    {isCustomDomain && !isEmailVerified && (
+                      <div className="animate-in slide-in-from-top-1 duration-200">
+                        <input
+                          type="text"
+                          required
+                          className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
+                          placeholder="도메인을 입력해주세요 (예: example.com)"
+                          value={customDomain}
+                          onChange={(e) => setCustomDomain(e.target.value)}
+                        />
+                      </div>
+                    )}
+                    
                     <button
                       type="button"
                       onClick={() => sendVerificationCode(false)}
-                      disabled={isEmailVerified}
+                      disabled={isEmailVerified || !emailId || (isCustomDomain && !customDomain)}
                       className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
                     >
                       코드전송
@@ -566,8 +621,8 @@ export const Signup: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => sendVerificationCode(true)}
-                            disabled={cooldown > 0}
-                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                            disabled={cooldown > 0 || !emailId || (isCustomDomain && !customDomain)}
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             {cooldown > 0 ? `${cooldown}초 후 가능` : '재요청'}
                           </button>
@@ -677,7 +732,6 @@ export const Signup: React.FC = () => {
                 className="w-full py-4 bg-[#FF5A5A] text-white font-black text-sm rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 active:scale-95 flex items-center justify-center gap-2"
               >
                 가입 완료하기
-                <ChevronRight className="w-5 h-5" />
               </button>
             </form>
           </div>
