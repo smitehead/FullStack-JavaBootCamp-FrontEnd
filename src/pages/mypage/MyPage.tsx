@@ -5,7 +5,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, MessageSquare } from 'lucide-react';
 import { Product } from '@/types';
 import api from '@/services/api';
-import { resolveImageUrls, resolveImageUrl } from '@/utils/imageUtils';
+import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 
@@ -353,11 +353,12 @@ export const MyPage: React.FC = () => {
           {/* Profile Image */}
           <div className="relative group">
             <div className="w-32 h-32 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-gray-100 flex items-center justify-center">
-              {profileImage ? (
-                <img src={profileImage} alt="Profile" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-              ) : (
-                <span className="text-4xl text-gray-400">{user.nickname?.charAt(0) || '?'}</span>
-              )}
+              <img 
+                src={getProfileImageUrl(profileImage)} 
+                alt="Profile" 
+                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" 
+                referrerPolicy="no-referrer" 
+              />
             </div>
             <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-indigo-600 hover:text-white transition-all duration-300 border border-gray-100 disabled:opacity-50">
               {uploadingProfile

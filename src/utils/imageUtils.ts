@@ -59,3 +59,14 @@ export function resolveImageUrls(imagePaths: (string | null | undefined)[]): str
     .map(resolveImageUrl)
     .filter((url): url is string => !!url);
 }
+/** 기본 프로필 이미지 경로 */
+export const DEFAULT_PROFILE_IMAGE = '/images/default-profile.png';
+
+/**
+ * 사용자 프로필 이미지 경로를 완전한 URL로 변환합니다.
+ * 경로가 없거나 유효하지 않으면 기본 프로필 이미지를 반환합니다.
+ */
+export function getProfileImageUrl(imagePath: string | null | undefined): string {
+  const resolved = resolveImageUrl(imagePath);
+  return resolved || DEFAULT_PROFILE_IMAGE;
+}

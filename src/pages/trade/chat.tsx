@@ -6,6 +6,7 @@ import { ChatRoom, ChatMessage } from '@/types';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'motion/react';
+import { getProfileImageUrl } from '@/utils/imageUtils';
 
 export const Chat: React.FC = () => {
   const navigate = useNavigate();
@@ -119,7 +120,7 @@ export const Chat: React.FC = () => {
                 className={`w-full p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 ${selectedRoom?.id === room.id ? 'bg-orange-50/50' : ''}`}
               >
                 <div className="relative flex-shrink-0">
-                  <img src={room.otherUser.profileImage} alt={room.otherUser.nickname} className="w-12 h-12 rounded-2xl object-cover" />
+                  <img src={getProfileImageUrl(room.otherUser.profileImage)} alt={room.otherUser.nickname} className="w-12 h-12 rounded-2xl object-cover" />
                   {room.unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white">
                       {room.unreadCount}
@@ -217,9 +218,7 @@ export const Chat: React.FC = () => {
                     )}
                     <div className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                       <div className={`flex gap-3 max-w-[80%] ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                        {!isMe && (
-                          <img src={selectedRoom.otherUser.profileImage} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
-                        )}
+                          <img src={getProfileImageUrl(selectedRoom.otherUser.profileImage)} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
                         <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                           <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${
                             isMe ? 'bg-orange-500 text-white rounded-tr-none' : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'

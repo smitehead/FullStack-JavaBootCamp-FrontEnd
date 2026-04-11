@@ -5,6 +5,7 @@ import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
 import { MOCK_PRODUCTS } from '@/services/mockData';
+import { getProfileImageUrl } from '@/utils/imageUtils';
 
 // 카카오 우편번호 서비스 타입 선언
 declare global {
@@ -794,7 +795,7 @@ export const Settings: React.FC = () => {
                   {blockedUsers.map(user => (
                     <div key={user.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
                       <div className="flex items-center gap-3">
-                        <img src={user.profileImage || undefined} alt={user.nickname} className="w-10 h-10 rounded-full object-cover" />
+                        <img src={getProfileImageUrl(user.profileImage)} alt={user.nickname} className="w-10 h-10 rounded-full object-cover" />
                         <div>
                           <p className="font-bold text-gray-900">{user.nickname}</p>
                           <p className="text-xs text-gray-400">매너온도 {Number(user.mannerTemp).toFixed(1)}℃</p>

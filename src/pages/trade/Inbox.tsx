@@ -3,6 +3,7 @@ import { Bell, MessageSquare, ChevronRight, Package, Clock } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { CURRENT_USER } from '@/services/mockData';
+import { getProfileImageUrl } from '@/utils/imageUtils';
 
 export const Inbox: React.FC = () => {
   const { notifications, chats, markNotificationAsRead, markChatAsRead } = useAppContext();
@@ -198,7 +199,7 @@ export const Inbox: React.FC = () => {
               >
                 <div className="relative">
                   <img
-                    src={chat.otherUser.profileImage || undefined}
+                    src={getProfileImageUrl(chat.otherUser.profileImage)}
                     alt={chat.otherUser.nickname}
                     className="w-14 h-14 rounded-2xl object-cover border border-gray-100"
                   />

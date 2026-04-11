@@ -8,7 +8,7 @@ import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { resolveImageUrls, resolveImageUrl } from '../../utils/imageUtils';
+import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '../../utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 
@@ -106,7 +106,7 @@ export const ProductDetail: React.FC = () => {
         seller: {
           id: String(data.seller?.sellerNo || 'seller_1'),
           nickname: data.seller?.nickname || '판매자',
-          profileImage: resolveImageUrl(data.seller?.profileImgUrl) || '',
+          profileImage: getProfileImageUrl(data.seller?.profileImgUrl),
           points: 0,
           mannerTemp: data.seller?.mannerTemp || 36.5,
           joinedAt: ''
@@ -528,7 +528,7 @@ export const ProductDetail: React.FC = () => {
                   ? 'bg-emerald-600 text-white'
                   : 'bg-orange-500 text-white'
                   }`}>
-                  <span className="text-xs font-black tracking-tight">
+                  <span className="text-xs font-bold tracking-tight">
                     입찰 중 <span className="mx-1.5 opacity-50">|</span> {isHighestBidder ? '최고 입찰' : '추월 변동'}
                   </span>
                 </div>
@@ -666,13 +666,7 @@ export const ProductDetail: React.FC = () => {
                   </button>
                 )}
                 <Link to={`/seller/${product.seller.id}`}>
-                  {product.seller.profileImage ? (
-                    <img src={product.seller.profileImage} alt="Seller" className="w-12 h-12 rounded-full object-cover border border-gray-100" />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center border border-gray-100">
-                      <Users className="w-6 h-6 text-gray-300" />
-                    </div>
-                  )}
+                  <img src={getProfileImageUrl(product.seller.profileImage)} alt="Seller" className="w-12 h-12 rounded-full object-cover border border-gray-100" />
                 </Link>
               </div>
             </div>

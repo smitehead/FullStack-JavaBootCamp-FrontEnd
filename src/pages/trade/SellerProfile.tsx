@@ -5,7 +5,7 @@ import { Package, MessageSquare, ChevronRight, AlertCircle, Shield } from 'lucid
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
-import { resolveImageUrl, resolveImageUrls } from '@/utils/imageUtils';
+import { resolveImageUrl, resolveImageUrls, getProfileImageUrl } from '@/utils/imageUtils';
 
 import { useAppContext } from '@/context/AppContext';
 
@@ -139,11 +139,7 @@ export const SellerProfile: React.FC = () => {
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
           {/* Profile Image */}
           <div className="w-32 h-32 rounded-3xl overflow-hidden border-4 border-white shadow-xl flex-shrink-0 bg-gray-100 flex items-center justify-center">
-            {seller.profileImgUrl ? (
-              <img src={seller.profileImgUrl} alt="Profile" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-            ) : (
-              <span className="text-4xl text-gray-400">{seller.nickname?.charAt(0) || '?'}</span>
-            )}
+            <img src={getProfileImageUrl(seller.profileImgUrl)} alt="Profile" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
           </div>
 
           {/* User Info */}
