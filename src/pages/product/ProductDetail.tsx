@@ -126,7 +126,8 @@ export const ProductDetail: React.FC = () => {
         location: data.location || '알 수 없음',
         transactionMethod: data.tradeType === '직거래' ? 'face-to-face' : 'delivery',
         isWishlisted: data.isWishlisted || false,
-        wishlistCount: data.wishlistCount || 0
+        wishlistCount: data.wishlistCount || 0,
+        categoryPath: data.categoryPath || []
       };
 
       // SSE가 이미 더 높은 가격을 수신했다면 되돌리지 않음 (fetchProduct 경쟁 조건 방지)
@@ -563,14 +564,31 @@ export const ProductDetail: React.FC = () => {
             {/* Breadcrumb & Time */}
             <div className="flex items-center justify-between mb-2">
               <nav className="flex items-center text-xs text-gray-400 space-x-1">
-                <span>홈</span>
+                <Link to="/search" className="hover:text-gray-900 transition-colors">홈</Link>
                 <ChevronRight className="w-3 h-3" />
-                {String(product.category).split(' > ').map((cat, index, array) => (
-                  <React.Fragment key={index}>
-                    <span>{cat}</span>
-                    {index < array.length - 1 && <ChevronRight className="w-3 h-3" />}
-                  </React.Fragment>
-                ))}
+                {product.categoryPath && product.categoryPath.length > 0 ? (
+                  product.categoryPath.map((cat, index) => {
+                    // 대/중/소 분류 단계에 맞는 쿼리 파라미터 생성
+                    const queryParams = new URLSearchParams();
+                    if (index >= 0) queryParams.set('large', String(product.categoryPath![0].id));
+                    if (index >= 1) queryParams.set('medium', String(product.categoryPath![1].id));
+                    if (index >= 2) queryParams.set('small', String(product.categoryPath![2].id));
+                    
+                    return (
+                      <React.Fragment key={cat.id}>
+                        <Link 
+                          to={`/search?${queryParams.toString()}`} 
+                          className="hover:text-gray-900 transition-colors font-medium"
+                        >
+                          {cat.name}
+                        </Link>
+                        {index < product.categoryPath!.length - 1 && <ChevronRight className="w-3 h-3" />}
+                      </React.Fragment>
+                    );
+                  })
+                ) : (
+                  <span>기타</span>
+                )}
                 <span className="mx-1 text-gray-300">•</span>
                 <span className="flex items-center">
                   <Clock className="w-3 h-3 mr-1" />
