@@ -12,6 +12,12 @@ export interface CategoryItem {
   subCategories?: CategoryItem[];
 }
 
+export interface CategoryPathItem {
+  id: number;
+  name: string;
+  depth: number;
+}
+
 export type TransactionMethod = "face-to-face" | "delivery" | "both";
 
 export interface UserSettings {
@@ -114,6 +120,7 @@ export interface Product {
   isWishlisted?: boolean;
   wishlistCount?: number;
   winnerId?: string;
+  categoryPath?: CategoryPathItem[];
 }
 
 export type NotificationType = "bid" | "activity" | "제재" | "제재해제";
