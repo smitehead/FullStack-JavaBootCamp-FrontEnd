@@ -524,10 +524,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40"></div>
           <div className="relative bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <ShieldAlert className="w-8 h-8 text-orange-500" />
-              </div>
+            <div className="p-8 text-left">
               <h3 className="text-xl font-black text-gray-900 mb-2">다른 기기에서 로그인됨</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
                 동일한 계정으로 다른 기기에서 로그인되어<br />자동 로그아웃 처리되었습니다.

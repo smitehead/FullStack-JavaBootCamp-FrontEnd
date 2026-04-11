@@ -1,3 +1,11 @@
+/* 프리텐다드 웹 폰트 불러오기 (최신 버전 CDN) */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+/* 프로젝트 전체에 프리텐다드 적용 */
+* {
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
 @import "tailwindcss";
 
 @theme {

@@ -669,21 +669,30 @@ export const Signup: React.FC = () => {
         )}
 
         {step === 'success' && (
-          <div className="bg-white p-12 rounded-[40px] shadow-2xl text-left border border-gray-100 animate-in zoom-in-95 duration-500">
-            <p className="text-gray-500 font-medium leading-relaxed mb-10">
-              회원가입이 성공적으로 완료되었습니다.<br />
-              지금 바로 JAVAJAVA의 실시간 중고 경매를 시작해보세요.
-            </p>
-            <div className="space-y-3">
+          <div className="bg-white p-12 rounded-[40px] shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-500">
+            <div className="flex flex-col items-center mb-10 text-center">
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="bg-[#FF5A5A] p-2.5 rounded-2xl shadow-lg shadow-red-100">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <span className="text-3xl font-black text-gray-800 tracking-tighter italic">JAVAJAVA</span>
+              </div>
+              
+              <h3 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">회원가입이 성공적으로 완료되었습니다.</h3>
+              <p className="text-gray-500 font-medium leading-relaxed">
+                지금 바로 JAVAJAVA의 실시간 중고 경매를 시작해보세요.
+              </p>
+            </div>
+            <div className="flex gap-3">
               <Link
                 to="/login"
-                className="block w-full py-5 bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95"
+                className="flex-1 py-5 bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 text-center"
               >
                 로그인 하러가기
               </Link>
               <Link
                 to="/"
-                className="block w-full py-5 bg-gray-50 text-gray-600 font-black rounded-2xl hover:bg-gray-100 transition-all"
+                className="flex-1 py-5 bg-gray-50 text-gray-600 font-black rounded-2xl hover:bg-gray-100 transition-all text-center"
               >
                 메인으로 이동
               </Link>
