@@ -49,11 +49,12 @@ export const ReportManagement: React.FC = () => {
     status !== '접수' && status !== 'PENDING' && status !== 'pending';
 
   const filteredReports = reports.filter(r => {
+    const term = searchTerm.toLowerCase();
     const matchesSearch =
       String(r.reportNo).includes(searchTerm) ||
-      r.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (r.reporterNickname || '').toLowerCase().includes(searchTerm.toLowerCase());
+      (r.type || '').toLowerCase().includes(term) ||
+      (r.content || '').toLowerCase().includes(term) ||
+      (r.reporterNickname || '').toLowerCase().includes(term);
     const matchesStatus =
       statusFilter === 'all' ||
       (statusFilter === 'pending' && !isResolved(r.status)) ||
@@ -221,7 +222,7 @@ export const ReportManagement: React.FC = () => {
                           onClick={() => handleViewDetail(report.reportNo)}
                           className="text-sm font-bold text-gray-900 mb-1 text-left hover:text-[#FF5A5A] transition-colors cursor-pointer"
                         >
-                          [{report.type}] {report.content.length > 40 ? report.content.slice(0, 40) + '…' : report.content}
+                          {report.type ? `[${report.type}] ` : ''}{(report.content || '').length > 40 ? (report.content || '').slice(0, 40) + '…' : (report.content || '')}
                         </button>
                         <div className="flex items-center gap-3 flex-wrap text-xs">
                           <Link
@@ -238,7 +239,7 @@ export const ReportManagement: React.FC = () => {
                             대상: {target.name}
                           </Link>
                           <span className="text-gray-300">|</span>
-                          <span className="text-[10px] font-medium text-gray-400">{new Date(report.createdAt).toLocaleString()}</span>
+                          <span className="text-[10px] font-medium text-gray-400">{report.createdAt ? new Date(report.createdAt).toLocaleString() : '-'}</span>
                         </div>
                       </div>
                     </div>
@@ -332,7 +333,7 @@ export const ReportManagement: React.FC = () => {
                     </div>
                     <div className="bg-gray-50 rounded-none p-4">
                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">신고 일시</p>
-                      <p className="text-xs font-bold text-gray-900">{new Date(detailReport.createdAt).toLocaleString()}</p>
+                      <p className="text-xs font-bold text-gray-900">{detailReport.createdAt ? new Date(detailReport.createdAt).toLocaleString() : '-'}</p>
                     </div>
                   </div>
 
