@@ -183,7 +183,7 @@ export const Signup: React.FC = () => {
     });
   };
 
-  const sendVerificationCode = async () => {
+  const sendVerificationCode = async (isResend = false) => {
     if (!formData.email.includes('@')) {
       showToast("올바른 '이메일' 형식을 입력해주세요.", 'error');
       return;
@@ -199,8 +199,8 @@ export const Signup: React.FC = () => {
       showToast("'이메일' 확인 중 오류가 발생했습니다.", 'error');
       return;
     }
-    // 버튼 즉시 비활성화
-    setCooldown(60);
+    // 재전송일 때만 즉시 버튼 비활성화
+    if (isResend) setCooldown(60);
     // 백엔드로 인증번호 발송 요청
     try {
       await api.post('/auth/send-email-code', { email: formData.email });
@@ -208,7 +208,7 @@ export const Signup: React.FC = () => {
       setTimer(180); // 3분
       showToast("'인증번호'가 발송되었습니다. 이메일을 확인해주세요.", 'success');
     } catch {
-      setCooldown(0); // 실패 시 쿨다운 해제
+      if (isResend) setCooldown(0); // 실패 시 쿨다운 해제
       showToast('인증번호 발송에 실패했습니다. 잠시 후 다시 시도해주세요.', 'error');
     }
   };
@@ -523,10 +523,10 @@ export const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={sendVerificationCode}
-                      disabled={isEmailVerified || cooldown > 0}
+                      disabled={isEmailVerified}
                       className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
                     >
-                      {cooldown > 0 ? `${cooldown}초 후 재전송` : '코드전송'}
+                      코드전송
                     </button>
                   </div>
 
@@ -565,7 +565,7 @@ export const Signup: React.FC = () => {
                           </button>
                           <button
                             type="button"
-                            onClick={sendVerificationCode}
+                            onClick={() => sendVerificationCode(true)}
                             disabled={cooldown > 0}
                             className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
                           >
