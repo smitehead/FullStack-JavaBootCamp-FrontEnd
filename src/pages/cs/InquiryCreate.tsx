@@ -200,7 +200,7 @@ export const InquiryCreate: React.FC = () => {
             disabled={isSubmitting || !type || !title || !content}
             className={`w-full py-4 rounded-2xl font-bold text-base shadow-xl transition-all flex items-center justify-center gap-3 ${isSubmitting || !type || !title || !content
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : 'bg-red-500 text-white hover:bg-red-600 shadow-red-500/20 active:scale-[0.98]'
+              : 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/10 active:scale-[0.98]'
               }`}
           >
             {isSubmitting ? (

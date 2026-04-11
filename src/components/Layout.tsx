@@ -182,7 +182,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               <>
                 <Link
                   to="/register"
-                  className="hidden lg:flex items-center space-x-1.5 bg-[#FF5A5A] text-white px-5 py-3 rounded-2xl text-sm font-semibold hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 active:scale-95"
+                  className="hidden lg:flex items-center space-x-1.5 bg-[#FF5A5A] text-white px-5 py-3 rounded-2xl text-sm font-semibold hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95"
                 >
                   <span>경매 등록</span>
                 </Link>
@@ -395,7 +395,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             {user?.isAdmin && (
               <Link
                 to="/admin"
-                className="flex items-center text-xs font-semibold text-white bg-black px-4 py-1.5 rounded-full shadow-lg hover:bg-gray-800 transition-all active:scale-95"
+                className="flex items-center text-xs font-semibold text-white bg-black px-4 py-1.5 rounded-full shadow-lg shadow-gray-900/10 hover:bg-gray-800 transition-all active:scale-95"
               >
                 관리자모드
               </Link>
@@ -531,7 +531,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                   closeForceLogoutModal();
                   navigate('/login');
                 }}
-                className="w-full py-3.5 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100"
+                className="w-full py-3.5 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10"
               >
                 로그인 페이지로 이동
               </button>
@@ -558,7 +558,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 </button>
                 <button
                   onClick={confirmLogout}
-                  className="flex-1 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all shadow-lg shadow-red-100"
+                  className="flex-1 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/10"
                 >
                   로그아웃
                 </button>

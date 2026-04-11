@@ -53,7 +53,7 @@ export const InquiryList: React.FC = () => {
             </div>
             <button
               onClick={() => navigate('/inquiry/create')}
-              className="px-6 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center shrink-0 text-sm"
+              className="px-6 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 flex items-center justify-center shrink-0 text-sm"
             >
               문의 작성하기
             </button>
@@ -80,7 +80,7 @@ export const InquiryList: React.FC = () => {
                 key={cat}
                 onClick={() => setSelectedType(cat)}
                 className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${selectedType === cat
-                  ? 'bg-red-500 text-white border border-transparent shadow-md shadow-red-500/10'
+                  ? 'bg-red-500 text-white border border-transparent shadow-lg shadow-red-500/10'
                   : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'
                   }`}
               >

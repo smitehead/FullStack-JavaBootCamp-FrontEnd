@@ -449,7 +449,7 @@ export const ProductRegister: React.FC = () => {
                   key={d}
                   type="button"
                   onClick={() => { setDuration(d); setIsManualTime(false); }}
-                  className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${duration === d && !isManualTime ? 'bg-brand border-brand text-black shadow-md shadow-brand/20' : 'bg-white border-gray-200 text-gray-500 hover:border-brand hover:text-brand'}`}
+                  className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${duration === d && !isManualTime ? 'bg-brand border-brand text-black shadow-md shadow-red-500/10' : 'bg-white border-gray-200 text-gray-500 hover:border-brand hover:text-brand'}`}
                 >
                   {d === '14' ? '2주' : `${d}일`}
                 </button>
@@ -457,7 +457,7 @@ export const ProductRegister: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsManualTime(true)}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${isManualTime ? 'bg-brand border-brand text-black shadow-md shadow-brand/20' : 'bg-white border-gray-200 text-gray-500 hover:border-brand hover:text-brand'}`}
+                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${isManualTime ? 'bg-brand border-brand text-black shadow-md shadow-red-500/10' : 'bg-white border-gray-200 text-gray-500 hover:border-brand hover:text-brand'}`}
               >
                 직접 입력
               </button>
@@ -599,7 +599,7 @@ export const ProductRegister: React.FC = () => {
           </button>
           <button
             type="submit"
-            className="px-12 py-4 rounded-2xl bg-brand text-white font-bold hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-95"
+            className="px-12 py-4 rounded-2xl bg-brand text-white font-bold hover:bg-brand-dark transition-all shadow-lg shadow-red-500/10 active:scale-95"
           >
             등록하기
           </button>

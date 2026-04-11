@@ -328,17 +328,17 @@ export const Signup: React.FC = () => {
         {/* Progress Header */}
         <div className="flex items-center justify-between mb-6 px-4">
           <div className="flex flex-col items-center gap-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'terms' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>1</div>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'terms' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>1</div>
             <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'terms' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>약관동의</span>
           </div>
           <div className="flex-1 h-px mx-4"></div>
           <div className="flex flex-col items-center gap-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'info' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>2</div>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'info' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>2</div>
             <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'info' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>정보입력</span>
           </div>
           <div className="flex-1 h-px mx-4"></div>
           <div className="flex flex-col items-center gap-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'success' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>3</div>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${step === 'success' ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 scale-110' : 'bg-white text-gray-300 border border-gray-100'}`}>3</div>
             <span className={`text-[12px] font-black uppercase tracking-wider ${step === 'success' ? 'text-[#FF5A5A]' : 'text-gray-300'}`}>가입완료</span>
           </div>
         </div>
@@ -406,7 +406,7 @@ export const Signup: React.FC = () => {
             <button
               disabled={!isAllRequiredTermsChecked}
               onClick={() => setStep('info')}
-              className={`w-full mt-10 py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-100 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+              className={`w-full mt-10 py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
             >
               다음 단계로
               <ChevronRight className="w-4 h-4" />
@@ -730,7 +730,7 @@ export const Signup: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-4 bg-[#FF5A5A] text-white font-black text-sm rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 active:scale-95 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-[#FF5A5A] text-white font-black text-sm rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 flex items-center justify-center gap-2"
               >
                 가입 완료하기
               </button>
@@ -750,7 +750,7 @@ export const Signup: React.FC = () => {
             <div className="flex gap-3">
               <Link
                 to="/login"
-                className="flex-1 py-5 bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 text-center"
+                className="flex-1 py-5 bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 text-center"
               >
                 로그인 하러가기
               </Link>

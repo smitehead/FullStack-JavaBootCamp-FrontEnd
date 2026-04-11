@@ -389,7 +389,7 @@ export const WonProductDetail: React.FC = () => {
                       <button 
                         onClick={handlePayment}
                         disabled={isProcessing}
-                        className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 disabled:opacity-50"
+                        className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50"
                       >
                         {isProcessing ? '처리 중...' : '입찰 구매 확정 (결제)'}
                       </button>
@@ -406,7 +406,7 @@ export const WonProductDetail: React.FC = () => {
                     <div className="grid grid-cols-1 gap-3">
                       <button 
                         onClick={() => setShowPurchaseConfirm(true)}
-                        className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
+                        className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
                       >
                         구매 확정하기
                       </button>
@@ -505,7 +505,7 @@ export const WonProductDetail: React.FC = () => {
               </button>
               <button 
                 onClick={executePayment}
-                className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-200 active:scale-95"
+                className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/10 active:scale-95"
               >
                 결제하기
               </button>
@@ -536,7 +536,7 @@ export const WonProductDetail: React.FC = () => {
               </button>
               <button 
                 onClick={executeConfirmPurchase}
-                className="flex-1 py-4 bg-emerald-500 text-white font-black rounded-2xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-200 active:scale-95"
+                className="flex-1 py-4 bg-emerald-500 text-white font-black rounded-2xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
               >
                 확정하기
               </button>
@@ -567,7 +567,7 @@ export const WonProductDetail: React.FC = () => {
               </button>
               <button 
                 onClick={executeCancel}
-                className="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-400 transition-all shadow-lg shadow-red-200 active:scale-95"
+                className="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-400 transition-all shadow-lg shadow-red-500/10 active:scale-95"
               >
                 취소하기
               </button>
@@ -633,7 +633,7 @@ export const WonProductDetail: React.FC = () => {
                 <button 
                   onClick={handleSubmitReview}
                   disabled={isSubmittingReview}
-                  className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-200 disabled:opacity-50 active:scale-95"
+                  className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/10 disabled:opacity-50 active:scale-95"
                 >
                   {isSubmittingReview ? '등록 중...' : '후기 등록하기'}
                 </button>
