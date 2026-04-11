@@ -123,7 +123,7 @@ export interface Product {
   categoryPath?: CategoryPathItem[];
 }
 
-export type NotificationType = "bid" | "activity" | "제재" | "제재해제";
+export type NotificationType = "bid" | "activity" | "제재" | "제재해제" | "QNA" | "QNA_ANSWER";
 
 export interface Notification {
   id: string;
