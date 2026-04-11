@@ -489,7 +489,7 @@ export const Settings: React.FC = () => {
                       {/* 이메일 */}
                       <div className="md:col-start-1">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일</p>
-                        <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                        <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900 break-all overflow-hidden">
                           {formData.email}
                         </div>
                       </div>
@@ -1134,11 +1134,8 @@ export const Settings: React.FC = () => {
 
             <div className="p-10">
               {withdrawStep === 'confirm' && (
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-red-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                    <AlertCircle className="w-10 h-10 text-red-500" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">정말 탈퇴하시겠습니까?</h3>
+                <div className="text-left">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">정말 탈퇴하시겠습니까?</h3>
 
                   <div className="bg-red-50 p-6 rounded-2xl text-left mb-8">
                     <p className="text-sm font-bold text-red-800 mb-4">탈퇴 조건 확인</p>
