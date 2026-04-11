@@ -159,7 +159,7 @@ export const ProductList: React.FC = () => {
   const selectedMedium = selectedLarge?.subCategories?.find(c => c.id === mediumCat);
   const selectedSmall = selectedMedium?.subCategories?.find(c => c.id === smallCat);
 
-  const selectedCityData = LOCATION_DATA.find(l => l.name === city);
+  const selectedCityData = LOCATION_DATA.find(l => l.name === city || l.short === city);
   const districtOptions = selectedCityData?.sub || [];
   const selectedDistrictData = districtOptions.find(d => d.name === district);
   const neighborhoodOptions = selectedDistrictData?.sub || [];
@@ -441,7 +441,7 @@ export const ProductList: React.FC = () => {
               >
                 <option value="">시/도 선택</option>
                 {LOCATION_DATA.map(l => (
-                  <option key={l.name} value={l.name}>{l.short}</option>
+                  <option key={l.name} value={l.short}>{l.short}</option>
                 ))}
               </select>
 
@@ -554,7 +554,7 @@ export const ProductList: React.FC = () => {
             {(searchParams.get('city') || searchParams.get('district') || searchParams.get('neighborhood')) && (
               <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>
-                  {LOCATION_DATA.find(l => l.name === searchParams.get('city'))?.short || searchParams.get('city')}
+                  {LOCATION_DATA.find(l => l.short === searchParams.get('city') || l.name === searchParams.get('city'))?.short || searchParams.get('city')}
                   {searchParams.get('district') && ` ${searchParams.get('district')}`}
                   {searchParams.get('neighborhood') && ` ${searchParams.get('neighborhood')}`}
                 </span>

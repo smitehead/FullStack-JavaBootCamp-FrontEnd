@@ -308,25 +308,25 @@ export const MyPage: React.FC = () => {
       case 'bidding':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold">
-            <Gavel className="w-3 h-3" /> 상위입찰자
+            상위입찰
           </span>
         );
       case 'outbid':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-500 rounded-full text-xs font-bold">
-            <XCircle className="w-3 h-3" /> 추월변동
+            추월변동
           </span>
         );
       case 'won':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold">
-            <CheckCircle2 className="w-3 h-3" /> 낙찰성공
+            낙찰성공
           </span>
         );
       case 'lost':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-50 text-gray-500 rounded-full text-xs font-bold">
-            <XCircle className="w-3 h-3" /> 낙찰실패
+            낙찰실패
           </span>
         );
       default:
@@ -540,9 +540,9 @@ export const MyPage: React.FC = () => {
                         {effectiveStatus === 'won' && (
                           <button
                             onClick={() => navigate(`/won/${p.id}`)}
-                            className="px-4 py-1.5 bg-amber-500 text-white rounded-xl text-xs font-bold hover:bg-amber-600 transition-all"
+                            className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-600 rounded-full text-xs font-bold hover:bg-amber-200 transition-all font-sans"
                           >
-                            결제대기중
+                            결제대기
                           </button>
                         )}
                       </div>
@@ -556,7 +556,7 @@ export const MyPage: React.FC = () => {
                     <ProductCard product={p} isSold />
                     <div className="flex items-center px-1">
                       <span className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold">
-                        <CheckCircle2 className="w-3 h-3" /> 구매완료
+                        구매완료
                       </span>
                     </div>
                   </div>

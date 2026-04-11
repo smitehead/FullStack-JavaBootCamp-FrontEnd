@@ -327,7 +327,12 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             </button>
 
             {isCategoryOpen && (
-              <div className="absolute top-full left-0 w-[900px] h-[600px] bg-white border border-gray-100 rounded-2xl shadow-2xl mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 flex overflow-hidden">
+              <>
+                <div
+                  className="fixed inset-0 z-40 bg-black/5"
+                  onClick={() => setIsCategoryOpen(false)}
+                />
+                <div className="absolute top-full left-0 w-[900px] h-[600px] bg-white border border-gray-100 rounded-2xl shadow-2xl mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 flex overflow-hidden">
                 {/* Sidebar */}
                 <div className="w-56 bg-gray-50 border-r border-gray-100 overflow-y-auto custom-scrollbar">
                   {CATEGORY_DATA.map((cat) => (
@@ -385,8 +390,9 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                   )}
                 </div>
               </div>
-            )}
-          </div>
+            </>
+          )}
+        </div>
 
           <div className="flex items-center space-x-3">
             {user?.isAdmin && (
@@ -516,7 +522,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       {/* 강제 로그아웃 알림 모달 (다른 기기에서 로그인 감지) */}
       {forceLogoutModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+          <div className="absolute inset-0 bg-black/40"></div>
           <div className="relative bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -543,7 +549,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       {/* Logout Confirmation Modal */}
       {isLogoutModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsLogoutModalOpen(false)}></div>
+          <div className="absolute inset-0 bg-black/40" onClick={() => setIsLogoutModalOpen(false)}></div>
           <div className="relative bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
