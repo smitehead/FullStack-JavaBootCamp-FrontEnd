@@ -5,16 +5,18 @@ import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useAppContext } from '@/context/AppContext';
-import { Category } from '@/types';
 import api from '@/services/api';
 
-const CATEGORY_COLORS: Record<string, string> = {
-  [Category.DIGITAL]: '#FF5A5A',
-  [Category.CLOTHING]: '#4F46E5',
-  [Category.FURNITURE]: '#10B981',
-  [Category.BOOKS]: '#F59E0B',
-  [Category.ETC]: '#9CA3AF',
-};
+const PALETTE = [
+  '#FF5A5A', '#4F46E5', '#10B981', '#F59E0B', '#9CA3AF',
+  '#EF4444', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16',
+];
+
+interface CategoryStat {
+  name: string;
+  count: number;
+  color: string;
+}
 
 interface NoticeItem {
   id: number;
@@ -33,11 +35,12 @@ interface InquiryItem {
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { reports, products } = useAppContext();
+  const { reports } = useAppContext();
   const [unprocessedWithdraws, setUnprocessedWithdraws] = useState(0);
   const [unprocessedInquiries, setUnprocessedInquiries] = useState(0);
   const [recentNotices, setRecentNotices] = useState<NoticeItem[]>([]);
   const [recentInquiries, setRecentInquiries] = useState<InquiryItem[]>([]);
+  const [popularCategories, setPopularCategories] = useState<CategoryStat[]>([]);
 
   useEffect(() => {
     // 미처리 출금 건수 조회
@@ -57,6 +60,19 @@ export const AdminDashboard: React.FC = () => {
         setRecentInquiries(res.data.content || []);
       })
       .catch(() => { });
+
+    // 대분류별 상품 건수 조회
+    api.get('/admin/products/category-stats')
+      .then(res => {
+        setPopularCategories(
+          (res.data || []).map((item: { name: string; count: number }, index: number) => ({
+            name: item.name,
+            count: Number(item.count),
+            color: PALETTE[index % PALETTE.length],
+          }))
+        );
+      })
+      .catch(() => { });
   }, []);
 
   const unprocessedReports = reports.filter(r => r.status === 'pending').length;
@@ -67,12 +83,6 @@ export const AdminDashboard: React.FC = () => {
     { label: '미처리 출금', value: unprocessedWithdraws, icon: DollarSign, color: 'bg-emerald-500', path: '/admin/withdraws' },
   ];
 
-  const popularCategories = Object.values(Category).map(cat => ({
-    name: cat,
-    count: products.filter(p => p.category === cat).length,
-    color: CATEGORY_COLORS[cat],
-  })).filter(c => c.count > 0);
-
   return (
     <div className="space-y-6 pb-10">
       <header>
@@ -81,7 +91,7 @@ export const AdminDashboard: React.FC = () => {
       </header>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -102,7 +112,7 @@ export const AdminDashboard: React.FC = () => {
         })}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {/* Popular Categories */}
         <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
           <h2 className="text-lg font-black text-gray-900 mb-6">인기 카테고리</h2>
@@ -119,6 +129,7 @@ export const AdminDashboard: React.FC = () => {
                       outerRadius={70}
                       paddingAngle={5}
                       dataKey="count"
+                      nameKey="name"
                     >
                       {popularCategories.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -126,7 +137,7 @@ export const AdminDashboard: React.FC = () => {
                     </Pie>
                     <Tooltip
                       contentStyle={{ borderRadius: '0px', border: '1px solid #e5e7eb', fontWeight: 'bold', fontSize: '12px' }}
-                      formatter={(value: number) => [`${value}건`, '']}
+                      formatter={(value: number, name: string) => [`${value}건`, name]}
                     />
                   </PieChart>
                 </ResponsiveContainer>
