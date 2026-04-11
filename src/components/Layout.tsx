@@ -209,54 +209,54 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                         className="fixed inset-0 z-40"
                         onClick={() => { setIsNotiOpen(false); markAllNotificationsAsRead(); }}
                       />
-                    <div className="absolute right-0 mt-3 w-80 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-50">
-                      <div className="flex border-b border-gray-50">
-                        <button
-                          onClick={() => setNotiTab('noti')}
-                          className={`flex-1 px-5 py-3 text-sm transition-all ${notiTab === 'noti' ? 'font-black text-gray-900 border-b-2 border-gray-900' : 'font-bold text-gray-400 hover:text-gray-600'}`}
+                      <div className="absolute right-0 mt-3 w-80 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-50">
+                        <div className="flex border-b border-gray-50">
+                          <button
+                            onClick={() => setNotiTab('noti')}
+                            className={`flex-1 px-5 py-3 text-sm transition-all ${notiTab === 'noti' ? 'font-black text-gray-900 border-b-2 border-gray-900' : 'font-bold text-gray-400 hover:text-gray-600'}`}
+                          >
+                            알림
+                          </button>
+                          <button
+                            onClick={() => setNotiTab('chat')}
+                            className={`flex-1 px-5 py-3 text-sm transition-all ${notiTab === 'chat' ? 'font-black text-gray-900 border-b-2 border-gray-900' : 'font-bold text-gray-400 hover:text-gray-600'}`}
+                          >
+                            대화
+                          </button>
+                        </div>
+                        <div className="max-h-80 overflow-y-auto">
+                          {notiTab === 'noti' ? (
+                            notifications.length > 0 ? notifications.slice(0, 10).map(noti => (
+                              <Link
+                                key={noti.id}
+                                to={noti.link || '/inbox?tab=noti'}
+                                className={`block px-5 py-4 text-sm transition-colors hover:bg-gray-50 relative ${!noti.read ? 'bg-orange-50/60' : 'bg-white'}`}
+                                onClick={() => {
+                                  markNotificationAsRead(noti.id);
+                                  setIsNotiOpen(false);
+                                }}
+                              >
+                                {!noti.read && (
+                                  <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FF5A5A]" />
+                                )}
+                                <p className={`leading-snug line-clamp-2 ${!noti.read ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{noti.message}</p>
+                                <span className="text-[10px] text-gray-300 mt-1 block">{new Date(noti.createdAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                              </Link>
+                            )) : (
+                              <div className="py-10 text-center text-sm text-gray-400 font-medium">알림이 없습니다.</div>
+                            )
+                          ) : (
+                            <div className="py-10 text-center text-sm text-gray-400 font-medium">대화 내역이 없습니다.</div>
+                          )}
+                        </div>
+                        <Link
+                          to={`/inbox?tab=${notiTab}`}
+                          className="block text-center py-3 text-xs font-bold text-gray-400 hover:text-gray-600 border-t border-gray-50"
+                          onClick={() => setIsNotiOpen(false)}
                         >
-                          알림
-                        </button>
-                        <button
-                          onClick={() => setNotiTab('chat')}
-                          className={`flex-1 px-5 py-3 text-sm transition-all ${notiTab === 'chat' ? 'font-black text-gray-900 border-b-2 border-gray-900' : 'font-bold text-gray-400 hover:text-gray-600'}`}
-                        >
-                          대화
-                        </button>
+                          전체보기
+                        </Link>
                       </div>
-                      <div className="max-h-80 overflow-y-auto">
-                        {notiTab === 'noti' ? (
-                          notifications.length > 0 ? notifications.slice(0, 10).map(noti => (
-                            <Link
-                              key={noti.id}
-                              to={noti.link || '/inbox?tab=noti'}
-                              className={`block px-5 py-4 text-sm transition-colors hover:bg-gray-50 relative ${!noti.read ? 'bg-orange-50/60' : 'bg-white'}`}
-                              onClick={() => {
-                                markNotificationAsRead(noti.id);
-                                setIsNotiOpen(false);
-                              }}
-                            >
-                              {!noti.read && (
-                                <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FF5A5A]" />
-                              )}
-                              <p className={`leading-snug line-clamp-2 ${!noti.read ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{noti.message}</p>
-                              <span className="text-[10px] text-gray-300 mt-1 block">{new Date(noti.createdAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
-                            </Link>
-                          )) : (
-                            <div className="py-10 text-center text-sm text-gray-400 font-medium">알림이 없습니다.</div>
-                          )
-                        ) : (
-                          <div className="py-10 text-center text-sm text-gray-400 font-medium">대화 내역이 없습니다.</div>
-                        )}
-                      </div>
-                      <Link
-                        to={`/inbox?tab=${notiTab}`}
-                        className="block text-center py-3 text-xs font-bold text-gray-400 hover:text-gray-600 border-t border-gray-50"
-                        onClick={() => setIsNotiOpen(false)}
-                      >
-                        전체보기
-                      </Link>
-                    </div>
                     </>
                   )}
                 </div>
@@ -333,66 +333,66 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                   onClick={() => setIsCategoryOpen(false)}
                 />
                 <div className="absolute top-full left-0 w-[900px] h-[600px] bg-white border border-gray-100 rounded-2xl shadow-2xl mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 flex overflow-hidden">
-                {/* Sidebar */}
-                <div className="w-56 bg-gray-50 border-r border-gray-100 overflow-y-auto custom-scrollbar">
-                  {CATEGORY_DATA.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onMouseEnter={() => setActiveCategory(cat.id)}
-                      onClick={() => {
-                        navigate(`/search?category=${encodeURIComponent(cat.name)}`);
-                        setIsCategoryOpen(false);
-                      }}
-                      className={`w-full text-left px-6 py-4 text-sm font-bold transition-all flex items-center justify-between group ${activeCategory === cat.id
-                        ? 'bg-white text-[#FF5A5A]'
-                        : 'text-gray-600 hover:bg-white hover:text-[#FF5A5A]'
-                        }`}
-                    >
-                      {cat.name}
-                    </button>
-                  ))}
-                </div>
+                  {/* Sidebar */}
+                  <div className="w-56 bg-gray-50 border-r border-gray-100 overflow-y-auto custom-scrollbar">
+                    {CATEGORY_DATA.map((cat) => (
+                      <button
+                        key={cat.id}
+                        onMouseEnter={() => setActiveCategory(cat.id)}
+                        onClick={() => {
+                          navigate(`/search?category=${encodeURIComponent(cat.name)}`);
+                          setIsCategoryOpen(false);
+                        }}
+                        className={`w-full text-left px-6 py-4 text-sm font-bold transition-all flex items-center justify-between group ${activeCategory === cat.id
+                          ? 'bg-white text-[#FF5A5A]'
+                          : 'text-gray-600 hover:bg-white hover:text-[#FF5A5A]'
+                          }`}
+                      >
+                        {cat.name}
+                      </button>
+                    ))}
+                  </div>
 
-                {/* Content */}
-                <div className="flex-1 p-6 overflow-y-auto custom-scrollbar bg-white">
-                  {activeCategory && (
-                    <div className="grid grid-cols-3 gap-x-10 gap-y-10">
-                      {CATEGORY_DATA.find(c => c.id === activeCategory)?.subCategories?.map((sub) => (
-                        <div key={sub.id} className="space-y-4">
-                          <button
-                            onClick={() => {
-                              navigate(`/search?category=${encodeURIComponent(sub.name)}`);
-                              setIsCategoryOpen(false);
-                            }}
-                            className="text-base font-black text-gray-900 hover:text-[#FF5A5A] transition-colors border-b-2 border-transparent hover:border-[#FF5A5A] pb-1 inline-block"
-                          >
-                            {sub.name}
-                          </button>
-                          {sub.subCategories && (
-                            <div className="flex flex-col space-y-2">
-                              {sub.subCategories.map(item => (
-                                <button
-                                  key={item.id}
-                                  onClick={() => {
-                                    navigate(`/search?category=${encodeURIComponent(item.name)}`);
-                                    setIsCategoryOpen(false);
-                                  }}
-                                  className="text-sm font-bold text-gray-400 hover:text-[#FF5A5A] transition-colors text-left"
-                                >
-                                  {item.name}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {/* Content */}
+                  <div className="flex-1 p-6 overflow-y-auto custom-scrollbar bg-white">
+                    {activeCategory && (
+                      <div className="grid grid-cols-3 gap-x-10 gap-y-10">
+                        {CATEGORY_DATA.find(c => c.id === activeCategory)?.subCategories?.map((sub) => (
+                          <div key={sub.id} className="space-y-4">
+                            <button
+                              onClick={() => {
+                                navigate(`/search?category=${encodeURIComponent(sub.name)}`);
+                                setIsCategoryOpen(false);
+                              }}
+                              className="text-base font-black text-gray-900 hover:text-[#FF5A5A] transition-colors border-b-2 border-transparent hover:border-[#FF5A5A] pb-1 inline-block"
+                            >
+                              {sub.name}
+                            </button>
+                            {sub.subCategories && (
+                              <div className="flex flex-col space-y-2">
+                                {sub.subCategories.map(item => (
+                                  <button
+                                    key={item.id}
+                                    onClick={() => {
+                                      navigate(`/search?category=${encodeURIComponent(item.name)}`);
+                                      setIsCategoryOpen(false);
+                                    }}
+                                    className="text-sm font-bold text-gray-400 hover:text-[#FF5A5A] transition-colors text-left"
+                                  >
+                                    {item.name}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
+              </>
+            )}
+          </div>
 
           <div className="flex items-center space-x-3">
             {user?.isAdmin && (
@@ -445,7 +445,7 @@ const Footer: React.FC = () => {
           {/* Links */}
           <div className="md:col-span-2">
             <h4 className="text-sm font-black text-gray-800 mb-6 uppercase tracking-wider">서비스 및 정책</h4>
-            <ul className="space-y-4 text-sm text-gray-500 font-bold">
+            <ul className="space-y-4 text-sm text-gray-500 font-medium">
               <li><Link to="/about?tab=intro" className="hover:text-[#FF5A5A] transition-colors">서비스 소개</Link></li>
               <li><Link to="/about?tab=privacy" className="hover:text-[#FF5A5A] transition-colors">개인정보처리방침</Link></li>
               <li><Link to="/about?tab=terms" className="hover:text-[#FF5A5A] transition-colors">이용약관</Link></li>

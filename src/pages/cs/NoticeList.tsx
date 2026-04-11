@@ -92,7 +92,7 @@ export const NoticeList: React.FC = () => {
                   setCurrentPage(1);
                 }}
                 className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${activeCategory === category
-                  ? 'bg-red-500 text-white shadow-lg shadow-red-200'
+                  ? 'bg-red-500 text-white shadow-md shadow-red-500/10'
                   : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
                   }`}
               >
@@ -155,7 +155,7 @@ export const NoticeList: React.FC = () => {
                   key={page}
                   onClick={() => setCurrentPage(page)}
                   className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${page === currentPage
-                    ? 'bg-red-500 text-white shadow-lg shadow-red-200'
+                    ? 'bg-red-500 text-white shadow-md shadow-red-500/10'
                     : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
                     }`}
                 >

@@ -80,7 +80,7 @@ export const InquiryList: React.FC = () => {
                 key={cat}
                 onClick={() => setSelectedType(cat)}
                 className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${selectedType === cat
-                  ? 'bg-red-500 text-white shadow-lg shadow-red-200'
+                  ? 'bg-red-500 text-white shadow-md shadow-red-500/10'
                   : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'
                   }`}
               >
