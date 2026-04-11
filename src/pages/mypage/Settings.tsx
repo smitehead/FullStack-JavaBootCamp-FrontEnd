@@ -489,8 +489,11 @@ export const Settings: React.FC = () => {
                       {/* 이메일 */}
                       <div className="md:col-start-1">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일</p>
-                        <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900 break-all overflow-hidden">
-                          {formData.email}
+                        <div 
+                          className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900 truncate"
+                          title={formData.email}
+                        >
+                          <span className="truncate w-full">{formData.email}</span>
                         </div>
                       </div>
 
