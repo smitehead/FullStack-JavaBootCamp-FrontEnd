@@ -322,12 +322,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       let dbMannerTemp = 36.5;
       let dbIsAdmin = false;
       let dbProfileImage = '';
+      let dbJoinedAt = new Date().toISOString();
       try {
         const memberRes = await api.get(`/members/${memberNo}`);
         dbPoints = memberRes.data.points || 0;
         dbMannerTemp = memberRes.data.mannerTemp || 36.5;
         dbIsAdmin = memberRes.data.isAdmin === 1;
         dbProfileImage = resolveImageUrl(memberRes.data.profileImgUrl) || '';
+        if (memberRes.data.joinedAt) {
+          dbJoinedAt = memberRes.data.joinedAt;
+        }
       } catch (err) {
         console.error("로그인 중 회원 정보 조회 실패", err);
       }
@@ -338,7 +342,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         profileImage: dbProfileImage,
         points: dbPoints,
         mannerTemp: dbMannerTemp,
-        joinedAt: new Date().toISOString(),
+        joinedAt: dbJoinedAt,
         isAdmin: dbIsAdmin,
         address: addrShort || '',
       };
