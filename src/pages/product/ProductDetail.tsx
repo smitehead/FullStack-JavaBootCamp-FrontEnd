@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Product, CategoryItem } from '@/types';
+import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
 import { Heart, Share2, AlertTriangle, Clock, MapPin, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, ArrowLeft, Package, Users, MessageSquare, Reply } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -41,13 +41,76 @@ export const ProductDetail: React.FC = () => {
   const [bidAmount, setBidAmount] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'detail' | 'history' | 'shipping' | 'qna'>('detail');
   const [isWishlisted, setIsWishlisted] = useState(false);
-
+  const [qnaList, setQnaList] = useState<ProductQna[]>([]);
+  const [qnaInput, setQnaInput] = useState('');
+  const [answerInputs, setAnswerInputs] = useState<Record<number, string>>({});
+  const [showAnswerInput, setShowAnswerInput] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     if (product) {
       setIsWishlisted(product.isWishlisted || false);
     }
   }, [product]);
+
+  useEffect(() => {
+    if (id) fetchQnaList();
+  }, [id]);
+
+  const fetchQnaList = async () => {
+    try {
+      const res = await api.get(`/products/${id}/qna`);
+      setQnaList(res.data);
+    } catch {
+      // 조용히 실패
+    }
+  };
+
+  const handleQnaSubmit = async () => {
+    if (!qnaInput.trim()) return;
+    if (!user) { showToast('로그인이 필요합니다.', 'error'); return; }
+    try {
+      await api.post(`/products/${id}/qna`, { content: qnaInput.trim() });
+      setQnaInput('');
+      fetchQnaList();
+    } catch {
+      showToast('문의 등록에 실패했습니다.', 'error');
+    }
+  };
+
+  const handleQnaDelete = async (qnaNo: number) => {
+    if (!confirm('문의를 삭제하시겠습니까?')) return;
+    try {
+      await api.delete(`/products/${id}/qna/${qnaNo}`);
+      fetchQnaList();
+    } catch {
+      showToast('삭제에 실패했습니다.', 'error');
+    }
+  };
+
+  const handleAnswerSubmit = async (qnaNo: number) => {
+    const answer = answerInputs[qnaNo];
+    if (!answer?.trim()) return;
+    try {
+      await api.post(`/products/${id}/qna/${qnaNo}/answer`, { answer: answer.trim() });
+      setAnswerInputs(prev => ({ ...prev, [qnaNo]: '' }));
+      setShowAnswerInput(prev => ({ ...prev, [qnaNo]: false }));
+      fetchQnaList();
+    } catch {
+      showToast('답변 등록에 실패했습니다.', 'error');
+    }
+  };
+
+  const handleAnswerDelete = async (qnaNo: number) => {
+    if (!confirm('답변을 삭제하시겠습니까?')) return;
+    try {
+      await api.delete(`/products/${id}/qna/${qnaNo}/answer`);
+      fetchQnaList();
+    } catch {
+      showToast('답변 삭제에 실패했습니다.', 'error');
+    }
+  };
+
+  const currentMemberNo = getMemberNo(user);
   const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
@@ -753,7 +816,7 @@ export const ProductDetail: React.FC = () => {
               { id: 'detail', label: '상품 상세' },
               { id: 'history', label: `입찰 기록 (${product.participantCount})` },
               { id: 'shipping', label: '배송 정보' },
-              { id: 'qna', label: `상품문의 (2)` }
+              { id: 'qna', label: `상품문의 (${qnaList.length})` }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -872,52 +935,82 @@ export const ProductDetail: React.FC = () => {
 
             {/* QnA Section */}
             <div id="qna" className="scroll-mt-[300px] space-y-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">상품문의 (2)</h3>
-              {!isFinished && (
+              <h3 className="text-lg font-bold text-gray-900 mb-4">상품문의 ({qnaList.length})</h3>
+              {!isFinished && !isSeller && (
                 <div className="flex gap-3">
-                  <input type="text" placeholder="상품에 대해 궁금한 점을 남겨주세요." className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none" />
-                  <button className="bg-gray-900 text-white px-8 py-3 rounded-xl text-sm font-bold hover:bg-black transition-colors">등록</button>
+                  <input
+                    type="text"
+                    value={qnaInput}
+                    onChange={e => setQnaInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleQnaSubmit()}
+                    placeholder="상품에 대해 궁금한 점을 남겨주세요."
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                  />
+                  <button onClick={handleQnaSubmit} className="bg-gray-900 text-white px-8 py-3 rounded-xl text-sm font-bold hover:bg-black transition-colors">등록</button>
                 </div>
               )}
               <div className="space-y-6">
-                <div className="border-b border-gray-100 pb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-gray-900">구매희망자1</span>
-                      <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">작성자</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs text-gray-400">2026.03.22</span>
+                {qnaList.length === 0 && (
+                  <p className="text-sm text-gray-400 text-center py-6">아직 등록된 문의가 없습니다.</p>
+                )}
+                {qnaList.map(qna => (
+                  <div key={qna.qnaNo} className="border-b border-gray-100 pb-6">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <button className="text-[10px] text-gray-400 hover:text-gray-600">수정</button>
-                        <button className="text-[10px] text-gray-400 hover:text-red-400">삭제</button>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-4">직거래 가능한가요?</p>
-
-                  <div className="bg-gray-50 p-4 rounded-xl ml-6 border border-gray-100">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-orange-600">판매자 답변</span>
+                        <span className="font-bold text-sm text-gray-900">{qna.memberNickname}</span>
+                        {currentMemberNo === qna.memberNo && (
+                          <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">작성자</span>
+                        )}
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-[10px] text-gray-400">2026.03.22</span>
-                        <div className="flex items-center gap-2">
-                          <button className="text-[10px] text-gray-400 hover:text-gray-600">수정</button>
-                          <button className="text-[10px] text-gray-400 hover:text-red-400">삭제</button>
-                        </div>
+                        <span className="text-xs text-gray-400">{new Date(qna.createdAt).toLocaleDateString('ko-KR')}</span>
+                        {currentMemberNo === qna.memberNo && (
+                          <button onClick={() => handleQnaDelete(qna.qnaNo)} className="text-[10px] text-gray-400 hover:text-red-400">삭제</button>
+                        )}
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600">네, 강남역 부근에서 가능합니다.</p>
-                  </div>
+                    <p className="text-sm text-gray-600 mb-4">{qna.content}</p>
 
-                  {!isFinished && (
-                    <button className="mt-3 ml-6 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-orange-500">
-                      <Reply className="w-3 h-3" /> 답글 달기
-                    </button>
-                  )}
-                </div>
+                    {qna.answer ? (
+                      <div className="bg-gray-50 p-4 rounded-xl ml-6 border border-gray-100">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-sm text-orange-600">판매자 답변</span>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] text-gray-400">{qna.answeredAt ? new Date(qna.answeredAt).toLocaleDateString('ko-KR') : ''}</span>
+                            {isSeller && (
+                              <button onClick={() => handleAnswerDelete(qna.qnaNo)} className="text-[10px] text-gray-400 hover:text-red-400">삭제</button>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600">{qna.answer}</p>
+                      </div>
+                    ) : (
+                      isSeller && !isFinished && (
+                        showAnswerInput[qna.qnaNo] ? (
+                          <div className="ml-6 flex gap-2 mt-2">
+                            <input
+                              type="text"
+                              value={answerInputs[qna.qnaNo] || ''}
+                              onChange={e => setAnswerInputs(prev => ({ ...prev, [qna.qnaNo]: e.target.value }))}
+                              onKeyDown={e => e.key === 'Enter' && handleAnswerSubmit(qna.qnaNo)}
+                              placeholder="답변을 입력하세요."
+                              className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                            />
+                            <button onClick={() => handleAnswerSubmit(qna.qnaNo)} className="bg-orange-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-orange-600">등록</button>
+                            <button onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: false }))} className="text-sm text-gray-400 hover:text-gray-600 px-2">취소</button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: true }))}
+                            className="mt-2 ml-6 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-orange-500"
+                          >
+                            <Reply className="w-3 h-3" /> 답글 달기
+                          </button>
+                        )
+                      )
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

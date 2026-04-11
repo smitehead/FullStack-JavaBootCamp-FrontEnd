@@ -255,6 +255,17 @@ export interface WithdrawnUser {
   withdrawnAt: string;
 }
 
+export interface ProductQna {
+  qnaNo: number;
+  productNo: number;
+  memberNo: number;
+  memberNickname: string;
+  content: string;
+  answer: string | null;
+  answeredAt: string | null;
+  createdAt: string;
+}
+
 export interface ProductRequestDto {
   sellerNo: number;
   categoryNo: number;
