@@ -395,7 +395,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             {user?.isAdmin && (
               <Link
                 to="/admin"
-                className="flex items-center text-xs font-bold text-white bg-black px-4 py-1.5 rounded-full shadow-lg hover:bg-gray-800 transition-all active:scale-95"
+                className="flex items-center text-xs font-semibold text-white bg-black px-4 py-1.5 rounded-full shadow-lg hover:bg-gray-800 transition-all active:scale-95"
               >
                 관리자모드
               </Link>

@@ -528,7 +528,7 @@ export const ProductDetail: React.FC = () => {
                   ? 'bg-emerald-600 text-white'
                   : 'bg-orange-500 text-white'
                   }`}>
-                  <span className="text-xs font-bold tracking-tight">
+                  <span className="text-xs font-semibold tracking-tight">
                     입찰 중 <span className="mx-1.5 opacity-50">|</span> {isHighestBidder ? '최고 입찰' : '추월 변동'}
                   </span>
                 </div>

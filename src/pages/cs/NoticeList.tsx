@@ -91,7 +91,7 @@ export const NoticeList: React.FC = () => {
                   setActiveCategory(category);
                   setCurrentPage(1);
                 }}
-                className={`px-6 py-2.5 rounded-full text-sm font-black transition-all ${activeCategory === category
+                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${activeCategory === category
                   ? 'bg-red-500 text-white border border-transparent shadow-md shadow-red-500/10'
                   : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
                   }`}
@@ -118,9 +118,9 @@ export const NoticeList: React.FC = () => {
                     <div className="flex items-center gap-4">
                       <div className="w-20 shrink-0">
                         {notice.isImportant ? (
-                          <span className="px-2 py-0.5 bg-gray-900 text-white text-[10px] font-bold rounded-md inline-block">공지</span>
+                          <span className="px-2 py-0.5 bg-gray-900 text-white text-[10px] font-semibold rounded-md inline-block">공지</span>
                         ) : (
-                          <span className="text-xs font-bold text-gray-400">{notice.category}</span>
+                          <span className="text-xs font-semibold text-gray-400">{notice.category}</span>
                         )}
                       </div>
                       <h3 className={`flex-1 text-sm text-gray-900 group-hover:underline underline-offset-4 transition-all line-clamp-1 ${notice.isImportant ? 'font-black' : 'font-bold'}`}>
@@ -154,7 +154,7 @@ export const NoticeList: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 rounded-xl text-sm font-black transition-all ${page === currentPage
+                  className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${page === currentPage
                     ? 'bg-red-500 text-white border border-transparent shadow-md shadow-red-500/10'
                     : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
                     }`}

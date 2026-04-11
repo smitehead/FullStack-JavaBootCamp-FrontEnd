@@ -105,7 +105,7 @@ export const FAQ: React.FC = () => {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id as any)}
-                className={`px-6 py-2.5 rounded-full text-sm font-black whitespace-nowrap transition-all ${activeCategory === cat.id
+                className={`px-6 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${activeCategory === cat.id
                   ? 'bg-red-500 text-white border border-transparent shadow-md shadow-red-500/10'
                   : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100'
                   }`}
@@ -129,7 +129,7 @@ export const FAQ: React.FC = () => {
                   >
                     <div className="flex items-center gap-4">
                       <HelpCircle className="w-5 h-5 text-gray-400 shrink-0" />
-                      <span className="text-sm font-bold text-gray-900">{faq.question}</span>
+                      <span className="text-sm font-semibold text-gray-900">{faq.question}</span>
                     </div>
                     {openId === faq.id ? (
                       <ChevronDown className="w-5 h-5 text-gray-400 rotate-180 transition-transform" />
