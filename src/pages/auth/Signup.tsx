@@ -75,7 +75,7 @@ export const Signup: React.FC = () => {
   
   // 이메일 분리 입력 상태
   const [emailId, setEmailId] = useState('');
-  const [emailDomain, setEmailDomain] = useState('naver.com');
+  const [emailDomain, setEmailDomain] = useState('');
   const [customDomain, setCustomDomain] = useState('');
   const [isCustomDomain, setIsCustomDomain] = useState(false);
 
@@ -548,6 +548,7 @@ export const Signup: React.FC = () => {
                             }
                           }}
                         >
+                          <option value="">선택</option>
                           <option value="naver.com">naver.com</option>
                           <option value="gmail.com">gmail.com</option>
                           <option value="daum.net">daum.net</option>
@@ -578,7 +579,7 @@ export const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={sendVerificationCode}
-                      disabled={isEmailVerified || !emailId || (isCustomDomain && !customDomain)}
+                      disabled={isEmailVerified || cooldown > 0 || !emailId || (isCustomDomain ? !customDomain : !emailDomain)}
                       className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
                     >
                       코드전송
@@ -621,7 +622,7 @@ export const Signup: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => sendVerificationCode(true)}
-                            disabled={cooldown > 0 || !emailId || (isCustomDomain && !customDomain)}
+                            disabled={cooldown > 0 || !emailId || (isCustomDomain ? !customDomain : !emailDomain)}
                             className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-black text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             {cooldown > 0 ? `${cooldown}초 후 가능` : '재요청'}
@@ -740,12 +741,6 @@ export const Signup: React.FC = () => {
         {step === 'success' && (
           <div className="bg-white p-12 rounded-[40px] shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-500">
             <div className="flex flex-col items-center mb-10 text-center">
-              <div className="flex items-center space-x-2 mb-6">
-                <div className="bg-[#FF5A5A] p-2.5 rounded-2xl shadow-lg shadow-red-100">
-                  <Sparkles className="w-8 h-8 text-white" />
-                </div>
-                <span className="text-3xl font-black text-gray-800 tracking-tighter italic">JAVAJAVA</span>
-              </div>
               
               <h3 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">회원가입이 성공적으로 완료되었습니다.</h3>
               <p className="text-gray-500 font-medium leading-relaxed">

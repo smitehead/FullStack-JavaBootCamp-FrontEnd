@@ -163,10 +163,8 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center space-x-5">
-            <div className="hidden xl:flex items-center space-x-4 mr-2">
-              <Link to="/notice" className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">고객센터</Link>
-            </div>
+          <div className="flex items-center space-x-6">
+            <Link to="/notice" className="hidden lg:flex text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">고객센터</Link>
 
             {/* 포인트 영역 (비회원은 숨김) */}
             {user && (
@@ -262,37 +260,35 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                   )}
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <div className="relative group">
-                    <button className="flex items-center gap-2 shrink-0">
-                      <img
-                        src={getProfileImageUrl(user.profileImage)}
-                        alt="Profile"
-                        className="w-10 h-10 rounded-full border-2 border-white shadow-md hover:ring-2 hover:ring-gray-200 transition-all object-cover"
-                      />
-                    </button>
+                <div className="relative group">
+                  <button className="flex items-center gap-2 shrink-0">
+                    <img
+                      src={getProfileImageUrl(user.profileImage)}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full border-2 border-white shadow-md hover:ring-2 hover:ring-gray-200 transition-all object-cover"
+                    />
+                  </button>
 
-                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100">
-                      <Link
-                        to="/mypage"
-                        className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100">
+                    <Link
+                      to="/mypage"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                    >
+                      <UserIcon className="w-4 h-4 mr-2.5" /> 프로필 보기
+                    </Link>
+                    <Link
+                      to="/settings"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                    >
+                      <SettingsIcon className="w-4 h-4 mr-2.5" /> 계정 설정
+                    </Link>
+                    <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
+                      <button
+                        onClick={onLogout}
+                        className="text-[11px] font-medium text-gray-400 hover:text-gray-600 transition-colors"
                       >
-                        <UserIcon className="w-4 h-4 mr-2.5" /> 프로필 보기
-                      </Link>
-                      <Link
-                        to="/settings"
-                        className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
-                      >
-                        <SettingsIcon className="w-4 h-4 mr-2.5" /> 계정 설정
-                      </Link>
-                      <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
-                        <button
-                          onClick={onLogout}
-                          className="text-[11px] font-medium text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                          로그아웃
-                        </button>
-                      </div>
+                        로그아웃
+                      </button>
                     </div>
                   </div>
                 </div>

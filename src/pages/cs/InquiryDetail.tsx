@@ -97,13 +97,11 @@ export const InquiryDetail: React.FC = () => {
             </div>
             
             {inquiry.status === 1 ? (
-              <div className="flex items-center gap-1.5 px-4 py-2 bg-green-50 text-green-600 rounded-full text-xs font-black">
-                <CheckCircle2 className="w-4 h-4" />
+              <div className="px-4 py-2 bg-green-50 text-green-600 rounded-full text-xs font-black">
                 답변 완료
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 px-4 py-2 bg-amber-50 text-amber-600 rounded-full text-xs font-black">
-                <Clock className="w-4 h-4" />
+              <div className="px-4 py-2 bg-amber-50 text-amber-600 rounded-full text-xs font-black">
                 답변 대기중
               </div>
             )}
