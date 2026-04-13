@@ -192,6 +192,7 @@ export const ProductDetail: React.FC = () => {
         status: isFinished ? 'completed' : 'active',
         location: data.location || '',
         transactionMethod: data.tradeType === '혼합' ? 'both' : (data.tradeType === '직거래' ? 'face-to-face' : 'delivery'),
+        shippingFee: data.shippingFee ?? 0,
         isWishlisted: data.isWishlisted || false,
         wishlistCount: data.wishlistCount || 0,
         categoryPath: data.categoryPath || []
@@ -1044,7 +1045,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
                 <div className="flex border-b border-gray-50 pb-4">
                   <span className="w-32 text-gray-500 font-medium">배송비</span>
-                  <span className="text-gray-900">3,000원 (도서산간 지역 제외)</span>
+                  <span className="text-gray-900">{product.shippingFee === 0 ? '무료배송' : `${product.shippingFee?.toLocaleString()}원`}</span>
                 </div>
                 <div className="flex">
                   <span className="w-32 text-gray-500 font-medium">거래 지역</span>

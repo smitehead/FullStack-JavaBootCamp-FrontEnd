@@ -126,6 +126,9 @@ export const MyPage: React.FC = () => {
       showToast('이미지 업로드에 실패했습니다.', 'error');
     } finally {
       setUploadingProfile(false);
+      if (e.target) {
+        e.target.value = '';
+      }
     }
   };
 

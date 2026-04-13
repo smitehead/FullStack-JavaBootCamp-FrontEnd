@@ -117,6 +117,7 @@ export interface Product {
   location: string;
   detailedAddress?: string;
   transactionMethod: TransactionMethod;
+  shippingFee?: number;
   isWishlisted?: boolean;
   wishlistCount?: number;
   winnerId?: string;
@@ -134,29 +135,37 @@ export interface Notification {
   type: NotificationType;
 }
 
+export type MessageStatus = 'SENDING' | 'SENT' | 'FAILED';
+
 export interface ChatMessage {
-  id: string;
-  senderId: string;
+  id: string;              // 표시용 (DB msgNo 또는 임시 clientUuid)
+  msgNo?: number;          // DB PK (서버 응답 후 확정)
+  senderId: string;        // 'user_{memberNo}' 형태
+  senderNo: number;        // 회원번호 (숫자)
   content: string;
-  createdAt: string;
+  createdAt: string;       // ISO 날짜 문자열
+  isRead: number;          // 0=미읽음, 1=읽음
+  clientUuid?: string;     // 중복 방지용 UUID
+  status?: MessageStatus;  // 낙관적 UI 상태
 }
 
 export interface ChatRoom {
-  id: string;
+  id: string;              // 'room_{roomNo}'
+  roomNo: number;          // DB PK
   productId: string;
   productTitle: string;
   productImage: string;
-  productPrice: number;
+  productPrice?: number;
   otherUser: {
     id: string;
+    no: number;
     nickname: string;
     profileImage: string;
-    role: "seller" | "buyer";
+    role: 'seller' | 'buyer';
   };
   lastMessage: string;
   lastMessageAt: string;
   unreadCount: number;
-  messages: ChatMessage[];
 }
 
 export interface ReviewTag {
@@ -278,4 +287,5 @@ export interface ProductRequestDto {
   buyoutPrice?: number | null;
   minBidUnit: number;
   endTime: string;
+  shippingFee?: number;
 }

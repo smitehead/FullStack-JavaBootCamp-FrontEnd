@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
 import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
+import { useAppContext } from '@/context/AppContext';
+import { getMemberNo } from '@/utils/memberUtils';
 import { 
   ChevronLeft, ChevronRight, MapPin, Truck, CreditCard, MessageSquare, 
   CheckCircle2, XCircle, Package, Info, AlertCircle
@@ -39,6 +41,7 @@ const REVIEW_TAGS = [
 export const WonProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAppContext();
 
   const [result, setResult] = useState<AuctionResultDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -194,8 +197,29 @@ export const WonProductDetail: React.FC = () => {
     }
   };
 
-  const handleChatWithSeller = () => {
-    showToast('판매자와의 채팅방으로 이동합니다.', 'success');
+  const handleChatWithSeller = async () => {
+    const buyerNo = getMemberNo(user);
+    if (!buyerNo) {
+      showToast('로그인이 필요합니다.', 'error');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const res = await api.post('/chat/rooms', {
+        buyerNo: buyerNo,
+        sellerNo: result.seller.sellerNo,
+        productNo: result.productNo,
+      });
+      if (res.data && res.data.roomNo) {
+        navigate(`/chat?roomNo=${res.data.roomNo}`);
+      } else {
+        showToast('채팅방 정보를 받아올 수 없습니다.', 'error');
+      }
+    } catch (err: any) {
+      console.error('Chat room creation failed:', err);
+      showToast('채팅방 생성에 실패했습니다.', 'error');
+    }
   };
 
   return (
