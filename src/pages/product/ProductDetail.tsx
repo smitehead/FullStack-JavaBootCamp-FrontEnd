@@ -144,6 +144,7 @@ export const ProductDetail: React.FC = () => {
 
   const [visibleBidsCount, setVisibleBidsCount] = useState(5);
   const [timeLeft, setTimeLeft] = useState<string>('');
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   // 입찰 참여 여부 및 최고입찰자 여부 (SSE 실시간 반영)
   const [hasBid, setHasBid] = useState(false);
@@ -359,13 +360,21 @@ export const ProductDetail: React.FC = () => {
         latestSsePriceRef.current = 0;
         fetchProduct();
       };
+      const onAuctionCancelled = (e: Event) => {
+        const detail = (e as CustomEvent).detail;
+        if (String(detail.productNo) !== String(product.id)) return;
+        setProduct((prev: Product | null | undefined) => prev ? { ...prev, status: 'completed' } : prev);
+        showToast('판매자의 사정으로 경매가 취소되었습니다.', 'error');
+      };
       window.addEventListener('sse:priceUpdate', onPriceUpdate);
       window.addEventListener('sse:pointUpdate', onPointUpdate);
       window.addEventListener('sse:reconnected', onReconnected);
+      window.addEventListener('sse:auctionCancelled', onAuctionCancelled);
       return () => {
         window.removeEventListener('sse:priceUpdate', onPriceUpdate);
         window.removeEventListener('sse:pointUpdate', onPointUpdate);
         window.removeEventListener('sse:reconnected', onReconnected);
+        window.removeEventListener('sse:auctionCancelled', onAuctionCancelled);
       };
     } else {
       // 비로그인 사용자: priceUpdate 수신을 위해 SSE 직접 연결
@@ -576,6 +585,35 @@ export const ProductDetail: React.FC = () => {
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response.data : '입찰에 실패했습니다.');
       showToast(errorMsg, 'error');
+    }
+  };
+
+  // 경매 마감까지 남은 시간 (시간 단위)
+  const hoursLeft = product
+    ? Math.max(0, (new Date(product.endTime).getTime() - Date.now()) / (1000 * 60 * 60))
+    : 0;
+
+  // 취소 조건 판별
+  const cancelCondition: 'A' | 'B' | 'C' =
+    product.participantCount === 0 ? 'A'
+    : hoursLeft < 12 ? 'C'
+    : 'B';
+
+  const handleAuctionCancel = async () => {
+    if (cancelCondition === 'C') {
+      setShowCancelModal(false);
+      return;
+    }
+    try {
+      await api.post(`/products/${product.id}/cancel`);
+      setShowCancelModal(false);
+      showToast('경매가 취소되었습니다.', 'success');
+      setProduct(prev => prev ? { ...prev, status: 'completed' } : prev);
+    } catch (error: any) {
+      const msg = error.response?.data?.message
+        || (typeof error.response?.data === 'string' ? error.response.data : '경매 취소에 실패했습니다.');
+      showToast(msg, 'error');
+      setShowCancelModal(false);
     }
   };
 
@@ -853,22 +891,37 @@ export const ProductDetail: React.FC = () => {
                 </span>
               </button>
 
-              {/* 2. 자동 입찰 버튼 (감싸던 div 삭제) */}
-              <button
-                onClick={() => openBidModal('auto')}
-                disabled={isFinished}
-                className="flex-1 py-4 border border-orange-500 text-orange-500 font-bold rounded-xl hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
-              </button>
+              {/* 2. 판매자 버튼 / 입찰자 버튼 분기 */}
+              {isSeller ? (
+                /* 판매자 전용: 경매 취소 버튼 */
+                <button
+                  onClick={() => setShowCancelModal(true)}
+                  disabled={isFinished}
+                  className="flex-1 py-4 border border-red-400 text-red-500 font-bold rounded-xl hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  경매 취소
+                </button>
+              ) : (
+                <>
+                  {/* 자동 입찰 버튼 */}
+                  <button
+                    onClick={() => openBidModal('auto')}
+                    disabled={isFinished}
+                    className="flex-1 py-4 border border-orange-500 text-orange-500 font-bold rounded-xl hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
+                  </button>
 
-              <button
-                onClick={() => openBidModal('bid')}
-                disabled={isFinished}
-                className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-              >
-                입찰 참여하기
-              </button>
+                  {/* 입찰 참여하기 버튼 */}
+                  <button
+                    onClick={() => openBidModal('bid')}
+                    disabled={isFinished}
+                    className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                  >
+                    입찰 참여하기
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -1335,6 +1388,103 @@ export const ProductDetail: React.FC = () => {
                   복사
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Auction Cancel Confirm Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-red-500" />
+                경매 취소
+              </h3>
+              <button onClick={() => setShowCancelModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {cancelCondition === 'A' && (
+                <>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    아직 입찰자가 없습니다. <span className="font-bold text-gray-900">패널티 없이</span> 즉시 취소할 수 있습니다.
+                  </p>
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      onClick={() => setShowCancelModal(false)}
+                      className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors"
+                    >
+                      돌아가기
+                    </button>
+                    <button
+                      onClick={handleAuctionCancel}
+                      className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors"
+                    >
+                      취소 확정
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {cancelCondition === 'B' && (
+                <>
+                  <div className="bg-red-50 border border-red-100 rounded-xl p-4 space-y-2">
+                    <p className="text-sm font-bold text-red-600">취소 패널티가 부과됩니다</p>
+                    <ul className="text-xs text-red-500 space-y-1 list-disc list-inside">
+                      <li>매너온도 <span className="font-bold">-10점</span> 차감</li>
+                      <li>포인트 벌금: <span className="font-bold">최소 1,000원 또는 현재 입찰가의 3%</span></li>
+                    </ul>
+                  </div>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    현재 <span className="font-bold text-gray-900">{product.participantCount}명</span>의 입찰자가 있습니다.
+                    취소 시 모든 입찰자에게 포인트가 즉시 환불되며, 취소 알림이 발송됩니다.
+                  </p>
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      onClick={() => setShowCancelModal(false)}
+                      className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors"
+                    >
+                      돌아가기
+                    </button>
+                    <button
+                      onClick={handleAuctionCancel}
+                      className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors"
+                    >
+                      패널티 감수하고 취소
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {cancelCondition === 'C' && (
+                <>
+                  <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
+                    <p className="text-sm font-bold text-orange-600 mb-1">마감 12시간 이내 — 취소 불가</p>
+                    <p className="text-xs text-orange-500 leading-relaxed">
+                      경매 마감이 임박하여 판매자가 임의로 취소할 수 없습니다.
+                      물건 파손 등 불가피한 사유가 있다면 관리자에게 취소를 신청해 주세요.
+                    </p>
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      onClick={() => setShowCancelModal(false)}
+                      className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors"
+                    >
+                      닫기
+                    </button>
+                    <button
+                      onClick={() => { setShowCancelModal(false); navigate(`/report?productId=${product.id}`); }}
+                      className="flex-1 py-3 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors"
+                    >
+                      관리자에게 신청
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

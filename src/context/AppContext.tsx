@@ -261,6 +261,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       }
     });
 
+    // 판매자 경매 취소 브로드캐스트 → ProductDetail에 전달
+    eventSource.addEventListener('auctionCancelled', (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        window.dispatchEvent(new CustomEvent('sse:auctionCancelled', { detail: data }));
+      } catch (e) {
+        console.error('[SSE] auctionCancelled 파싱 오류', e);
+      }
+    });
+
     // 다른 기기에서 로그인 시 즉시 강제 로그아웃 처리
     eventSource.addEventListener('forceLogout', () => {
       eventSource.close();
