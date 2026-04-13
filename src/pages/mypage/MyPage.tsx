@@ -551,7 +551,7 @@ export const MyPage: React.FC = () => {
                               : 'bg-amber-100 text-amber-600 hover:bg-amber-200'
                             }`}
                           >
-                            {p.auctionResultStatus === '결제완료' ? '확정하기' : '결제대기'}
+                            {p.auctionResultStatus === '결제완료' ? '거래대기' : '결제대기'}
                           </button>
                         )}
                       </div>
