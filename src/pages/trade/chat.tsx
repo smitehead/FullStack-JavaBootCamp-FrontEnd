@@ -65,7 +65,7 @@ export const Chat: React.FC = () => {
       const rooms: ChatRoom[] = (res.data || []).map((r: any) => ({
         id: `room_${r.roomNo}`,
         roomNo: r.roomNo,
-        productId: `prod_${r.productNo}`,
+        productId: String(r.productNo),
         productTitle: r.productTitle || '',
         productImage: r.productImage || '',
         otherUser: {
@@ -565,7 +565,7 @@ export const Chat: React.FC = () => {
                 </button>
                 {showMoreMenu && (
                   <div className="absolute right-0 top-10 w-40 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-10">
-                    <button onClick={() => navigate(`/product/${selectedRoom.productId}`)}
+                    <button onClick={() => navigate(`/products/${selectedRoom.productId}`)}
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                       <ShoppingBag className="w-4 h-4" /> 상품 보기
                     </button>
