@@ -117,6 +117,7 @@ export interface Product {
   location: string;
   detailedAddress?: string;
   transactionMethod: TransactionMethod;
+  shippingFee?: number;
   isWishlisted?: boolean;
   wishlistCount?: number;
   winnerId?: string;
@@ -278,4 +279,5 @@ export interface ProductRequestDto {
   buyoutPrice?: number | null;
   minBidUnit: number;
   endTime: string;
+  shippingFee?: number;
 }

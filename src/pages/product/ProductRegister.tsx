@@ -206,7 +206,8 @@ export const ProductRegister: React.FC = () => {
         startPrice,
         buyoutPrice: isInstantPriceEnabled ? instantPrice : null,
         minBidUnit: minBidIncrement,
-        endTime: computedEndTime
+        endTime: computedEndTime,
+        shippingFee: isFreeShipping ? 0 : shippingFee
       };
 
       const formData = new FormData();
