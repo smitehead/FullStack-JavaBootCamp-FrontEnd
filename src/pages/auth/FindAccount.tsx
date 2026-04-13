@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Search, Lock, ChevronLeft, User, Send, CheckCircle2, ChevronDown, AlertCircle } from 'lucide-react';
 import { showToast } from '@/components/toastService';
+import api from '@/services/api';
 
 type Tab = 'id' | 'pw';
 
@@ -62,16 +63,17 @@ export const FindAccount: React.FC = () => {
     }
   }, [location.pathname]);
 
-  const handleFindId = (e: React.FormEvent) => {
+  const handleFindId = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (idEmail === 'test@example.com') {
-      setFoundId('testuser');
-    } else {
-      showToast('일치하는 이메일 정보가 없습니다.', 'error');
+    try {
+      const res = await api.post('/auth/find-id', { email: idEmail });
+      setFoundId(res.data.userId);
+    } catch (err: any) {
+      showToast(err.response?.data?.message || '일치하는 이메일 정보가 없습니다.', 'error');
     }
   };
 
-  const handleSendCode = () => {
+  const handleSendCode = async () => {
     if (cooldown > 0) return;
     if (!pwUserId.trim()) {
       showToast('아이디를 먼저 입력해주세요.', 'error');
@@ -82,36 +84,47 @@ export const FindAccount: React.FC = () => {
       showToast('올바른 이메일 형식을 입력해주세요.', 'error');
       return;
     }
-
-    if (pwUserId === 'testuser') {
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      setPwSentCode(code);
-      setTimer(180); // 3 minutes
+    try {
+      await api.post('/auth/send-reset-code', { userId: pwUserId, email: fullEmail });
+      setPwSentCode('sent');
+      setTimer(180);
       setCooldown(60);
-      showToast(`인증번호가 발송되었습니다: ${code}`, 'info');
-    } else {
-      showToast('일치하는 회원 정보가 없습니다.', 'error');
+      showToast('인증번호가 발송되었습니다.', 'success');
+    } catch (err: any) {
+      showToast(err.response?.data?.message || '일치하는 회원 정보가 없습니다.', 'error');
     }
   };
 
-  const handleVerifyCode = () => {
-    if (pwEmailCode === pwSentCode) {
-      setIsPwVerified(true);
-      setPwVerificationError(null);
-      showToast('이메일 인증이 완료되었습니다.', 'success');
-    } else {
-      setPwVerificationError('인증번호가 틀렸습니다.');
-      showToast('인증번호가 틀렸습니다.', 'error');
+  const handleVerifyCode = async () => {
+    const fullEmail = getFullPwEmail();
+    try {
+      const res = await api.post('/auth/verify-email-code', { email: fullEmail, code: pwEmailCode });
+      if (res.data.verified) {
+        setIsPwVerified(true);
+        setPwVerificationError(null);
+        showToast('이메일 인증이 완료되었습니다.', 'success');
+      } else {
+        setPwVerificationError('인증번호가 틀렸습니다.');
+        showToast('인증번호가 틀렸습니다.', 'error');
+      }
+    } catch {
+      setPwVerificationError('인증번호 확인에 실패했습니다.');
+      showToast('인증번호 확인에 실패했습니다.', 'error');
     }
   };
 
-  const handleFindPw = (e: React.FormEvent) => {
+  const handleFindPw = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isPwVerified) {
       showToast('이메일 인증을 완료해주세요.', 'error');
       return;
     }
-    setIsPwSuccess(true);
+    try {
+      await api.post('/auth/reset-pw', { userId: pwUserId, email: getFullPwEmail() });
+      setIsPwSuccess(true);
+    } catch (err: any) {
+      showToast(err.response?.data?.message || '임시 비밀번호 발송에 실패했습니다.', 'error');
+    }
   };
 
   return (
@@ -281,7 +294,7 @@ export const FindAccount: React.FC = () => {
                       </div>
 
                       {/* 인증번호 입력 섹션 (중앙 정렬 스타일) */}
-                      {!isPwVerified && pwSentCode && (
+                      {!isPwVerified && pwSentCode === 'sent' && (
                         <div className="mt-8 space-y-3 animate-in fade-in slide-in-from-top-2">
                           <div className="flex flex-col items-center gap-4">
                             <div className="w-40">
