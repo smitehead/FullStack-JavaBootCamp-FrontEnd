@@ -84,13 +84,15 @@ export const FindAccount: React.FC = () => {
       showToast('올바른 이메일 형식을 입력해주세요.', 'error');
       return;
     }
+    const isResend = pwSentCode === 'sent';
+    if (isResend) setCooldown(60);
     try {
       await api.post('/auth/send-reset-code', { userId: pwUserId, email: fullEmail });
       setPwSentCode('sent');
       setTimer(180);
-      setCooldown(60);
       showToast('인증번호가 발송되었습니다.', 'success');
     } catch (err: any) {
+      if (isResend) setCooldown(0);
       showToast(err.response?.data?.message || '일치하는 회원 정보가 없습니다.', 'error');
     }
   };
