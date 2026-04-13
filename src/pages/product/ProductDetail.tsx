@@ -1041,12 +1041,17 @@ export const ProductDetail: React.FC = () => {
               <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
                 <div className="flex border-b border-gray-50 pb-4">
                   <span className="w-32 text-gray-500 font-medium">배송 방법</span>
-                  <span className="text-gray-900">택배거래, 직거래 가능</span>
+                  <span className="text-gray-900">
+                    {product.transactionMethod === 'both' ? '택배거래, 직거래 가능' :
+                     product.transactionMethod === 'delivery' ? '택배거래' : '직거래'}
+                  </span>
                 </div>
-                <div className="flex border-b border-gray-50 pb-4">
-                  <span className="w-32 text-gray-500 font-medium">배송비</span>
-                  <span className="text-gray-900">{product.shippingFee === 0 ? '무료배송' : `${product.shippingFee?.toLocaleString()}원`}</span>
-                </div>
+                {(product.transactionMethod === 'delivery' || product.transactionMethod === 'both') && (
+                  <div className="flex border-b border-gray-50 pb-4">
+                    <span className="w-32 text-gray-500 font-medium">배송비</span>
+                    <span className="text-gray-900">{product.shippingFee === 0 ? '무료배송' : `${product.shippingFee?.toLocaleString()}원`}</span>
+                  </div>
+                )}
                 <div className="flex">
                   <span className="w-32 text-gray-500 font-medium">거래 지역</span>
                   <span className="text-gray-900">{product.location}</span>
