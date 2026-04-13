@@ -358,7 +358,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                   className="fixed inset-0 z-40 bg-black/5"
                   onClick={() => setIsCategoryOpen(false)}
                 />
-                <div className="absolute top-full left-0 w-[900px] h-[600px] bg-white border border-gray-100 rounded-2xl shadow-2xl mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 flex overflow-hidden">
+                <div className="absolute top-full left-0 w-[min(900px,calc(100vw-3rem))] h-[min(600px,80vh)] bg-white border border-gray-100 rounded-2xl shadow-2xl mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 flex overflow-hidden">
                   {/* Sidebar */}
                   <div className="w-56 bg-gray-50 border-r border-gray-100 overflow-y-auto custom-scrollbar">
                     {CATEGORY_DATA.map((cat) => (
