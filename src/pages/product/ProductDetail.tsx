@@ -512,9 +512,9 @@ export const ProductDetail: React.FC = () => {
 
       await api.post('/bids/buyout', { productNo: Number(product.id) });
 
-      showToast('즉시 구매가 완료되었습니다!', 'success');
+      showToast('즉시 구매가 완료되었습니다! 입찰 내역으로 이동합니다.', 'success');
       setIsBidModalOpen(false);
-      await fetchProduct();
+      setTimeout(() => navigate('/mypage?tab=bidding'), 800);
     } catch (error: any) {
       const errorMsg = error.response?.data?.message
         || (typeof error.response?.data === 'string' ? error.response.data : '즉시 구매에 실패했습니다.');
