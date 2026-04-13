@@ -562,7 +562,15 @@ export const ProductDetail: React.FC = () => {
       // 내가 방금 입찰 → 즉시 최고입찰자로 표시 (fetchProduct 완료 전 선반영)
       setHasBid(true);
       setIsHighestBidder(true);
-      showToast(modalType === 'bid' ? '입찰이 완료되었습니다!' : '자동 입찰이 설정되었습니다!', 'success');
+
+      if (modalType === 'auto') {
+        showToast('자동 입찰이 설정되었습니다! 입찰 내역으로 이동합니다.', 'success');
+        setIsBidModalOpen(false);
+        setTimeout(() => navigate('/mypage?tab=bidding'), 800);
+        return;
+      }
+
+      showToast('입찰이 완료되었습니다!', 'success');
       await fetchProduct();
 
     } catch (error: any) {
