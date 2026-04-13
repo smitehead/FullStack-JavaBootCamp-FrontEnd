@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Search, MessageSquare, CheckCircle2, Trash2, Send, User } from 'lucide-react';
-import { MOCK_INQUIRIES, MOCK_USERS } from '@/services/mockData';
 import { Inquiry } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
 
 export const InquiryManagement: React.FC = () => {
   const navigate = useNavigate();
-  const [inquiries, setInquiries] = useState<Inquiry[]>(MOCK_INQUIRIES);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Bell, MessageSquare, ChevronRight, Package, Clock } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
-import { CURRENT_USER } from '@/services/mockData';
 import { getProfileImageUrl } from '@/utils/imageUtils';
 
 export const Inbox: React.FC = () => {
-  const { notifications, chats, markNotificationAsRead, markChatAsRead } = useAppContext();
+  const { user, notifications, chats, markNotificationAsRead, markChatAsRead } = useAppContext();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'noti' | 'chat'>('noti');
   const [notiFilter, setNotiFilter] = useState<'all' | 'bid' | 'activity'>('all');
@@ -55,7 +54,7 @@ export const Inbox: React.FC = () => {
 
   const filteredChats = chats.filter(c => {
     // Filter out blocked users
-    if (CURRENT_USER.blockedUserIds?.includes(c.otherUser.id)) return false;
+    if ((user?.blockedUserIds ?? []).includes(c.otherUser.id)) return false;
 
     if (chatFilter === 'all') return true;
     return c.otherUser.role === chatFilter;

@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { MOCK_REVIEW_TAGS } from '@/services/mockData';
 import { ChevronLeft, CheckCircle2 } from 'lucide-react';
+
+const REVIEW_TAGS = [
+  { id: 'tag_1', content: '응답이 빨라요' },
+  { id: 'tag_2', content: '친절하고 매너가 좋아요' },
+  { id: 'tag_3', content: '시간 약속을 잘 지켜요' },
+  { id: 'tag_4', content: '상품 상태가 설명과 같아요' },
+];
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
 
@@ -71,7 +77,7 @@ export const ReviewCreate: React.FC = () => {
               거래하며 느낀 점을 태그로 선택해주세요. (중복 선택 가능)
             </p>
             <div className="flex flex-wrap gap-2.5">
-              {MOCK_REVIEW_TAGS.map(tag => (
+              {REVIEW_TAGS.map(tag => (
                 <button
                   key={tag.id}
                   onClick={() => toggleTag(tag.content)}

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { Category, Notification, ChatRoom, User, Product, Account, WithdrawnUser, NotificationType, Report, MannerHistory, ActivityLog } from '@/types';
-import { NOTIFICATIONS as INITIAL_NOTIFICATIONS, MOCK_CHAT_ROOMS as INITIAL_CHATS, CURRENT_USER as MOCK_USER, ADMIN_USER, MOCK_PRODUCTS as INITIAL_PRODUCTS } from '@/services/mockData';
 import api from '@/services/api';
 import { resolveImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -132,7 +131,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isInitialized, setIsInitialized] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [chats, setChats] = useState<ChatRoom[]>([]);
   const [reports, setReports] = useState<Report[]>([]);

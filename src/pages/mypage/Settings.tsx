@@ -4,7 +4,6 @@ import { Bell, Shield, ShieldCheck, UserMinus, X, AlertCircle, CheckCircle2, Use
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
-import { MOCK_PRODUCTS } from '@/services/mockData';
 import { getProfileImageUrl } from '@/utils/imageUtils';
 
 // 카카오 우편번호 서비스 타입 선언
@@ -27,6 +26,8 @@ export const Settings: React.FC = () => {
     }
   }, [initialTab]);
   const { user, logout, updateCurrentUserAddress } = useAppContext();
+  const [activeProductCount, setActiveProductCount] = useState(0);
+  const [tradingProductCount, setTradingProductCount] = useState(0);
   const [settings, setSettings] = useState({
     auctionEnd: true,
     newBid: true,
@@ -34,6 +35,16 @@ export const Settings: React.FC = () => {
     chat: true
   });
   const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
+
+  // 탈퇴 조건 확인용 진행 중 상품 조회
+  useEffect(() => {
+    if (!user) return;
+    api.get('/products/my-selling').then(res => {
+      const list = res.data?.content ?? res.data ?? [];
+      setActiveProductCount(list.filter((p: any) => p.status === 0).length);
+      setTradingProductCount(list.filter((p: any) => p.status === 0).length);
+    }).catch(() => {});
+  }, [user]);
 
   // 프로필 초기 데이터를 API에서 로드
   useEffect(() => {
@@ -1155,31 +1166,21 @@ export const Settings: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-red-700">판매 중인 물건 없음</span>
-                        {MOCK_PRODUCTS.filter(p => String(p.seller.id) === String(user?.id) && p.status === 'active').length === 0 ? (
+                        {activeProductCount === 0 ? (
                           <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                         ) : (
                           <span className="text-[10px] font-bold text-red-500 bg-white px-2 py-0.5 rounded-md shadow-sm">
-                            {MOCK_PRODUCTS.filter(p => String(p.seller.id) === String(user?.id) && p.status === 'active').length}건 진행 중
+                            {activeProductCount}건 진행 중
                           </span>
                         )}
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-red-700">거래 중인 물품 없음</span>
-                        {MOCK_PRODUCTS.filter(p => {
-                          const isSeller = String(p.seller.id) === String(user?.id);
-                          const isBuyer = p.bids.some(b => b.bidderName === user?.nickname && String(p.winnerId) === String(user?.id));
-                          const isTrading = ['paid', 'shipped'].includes(p.status);
-                          return (isSeller || isBuyer) && isTrading;
-                        }).length === 0 ? (
+                        {tradingProductCount === 0 ? (
                           <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                         ) : (
                           <span className="text-[10px] font-bold text-red-500 bg-white px-2 py-0.5 rounded-md shadow-sm">
-                            {MOCK_PRODUCTS.filter(p => {
-                              const isSeller = String(p.seller.id) === String(user?.id);
-                              const isBuyer = p.bids.some(b => b.bidderName === user?.nickname && String(p.winnerId) === String(user?.id));
-                              const isTrading = ['paid', 'shipped'].includes(p.status);
-                              return (isSeller || isBuyer) && isTrading;
-                            }).length}건 거래 중
+                            {tradingProductCount}건 거래 중
                           </span>
                         )}
                       </div>
