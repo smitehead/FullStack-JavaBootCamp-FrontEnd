@@ -229,7 +229,7 @@ export const Chat: React.FC = () => {
         setMessages(prev => {
           // clientUuid로 낙관적 메시지 찾기
           const optimisticIdx = prev.findIndex(
-            m => m.clientUuid === clientUuid && m.status === 'SENDING'
+            m => m.clientUuid === clientUuid
           );
 
           if (optimisticIdx >= 0) {
@@ -365,7 +365,6 @@ export const Chat: React.FC = () => {
       status: 'SENDING',
     };
     setMessages(prev => [...prev, optimisticMsg]);
-    receivedUuids.current.add(clientUuid);
     scrollToBottom();
 
     // B) STOMP 전송
