@@ -31,6 +31,7 @@ function mapToProduct(item: any): Product & { bidStatus?: string } {
     transactionMethod: item.transactionMethod || 'delivery',
     isWishlisted: item.isWishlisted || false,
     bidStatus: item.bidStatus || null,
+    auctionResultStatus: item.auctionResultStatus || null,
   };
 }
 
@@ -544,9 +545,13 @@ export const MyPage: React.FC = () => {
                         {effectiveStatus === 'won' && (
                           <button
                             onClick={() => navigate(`/won/${p.id}`)}
-                            className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-600 rounded-full text-xs font-bold hover:bg-amber-200 transition-all font-sans"
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold transition-all font-sans ${
+                              p.auctionResultStatus === '결제완료' 
+                              ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200' 
+                              : 'bg-amber-100 text-amber-600 hover:bg-amber-200'
+                            }`}
                           >
-                            결제대기
+                            {p.auctionResultStatus === '결제완료' ? '확정하기' : '결제대기'}
                           </button>
                         )}
                       </div>

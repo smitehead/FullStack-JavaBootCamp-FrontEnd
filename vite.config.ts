@@ -14,6 +14,11 @@ export default defineConfig(({ mode }) => {
           target: 'http://localhost:8080',
           changeOrigin: true,
         },
+        '/ws-stomp': {
+          target: 'http://localhost:8080',
+          ws: true,
+          changeOrigin: true,
+        },
       },
     },
     plugins: [react(), tailwindcss()],
