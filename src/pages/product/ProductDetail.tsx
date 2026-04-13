@@ -282,20 +282,36 @@ export const ProductDetail: React.FC = () => {
   useEffect(() => {
     if (!product || !product.id) return;
 
-    const handlePriceUpdate = (detail: { productNo: number | string; currentPrice: number; bidderNo?: number | null }) => {
+    const handlePriceUpdate = (detail: { productNo: number | string; currentPrice: number; bidderNo?: number | null; auctionEnded?: boolean }) => {
       if (String(detail.productNo) !== String(product.id)) return;
 
       // SSE 수신 가격을 ref에 기록 — fetchProduct 경쟁 조건 방지
       latestSsePriceRef.current = Math.max(latestSsePriceRef.current, detail.currentPrice);
       sseHasRunRef.current = true;
 
-      setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
-
-      // bidderNo로 입찰자 식별 → justBidRef와 관계없이 정확한 뱃지 업데이트
       const myMemberNo = getMemberNo(user);
       const bidderNo = detail.bidderNo != null ? Number(detail.bidderNo) : null;
       const isMyBid = bidderNo !== null && myMemberNo !== null && bidderNo === myMemberNo;
 
+      // 즉시구매/입찰가 도달로 경매 종료된 경우
+      if (detail.auctionEnded) {
+        setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice, status: 'completed' }) : prev);
+        setIsHighestBidder(isMyBid);
+        if (isMyBid) {
+          setHasBid(true);
+        } else if (!justBidRef.current) {
+          const title = product?.title || '이 상품';
+          const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
+          showToast(`'${truncatedTitle}' 즉시구매로 경매가 종료되었습니다.`, 'bid');
+        }
+        // 경매 종료 후 최신 상태 반영
+        setTimeout(() => fetchProduct(), 600);
+        return;
+      }
+
+      setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
+
+      // bidderNo로 입찰자 식별 → justBidRef와 관계없이 정확한 뱃지 업데이트
       if (isMyBid) {
         // 내 입찰 SSE 확인 — 최고입찰자로 확정
         setIsHighestBidder(true);
@@ -456,6 +472,44 @@ export const ProductDetail: React.FC = () => {
       setAutoBidMaxAmount(product.currentPrice + product.minBidIncrement * 5);
     }
     setIsBidModalOpen(true);
+  };
+
+  const handleBuyout = async () => {
+    if (!user) {
+      showToast("로그인이 필요한 서비스입니다.", 'error');
+      navigate('/login');
+      return;
+    }
+    if (user.isSuspended) {
+      showToast("계정이 정지된 상태에서는 즉시 구매할 수 없습니다.", 'error');
+      return;
+    }
+    if (!product?.instantPrice) return;
+
+    if ((user?.points || 0) < Number(product.instantPrice)) {
+      setShowRechargePrompt(true);
+      return;
+    }
+    if (!window.confirm(`${Number(product.instantPrice).toLocaleString()}원에 즉시 구매하시겠습니까?\n구매 후 취소가 불가능합니다.`)) {
+      return;
+    }
+
+    try {
+      const memberNo = getMemberNo(user);
+      if (!memberNo) return;
+      justBidRef.current = true;
+      setTimeout(() => { justBidRef.current = false; }, 5000);
+
+      await api.post('/bids/buyout', { productNo: Number(product.id) });
+
+      showToast('즉시 구매가 완료되었습니다!', 'success');
+      setIsBidModalOpen(false);
+      await fetchProduct();
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message
+        || (typeof error.response?.data === 'string' ? error.response.data : '즉시 구매에 실패했습니다.');
+      showToast(errorMsg, 'error');
+    }
   };
 
   const handleBidSubmit = async () => {
@@ -1108,10 +1162,17 @@ export const ProductDetail: React.FC = () => {
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">현재가</p>
                   <p className="text-lg font-bold text-gray-900">{(product.currentPrice || 0).toLocaleString()}원</p>
+                  {/* 즉시구매가의 70% 이상 경고 — h-4 고정으로 카드 크기 유지 */}
+                  <div className="h-4 flex items-center mt-1">
+                    {product.instantPrice && product.currentPrice >= Number(product.instantPrice) * 0.7 && (
+                      <span className="text-[10px] font-bold text-orange-500">즉시구매가의 70% 이상입니다</span>
+                    )}
+                  </div>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">최소 입찰 단위</p>
                   <p className="text-lg font-bold text-gray-900">{(product.minBidIncrement || 0).toLocaleString()}원</p>
+                  <div className="h-4 mt-1" />
                 </div>
               </div>
 
@@ -1190,16 +1251,7 @@ export const ProductDetail: React.FC = () => {
                     </button>
                     {product.instantPrice && (
                       <button
-                        onClick={() => {
-                          if ((user?.points || 0) < Number(product.instantPrice)) {
-                            setShowRechargePrompt(true);
-                            return;
-                          }
-                          if (window.confirm(`${Number(product.instantPrice).toLocaleString()}원에 즉시 구매하시겠습니까?`)) {
-                            showToast('즉시 구매가 완료되었습니다!', 'success');
-                            setIsBidModalOpen(false);
-                          }
-                        }}
+                        onClick={handleBuyout}
                         className="flex-1 py-5 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-[0.98]"
                       >
                         즉시 구매하기
