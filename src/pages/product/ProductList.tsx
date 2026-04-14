@@ -234,9 +234,14 @@ export const ProductList: React.FC = () => {
 
     if (sigunguPart) {
       // 2. 시/군/구 찾기
-      // 창원시 성산구 -> 데이터상 "창원시성산구" 형태일 수 있으므로 두 경우 모두 검사
+      // 창원시 성산구 -> 데이터상 "창원시성산구" 형태일 수 있으므로 우선 결합된 형태로 검색
       let searchDistrictFull = (sigunguPart + bnamePart).replace(/\s/g, ''); 
-      let foundDistrict = foundCity.sub.find(d => d.name.replace(/\s/g, '') === searchDistrictFull || d.name === sigunguPart);
+      let foundDistrict = foundCity.sub.find(d => d.name.replace(/\s/g, '') === searchDistrictFull);
+
+      // 결합된 형태가 없다면 단일 구역(sigunguPart)으로 검색
+      if (!foundDistrict) {
+        foundDistrict = foundCity.sub.find(d => d.name === sigunguPart);
+      }
 
       if (foundDistrict) {
         targetDistrict = foundDistrict.name;

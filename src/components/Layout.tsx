@@ -568,6 +568,18 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     }, 800);
   };
 
+  // 전역 서버 에러 이벤트 리스너 등록
+  useEffect(() => {
+    const handleServerError = () => {
+      setShowErrorScreen(true);
+    };
+
+    window.addEventListener('serverError', handleServerError);
+    return () => {
+      window.removeEventListener('serverError', handleServerError);
+    };
+  }, []);
+
   // 로그아웃 확인 모달 오픈
   const handleLogout = () => {
     setIsLogoutModalOpen(true);
