@@ -228,14 +228,14 @@ export const ProductList: React.FC = () => {
     if (!foundCity) return;
 
     // 셀렉트 박스에서 short(예: '경남', '서울')를 value로 사용하므로 short로 지정
-    let targetCity = foundCity.short; 
+    let targetCity = foundCity.short;
     let targetDistrict = '';
     let targetNeighborhood = '';
 
     if (sigunguPart) {
       // 2. 시/군/구 찾기
       // 창원시 성산구 -> 데이터상 "창원시성산구" 형태일 수 있으므로 우선 결합된 형태로 검색
-      let searchDistrictFull = (sigunguPart + bnamePart).replace(/\s/g, ''); 
+      let searchDistrictFull = (sigunguPart + bnamePart).replace(/\s/g, '');
       let foundDistrict = foundCity.sub.find(d => d.name.replace(/\s/g, '') === searchDistrictFull);
 
       // 결합된 형태가 없다면 단일 구역(sigunguPart)으로 검색
@@ -442,7 +442,7 @@ export const ProductList: React.FC = () => {
             </div>
             <button
               onClick={() => updateParams({ minPrice, maxPrice })}
-              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-brand-dark transition-colors shadow-sm"
+              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-blue-600 transition-colors shadow-sm"
             >
               적용
             </button>
@@ -503,7 +503,7 @@ export const ProductList: React.FC = () => {
             </div>
             <button
               onClick={() => updateParams({ city, district, neighborhood })}
-              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-brand-dark transition-colors shadow-sm ml-2"
+              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-blue-600 transition-colors shadow-sm"
             >
               적용
             </button>
