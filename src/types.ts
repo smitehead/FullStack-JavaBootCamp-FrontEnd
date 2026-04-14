@@ -291,3 +291,4 @@ export interface ProductRequestDto {
   endTime: string;
   shippingFee?: number;
 }
+
