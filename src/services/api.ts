@@ -18,10 +18,15 @@ api.interceptors.request.use(
   }
 );
 
-// 401 응답 인터셉터: 다른 기기에서 로그인으로 토큰이 무효화된 경우 자동 로그아웃
+// 401 응답 및 서버 오류 인터셉터
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // 서버가 죽었거나(Network Error) 500, 502, 503, 504 에러일 때
+    if (!error.response || [500, 502, 503, 504].includes(error.response.status)) {
+      window.dispatchEvent(new CustomEvent('serverError'));
+    }
+
     if (error.response?.status === 401) {
       // /auth/logout 요청 자체는 제외 (무한루프 방지)
       const url = error.config?.url ?? '';

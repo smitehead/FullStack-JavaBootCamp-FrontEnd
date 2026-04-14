@@ -568,6 +568,18 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     }, 800);
   };
 
+  // 전역 서버 에러 이벤트 리스너 등록
+  useEffect(() => {
+    const handleServerError = () => {
+      setShowErrorScreen(true);
+    };
+
+    window.addEventListener('serverError', handleServerError);
+    return () => {
+      window.removeEventListener('serverError', handleServerError);
+    };
+  }, []);
+
   // 로그아웃 확인 모달 오픈
   const handleLogout = () => {
     setIsLogoutModalOpen(true);
@@ -650,9 +662,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <div className="max-w-md w-full space-y-8">
               {/* 점검 안내 이미지 영역 */}
               <div className="relative mx-auto w-48 h-48 mb-8">
-                <img
-                  src="/images/죄송합니다.png"
-                  alt="Sorry"
+                <img 
+                  src="/images/sorry.png" 
+                  alt="Sorry" 
                   className="w-full h-full object-cover rounded-3xl shadow-lg"
                 />
               </div>
