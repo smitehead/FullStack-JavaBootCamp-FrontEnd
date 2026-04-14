@@ -898,9 +898,8 @@ export const ProductDetail: React.FC = () => {
                 <button
                   onClick={() => setShowCancelModal(true)}
                   disabled={isFinished}
-                  className="group flex-1 py-4 bg-white border-2 border-red-200 text-red-500 font-bold rounded-2xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-red-500"
+                  className="flex-1 py-4 bg-white border-2 border-brand text-brand font-black rounded-2xl hover:border-gray-400 hover:text-gray-500 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Ban className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                   <span>경매 취소</span>
                 </button>
               ) : (
