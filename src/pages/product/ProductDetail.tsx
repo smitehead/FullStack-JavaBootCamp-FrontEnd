@@ -145,6 +145,9 @@ export const ProductDetail: React.FC = () => {
   const [visibleBidsCount, setVisibleBidsCount] = useState(5);
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [showCancelModal, setShowCancelModal] = useState(false);
+  // 최고 입찰자 입찰 취소 모달 (Phase 1)
+  const [showBidCancelModal, setShowBidCancelModal] = useState(false);
+  const [isBidCancelling, setIsBidCancelling] = useState(false);
 
   // 입찰 참여 여부 및 최고입찰자 여부 (SSE 실시간 반영)
   const [hasBid, setHasBid] = useState(false);
@@ -160,7 +163,14 @@ export const ProductDetail: React.FC = () => {
       const response = await api.get(url);
       const data = response.data;
 
-      const isFinished = new Date(data.endTime).getTime() <= Date.now() || data.status === 'completed';
+      // 백엔드 status(정수): 0=진행중, 1=낙찰완료, 2=판매자취소, 3=결제대기, 4=유찰/최종실패
+      const backendStatus: number = data.status ?? 0;
+      const isAuctionEnded = new Date(data.endTime).getTime() <= Date.now() || backendStatus >= 1;
+      const mappedStatus: Product['status'] =
+        backendStatus === 4 ? 'closed_failed' :
+        backendStatus === 3 ? 'pending_payment' :
+        backendStatus === 2 ? 'canceled' :
+        isAuctionEnded ? 'completed' : 'active';
 
       const mappedProduct: Product = {
         id: String(data.productNo || id),
@@ -189,7 +199,7 @@ export const ProductDetail: React.FC = () => {
           amount: b.bidPrice,
           timestamp: b.bidTime
         })),
-        status: isFinished ? 'completed' : 'active',
+        status: mappedStatus,
         location: data.location || '',
         transactionMethod: data.tradeType === '혼합' ? 'both' : (data.tradeType === '직거래' ? 'face-to-face' : 'delivery'),
         shippingFee: data.shippingFee ?? 0,
@@ -284,16 +294,50 @@ export const ProductDetail: React.FC = () => {
   useEffect(() => {
     if (!product || !product.id) return;
 
-    const handlePriceUpdate = (detail: { productNo: number | string; currentPrice: number; bidderNo?: number | null; auctionEnded?: boolean }) => {
+    const handlePriceUpdate = (detail: {
+      productNo: number | string;
+      currentPrice: number;
+      bidderNo?: number | null;
+      auctionEnded?: boolean;
+      bidCancelled?: boolean;
+    }) => {
       if (String(detail.productNo) !== String(product.id)) return;
 
       // SSE 수신 가격을 ref에 기록 — fetchProduct 경쟁 조건 방지
-      latestSsePriceRef.current = Math.max(latestSsePriceRef.current, detail.currentPrice);
+      // bidCancelled 이벤트는 가격이 내려가므로 max 비교 없이 직접 반영
+      if (!detail.bidCancelled) {
+        latestSsePriceRef.current = Math.max(latestSsePriceRef.current, detail.currentPrice);
+      } else {
+        latestSsePriceRef.current = detail.currentPrice;
+      }
       sseHasRunRef.current = true;
 
       const myMemberNo = getMemberNo(user);
       const bidderNo = detail.bidderNo != null ? Number(detail.bidderNo) : null;
       const isMyBid = bidderNo !== null && myMemberNo !== null && bidderNo === myMemberNo;
+
+      // ── 최고 입찰자 취소 이벤트 (Phase 1) ─────────────────────────────────────
+      if (detail.bidCancelled) {
+        const title = product?.title || '이 상품';
+        const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
+
+        // 현재가를 차순위 가격으로 즉시 갱신 (전체 리로드 없음)
+        setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
+        setBidAmount(detail.currentPrice + (product?.minBidIncrement || 0));
+
+        if (isMyBid) {
+          // 내가 차순위 → 최고 입찰자로 승계됨
+          setIsHighestBidder(true);
+          showToast(`'${truncatedTitle}' 상위 입찰자 취소로 최고 입찰자가 되었습니다!`, 'success');
+        } else {
+          // 나는 다른 순위 → 가격 변동 토스트
+          setIsHighestBidder(false);
+          if (!justBidRef.current) {
+            showToast(`'${truncatedTitle}' 1등 입찰자가 취소하여 현재가가 변동되었습니다.`, 'bid');
+          }
+        }
+        return;
+      }
 
       // 즉시구매/입찰가 도달로 경매 종료된 경우
       if (detail.auctionEnded) {
@@ -618,6 +662,31 @@ export const ProductDetail: React.FC = () => {
     }
   };
 
+  /**
+   * 최고 입찰자 본인 입찰 취소 (Phase 1).
+   * POST /api/bids/cancel  →  { productNo }
+   * 성공 시: SSE broadcastBidCancelled → handlePriceUpdate(bidCancelled=true) 로 자동 반영
+   */
+  const handleBidCancelConfirm = async () => {
+    if (!user || !product) return;
+    setIsBidCancelling(true);
+    try {
+      await api.post('/bids/cancel', { productNo: Number(product.id) });
+      setShowBidCancelModal(false);
+      setIsBidModalOpen(false);
+      setIsHighestBidder(false);
+      showToast('입찰이 취소되었습니다. 위약금이 차감되었습니다.', 'success');
+      // SSE가 currentPrice를 갱신하므로 fetchProduct는 선택적으로 호출
+      setTimeout(() => fetchProduct(), 800);
+    } catch (error: any) {
+      const msg = error.response?.data?.error
+        || (typeof error.response?.data === 'string' ? error.response.data : '입찰 취소에 실패했습니다.');
+      showToast(msg, 'error');
+    } finally {
+      setIsBidCancelling(false);
+    }
+  };
+
   const chartData = [...product.bids]
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
     .map(bid => ({
@@ -655,7 +724,13 @@ export const ProductDetail: React.FC = () => {
     }
   };
 
-  const isFinished = product ? (product.status === 'completed' || new Date(product.endTime).getTime() <= Date.now()) : false;
+  const isFinished = product ? (
+    product.status === 'completed' ||
+    product.status === 'pending_payment' ||
+    product.status === 'closed_failed' ||
+    product.status === 'canceled' ||
+    new Date(product.endTime).getTime() <= Date.now()
+  ) : false;
 
   const isSeller = product?.seller.id === user?.id;
   // 나의 입찰가 표시용 (금액 계산에만 사용)
@@ -894,16 +969,43 @@ export const ProductDetail: React.FC = () => {
 
               {/* 2. 판매자 버튼 / 입찰자 버튼 분기 */}
               {isSeller ? (
-                /* 판매자 전용: 경매 취소 버튼 */
-                <button
-                  onClick={() => setShowCancelModal(true)}
-                  disabled={isFinished}
-                  className="flex-1 py-4 bg-white border-2 border-brand text-brand font-black rounded-2xl hover:border-gray-400 hover:text-gray-500 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span>경매 취소</span>
-                </button>
+                /* 판매자 전용: 경매 취소 or 유찰 시 재등록 */
+                product.status === 'closed_failed' ? (
+                  <button
+                    onClick={() => navigate(`/products/register?parentProductNo=${product.id}`)}
+                    className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95"
+                  >
+                    <span>재등록하기</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setShowCancelModal(true)}
+                    disabled={isFinished}
+                    className="flex-1 py-4 bg-white border-2 border-brand text-brand font-black rounded-2xl hover:border-gray-400 hover:text-gray-500 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span>경매 취소</span>
+                  </button>
+                )
               ) : (
                 <>
+                  {/* 최고 입찰자: 입찰 취소 버튼 */}
+                  {isHighestBidder && !isFinished && (
+                    (() => {
+                      const penalty = Math.floor((product.currentPrice || 0) * 0.1);
+                      const canAffordPenalty = (user?.points || 0) >= penalty;
+                      return (
+                        <button
+                          onClick={() => setShowBidCancelModal(true)}
+                          disabled={!canAffordPenalty}
+                          title={!canAffordPenalty ? `위약금 ${penalty.toLocaleString()}P 납부 포인트 부족` : '입찰 취소 (위약금 10% 발생)'}
+                          className="py-4 px-4 bg-white border-2 border-red-200 text-red-500 font-bold rounded-xl hover:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                        >
+                          입찰 취소
+                        </button>
+                      );
+                    })()
+                  )}
+
                   {/* 자동 입찰 버튼 */}
                   <button
                     onClick={() => openBidModal('auto')}
@@ -1301,10 +1403,10 @@ export const ProductDetail: React.FC = () => {
                 isHighestBidder ? (
                   <button
                     onClick={() => {
-                      showToast("입찰이 취소되었습니다.", 'success');
                       setIsBidModalOpen(false);
+                      setShowBidCancelModal(true);
                     }}
-                    className="w-full py-5 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98]"
+                    className="w-full py-5 bg-red-50 border-2 border-red-200 text-red-600 font-bold rounded-2xl hover:bg-red-100 transition-all active:scale-[0.98]"
                   >
                     입찰 취소하기
                   </button>
@@ -1534,6 +1636,142 @@ export const ProductDetail: React.FC = () => {
               <p className="text-center text-[10px] text-gray-400 font-bold tracking-tight uppercase">
                 LifeBid Auction Security System
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ──────────────────────────────────────────────────────────────────
+          입찰 취소 확인 모달 (Phase 1 — 최고 입찰자 본인 취소)
+          - 위약금(현재 입찰가의 10%) 명시
+          - 보유 포인트 부족 시 취소 버튼 비활성화
+      ────────────────────────────────────────────────────────────────── */}
+      {showBidCancelModal && product && (
+        <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 relative">
+            {/* 위험 강조 상단 라인 */}
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500" />
+
+            <div className="p-8">
+              {/* 헤더 */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center shadow-sm">
+                    <Ban className="w-7 h-7 text-red-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-gray-900 tracking-tight">입찰 취소</h3>
+                    <p className="text-sm text-gray-400 font-bold mt-0.5">Bid Cancellation</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowBidCancelModal(false)}
+                  disabled={isBidCancelling}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <X className="w-6 h-6 text-gray-300" />
+                </button>
+              </div>
+
+              {/* 위약금 경고 카드 */}
+              {(() => {
+                const penalty = Math.floor((product.currentPrice || 0) * 0.1);
+                const userPoints = user?.points || 0;
+                const canAfford = userPoints >= penalty;
+                return (
+                  <div className="space-y-6 mb-8">
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <AlertTriangle className="w-4 h-4 text-red-500" />
+                        <p className="text-sm font-black text-red-600">취소 시 위약금이 즉시 차감됩니다</p>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-bold text-gray-500">현재 입찰가</span>
+                          <span className="text-sm font-bold text-gray-900">
+                            {(product.currentPrice || 0).toLocaleString()} P
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-bold text-red-500">위약금 (10%)</span>
+                          <span className="text-base font-black text-red-600">
+                            -{penalty.toLocaleString()} P
+                          </span>
+                        </div>
+                        <div className="border-t border-red-100 pt-3 flex justify-between items-center">
+                          <span className="text-xs font-bold text-gray-500">취소 후 예상 잔액</span>
+                          <span className={`text-sm font-bold ${canAfford ? 'text-gray-900' : 'text-red-500'}`}>
+                            {(userPoints - penalty + (product.currentPrice || 0)).toLocaleString()} P
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 보유 포인트 표시 */}
+                    <div className="bg-gray-900 rounded-2xl p-4 flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <Wallet className="w-4 h-4 text-orange-400" />
+                        <span className="text-xs font-bold text-gray-400">현재 보유 포인트</span>
+                      </div>
+                      <span className={`text-base font-bold ${canAfford ? 'text-orange-400' : 'text-red-400'}`}>
+                        {userPoints.toLocaleString()} P
+                      </span>
+                    </div>
+
+                    {/* 포인트 부족 경고 */}
+                    {!canAfford && (
+                      <div className="flex items-start gap-2 bg-orange-50 border border-orange-200 rounded-xl p-4">
+                        <AlertCircle className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                        <p className="text-xs font-bold text-orange-700 leading-relaxed">
+                          위약금 납부를 위한 포인트가 부족합니다. 포인트를 충전하셔야 취소가 가능합니다.
+                        </p>
+                      </div>
+                    )}
+
+                    <p className="text-xs text-gray-400 leading-relaxed text-center">
+                      경매 마감 시간은 변동 없이 유지됩니다.
+                      위약금은 판매자에게 보상금으로 즉시 지급됩니다.
+                    </p>
+                  </div>
+                );
+              })()}
+
+              {/* 액션 버튼 */}
+              {(() => {
+                const penalty = Math.floor((product.currentPrice || 0) * 0.1);
+                const canAfford = (user?.points || 0) >= penalty;
+                return (
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowBidCancelModal(false)}
+                      disabled={isBidCancelling}
+                      className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
+                    >
+                      돌아가기
+                    </button>
+                    {canAfford ? (
+                      <button
+                        onClick={handleBidCancelConfirm}
+                        disabled={isBidCancelling}
+                        className="flex-1 py-4 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {isBidCancelling ? (
+                          <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />처리 중...</>
+                        ) : (
+                          `위약금 ${Math.floor((product.currentPrice || 0) * 0.1).toLocaleString()}P 차감 후 취소`
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => { setShowBidCancelModal(false); navigate('/points/charge'); }}
+                        className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-95"
+                      >
+                        포인트 충전하기
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
