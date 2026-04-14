@@ -597,8 +597,8 @@ export const ProductRegister: React.FC = () => {
                 <button
                   type="button"
                   onClick={handlePasteMyAddress}
-                  className="px-4 py-4 bg-white border border-gray-200 text-gray-500 rounded-xl hover:bg-gray-50 hover:text-[#FF5A5A] hover:border-red-100 transition-colors group relative flex items-center justify-center shrink-0"
-                  title="내 지역 주소 가져오기"
+                  className="p-2.5 text-gray-400 hover:text-[#FF5A5A] transition-colors group relative flex items-center justify-center shrink-0"
+                  title="내 주소 불러오기"
                 >
                   <LocateFixed className="w-5 h-5" />
                   <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10 w-max">
