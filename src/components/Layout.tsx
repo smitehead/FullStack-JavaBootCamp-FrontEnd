@@ -631,7 +631,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </div>
       )}
 
-      {/* Logout Confirmation Modal */}
+      {/* 로그아웃 모달 */}
       {isLogoutModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setIsLogoutModalOpen(false)}></div>
