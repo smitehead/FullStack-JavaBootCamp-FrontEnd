@@ -560,12 +560,19 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const [showErrorScreen, setShowErrorScreen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    // 애니메이션을 보여주기 위한 짧은 지연 후 새로고침
-    setTimeout(() => {
+    try {
+      // 프론트엔드 서버가 닫혀있을 때 reload하면 브라우저 기본 오류페이지로 넘어가므로 이를 방지하기 위해 가벼운 ping 체크
+      await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+      // 정상 응답을 받으면(서버가 다시 켜졌으면) 화면을 새로고침하여 앱 마운트
       window.location.reload();
-    }, 800);
+    } catch (error) {
+      // fetch가 실패했다면 서버가 아직 내려가있는 것이므로 스피너만 끄고 오류화면 유지
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 500);
+    }
   };
 
   // 전역 서버 에러 이벤트 리스너 등록
