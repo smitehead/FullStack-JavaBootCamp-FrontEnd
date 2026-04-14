@@ -157,6 +157,47 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   ]);
 
+  // 채팅방 초기 렌더링 시 새 채팅 알람 방지용 ref
+  const previousUnreadChatsCount = React.useRef(0);
+  const isFirstChatFetch = React.useRef(true);
+
+  // 채팅 목록 API 로드
+  const fetchChats = useCallback(async () => {
+    try {
+      const res = await api.get('/chat/rooms');
+      const mapped: ChatRoom[] = (res.data || []).map((r: any) => ({
+        id: `room_${r.roomNo}`,
+        roomNo: r.roomNo,
+        productId: String(r.productNo),
+        productTitle: r.productTitle || '',
+        productImage: r.productImage || '',
+        otherUser: {
+          id: `user_${r.otherUserNo}`,
+          no: r.otherUserNo,
+          nickname: r.otherUserNickname || '상대방',
+          profileImage: r.otherUserProfileImage || '',
+          role: r.otherUserRole || 'seller',
+        },
+        lastMessage: r.lastMessage || '',
+        lastMessageAt: r.lastMessageAt || '',
+        unreadCount: r.unreadCount || 0,
+      }));
+      
+      const currentUnread = mapped.reduce((sum, r) => sum + r.unreadCount, 0);
+      
+      if (!isFirstChatFetch.current && currentUnread > previousUnreadChatsCount.current) {
+        showToast('새로운 채팅 메시지가 도착했습니다.', 'success');
+      }
+      
+      previousUnreadChatsCount.current = currentUnread;
+      isFirstChatFetch.current = false;
+      
+      setChats(mapped);
+    } catch (err) {
+      console.error('[Chat] 목록 로딩 실패:', err);
+    }
+  }, []);
+
   // 알림 목록 API 로드
   const fetchNotifications = useCallback(async () => {
     try {
@@ -176,15 +217,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, []);
 
   useEffect(() => {
-    if (user) fetchNotifications();
-    else setNotifications([]);
-  }, [user?.id, fetchNotifications]);
+    if (user) {
+      fetchNotifications();
+      fetchChats();
+    } else {
+      setNotifications([]);
+      setChats([]);
+      isFirstChatFetch.current = true;
+      previousUnreadChatsCount.current = 0;
+    }
+  }, [user?.id, fetchNotifications, fetchChats]);
 
   useEffect(() => {
     if (!user) return;
-    const interval = setInterval(fetchNotifications, 60000);
+    const interval = setInterval(() => {
+      fetchNotifications();
+      fetchChats();
+    }, 10000); // Poll every 10 seconds for real-time feel
     return () => clearInterval(interval);
-  }, [user?.id, fetchNotifications]);
+  }, [user?.id, fetchNotifications, fetchChats]);
 
   // 전역 SSE 구독 - 로그인한 사용자의 포인트/알림 실시간 업데이트
   useEffect(() => {

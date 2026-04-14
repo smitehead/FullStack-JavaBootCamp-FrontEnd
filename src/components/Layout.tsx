@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Bell, Search, Menu, X, User as UserIcon, LogOut, ChevronDown, ChevronUp, Sparkles, Plus, MapPin, Share2, Instagram, Youtube, Info, Headphones, Megaphone, Settings as SettingsIcon, Clock, TrendingUp, ShieldAlert } from 'lucide-react';
+import { Bell, Search, Menu, X, User as UserIcon, LogOut, ChevronDown, ChevronUp, Sparkles, Plus, MapPin, Share2, Instagram, Youtube, Info, Headphones, Megaphone, Settings as SettingsIcon, Clock, TrendingUp, ShieldAlert, MessageSquare } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onLogout }) => {
-  const { user, notifications, markNotificationAsRead, markAllNotificationsAsRead, unreadNotificationsCount } = useAppContext();
+  const { user, notifications, chats, markNotificationAsRead, markAllNotificationsAsRead, unreadNotificationsCount, unreadChatsCount } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
@@ -227,7 +227,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                     className="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all relative"
                   >
                     <Bell className="w-6 h-6" />
-                    {unreadNotificationsCount > 0 && (
+                    {(unreadNotificationsCount > 0 || unreadChatsCount > 0) && (
                       <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#FF5A5A] rounded-full border-2 border-white"></span>
                     )}
                   </button>
@@ -274,7 +274,32 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               <div className="py-10 text-center text-sm text-gray-400 font-medium">알림이 없습니다.</div>
                             )
                           ) : (
-                            <div className="py-10 text-center text-sm text-gray-400 font-medium">대화 내역이 없습니다.</div>
+                            chats && chats.length > 0 ? chats.map(chat => (
+                              <Link
+                                key={chat.id}
+                                to={`/chat?roomNo=${chat.roomNo}`}
+                                className={`block px-5 py-4 text-sm transition-colors hover:bg-gray-50 relative ${chat.unreadCount > 0 ? 'bg-orange-50/60' : 'bg-white'}`}
+                                onClick={() => {
+                                  setIsNotiOpen(false);
+                                }}
+                              >
+                                {chat.unreadCount > 0 && (
+                                  <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FF5A5A]" />
+                                )}
+                                <div className="flex items-center gap-3">
+                                  <img src={getProfileImageUrl(chat.otherUser.profileImage)} alt="" className="w-8 h-8 rounded-full bg-gray-100 object-cover" />
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex justify-between items-center mb-1">
+                                      <span className="font-bold text-gray-900 truncate">{chat.otherUser.nickname}</span>
+                                      <span className="text-[10px] text-gray-400">{new Date(chat.lastMessageAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                                    </div>
+                                    <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{chat.lastMessage}</p>
+                                  </div>
+                                </div>
+                              </Link>
+                            )) : (
+                              <div className="py-10 text-center text-sm text-gray-400 font-medium">대화 내역이 없습니다.</div>
+                            )
                           )}
                         </div>
                         <Link
@@ -304,6 +329,12 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                     >
                       <UserIcon className="w-4 h-4 mr-2.5" /> 프로필 보기
+                    </Link>
+                    <Link
+                      to="/chat"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                    >
+                      <MessageSquare className="w-4 h-4 mr-2.5" /> 채팅방 가기
                     </Link>
                     <Link
                       to="/settings"

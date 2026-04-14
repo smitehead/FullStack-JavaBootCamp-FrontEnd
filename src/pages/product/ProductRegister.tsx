@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Category, CategoryItem, TransactionMethod, Product } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { useAppContext } from '@/context/AppContext';
-import { Camera, Calendar, DollarSign, MapPin, Truck, Info, AlignLeft, Package, ArrowLeft } from 'lucide-react';
+import { Camera, Calendar, DollarSign, MapPin, Truck, Info, AlignLeft, Package, ArrowLeft, LocateFixed } from 'lucide-react';
 import api from '@/services/api';
 import { ProductRequestDto } from '@/types';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -246,6 +246,24 @@ export const ProductRegister: React.FC = () => {
         setAddrShort(short);
       },
     }).open();
+  };
+
+  const handlePasteMyAddress = async () => {
+    try {
+      const res = await api.get('/members/me');
+      const data = res.data;
+      if (data.addrRoad) {
+        setAddress(data.addrRoad);
+        setAddrShort(data.addrShort || '');
+        setDetailedAddress(data.addrDetail || '');
+        showToast('내 주소를 성공적으로 불러왔습니다.', 'success');
+      } else {
+        showToast('등록된 내 주소가 없습니다. 프로필을 확인해주세요.', 'warning');
+      }
+    } catch (e) {
+      console.error('내 주소 불러오기 실패:', e);
+      showToast('주소 정보를 불러오는 중 오류가 발생했습니다.', 'error');
+    }
   };
 
   const selectedLarge = CATEGORY_DATA.find(c => c.id === largeCat);
@@ -572,9 +590,20 @@ export const ProductRegister: React.FC = () => {
                 <button
                   type="button"
                   onClick={openPostcode}
-                  className="px-6 py-4 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors"
+                  className="px-6 py-4 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors whitespace-nowrap"
                 >
                   주소 검색
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePasteMyAddress}
+                  className="px-4 py-4 bg-white border border-gray-200 text-gray-500 rounded-xl hover:bg-gray-50 hover:text-[#FF5A5A] hover:border-red-100 transition-colors group relative flex items-center justify-center shrink-0"
+                  title="내 지역 주소 가져오기"
+                >
+                  <LocateFixed className="w-5 h-5" />
+                  <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10 w-max">
+                    내 주소 불러오기
+                  </div>
                 </button>
               </div>
               <input

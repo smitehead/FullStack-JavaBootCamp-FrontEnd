@@ -525,7 +525,12 @@ export const MyPage: React.FC = () => {
                         className="flex-1 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center gap-1.5">
                         <Trash2 className="w-3.5 h-3.5" /> 삭제하기
                       </button>
-
+                      {p.status === 'completed' && (p.participantCount === 0 || p.auctionResultStatus === '유찰') && (
+                        <button onClick={() => handleRepost(p)}
+                          className="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-all flex items-center justify-center gap-1.5">
+                          <RefreshCw className="w-3.5 h-3.5" /> 재게시
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
