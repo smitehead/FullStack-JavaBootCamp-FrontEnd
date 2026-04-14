@@ -21,7 +21,6 @@ export const Points: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 필터 상태 — 기존 UI 유지
   const [typeFilter, setTypeFilter] = useState<'all' | 'charge' | 'withdraw' | 'use'>('all');
   const [dateFilter, setDateFilter] = useState<'all' | '1m' | '3m' | '6m'>('all');
   const [showTypeFilters, setShowTypeFilters] = useState(false);
@@ -78,12 +77,12 @@ export const Points: React.FC = () => {
   };
 
   const filteredHistory = history.filter((item) => {
-    const matchType = typeFilter === 'all' || 
+    const matchType = typeFilter === 'all' ||
       (typeFilter === 'charge' && (item.type === '충전' || item.type === '관리자추가')) ||
       (typeFilter === 'withdraw' && (item.type === '출금' || item.type === '관리자회수' || item.type === '거래취소회수')) ||
       (typeFilter === 'use' && (
-        item.type === '입찰정산' || item.type === '낙찰차감' || item.type === '입찰차감' || 
-        item.type === '입찰참여' || item.type === '입찰환불' || item.type === '판매정산' || 
+        item.type === '입찰정산' || item.type === '낙찰차감' || item.type === '입찰차감' ||
+        item.type === '입찰참여' || item.type === '입찰환불' || item.type === '판매정산' ||
         item.type === '낙찰대금수령' || item.type === '거래취소환불' || item.type === '입찰취소환불'
       ));
     const cutoff = getDateCutoff();
