@@ -663,7 +663,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               {/* 점검 안내 이미지 영역 */}
               <div className="relative mx-auto w-48 h-48 mb-8">
                 <img 
-                  src="/images/sorry.png" 
+                  src="/images/sorry.png?v=1" 
                   alt="Sorry" 
                   className="w-full h-full object-cover rounded-3xl shadow-lg"
                 />
