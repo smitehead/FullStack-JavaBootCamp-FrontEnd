@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Bell, Search, Menu, X, User as UserIcon, LogOut, ChevronDown, ChevronUp, Sparkles, Plus, MapPin, Share2, Instagram, Youtube, Info, Headphones, Megaphone, Settings as SettingsIcon, Clock, TrendingUp, ShieldAlert, MessageSquare } from 'lucide-react';
+import { Bell, Search, Menu, X, User as UserIcon, LogOut, ChevronDown, ChevronUp, Sparkles, Plus, MapPin, Share2, Instagram, Youtube, Info, Headphones, Megaphone, Settings as SettingsIcon, Clock, TrendingUp, ShieldAlert, MessageSquare, RefreshCw } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
@@ -556,6 +557,16 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const navigate = useNavigate();
   const { logout, forceLogoutModalOpen, closeForceLogoutModal } = useAppContext();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [showErrorScreen, setShowErrorScreen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    // 애니메이션을 보여주기 위한 짧은 지연 후 새로고침
+    setTimeout(() => {
+      window.location.reload();
+    }, 800);
+  };
 
   // 로그아웃 확인 모달 오픈
   const handleLogout = () => {
@@ -627,6 +638,48 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           </div>
         </div>
       )}
+
+      <AnimatePresence>
+        {showErrorScreen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center p-6 text-center"
+          >
+            <div className="max-w-md w-full space-y-8">
+              {/* 점검 안내 이미지 영역 */}
+              <div className="relative mx-auto w-48 h-48 mb-8">
+                <img
+                  src="/images/죄송합니다.png"
+                  alt="Sorry"
+                  className="w-full h-full object-cover rounded-3xl shadow-lg"
+                />
+              </div>
+
+              {/* 안내 문구 */}
+              <div className="space-y-4">
+                <h2 className="text-3xl font-black text-gray-900 tracking-tight">서버 점검 중</h2>
+                <p className="text-gray-500 font-medium leading-relaxed">
+                  잠시 후 점검이 완료되면 이용하실 수 있습니다.
+                </p>
+              </div>
+
+              {/* 새로고침 버튼 */}
+              <div className="pt-8 flex justify-center">
+                <button
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                  className="px-12 py-5 bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 flex items-center gap-3 disabled:opacity-70"
+                >
+                  <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  새로고침
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
