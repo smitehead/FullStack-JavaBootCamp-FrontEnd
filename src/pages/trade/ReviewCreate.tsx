@@ -81,11 +81,10 @@ export const ReviewCreate: React.FC = () => {
                 <button
                   key={tag.id}
                   onClick={() => toggleTag(tag.content)}
-                  className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
-                    selectedTags.includes(tag.content)
+                  className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${selectedTags.includes(tag.content)
                       ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
                       : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
-                  }`}
+                    }`}
                 >
                   {tag.content}
                 </button>
@@ -114,7 +113,7 @@ export const ReviewCreate: React.FC = () => {
         </section>
       </div>
 
-      {/* Success Modal */}
+      {/* 성공 모달 */}
       {showSuccess && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-200">
