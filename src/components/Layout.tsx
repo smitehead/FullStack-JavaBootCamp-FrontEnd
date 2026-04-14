@@ -92,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
       <div className="max-w-[1200px] mx-auto px-6">
-        {/* Main Header Row */}
+        {/* 메인 헤더 */}
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-1 shrink-0 group">
@@ -102,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             <span className="text-2xl font-bold text-gray-800 tracking-tighter italic">JAVAJAVA</span>
           </Link>
 
-          {/* Search Bar */}
+          {/* 검색창 */}
           <div className="flex-1 max-w-2xl mx-12 hidden md:block relative">
             <form onSubmit={handleSearch} className="relative group flex items-center">
               <input
@@ -670,9 +670,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <div className="max-w-md w-full space-y-8">
               {/* 점검 안내 이미지 영역 */}
               <div className="relative mx-auto w-48 h-48 mb-8">
-                <img 
-                  src={sorryImg} 
-                  alt="Sorry" 
+                <img
+                  src={sorryImg}
+                  alt="Sorry"
                   className="w-full h-full object-cover rounded-3xl shadow-lg"
                 />
               </div>
