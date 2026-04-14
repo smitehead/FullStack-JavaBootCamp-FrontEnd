@@ -39,13 +39,18 @@ type TabType = 'selling' | 'bidding' | 'purchased' | 'wishlist' | 'reviews';
 
 export const MyPage: React.FC = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, updateCurrentUserProfileImage } = useAppContext();
   const [activeTab, setActiveTab] = useState<TabType>(() => {
     const tab = searchParams.get('tab');
     return (tab && ['selling', 'bidding', 'purchased', 'wishlist', 'reviews'].includes(tab))
       ? tab as TabType : 'selling';
   });
+
+  // URL 쿼리 파라미터 업데이트
+  useEffect(() => {
+    setSearchParams({ tab: activeTab }, { replace: true });
+  }, [activeTab, setSearchParams]);
   const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'completed'>('all');
   const [biddingFilter, setBiddingFilter] = useState<'all' | 'leader' | 'outbid' | 'lost'>('all');
 

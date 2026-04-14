@@ -273,7 +273,7 @@ export const WonProductDetail: React.FC = () => {
                     </div>
                   )}
                   <div className="flex-1">
-                    <Link to={`/product/${result.productNo}`} className="block group">
+                    <Link to={`/products/${result.productNo}`} className="block group">
                       <h4 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-emerald-500 transition-colors">{result.title}</h4>
                     </Link>
                     <p className="text-sm text-gray-500 mb-4 line-clamp-1">{result.description}</p>

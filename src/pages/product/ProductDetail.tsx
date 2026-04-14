@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { Heart, Share2, AlertTriangle, Clock, MapPin, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, ArrowLeft, Package, Users, MessageSquare, Reply } from 'lucide-react';
+import { Heart, Share2, AlertTriangle, Clock, MapPin, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, ArrowLeft, Package, Users, MessageSquare, Reply, Ban, AlertCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -898,9 +898,10 @@ export const ProductDetail: React.FC = () => {
                 <button
                   onClick={() => setShowCancelModal(true)}
                   disabled={isFinished}
-                  className="flex-1 py-4 border border-red-400 text-red-500 font-bold rounded-xl hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group flex-1 py-4 bg-white border-2 border-red-200 text-red-500 font-bold rounded-2xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-red-500"
                 >
-                  경매 취소
+                  <Ban className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                  <span>경매 취소</span>
                 </button>
               ) : (
                 <>
@@ -1401,96 +1402,139 @@ export const ProductDetail: React.FC = () => {
 
       {/* Auction Cancel Confirm Modal */}
       {showCancelModal && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-red-500" />
-                경매 취소
-              </h3>
-              <button onClick={() => setShowCancelModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <X className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 relative">
+            {/* Top accent line based on condition */}
+            <div className={`absolute top-0 left-0 w-full h-2 ${
+              cancelCondition === 'A' ? 'bg-emerald-500' : 
+              cancelCondition === 'B' ? 'bg-red-500' : 'bg-orange-500'
+            }`} />
 
-            <div className="p-6 space-y-4">
-              {cancelCondition === 'A' && (
-                <>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    아직 입찰자가 없습니다. <span className="font-bold text-gray-900">패널티 없이</span> 즉시 취소할 수 있습니다.
-                  </p>
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      onClick={() => setShowCancelModal(false)}
-                      className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors"
-                    >
-                      돌아가기
-                    </button>
-                    <button
-                      onClick={handleAuctionCancel}
-                      className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors"
-                    >
-                      취소 확정
-                    </button>
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm ${
+                    cancelCondition === 'A' ? 'bg-emerald-50 text-emerald-500' : 
+                    cancelCondition === 'B' ? 'bg-red-50 text-red-500' : 'bg-orange-50 text-orange-500'
+                  }`}>
+                    <AlertTriangle className="w-7 h-7" />
                   </div>
-                </>
-              )}
+                  <div>
+                    <h3 className="text-2xl font-black text-gray-900 tracking-tight">경매 취소</h3>
+                    <p className="text-sm text-gray-400 font-bold mt-0.5">Auction Cancellation</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowCancelModal(false)} 
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors group"
+                >
+                  <X className="w-6 h-6 text-gray-300 group-hover:text-gray-600" />
+                </button>
+              </div>
 
-              {cancelCondition === 'B' && (
-                <>
-                  <div className="bg-red-50 border border-red-100 rounded-xl p-4 space-y-2">
-                    <p className="text-sm font-bold text-red-600">취소 패널티가 부과됩니다</p>
-                    <ul className="text-xs text-red-500 space-y-1 list-disc list-inside">
-                      <li>매너온도 <span className="font-bold">-10점</span> 차감</li>
-                      <li>포인트 벌금: <span className="font-bold">최소 1,000원 또는 현재 입찰가의 3%</span></li>
-                    </ul>
+              <div className="mb-10">
+                {cancelCondition === 'A' && (
+                  <div className="space-y-6">
+                    <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-5">
+                      <p className="text-sm text-emerald-700 leading-relaxed font-bold">
+                        현재 입찰 참여자가 없습니다. <br/>
+                        <span className="text-emerald-500 underline underline-offset-4 decoration-2">아무런 패널티 없이</span> 즉시 취소할 수 있습니다.
+                      </p>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setShowCancelModal(false)}
+                        className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-95"
+                      >
+                        돌아가기
+                      </button>
+                      <button
+                        onClick={handleAuctionCancel}
+                        className="flex-1 py-4 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
+                      >
+                        취소 확정
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    현재 <span className="font-bold text-gray-900">{product.participantCount}명</span>의 입찰자가 있습니다.
-                    취소 시 모든 입찰자에게 포인트가 즉시 환불되며, 취소 알림이 발송됩니다.
-                  </p>
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      onClick={() => setShowCancelModal(false)}
-                      className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors"
-                    >
-                      돌아가기
-                    </button>
-                    <button
-                      onClick={handleAuctionCancel}
-                      className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors"
-                    >
-                      패널티 감수하고 취소
-                    </button>
-                  </div>
-                </>
-              )}
+                )}
 
-              {cancelCondition === 'C' && (
-                <>
-                  <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
-                    <p className="text-sm font-bold text-orange-600 mb-1">마감 12시간 이내 — 취소 불가</p>
-                    <p className="text-xs text-orange-500 leading-relaxed">
-                      경매 마감이 임박하여 판매자가 임의로 취소할 수 없습니다.
-                      물건 파손 등 불가피한 사유가 있다면 관리자에게 취소를 신청해 주세요.
-                    </p>
+                {cancelCondition === 'B' && (
+                  <div className="space-y-6">
+                    <div className="bg-red-50/50 border border-red-100 rounded-2xl p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                        <p className="text-sm font-black text-red-600">주의: 취소 패널티가 발생합니다</p>
+                      </div>
+                      <ul className="space-y-3">
+                        <li className="flex items-center gap-2 text-xs font-bold text-red-500/80">
+                          <div className="w-1 h-1 bg-red-300 rounded-full" />
+                          매너온도 <span className="text-red-600 font-black">-10점</span> 즉시 차감
+                        </li>
+                        <li className="flex items-center gap-2 text-xs font-bold text-red-500/80">
+                          <div className="w-1 h-1 bg-red-300 rounded-full" />
+                          포인트 벌금: <span className="text-red-600 font-black">현재가의 3% (최소 1,000원)</span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div className="px-1">
+                      <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                        현재 <span className="font-bold text-gray-900 border-b-2 border-red-100">{product.participantCount}명</span>의 입찰자가 대기 중입니다.
+                        취소 시 모든 입찰자에게 포인트가 환불되며 알림이 가요.
+                      </p>
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        onClick={() => setShowCancelModal(false)}
+                        className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95"
+                      >
+                        돌아가기
+                      </button>
+                      <button
+                        onClick={handleAuctionCancel}
+                        className="flex-1 py-4 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all shadow-xl shadow-red-100 active:scale-95"
+                      >
+                        패널티 감수하고 취소
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      onClick={() => setShowCancelModal(false)}
-                      className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors"
-                    >
-                      닫기
-                    </button>
-                    <button
-                      onClick={() => { setShowCancelModal(false); navigate(`/report?productId=${product.id}`); }}
-                      className="flex-1 py-3 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors"
-                    >
-                      관리자에게 신청
-                    </button>
+                )}
+
+                {cancelCondition === 'C' && (
+                  <div className="space-y-6">
+                    <div className="bg-orange-50/50 border border-orange-100 rounded-2xl p-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <AlertCircle className="w-4 h-4 text-orange-500" />
+                        <p className="text-sm font-black text-orange-600">마감 임박 (12시간 이내)</p>
+                      </div>
+                      <p className="text-xs text-orange-700 leading-relaxed font-bold">
+                        경매 종료가 얼마 남지 않아 판매자가 직접 취소할 수 없습니다. 
+                        부득이한 사유가 있다면 관리자에게 문의해주세요.
+                      </p>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setShowCancelModal(false)}
+                        className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95"
+                      >
+                        닫기
+                      </button>
+                      <button
+                        onClick={() => { setShowCancelModal(false); navigate(`/report?productId=${product.id}`); }}
+                        className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-95"
+                      >
+                        관리자에게 문의
+                      </button>
+                    </div>
                   </div>
-                </>
-              )}
+                )}
+              </div>
+              
+              <p className="text-center text-[10px] text-gray-400 font-bold tracking-tight uppercase">
+                LifeBid Auction Security System
+              </p>
             </div>
           </div>
         </div>

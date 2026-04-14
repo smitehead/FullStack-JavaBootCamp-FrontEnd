@@ -456,7 +456,13 @@ export const Chat: React.FC = () => {
 
   // ──── 유틸 ────
   const scrollToBottom = () => {
-    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    const container = messagesContainerRef.current;
+    if (container) {
+      // requestAnimationFrame을 사용하여 돔 렌더링 후 스크롤이 적용되도록 함
+      requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight;
+      });
+    }
   };
 
   const filteredRooms = chatRooms.filter(room => {
