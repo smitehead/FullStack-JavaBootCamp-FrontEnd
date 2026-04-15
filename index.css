@@ -14,6 +14,13 @@
   --color-brand-light: #FF8080;
 }
 
+/* sonner 토스터 중앙 정렬 fix (스크롤바 너비 보정) */
+[data-sonner-toaster][data-position="top-center"] {
+  left: 50vw !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+}
+
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
