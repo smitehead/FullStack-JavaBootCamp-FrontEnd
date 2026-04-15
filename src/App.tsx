@@ -73,7 +73,7 @@ const App: React.FC = () => {
       // 각 toast li를 ol 안에서 가운데 정렬
       toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((toast) => {
         toast.style.setProperty('left', '50%', 'important');
-        toast.style.setProperty('transform', 'translateX(-50%)', 'important');
+        toast.style.setProperty('transform', 'var(--y) translateX(-50%)', 'important');
       });
     };
     const observer = new MutationObserver(applyAll);
