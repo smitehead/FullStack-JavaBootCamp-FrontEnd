@@ -4,7 +4,7 @@ import api from '@/services/api';
 import { ProductCard } from '@/components/ProductCard';
 import { CATEGORY_DATA, LOCATION_DATA } from '@/constants';
 import { showToast } from '@/components/toastService';
-import { ChevronRight, Search, RotateCcw, X, Plus, Minus, Loader2, MapPin, LocateFixed } from 'lucide-react';
+import { ChevronRight, Search, RotateCcw, X, Plus, Minus, Loader2, LocateFixed } from 'lucide-react';
 import { Product } from '@/types';
 import { resolveImageUrls } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';

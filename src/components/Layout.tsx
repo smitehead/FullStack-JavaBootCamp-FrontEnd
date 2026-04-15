@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Bell, Search, Menu, X, User as UserIcon, LogOut, ChevronDown, ChevronUp, Sparkles, Plus, MapPin, Share2, Instagram, Youtube, Info, Headphones, Megaphone, Settings as SettingsIcon, Clock, TrendingUp, ShieldAlert, MessageSquare, RefreshCw } from 'lucide-react';
+import { Bell, Search, Menu, X, User as UserIcon, Sparkles, MapPin, Share2, Instagram, Youtube, Settings as SettingsIcon, Clock, TrendingUp, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
@@ -688,7 +688,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </div>
       )}
 
-      {/* 서버 점검 / 에러 화면 */}
+      {/* 서버 점검 / 에러 화면 (Maintenance.html과 디자인 통일) */}
       <AnimatePresence>
         {showErrorScreen && (
           <motion.div
@@ -697,23 +697,33 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center p-6 text-center"
           >
-            <div className="max-w-2xl w-full space-y-10">
-              {/* 점검 안내 이미지 영역 (반응형 대응 및 잘림 방지) */}
-              <div className="relative mx-auto w-full flex items-center justify-center min-h-[200px] mb-6">
+            <div className="max-w-[600px] w-full flex flex-col items-center">
+              {/* 점검 안내 이미지 영역 */}
+              <div className="relative w-full flex items-center justify-center min-h-[200px] mb-6">
                 <img
                   src={SORRY_IMAGE_BASE64}
                   alt="Sorry"
-                  className="w-[280px] h-[280px] md:w-[360px] md:h-[360px] object-contain pointer-events-none mx-auto"
+                  className="w-[280px] h-[280px] md:w-[360px] md:h-[360px] object-contain pointer-events-none"
                 />
               </div>
 
               {/* 안내 문구 */}
-              <div className="space-y-4">
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight">서비스 점검 중</h2>
-                <p className="text-gray-500 font-medium leading-relaxed">
+              <div className="mb-8">
+                <h2 className="text-[30px] font-black text-[#111827] tracking-tight mb-4">서비스 점검 중</h2>
+                <p className="text-[16px] text-[#6b7280] font-medium leading-relaxed">
                   보다 안정적인 서비스 제공을 위해 서버 점검 중입니다.<br />
                   점검이 완료되면 자동으로 페이지가 복구됩니다.
                 </p>
+              </div>
+
+              {/* 하단 자동 복구 안내 (Maintenance.html과 동일한 pulsing dot 적용) */}
+              <div className="flex items-center space-x-2 text-[13px] font-bold text-[#9ca3af]">
+                <motion.span
+                  animate={{ scale: [0.95, 1.05, 0.95], opacity: [0.5, 1, 0.5] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                  className="w-2 h-2 bg-[#FF5A5A] rounded-full"
+                />
+                <span>자동 복구 시도 중</span>
               </div>
             </div>
           </motion.div>
