@@ -70,6 +70,8 @@ const App: React.FC = () => {
           visibleToasts={5}
           gap={12}
           richColors
+          containerAriaLabel="알림"
+          style={{ left: '50vw', transform: 'translateX(-50%)', right: 'auto' }}
         />
         <Routes>
           {/* Admin Routes */}
