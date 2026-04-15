@@ -63,7 +63,7 @@ import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 const App: React.FC = () => {
   useEffect(() => {
     const style = document.createElement('style');
-    style.textContent = '[data-sonner-toaster]{left:50dvw!important;transform:translateX(-50%)!important;}';
+    style.textContent = '[data-sonner-toaster]{left:50dvw !important;transform:translateX(-50%) !important;}';
     document.head.appendChild(style);
   }, []);
 
