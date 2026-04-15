@@ -30,10 +30,17 @@
       background: #555;
     }
 
-    /* sonner toast 가운데 고정 (Tailwind 레이어 우선순위 문제 우회) */
+    /* sonner: ol을 전체 뷰포트로 확장, li를 정가운데 정렬 */
     [data-sonner-toaster] {
-      left: 50dvw !important;
-      transform: translateX(-50%) !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100vw !important;
+      transform: none !important;
+    }
+    [data-sonner-toast] {
+      left: 50% !important;
+      transform: var(--y) translateX(-50%) !important;
+      transition: transform 0.2s ease, opacity 0.2s ease, height 0.2s ease !important;
     }
   </style>
   <script type="importmap">
