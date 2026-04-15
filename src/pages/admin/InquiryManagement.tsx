@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Search, MessageSquare, CheckCircle2, Trash2, Send, User } from 'lucide-react';
 import { Inquiry } from '@/types';
 import { showToast } from '@/components/toastService';
+import { ImageLightbox } from '@/components/ImageLightbox';
 import api from '@/services/api';
 
 export const InquiryManagement: React.FC = () => {
@@ -15,6 +16,8 @@ export const InquiryManagement: React.FC = () => {
   const [answer, setAnswer] = useState('');
   const [activeTab, setActiveTab] = useState<'전체' | '답변 대기중' | '답변 완료'>('전체');
   const [selectedType, setSelectedType] = useState<string>('전체');
+  const [lightboxUrls, setLightboxUrls] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const filteredInquiries = inquiries.filter(i => {
     const matchesSearch = i.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -215,13 +218,13 @@ export const InquiryManagement: React.FC = () => {
                 {selectedInquiry.imageUrls && selectedInquiry.imageUrls.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {selectedInquiry.imageUrls.map((url, idx) => (
-                      <a key={idx} href={url} target="_blank" rel="noopener noreferrer">
-                        <img
-                          src={url}
-                          alt={`첨부 이미지 ${idx + 1}`}
-                          className="h-24 w-24 object-cover rounded-none border border-gray-200 hover:opacity-80 transition-opacity cursor-pointer"
-                        />
-                      </a>
+                      <img
+                        key={idx}
+                        src={url}
+                        alt={`첨부 이미지 ${idx + 1}`}
+                        className="h-24 w-24 object-cover rounded-none border border-gray-200 hover:opacity-80 transition-opacity cursor-pointer"
+                        onClick={() => { setLightboxUrls(selectedInquiry.imageUrls!); setLightboxIndex(idx); }}
+                      />
                     ))}
                   </div>
                 )}
@@ -274,6 +277,15 @@ export const InquiryManagement: React.FC = () => {
         )}
       </div>
       {/* Delete Confirmation Modal */}
+      {lightboxUrls.length > 0 && (
+        <ImageLightbox
+          urls={lightboxUrls}
+          index={lightboxIndex}
+          onClose={() => setLightboxUrls([])}
+          onNav={setLightboxIndex}
+        />
+      )}
+
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-w-sm rounded-2xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300">

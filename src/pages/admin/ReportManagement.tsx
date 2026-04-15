@@ -3,6 +3,7 @@ import { AlertTriangle, Search, Filter, User, Gavel, MessageSquare, ShieldAlert,
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { showToast } from '@/components/toastService';
+import { ImageLightbox } from '@/components/ImageLightbox';
 import api from '@/services/api';
 
 interface ReportDetail {
@@ -34,6 +35,8 @@ export const ReportManagement: React.FC = () => {
   const [detailReport, setDetailReport] = useState<ReportDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const [lightboxUrls, setLightboxUrls] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const loaderRef = useRef<HTMLDivElement>(null);
 
   // 신고 목록 fetch (실제 API)
@@ -378,7 +381,7 @@ export const ReportManagement: React.FC = () => {
                             src={url}
                             alt={`report-img-${idx}`}
                             className="w-28 h-28 object-cover rounded-xl border border-gray-100 hover:scale-105 transition-transform cursor-pointer"
-                            onClick={() => window.open(url, '_blank')}
+                            onClick={() => { setLightboxUrls(detailReport.imageUrls!); setLightboxIndex(idx); }}
                           />
                         ))}
                       </div>
@@ -458,6 +461,15 @@ export const ReportManagement: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
+
+      {lightboxUrls.length > 0 && (
+        <ImageLightbox
+          urls={lightboxUrls}
+          index={lightboxIndex}
+          onClose={() => setLightboxUrls([])}
+          onNav={setLightboxIndex}
+        />
+      )}
     </div>
   );
 };
