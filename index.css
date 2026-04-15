@@ -14,11 +14,6 @@
   --color-brand-light: #FF8080;
 }
 
-[data-sonner-toaster] {
-  left: 50dvw !important;
-  transform: translateX(-50%) !important;
-}
-
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
