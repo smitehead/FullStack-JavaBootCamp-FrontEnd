@@ -1507,8 +1507,25 @@ export const ProductDetail: React.FC = () => {
                 </p>
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(window.location.href);
-                    showToast('링크가 복사되었습니다!', 'success');
+                    const url = window.location.href;
+                    const fallbackCopy = () => {
+                      const el = document.createElement('textarea');
+                      el.value = url;
+                      el.style.position = 'fixed';
+                      el.style.opacity = '0';
+                      document.body.appendChild(el);
+                      el.select();
+                      document.execCommand('copy');
+                      document.body.removeChild(el);
+                      showToast('링크가 복사되었습니다!', 'success');
+                    };
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                      navigator.clipboard.writeText(url)
+                        .then(() => showToast('링크가 복사되었습니다!', 'success'))
+                        .catch(fallbackCopy);
+                    } else {
+                      fallbackCopy();
+                    }
                   }}
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 shrink-0"
                 >
