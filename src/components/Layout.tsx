@@ -558,7 +558,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const navigate = useNavigate();
   const { logout, forceLogoutModalOpen, closeForceLogoutModal } = useAppContext();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [showErrorScreen, setShowErrorScreen] = useState(false);
+  const [showErrorScreen, setShowErrorScreen] = useState(() => {
+    return localStorage.getItem('server_error') === 'true';
+  });
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = async () => {
@@ -567,6 +569,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       // 프론트엔드 서버가 닫혀있을 때 reload하면 브라우저 기본 오류페이지로 넘어가므로 이를 방지하기 위해 가벼운 ping 체크
       await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
       // 정상 응답을 받으면(서버가 다시 켜졌으면) 화면을 새로고침하여 앱 마운트
+      localStorage.removeItem('server_error');
       window.location.reload();
     } catch (error) {
       // fetch가 실패했다면 서버가 아직 내려가있는 것이므로 스피너만 끄고 오류화면 유지
@@ -580,6 +583,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   useEffect(() => {
     const handleServerError = () => {
       setShowErrorScreen(true);
+      localStorage.setItem('server_error', 'true');
     };
 
     window.addEventListener('serverError', handleServerError);
@@ -667,13 +671,13 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center p-6 text-center"
           >
-            <div className="max-w-md w-full space-y-8">
+            <div className="max-w-2xl w-full space-y-10">
               {/* 점검 안내 이미지 영역 */}
-              <div className="relative mx-auto w-48 h-48 mb-8">
+              <div className="relative mx-auto w-full max-w-[500px] mb-4">
                 <img
                   src={SORRY_IMAGE_BASE64}
                   alt="Sorry"
-                  className="w-full h-full object-cover rounded-3xl shadow-lg"
+                  className="w-full h-auto object-contain"
                 />
               </div>
 
