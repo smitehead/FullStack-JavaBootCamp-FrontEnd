@@ -119,7 +119,7 @@ export const AuctionManagement: React.FC = () => {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <Link
-                        to={`/products/${product.id}`}
+                        to={`/products/${product.id.replace('prod_', '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm font-bold text-gray-900 truncate hover:text-[#FF5A5A] hover:underline transition-colors"
