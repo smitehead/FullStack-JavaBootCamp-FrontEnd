@@ -34,7 +34,7 @@ const mapReportToFrontend = (r: any): Report => ({
   targetType: r.targetMemberNo ? 'user' as const : 'product' as const,
   reason: r.type,
   details: r.content || '',
-  status: (r.status === '완료' || r.status === '반려') ? 'resolved' as const : 'pending' as const,
+  status: r.status === '접수' ? 'pending' as const : 'resolved' as const,
   createdAt: r.createdAt,
 });
 
