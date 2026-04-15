@@ -572,12 +572,37 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       localStorage.removeItem('server_error');
       window.location.reload();
     } catch (error) {
-      // fetch가 실패했다면 서버가 아직 내려가있는 것이므로 스피너만 끄고 오류화면 유지
       setTimeout(() => {
         setIsRefreshing(false);
       }, 500);
     }
   };
+
+  // 자동 복구 폴링 로직 (5초마다 서버 체크)
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    if (showErrorScreen) {
+      intervalId = setInterval(async () => {
+        try {
+          // 프론트엔드 URL에 HEAD 요청을 보내서 살아있는지 확인
+          const res = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+          if (res.ok) {
+            // 서버가 응답하면 상태 초기화 및 리로드
+            localStorage.removeItem('server_error');
+            setShowErrorScreen(false);
+            window.location.reload();
+          }
+        } catch (err) {
+          // 여전히 서버가 내려가 있는 경우
+        }
+      }, 5000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [showErrorScreen]);
 
   // 전역 서버 에러 이벤트 리스너 등록
   useEffect(() => {
@@ -663,6 +688,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </div>
       )}
 
+      {/* 서버 점검 / 에러 화면 */}
       <AnimatePresence>
         {showErrorScreen && (
           <motion.div
@@ -672,33 +698,22 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center p-6 text-center"
           >
             <div className="max-w-2xl w-full space-y-10">
-              {/* 점검 안내 이미지 영역 */}
-              <div className="relative mx-auto w-full max-w-[500px] mb-4">
+              {/* 점검 안내 이미지 영역 (반응형 대응 및 잘림 방지) */}
+              <div className="relative mx-auto w-full flex items-center justify-center min-h-[200px] mb-6">
                 <img
                   src={SORRY_IMAGE_BASE64}
                   alt="Sorry"
-                  className="w-full h-auto object-contain"
+                  className="w-[280px] h-[280px] md:w-[360px] md:h-[360px] object-contain pointer-events-none mx-auto"
                 />
               </div>
 
               {/* 안내 문구 */}
               <div className="space-y-4">
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight">서버 점검 중</h2>
+                <h2 className="text-3xl font-black text-gray-900 tracking-tight">서비스 점검 중</h2>
                 <p className="text-gray-500 font-medium leading-relaxed">
-                  잠시 후 점검이 완료되면 이용하실 수 있습니다.
+                  보다 안정적인 서비스 제공을 위해 서버 점검 중입니다.<br />
+                  점검이 완료되면 자동으로 페이지가 복구됩니다.
                 </p>
-              </div>
-
-              {/* 새로고침 버튼 */}
-              <div className="pt-8 flex justify-center">
-                <button
-                  onClick={handleRefresh}
-                  disabled={isRefreshing}
-                  className="px-12 py-5 bg-[#FF5A5A] text-white font-black rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 flex items-center gap-3 disabled:opacity-70"
-                >
-                  <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  새로고침
-                </button>
               </div>
             </div>
           </motion.div>
