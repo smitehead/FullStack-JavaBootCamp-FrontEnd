@@ -1502,7 +1502,7 @@ export const ProductDetail: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative"
+              className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative"
             >
               <div className="p-8">
                 <div className="mb-8">
@@ -1624,7 +1624,7 @@ export const ProductDetail: React.FC = () => {
       ────────────────────────────────────────────────────────────────── */}
       {showBidCancelModal && product && (
         <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 relative">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 relative">
             {/* 위험 강조 상단 라인 */}
             <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500" />
 

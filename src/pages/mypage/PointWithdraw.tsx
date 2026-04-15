@@ -145,7 +145,7 @@ export const PointWithdraw: React.FC = () => {
         <div className="flex gap-4">
           <button
             onClick={() => setWithdrawType('my')}
-            className={`flex-1 p-6 rounded-3xl border transition-all text-left ${withdrawType === 'my' ? 'border-indigo-600 bg-indigo-50/50 shadow-sm' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+            className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${withdrawType === 'my' ? 'border-indigo-600 bg-indigo-50/50 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${withdrawType === 'my' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
               <Landmark className="w-5 h-5" />
@@ -155,7 +155,7 @@ export const PointWithdraw: React.FC = () => {
           </button>
           <button
             onClick={() => setWithdrawType('new')}
-            className={`flex-1 p-6 rounded-3xl border transition-all text-left ${withdrawType === 'new' ? 'border-indigo-600 bg-indigo-50/50 shadow-sm' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+            className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${withdrawType === 'new' ? 'border-indigo-600 bg-indigo-50/50 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${withdrawType === 'new' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
               <Plus className="w-5 h-5" />
