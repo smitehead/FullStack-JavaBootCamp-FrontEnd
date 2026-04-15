@@ -62,9 +62,19 @@ import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 
 const App: React.FC = () => {
   useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = '[data-sonner-toaster]{left:50dvw !important;transform:translateX(-50%) !important;}';
-    document.head.appendChild(style);
+    const apply = (el: HTMLElement) => {
+      el.style.setProperty('left', '50%', 'important');
+      el.style.setProperty('right', 'auto', 'important');
+      el.style.setProperty('transform', 'translateX(-50%)', 'important');
+    };
+    const observer = new MutationObserver(() => {
+      const el = document.querySelector<HTMLElement>('[data-sonner-toaster]');
+      if (el) apply(el);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    const el = document.querySelector<HTMLElement>('[data-sonner-toaster]');
+    if (el) apply(el);
+    return () => observer.disconnect();
   }, []);
 
   return (
