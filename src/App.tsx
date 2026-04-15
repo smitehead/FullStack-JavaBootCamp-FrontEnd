@@ -63,7 +63,8 @@ import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 const App: React.FC = () => {
   useEffect(() => {
     const apply = (el: HTMLElement) => {
-      el.style.setProperty('left', '50%', 'important');
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      el.style.setProperty('left', `calc(50% - ${scrollbarWidth / 2}px)`, 'important');
       el.style.setProperty('right', 'auto', 'important');
       el.style.setProperty('transform', 'translateX(-50%)', 'important');
     };
