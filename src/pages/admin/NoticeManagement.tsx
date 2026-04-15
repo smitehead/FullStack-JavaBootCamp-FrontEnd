@@ -12,6 +12,8 @@ interface NoticeItem {
   isImportant: boolean;
   createdAt: string;
   isDeleted: number;
+  maintenanceStart?: string;
+  maintenanceEnd?: string;
 }
 
 const ITEMS_PER_PAGE = 15;
@@ -31,6 +33,8 @@ export const NoticeManagement: React.FC = () => {
   const [category, setCategory] = useState<NoticeCategory>("업데이트");
   const [content, setContent] = useState("");
   const [isImportant, setIsImportant] = useState(false);
+  const [maintenanceStart, setMaintenanceStart] = useState("");
+  const [maintenanceEnd, setMaintenanceEnd] = useState("");
 
   const fetchNotices = useCallback(async () => {
     try {
@@ -74,12 +78,16 @@ export const NoticeManagement: React.FC = () => {
       setCategory(notice.category as NoticeCategory);
       setContent(notice.content);
       setIsImportant(notice.isImportant);
+      setMaintenanceStart(notice.maintenanceStart?.slice(0, 16) || "");
+      setMaintenanceEnd(notice.maintenanceEnd?.slice(0, 16) || "");
     } else {
       setEditingNotice(null);
       setTitle("");
       setCategory("업데이트");
       setContent("");
       setIsImportant(false);
+      setMaintenanceStart("");
+      setMaintenanceEnd("");
     }
     setIsModalOpen(true);
   };
@@ -90,7 +98,11 @@ export const NoticeManagement: React.FC = () => {
       return;
     }
     try {
-      const body = { category, title, content, isImportant };
+      const body: any = { category, title, content, isImportant };
+      if (category === "점검") {
+        body.maintenanceStart = maintenanceStart || null;
+        body.maintenanceEnd = maintenanceEnd || null;
+      }
       if (editingNotice) {
         await api.put(`/notices/${editingNotice.id}`, body);
         showToast("공지사항이 수정되었습니다.", "success");
@@ -278,6 +290,29 @@ export const NoticeManagement: React.FC = () => {
                   </label>
                 </div>
               </div>
+
+              {category === "점검" && (
+                <div className="grid grid-cols-2 gap-4 p-4 bg-orange-50 border border-orange-100 rounded-none">
+                  <div>
+                    <label className="block text-xs font-bold text-orange-700 mb-2">점검 시작 일시</label>
+                    <input
+                      type="datetime-local"
+                      className="w-full px-3 py-2 bg-white border border-orange-200 rounded-none focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm font-medium"
+                      value={maintenanceStart}
+                      onChange={(e) => setMaintenanceStart(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-orange-700 mb-2">점검 종료 일시</label>
+                    <input
+                      type="datetime-local"
+                      className="w-full px-3 py-2 bg-white border border-orange-200 rounded-none focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm font-medium"
+                      value={maintenanceEnd}
+                      onChange={(e) => setMaintenanceEnd(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-2">

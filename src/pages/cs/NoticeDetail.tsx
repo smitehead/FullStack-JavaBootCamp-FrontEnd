@@ -11,6 +11,8 @@ interface NoticeItem {
   content: string;
   isImportant: boolean;
   createdAt: string;
+  maintenanceStart?: string;
+  maintenanceEnd?: string;
 }
 
 export const NoticeDetail: React.FC = () => {
@@ -99,8 +101,12 @@ export const NoticeDetail: React.FC = () => {
               </div>
               <div className="space-y-3 text-sm">
                 <div className="flex gap-4">
-                  <span className="w-20 text-gray-400 font-bold">점검 일시</span>
-                  <span className="text-gray-900">공지사항 내용을 확인해주세요.</span>
+                  <span className="w-20 text-gray-400 font-bold shrink-0">점검 일시</span>
+                  <span className="text-gray-900">
+                    {notice.maintenanceStart
+                      ? `${format(new Date(notice.maintenanceStart), 'yyyy.MM.dd HH:mm')} ~ ${notice.maintenanceEnd ? format(new Date(notice.maintenanceEnd), 'yyyy.MM.dd HH:mm') : '미정'}`
+                      : '공지사항 내용을 확인해주세요.'}
+                  </span>
                 </div>
               </div>
             </div>
