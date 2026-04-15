@@ -150,7 +150,8 @@ export const ProductDetail: React.FC = () => {
   const [showBidCancelModal, setShowBidCancelModal] = useState(false);
   const [isBidCancelling, setIsBidCancelling] = useState(false);
 
-  // 입찰 버튼 더블탭 확인 UX (Phase 0)
+  // 입찰 약관 동의 모달 + 더블탭 확인 UX (Phase 0)
+  const [showBidTermsModal, setShowBidTermsModal] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const confirmTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -693,19 +694,25 @@ export const ProductDetail: React.FC = () => {
   };
 
   /**
-   * 입찰 참여 버튼 더블탭 UX (Phase 0).
-   * 첫 탭: 확인 상태 진입 (3초 후 자동 해제).
-   * 두 번째 탭: 실제 입찰 모달 오픈.
+   * 입찰 참여 버튼 클릭 (Phase 0).
+   * - isConfirming=false: 약관 동의 모달 오픈.
+   * - isConfirming=true (약관 동의 후 대기 중): 실제 입찰 모달 오픈.
    */
   const handleBidButtonClick = () => {
     if (!isConfirming) {
-      setIsConfirming(true);
-      confirmTimerRef.current = setTimeout(() => setIsConfirming(false), 3000);
+      setShowBidTermsModal(true);
     } else {
       if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
       setIsConfirming(false);
       openBidModal('bid');
     }
+  };
+
+  /** 약관 동의 모달 — 동의 버튼 핸들러. 모달 닫고 더블탭 대기 상태로 진입. */
+  const handleBidTermsAgree = () => {
+    setShowBidTermsModal(false);
+    setIsConfirming(true);
+    confirmTimerRef.current = setTimeout(() => setIsConfirming(false), 3000);
   };
 
   const chartData = [...product.bids]
@@ -1791,6 +1798,73 @@ export const ProductDetail: React.FC = () => {
                   </div>
                 );
               })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ──────────────────────────────────────────────────────────────────
+          입찰 약관 동의 모달 (Phase 0)
+          - "입찰 참여하기" 첫 탭 시 표시
+          - 동의 → 더블탭 대기 상태(isConfirming) 진입
+          - 뒤로가기 → 모달 닫기
+      ────────────────────────────────────────────────────────────────── */}
+      {showBidTermsModal && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="h-1.5 bg-orange-500 w-full" />
+            <div className="p-8">
+              {/* 헤더 */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-gray-900 tracking-tight">입찰 참여 전 확인사항</h3>
+                  <p className="text-sm text-gray-400 font-medium mt-0.5">Bid Terms & Conditions</p>
+                </div>
+              </div>
+
+              {/* 약관 내용 */}
+              <div className="bg-gray-50 rounded-2xl p-5 mb-6 space-y-3 text-sm text-gray-700 leading-relaxed">
+                <p className="font-bold text-gray-900">입찰 전 아래 사항을 반드시 확인하세요.</p>
+                <ul className="space-y-2 list-none">
+                  <li className="flex gap-2">
+                    <span className="text-orange-500 font-black mt-0.5">·</span>
+                    <span>입찰가는 현재 최고가보다 <strong>높아야</strong> 하며, 한 번 제출된 입찰은 취소 시 <strong>위약금(5%)</strong>이 발생합니다.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-orange-500 font-black mt-0.5">·</span>
+                    <span>경매 마감 <strong>12시간 이내</strong>에는 입찰 취소가 불가합니다.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-orange-500 font-black mt-0.5">·</span>
+                    <span>낙찰 후 <strong>12시간 이내</strong>에 결제를 완료하지 않으면 낙찰이 취소되고 차순위 입찰자에게 권한이 이전됩니다.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-orange-500 font-black mt-0.5">·</span>
+                    <span>입찰 포인트는 상회 입찰 발생 시 즉시 환불되며, 낙찰 시 최종 결제에 사용됩니다.</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* 버튼 */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowBidTermsModal(false)}
+                  className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-colors"
+                >
+                  뒤로가기
+                </button>
+                <button
+                  onClick={handleBidTermsAgree}
+                  className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20"
+                >
+                  동의하고 입찰
+                </button>
+              </div>
             </div>
           </div>
         </div>
