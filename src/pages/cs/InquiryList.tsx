@@ -81,7 +81,7 @@ export const InquiryList: React.FC = () => {
                 onClick={() => setSelectedType(cat)}
                 className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${selectedType === cat
                   ? 'bg-red-500 text-white border border-transparent shadow-lg shadow-red-500/10'
-                  : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'
+                  : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50 shadow-sm'
                   }`}
               >
                 {cat}
@@ -100,8 +100,8 @@ export const InquiryList: React.FC = () => {
                     className="block px-8 py-5 transition-colors group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-20 shrink-0">
-                        <span className="text-xs font-bold text-gray-400">{inquiry.type}</span>
+                       <div className="w-20 shrink-0">
+                        <span className="text-xs font-bold px-2 py-1 bg-gray-50 text-gray-400 rounded-md shadow-lg shadow-gray-100/50">{inquiry.type}</span>
                       </div>
                       <div className="flex-1 flex items-center gap-4 min-w-0">
                         <h3 className="flex-1 text-sm text-gray-900 group-hover:underline underline-offset-4 transition-all line-clamp-1 font-bold">

@@ -86,7 +86,7 @@ export const InquiryDetail: React.FC = () => {
         <div className="p-10 border-b border-gray-50">
           <div className="flex items-center justify-between gap-4 mb-6">
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 text-xs font-semibold rounded-md uppercase tracking-wider bg-gray-50 text-gray-500">
+              <span className="px-3 py-1 text-xs font-bold rounded-md uppercase tracking-wider bg-gray-50 text-gray-500 shadow-lg shadow-gray-100/50">
                 {inquiry.type}
               </span>
               {inquiry.bugType && (
@@ -97,11 +97,11 @@ export const InquiryDetail: React.FC = () => {
             </div>
             
             {inquiry.status === 1 ? (
-              <div className="px-4 py-2 bg-green-50 text-green-600 rounded-full text-xs font-semibold">
+              <div className="px-4 py-2 bg-green-50 text-green-600 rounded-full text-xs font-bold shadow-lg shadow-green-500/10">
                 답변 완료
               </div>
             ) : (
-              <div className="px-4 py-2 bg-amber-50 text-amber-600 rounded-full text-xs font-semibold">
+              <div className="px-4 py-2 bg-amber-50 text-amber-600 rounded-full text-xs font-bold shadow-lg shadow-amber-500/10">
                 답변 대기중
               </div>
             )}
