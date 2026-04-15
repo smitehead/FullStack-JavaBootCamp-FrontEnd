@@ -212,6 +212,19 @@ export const InquiryManagement: React.FC = () => {
                 </div>
                 <h4 className="text-base font-bold text-gray-900 mb-1">{selectedInquiry.title}</h4>
                 <p className="text-sm text-gray-700 font-medium leading-relaxed whitespace-pre-wrap">{selectedInquiry.content}</p>
+                {selectedInquiry.imageUrls && selectedInquiry.imageUrls.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {selectedInquiry.imageUrls.map((url, idx) => (
+                      <a key={idx} href={url} target="_blank" rel="noopener noreferrer">
+                        <img
+                          src={url}
+                          alt={`첨부 이미지 ${idx + 1}`}
+                          className="h-24 w-24 object-cover rounded-none border border-gray-200 hover:opacity-80 transition-opacity cursor-pointer"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {selectedInquiry.status === 1 && (
