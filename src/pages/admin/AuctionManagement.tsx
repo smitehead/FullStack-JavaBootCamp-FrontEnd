@@ -118,7 +118,15 @@ export const AuctionManagement: React.FC = () => {
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <p className="text-sm font-bold text-gray-900 truncate">{product.title}</p>
+                      <Link
+                        to={`/products/${product.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-bold text-gray-900 truncate hover:text-[#FF5A5A] hover:underline transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {product.title}
+                      </Link>
                       <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-bold ${product.status === 'active' ? 'bg-green-50 text-green-600' :
                         product.status === 'completed' ? 'bg-gray-100 text-gray-500' :
                           'bg-red-50 text-red-600'
