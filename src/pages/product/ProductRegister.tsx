@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Category, CategoryItem, TransactionMethod, Product } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { useAppContext } from '@/context/AppContext';
-import { Camera, Calendar, DollarSign, MapPin, Truck, Info, AlignLeft, Package, ArrowLeft, LocateFixed } from 'lucide-react';
+import { Camera, Calendar, DollarSign, MapPin, Truck, Info, AlignLeft, LocateFixed } from 'lucide-react';
 import api from '@/services/api';
 import { ProductRequestDto } from '@/types';
 import { getMemberNo } from '@/utils/memberUtils';

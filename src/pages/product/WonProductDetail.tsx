@@ -5,8 +5,8 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { 
-  ChevronLeft, ChevronRight, MapPin, Truck, CreditCard, MessageSquare, 
-  CheckCircle2, XCircle, Package, Info, AlertCircle
+  ChevronLeft, ChevronRight, MapPin, CreditCard, MessageSquare, 
+  CheckCircle2, XCircle, Package, AlertCircle
 } from 'lucide-react';
 import { showToast } from '@/components/toastService';
 
