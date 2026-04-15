@@ -271,20 +271,20 @@ export const ProductRegister: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-12">
-      <div className="flex items-center gap-4 mb-10">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          <ArrowLeft className="w-6 h-6 text-gray-900" />
-        </button>
-        <div className="bg-emerald-100 p-3 rounded-2xl">
-          <Package className="w-8 h-8 text-emerald-600" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">경매 상품 등록</h1>
-          <p className="text-sm text-gray-500 font-medium">새로운 경매를 시작해보세요!</p>
-        </div>
+      {/* 뒤로가기 버튼 */}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8 group"
+      >
+        <svg className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        뒤로가기
+      </button>
+
+      <div className="mb-10">
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">경매 상품 등록</h1>
+        <p className="text-sm text-gray-500 font-medium mt-1">새로운 경매를 시작해보세요!</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-12">
@@ -520,9 +520,9 @@ export const ProductRegister: React.FC = () => {
             <button
               type="button"
               onClick={() => toggleMethod('face')}
-              className={`flex-1 p-6 rounded-3xl border transition-all text-left ${methods.face ? 'border-brand bg-brand/5 shadow-sm' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+              className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${methods.face ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.face ? 'bg-brand text-black' : 'bg-gray-100 text-gray-400'}`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.face ? 'bg-brand text-white' : 'bg-gray-100 text-gray-400'}`}>
                 <MapPin className="w-5 h-5" />
               </div>
               <p className={`font-bold ${methods.face ? 'text-brand-dark' : 'text-gray-900'}`}>대면 거래</p>
@@ -531,9 +531,9 @@ export const ProductRegister: React.FC = () => {
             <button
               type="button"
               onClick={() => toggleMethod('delivery')}
-              className={`flex-1 p-6 rounded-3xl border transition-all text-left ${methods.delivery ? 'border-brand bg-brand/5 shadow-sm' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+              className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${methods.delivery ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.delivery ? 'bg-brand text-black' : 'bg-gray-100 text-gray-400'}`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.delivery ? 'bg-brand text-white' : 'bg-gray-100 text-gray-400'}`}>
                 <Truck className="w-5 h-5" />
               </div>
               <p className={`font-bold ${methods.delivery ? 'text-brand-dark' : 'text-gray-900'}`}>택배 거래</p>

@@ -1327,22 +1327,14 @@ export const ProductDetail: React.FC = () => {
                 <span className="text-xl font-bold text-orange-400">{(user?.points || 0).toLocaleString()} P</span>
               </div>
 
-              {/* Price Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">현재가</p>
                   <p className="text-lg font-bold text-gray-900">{(product.currentPrice || 0).toLocaleString()}원</p>
-                  {/* 즉시구매가의 70% 이상 경고 — h-4 고정으로 카드 크기 유지 */}
-                  <div className="h-4 flex items-center mt-1">
-                    {product.instantPrice && product.currentPrice >= Number(product.instantPrice) * 0.7 && (
-                      <span className="text-[10px] font-bold text-orange-500">즉시구매가의 70% 이상입니다</span>
-                    )}
-                  </div>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">최소 입찰 단위</p>
                   <p className="text-lg font-bold text-gray-900">{(product.minBidIncrement || 0).toLocaleString()}원</p>
-                  <div className="h-4 mt-1" />
                 </div>
               </div>
 

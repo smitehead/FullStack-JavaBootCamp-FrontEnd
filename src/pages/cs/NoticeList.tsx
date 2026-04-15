@@ -93,7 +93,7 @@ export const NoticeList: React.FC = () => {
                 }}
                 className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${activeCategory === category
                   ? 'bg-red-500 text-white border border-transparent shadow-lg shadow-red-500/10'
-                  : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
+                  : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100 shadow-sm'
                   }`}
               >
                 {category}
@@ -118,9 +118,9 @@ export const NoticeList: React.FC = () => {
                     <div className="flex items-center gap-4">
                       <div className="w-20 shrink-0">
                         {notice.isImportant ? (
-                          <span className="px-2 py-0.5 bg-gray-900 text-white text-[10px] font-semibold rounded-md inline-block">공지</span>
+                          <span className="px-2 py-0.5 bg-gray-900 text-white text-[10px] font-semibold rounded-md inline-block shadow-lg shadow-gray-900/10">공지</span>
                         ) : (
-                          <span className="text-xs font-semibold text-gray-400">{notice.category}</span>
+                          <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-500 rounded-md shadow-lg shadow-gray-200/50">{notice.category}</span>
                         )}
                       </div>
                       <h3 className={`flex-1 text-sm text-gray-900 group-hover:underline underline-offset-4 transition-all line-clamp-1 ${notice.isImportant ? 'font-bold' : 'font-bold'}`}>
