@@ -105,7 +105,7 @@ export const FAQ: React.FC = () => {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id as any)}
-                className={`px-6 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${activeCategory === cat.id
+                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${activeCategory === cat.id
                   ? 'bg-red-500 text-white border border-transparent shadow-lg shadow-red-500/10'
                   : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100 shadow-sm'
                   }`}
@@ -128,9 +128,7 @@ export const FAQ: React.FC = () => {
                     className="w-full px-8 py-5 flex items-center justify-between text-left"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-20 shrink-0">
-                        <span className="text-xs font-bold px-2 py-1 bg-gray-50 text-gray-400 rounded-md shadow-lg shadow-gray-100/50">{faq.category}</span>
-                      </div>
+                      <HelpCircle className="w-5 h-5 text-gray-400 shrink-0" />
                       <span className="text-sm font-semibold text-gray-900">{faq.question}</span>
                     </div>
                     {openId === faq.id ? (

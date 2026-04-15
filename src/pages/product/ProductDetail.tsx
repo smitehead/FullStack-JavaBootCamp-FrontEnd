@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { Heart, Share2, AlertTriangle, Clock, MapPin, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, ArrowLeft, Package, Users, MessageSquare, Reply, Ban, AlertCircle } from 'lucide-react';
+import { Heart, Share2, AlertTriangle, Clock, MapPin, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, ArrowLeft, Package, Users, MessageSquare, Reply, Ban, AlertCircle, RefreshCw, MoreVertical, Trash2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -56,6 +56,22 @@ export const ProductDetail: React.FC = () => {
   useEffect(() => {
     if (id) fetchQnaList();
   }, [id]);
+
+  /** 상품 삭제 처리 */
+  const handleDeleteProduct = async () => {
+    if (!product) return;
+    setIsDeleting(true);
+    try {
+      await api.delete(`/products/${product.id}`);
+      showToast('상품이 삭제되었습니다.', 'success');
+      navigate('/products');
+    } catch {
+      showToast('상품 삭제에 실패했습니다.', 'error');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
+  };
 
   const fetchQnaList = async () => {
     try {
@@ -146,13 +162,17 @@ export const ProductDetail: React.FC = () => {
   const [visibleBidsCount, setVisibleBidsCount] = useState(5);
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showRepostModal, setShowRepostModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   // 최고 입찰자 입찰 취소 모달 (Phase 1)
   const [showBidCancelModal, setShowBidCancelModal] = useState(false);
   const [isBidCancelling, setIsBidCancelling] = useState(false);
-
   // 입찰 약관 동의 모달 + 더블탭 확인 UX (Phase 0)
   const [showBidTermsModal, setShowBidTermsModal] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [dontAskToday, setDontAskToday] = useState(false);
   const confirmTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 입찰 참여 여부 및 최고입찰자 여부 (SSE 실시간 반영)
@@ -770,14 +790,41 @@ export const ProductDetail: React.FC = () => {
 
   return (
     <div className="max-w-[1200px] mx-auto px-10 py-4">
-      {/* Header with Back Button */}
-      <div className="flex items-center gap-4 mb-4">
+      {/* Header with Back Button & More Menu */}
+      <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => navigate(-1)}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
           <ArrowLeft className="w-6 h-6 text-gray-900" />
         </button>
+
+        {isSeller && (
+          <div className="relative">
+            <button
+              onClick={() => setShowMoreMenu(!showMoreMenu)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <MoreVertical className="w-6 h-6 text-gray-900" />
+            </button>
+            {showMoreMenu && (
+              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-100 rounded-2xl shadow-xl z-[150] overflow-hidden">
+                <button
+                  onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
+                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" /> 삭제하기
+                </button>
+                <button
+                  onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
+                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" /> 재게시하기
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Top Section: Image & Info */}
@@ -999,43 +1046,24 @@ export const ProductDetail: React.FC = () => {
 
               {/* 2. 판매자 버튼 / 입찰자 버튼 분기 */}
               {isSeller ? (
-                /* 판매자 전용: 경매 취소 or 유찰 시 재등록 */
-                product.status === 'closed_failed' ? (
+                /* 판매자 전용: 경매 취소 or 경매 종료 표시 */
+                isFinished ? (
                   <button
-                    onClick={() => navigate(`/products/register?parentProductNo=${product.id}`)}
-                    className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95"
+                    disabled
+                    className="flex-1 py-4 bg-gray-100 text-gray-400 font-black rounded-2xl cursor-not-allowed opacity-70 flex items-center justify-center"
                   >
-                    <span>재등록하기</span>
+                    <span>경매 종료</span>
                   </button>
                 ) : (
                   <button
                     onClick={() => setShowCancelModal(true)}
-                    disabled={isFinished}
-                    className="flex-1 py-4 bg-white border-2 border-brand text-brand font-black rounded-2xl hover:border-gray-400 hover:text-gray-500 transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 py-4 bg-gray-50 border-2 border-gray-100 text-gray-400 font-black rounded-2xl hover:bg-[#FF5A5A] hover:text-white hover:border-[#FF5A5A] transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95"
                   >
                     <span>경매 취소</span>
                   </button>
                 )
               ) : (
                 <>
-                  {/* 최고 입찰자: 입찰 취소 버튼 (Phase 0: 마감 12시간 미만이면 숨김) */}
-                  {isHighestBidder && !isFinished && hoursLeft >= 12 && (
-                    (() => {
-                      const penalty = Math.floor((product.currentPrice || 0) * 0.05);
-                      const canAffordPenalty = (user?.points || 0) >= penalty;
-                      return (
-                        <button
-                          onClick={() => setShowBidCancelModal(true)}
-                          disabled={!canAffordPenalty}
-                          title={!canAffordPenalty ? `위약금 ${penalty.toLocaleString()}P 납부 포인트 부족` : '입찰 취소 (위약금 5% 발생)'}
-                          className="py-4 px-4 bg-white border-2 border-red-200 text-red-500 font-bold rounded-xl hover:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
-                        >
-                          입찰 취소
-                        </button>
-                      );
-                    })()
-                  )}
-
                   {/* 자동 입찰 버튼 */}
                   <button
                     onClick={() => openBidModal('auto')}
@@ -1351,11 +1379,14 @@ export const ProductDetail: React.FC = () => {
               <div className="bg-gray-900 rounded-2xl p-5 text-white flex justify-between items-center shadow-lg">
                 <div className="flex items-center gap-3">
                   <div className="bg-white/10 p-2 rounded-xl">
-                    <Wallet className="w-5 h-5 text-orange-400" />
+                    <Wallet className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">보유 포인트</span>
+                  <span className="text-xs font-bold text-indigo-300 uppercase tracking-widest">보유 포인트</span>
                 </div>
-                <span className="text-xl font-bold text-orange-400">{(user?.points || 0).toLocaleString()} P</span>
+                <div className="text-xl font-bold">
+                  {(user?.points || 0).toLocaleString()}
+                  <span className="text-sm ml-1 text-indigo-400">P</span>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1430,7 +1461,7 @@ export const ProductDetail: React.FC = () => {
                       setIsBidModalOpen(false);
                       setShowBidCancelModal(true);
                     }}
-                    className="w-full py-5 bg-red-50 border-2 border-red-200 text-red-600 font-bold rounded-2xl hover:bg-red-100 transition-all active:scale-[0.98]"
+                    className="w-full py-5 bg-gray-50 border-2 border-gray-100 text-gray-400 font-bold rounded-2xl hover:bg-[#FF5A5A] hover:text-white hover:border-[#FF5A5A] transition-all active:scale-[0.98]"
                   >
                     입찰 취소하기
                   </button>
@@ -1801,76 +1832,90 @@ export const ProductDetail: React.FC = () => {
         </div>
       )}
 
-      {/* ──────────────────────────────────────────────────────────────────
-          입찰 약관 동의 모달 (Phase 0)
-          - "입찰 참여하기" 클릭 시 표시
-          - "확인 및 입찰하기" 더블탭 → 입찰 모달 오픈
-          - 뒤로가기 → 모달 닫기
-      ────────────────────────────────────────────────────────────────── */}
-      {showBidTermsModal && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="h-1.5 bg-orange-500 w-full" />
-            <div className="p-8">
-              {/* 헤더 */}
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+      <AnimatePresence>
+        {showBidTermsModal && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative"
+            >
+              <div className="p-8">
+                <div className="mb-8">
+                  <h3 className="text-2xl font-black text-gray-900 tracking-tight">입찰 참여 전 확인사항</h3>
                 </div>
-                <div>
-                  <h3 className="text-xl font-black text-gray-900 tracking-tight">입찰 참여 전 확인사항</h3>
-                  <p className="text-sm text-gray-400 font-medium mt-0.5">Bid Terms & Conditions</p>
+
+                {/* 약관 내용 박스 */}
+                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 mb-8 space-y-4 text-sm text-gray-700 leading-relaxed">
+                  <p className="font-bold text-gray-900">입찰 전 아래 사항을 반드시 확인하세요.</p>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
+                      <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
+                      <span>입찰가는 현재 최고가보다 <span className="text-gray-900 font-black">높아야</span> 하며, 한 번 제출된 입찰은 취소 시 <span className="text-red-500 font-black">위약금(5%)</span>이 발생합니다.</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
+                      <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
+                      <span>경매 마감 <span className="text-gray-900 font-black">12시간 이내</span>에는 입찰 취소가 불가합니다.</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
+                      <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
+                      <span>낙찰 후 <span className="text-gray-900 font-black">12시간 이내</span>에 결제를 완료하지 않으면 낙찰이 취소되고 차순위 입찰자에게 권한이 이전됩니다.</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
+                      <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
+                      <span>입찰 포인트는 상회 입찰 발생 시 즉시 환불되며, 낙찰 시 최종 결제에 사용됩니다.</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* 오늘 하루 보지 않기 체크박스 */}
+                <div className="flex items-center gap-2 mb-6 px-1">
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <div className="relative flex items-center justify-center w-5 h-5">
+                      <input
+                        type="checkbox"
+                        className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-md checked:bg-indigo-600 checked:border-indigo-600 transition-all cursor-pointer"
+                        checked={dontAskToday}
+                        onChange={(e) => setDontAskToday(e.target.checked)}
+                      />
+                      <svg
+                        className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">
+                      오늘 하루 더 이상 보지 않기
+                    </span>
+                  </label>
+                </div>
+
+                {/* 하단 버튼 영역 */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleBidTermsClose}
+                    className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95"
+                  >
+                    뒤로가기
+                  </button>
+                  <button
+                    onClick={handleBidTermsConfirm}
+                    className={`flex-1 py-4 font-bold rounded-2xl transition-all active:scale-95 bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100 ${isConfirming ? 'animate-pulse' : ''
+                      }`}
+                  >
+                    {isConfirming ? '한 번 더 탭하여 확인' : '확인 및 입찰하기'}
+                  </button>
                 </div>
               </div>
-
-              {/* 약관 내용 */}
-              <div className="bg-gray-50 rounded-2xl p-5 mb-6 space-y-3 text-sm text-gray-700 leading-relaxed">
-                <p className="font-bold text-gray-900">입찰 전 아래 사항을 반드시 확인하세요.</p>
-                <ul className="space-y-2 list-none">
-                  <li className="flex gap-2">
-                    <span className="text-orange-500 font-black mt-0.5">·</span>
-                    <span>입찰가는 현재 최고가보다 <strong>높아야</strong> 하며, 한 번 제출된 입찰은 취소 시 <strong>위약금(5%)</strong>이 발생합니다.</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-orange-500 font-black mt-0.5">·</span>
-                    <span>경매 마감 <strong>12시간 이내</strong>에는 입찰 취소가 불가합니다.</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-orange-500 font-black mt-0.5">·</span>
-                    <span>낙찰 후 <strong>12시간 이내</strong>에 결제를 완료하지 않으면 낙찰이 취소되고 차순위 입찰자에게 권한이 이전됩니다.</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-orange-500 font-black mt-0.5">·</span>
-                    <span>입찰 포인트는 상회 입찰 발생 시 즉시 환불되며, 낙찰 시 최종 결제에 사용됩니다.</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* 버튼 */}
-              <div className="flex gap-3">
-                <button
-                  onClick={handleBidTermsClose}
-                  className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-colors"
-                >
-                  뒤로가기
-                </button>
-                <button
-                  onClick={handleBidTermsConfirm}
-                  className={`flex-1 py-4 font-bold rounded-2xl transition-colors shadow-lg ${
-                    isConfirming
-                      ? 'bg-orange-100 text-orange-600 border-2 border-orange-400 shadow-orange-100 animate-pulse'
-                      : 'bg-orange-500 text-white hover:bg-orange-600 shadow-orange-500/20'
-                  }`}
-                >
-                  {isConfirming ? '한 번 더 탭하여 확인' : '확인 및 입찰하기'}
-                </button>
-              </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* Recharge Prompt Modal */}
       {showRechargePrompt && (
