@@ -694,25 +694,27 @@ export const ProductDetail: React.FC = () => {
   };
 
   /**
-   * 입찰 참여 버튼 클릭 (Phase 0).
-   * - isConfirming=false: 약관 동의 모달 오픈.
-   * - isConfirming=true (약관 동의 후 대기 중): 실제 입찰 모달 오픈.
+   * 약관 모달 내 "확인 및 입찰하기" 더블탭 UX.
+   * 첫 탭: 확인 대기 상태 (3초 후 자동 해제).
+   * 두 번째 탭: 모달 닫고 실제 입찰 모달 오픈.
    */
-  const handleBidButtonClick = () => {
+  const handleBidTermsConfirm = () => {
     if (!isConfirming) {
-      setShowBidTermsModal(true);
+      setIsConfirming(true);
+      confirmTimerRef.current = setTimeout(() => setIsConfirming(false), 3000);
     } else {
       if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
       setIsConfirming(false);
+      setShowBidTermsModal(false);
       openBidModal('bid');
     }
   };
 
-  /** 약관 동의 모달 — 동의 버튼 핸들러. 모달 닫고 더블탭 대기 상태로 진입. */
-  const handleBidTermsAgree = () => {
+  /** 약관 모달 닫기 — 더블탭 대기 상태도 함께 초기화. */
+  const handleBidTermsClose = () => {
+    if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+    setIsConfirming(false);
     setShowBidTermsModal(false);
-    setIsConfirming(true);
-    confirmTimerRef.current = setTimeout(() => setIsConfirming(false), 3000);
   };
 
   const chartData = [...product.bids]
@@ -1043,17 +1045,13 @@ export const ProductDetail: React.FC = () => {
                     {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
                   </button>
 
-                  {/* 입찰 참여하기 버튼 (더블탭 확인 UX) */}
+                  {/* 입찰 참여하기 버튼 → 약관 동의 모달 오픈 */}
                   <button
-                    onClick={handleBidButtonClick}
+                    onClick={() => setShowBidTermsModal(true)}
                     disabled={isFinished}
-                    className={`flex-1 py-4 font-bold rounded-xl transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none ${
-                      isConfirming
-                        ? 'bg-orange-100 text-orange-600 border-2 border-orange-400 shadow-orange-100 animate-pulse'
-                        : 'bg-orange-500 text-white hover:bg-orange-600 shadow-orange-500/10'
-                    }`}
+                    className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
                   >
-                    {isConfirming ? '한 번 더 탭하여 확인' : '입찰 참여하기'}
+                    입찰 참여하기
                   </button>
                 </>
               )}
@@ -1805,8 +1803,8 @@ export const ProductDetail: React.FC = () => {
 
       {/* ──────────────────────────────────────────────────────────────────
           입찰 약관 동의 모달 (Phase 0)
-          - "입찰 참여하기" 첫 탭 시 표시
-          - 동의 → 더블탭 대기 상태(isConfirming) 진입
+          - "입찰 참여하기" 클릭 시 표시
+          - "확인 및 입찰하기" 더블탭 → 입찰 모달 오픈
           - 뒤로가기 → 모달 닫기
       ────────────────────────────────────────────────────────────────── */}
       {showBidTermsModal && (
@@ -1853,16 +1851,20 @@ export const ProductDetail: React.FC = () => {
               {/* 버튼 */}
               <div className="flex gap-3">
                 <button
-                  onClick={() => setShowBidTermsModal(false)}
+                  onClick={handleBidTermsClose}
                   className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-colors"
                 >
                   뒤로가기
                 </button>
                 <button
-                  onClick={handleBidTermsAgree}
-                  className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20"
+                  onClick={handleBidTermsConfirm}
+                  className={`flex-1 py-4 font-bold rounded-2xl transition-colors shadow-lg ${
+                    isConfirming
+                      ? 'bg-orange-100 text-orange-600 border-2 border-orange-400 shadow-orange-100 animate-pulse'
+                      : 'bg-orange-500 text-white hover:bg-orange-600 shadow-orange-500/20'
+                  }`}
                 >
-                  동의하고 입찰
+                  {isConfirming ? '한 번 더 탭하여 확인' : '확인 및 입찰하기'}
                 </button>
               </div>
             </div>
