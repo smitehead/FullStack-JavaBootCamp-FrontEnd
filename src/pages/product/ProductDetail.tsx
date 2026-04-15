@@ -194,9 +194,9 @@ export const ProductDetail: React.FC = () => {
       const isAuctionEnded = new Date(data.endTime).getTime() <= Date.now() || backendStatus >= 1;
       const mappedStatus: Product['status'] =
         backendStatus === 4 ? 'closed_failed' :
-        backendStatus === 3 ? 'pending_payment' :
-        backendStatus === 2 ? 'canceled' :
-        isAuctionEnded ? 'completed' : 'active';
+          backendStatus === 3 ? 'pending_payment' :
+            backendStatus === 2 ? 'canceled' :
+              isAuctionEnded ? 'completed' : 'active';
 
       const mappedProduct: Product = {
         id: String(data.productNo || id),
@@ -667,8 +667,8 @@ export const ProductDetail: React.FC = () => {
   // 취소 조건 판별
   const cancelCondition: 'A' | 'B' | 'C' =
     product.participantCount === 0 ? 'A'
-    : hoursLeft < 12 ? 'C'
-    : 'B';
+      : hoursLeft < 12 ? 'C'
+        : 'B';
 
   const handleAuctionCancel = async () => {
     if (cancelCondition === 'C') {
@@ -808,18 +808,18 @@ export const ProductDetail: React.FC = () => {
               <MoreVertical className="w-6 h-6 text-gray-900" />
             </button>
             {showMoreMenu && (
-              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-100 rounded-2xl shadow-xl z-[150] overflow-hidden">
+              <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[150] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
                 <button
                   onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
-                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
+                  className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors"
                 >
-                  <Trash2 className="w-4 h-4 mr-2" /> 삭제하기
+                  <Trash2 className="w-4 h-4 mr-2.5" /> 삭제하기
                 </button>
                 <button
                   onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
-                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                 >
-                  <RefreshCw className="w-4 h-4 mr-2" /> 재게시하기
+                  <RefreshCw className="w-4 h-4 mr-2.5" /> 재게시하기
                 </button>
               </div>
             )}
@@ -1205,7 +1205,7 @@ export const ProductDetail: React.FC = () => {
                   <span className="w-32 text-gray-500 font-medium">배송 방법</span>
                   <span className="text-gray-900">
                     {product.transactionMethod === 'both' ? '택배거래, 직거래 가능' :
-                     product.transactionMethod === 'delivery' ? '택배거래' : '직거래'}
+                      product.transactionMethod === 'delivery' ? '택배거래' : '직거래'}
                   </span>
                 </div>
                 {(product.transactionMethod === 'delivery' || product.transactionMethod === 'both') && (
@@ -1624,7 +1624,7 @@ export const ProductDetail: React.FC = () => {
                           <p className="text-sm font-black text-gray-900">주의: 취소 패널티가 발생합니다</p>
                         </div>
                         <ul className="space-y-3">
-                          <li className="flex items-center gap-2 text-xs font-bold text-gray-600">
+                      <li className="flex items-center gap-2 text-xs font-bold text-gray-600">
                             <div className="w-1 h-1 bg-gray-400 rounded-full" />
                             매너온도 <span className="text-red-500 font-black">10점</span> 즉시 차감
                           </li>

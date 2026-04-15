@@ -667,8 +667,8 @@ export const MyPage: React.FC = () => {
       {showDeleteModal && deleteProduct && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-md relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 flex flex-col items-center text-center">
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">게시글을 삭제하시겠습니까?</h3>
 
               {deleteProduct.participantCount > 0 && deleteProduct.status !== 'completed' ? (
@@ -679,17 +679,16 @@ export const MyPage: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                <p className="text-gray-500 text-sm font-medium mb-6 leading-relaxed">
-                  삭제된 게시글은 복구할 수 없습니다. <br />
-                  정말로 삭제하시겠습니까?
+                <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                  삭제된 게시글은 복구할 수 없습니다.
                 </p>
               )}
 
               <div className="flex gap-3 w-full">
-                <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
+                <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
                   취소
                 </button>
-                <button onClick={confirmDelete} className="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-200">
+                <button onClick={confirmDelete} className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10">
                   삭제하기
                 </button>
               </div>
@@ -702,15 +701,15 @@ export const MyPage: React.FC = () => {
       {showRepostModal && repostProduct && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowRepostModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-md relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 flex flex-col items-center text-center">
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">재게시하시겠습니까?</h3>
               <p className="text-gray-500 text-sm font-medium mb-8 leading-relaxed">
                 기존 정보를 유지한 채 경매를 다시 시작합니다.
               </p>
 
               <div className="flex gap-3 w-full">
-                <button onClick={() => setShowRepostModal(false)} className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
+                <button onClick={() => setShowRepostModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
                   닫기
                 </button>
                 <button 
@@ -718,7 +717,7 @@ export const MyPage: React.FC = () => {
                     setShowRepostModal(false);
                     navigate('/register', { state: { product: repostProduct } });
                   }} 
-                  className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
+                  className="flex-1 py-3.5 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
                 >
                   재게시하기
                 </button>
