@@ -150,6 +150,10 @@ export const ProductDetail: React.FC = () => {
   const [showBidCancelModal, setShowBidCancelModal] = useState(false);
   const [isBidCancelling, setIsBidCancelling] = useState(false);
 
+  // 입찰 버튼 더블탭 확인 UX (Phase 0)
+  const [isConfirming, setIsConfirming] = useState(false);
+  const confirmTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // 입찰 참여 여부 및 최고입찰자 여부 (SSE 실시간 반영)
   const [hasBid, setHasBid] = useState(false);
   const [isHighestBidder, setIsHighestBidder] = useState(false);
@@ -672,7 +676,7 @@ export const ProductDetail: React.FC = () => {
     if (!user || !product) return;
     setIsBidCancelling(true);
     try {
-      await api.post('/bids/cancel', { productNo: Number(product.id) });
+      await api.post(`/bids/${product.id}/cancel`);
       setShowBidCancelModal(false);
       setIsBidModalOpen(false);
       setIsHighestBidder(false);
@@ -685,6 +689,22 @@ export const ProductDetail: React.FC = () => {
       showToast(msg, 'error');
     } finally {
       setIsBidCancelling(false);
+    }
+  };
+
+  /**
+   * 입찰 참여 버튼 더블탭 UX (Phase 0).
+   * 첫 탭: 확인 상태 진입 (3초 후 자동 해제).
+   * 두 번째 탭: 실제 입찰 모달 오픈.
+   */
+  const handleBidButtonClick = () => {
+    if (!isConfirming) {
+      setIsConfirming(true);
+      confirmTimerRef.current = setTimeout(() => setIsConfirming(false), 3000);
+    } else {
+      if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+      setIsConfirming(false);
+      openBidModal('bid');
     }
   };
 
@@ -989,16 +1009,16 @@ export const ProductDetail: React.FC = () => {
                 )
               ) : (
                 <>
-                  {/* 최고 입찰자: 입찰 취소 버튼 */}
-                  {isHighestBidder && !isFinished && (
+                  {/* 최고 입찰자: 입찰 취소 버튼 (Phase 0: 마감 12시간 미만이면 숨김) */}
+                  {isHighestBidder && !isFinished && hoursLeft >= 12 && (
                     (() => {
-                      const penalty = Math.floor((product.currentPrice || 0) * 0.1);
+                      const penalty = Math.floor((product.currentPrice || 0) * 0.05);
                       const canAffordPenalty = (user?.points || 0) >= penalty;
                       return (
                         <button
                           onClick={() => setShowBidCancelModal(true)}
                           disabled={!canAffordPenalty}
-                          title={!canAffordPenalty ? `위약금 ${penalty.toLocaleString()}P 납부 포인트 부족` : '입찰 취소 (위약금 10% 발생)'}
+                          title={!canAffordPenalty ? `위약금 ${penalty.toLocaleString()}P 납부 포인트 부족` : '입찰 취소 (위약금 5% 발생)'}
                           className="py-4 px-4 bg-white border-2 border-red-200 text-red-500 font-bold rounded-xl hover:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
                         >
                           입찰 취소
@@ -1016,13 +1036,17 @@ export const ProductDetail: React.FC = () => {
                     {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
                   </button>
 
-                  {/* 입찰 참여하기 버튼 */}
+                  {/* 입찰 참여하기 버튼 (더블탭 확인 UX) */}
                   <button
-                    onClick={() => openBidModal('bid')}
+                    onClick={handleBidButtonClick}
                     disabled={isFinished}
-                    className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    className={`flex-1 py-4 font-bold rounded-xl transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none ${
+                      isConfirming
+                        ? 'bg-orange-100 text-orange-600 border-2 border-orange-400 shadow-orange-100 animate-pulse'
+                        : 'bg-orange-500 text-white hover:bg-orange-600 shadow-orange-500/10'
+                    }`}
                   >
-                    입찰 참여하기
+                    {isConfirming ? '한 번 더 탭하여 확인' : '입찰 참여하기'}
                   </button>
                 </>
               )}
@@ -1653,7 +1677,7 @@ export const ProductDetail: React.FC = () => {
 
               {/* 위약금 경고 카드 */}
               {(() => {
-                const penalty = Math.floor((product.currentPrice || 0) * 0.1);
+                const penalty = Math.floor((product.currentPrice || 0) * 0.05);
                 const userPoints = user?.points || 0;
                 const canAfford = userPoints >= penalty;
                 return (
@@ -1671,7 +1695,7 @@ export const ProductDetail: React.FC = () => {
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs font-bold text-red-500">위약금 (10%)</span>
+                          <span className="text-xs font-bold text-red-500">위약금 (5%)</span>
                           <span className="text-base font-black text-red-600">
                             -{penalty.toLocaleString()} P
                           </span>
@@ -1708,7 +1732,7 @@ export const ProductDetail: React.FC = () => {
 
                     <p className="text-xs text-gray-400 leading-relaxed text-center">
                       경매 마감 시간은 변동 없이 유지됩니다.
-                      위약금은 판매자에게 보상금으로 즉시 지급됩니다.
+                      위약금은 위약금 풀에 적립되어 최종 정산 시 분배됩니다.
                     </p>
                   </div>
                 );
@@ -1716,7 +1740,7 @@ export const ProductDetail: React.FC = () => {
 
               {/* 액션 버튼 */}
               {(() => {
-                const penalty = Math.floor((product.currentPrice || 0) * 0.1);
+                const penalty = Math.floor((product.currentPrice || 0) * 0.05);
                 const canAfford = (user?.points || 0) >= penalty;
                 return (
                   <div className="flex gap-3">
@@ -1736,7 +1760,7 @@ export const ProductDetail: React.FC = () => {
                         {isBidCancelling ? (
                           <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />처리 중...</>
                         ) : (
-                          `위약금 ${Math.floor((product.currentPrice || 0) * 0.1).toLocaleString()}P 차감 후 취소`
+                          `위약금 ${Math.floor((product.currentPrice || 0) * 0.05).toLocaleString()}P 차감 후 취소`
                         )}
                       </button>
                     ) : (
