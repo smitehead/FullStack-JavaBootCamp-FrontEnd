@@ -214,31 +214,48 @@ export const ProductList: React.FC = () => {
       return;
     }
 
-    // 주소 형식: "서울 강남구 역삼동"
+    // 주소 형식: "경남 창원시 성산구 남산동" 또는 "서울 강남구 역삼동"
     const parts = user.address.split(' ');
     if (parts.length < 1) return;
 
     const sidoPart = parts[0];
     const sigunguPart = parts[1] || '';
     const bnamePart = parts[2] || '';
+    const restPart = parts[3] || '';
 
     // 1. 시/도 찾기
     const foundCity = LOCATION_DATA.find(l => l.short === sidoPart || l.name === sidoPart);
     if (!foundCity) return;
 
-    let targetCity = foundCity.name;
+    // 셀렉트 박스에서 short(예: '경남', '서울')를 value로 사용하므로 short로 지정
+    let targetCity = foundCity.short;
     let targetDistrict = '';
     let targetNeighborhood = '';
 
-    // 2. 시/군/구 찾기
     if (sigunguPart) {
-      const foundDistrict = foundCity.sub.find(d => d.name === sigunguPart);
+      // 2. 시/군/구 찾기
+      // 창원시 성산구 -> 데이터상 "창원시성산구" 형태일 수 있으므로 우선 결합된 형태로 검색
+      let searchDistrictFull = (sigunguPart + bnamePart).replace(/\s/g, '');
+      let foundDistrict = foundCity.sub.find(d => d.name.replace(/\s/g, '') === searchDistrictFull);
+
+      // 결합된 형태가 없다면 단일 구역(sigunguPart)으로 검색
+      if (!foundDistrict) {
+        foundDistrict = foundCity.sub.find(d => d.name === sigunguPart);
+      }
+
       if (foundDistrict) {
         targetDistrict = foundDistrict.name;
 
         // 3. 읍/면/동 찾기
-        if (bnamePart && foundDistrict.sub.includes(bnamePart)) {
-          targetNeighborhood = bnamePart;
+        // 찾은 시군구가 "창원시성산구"처럼 조합된 것이라면 읍면동은 4번째(restPart) 부분일 확률이 높음
+        let searchNeighborhood = (foundDistrict.name.replace(/\s/g, '') === searchDistrictFull) ? restPart : bnamePart;
+
+        if (searchNeighborhood && foundDistrict.sub.includes(searchNeighborhood)) {
+          targetNeighborhood = searchNeighborhood;
+        } else if (bnamePart && foundDistrict.sub.includes(bnamePart)) {
+          targetNeighborhood = bnamePart; // fallback
+        } else if (restPart && foundDistrict.sub.includes(restPart)) {
+          targetNeighborhood = restPart; // fallback
         }
       }
     }
@@ -400,10 +417,12 @@ export const ProductList: React.FC = () => {
           <div className="p-4 flex items-center space-x-2">
             <div className="relative">
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="최소 금액"
                 value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
+                onChange={(e) => setMinPrice(e.target.value.replace(/[^0-9]/g, ''))}
                 className="w-40 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-brand"
               />
               <span className="absolute right-3 top-2 text-gray-400 text-sm">원</span>
@@ -411,17 +430,19 @@ export const ProductList: React.FC = () => {
             <span className="text-gray-400">~</span>
             <div className="relative">
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="최대 금액"
                 value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
+                onChange={(e) => setMaxPrice(e.target.value.replace(/[^0-9]/g, ''))}
                 className="w-40 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-brand"
               />
               <span className="absolute right-3 top-2 text-gray-400 text-sm">원</span>
             </div>
             <button
               onClick={() => updateParams({ minPrice, maxPrice })}
-              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-brand-dark transition-colors shadow-sm"
+              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-blue-600 transition-colors shadow-sm"
             >
               적용
             </button>
@@ -482,7 +503,7 @@ export const ProductList: React.FC = () => {
             </div>
             <button
               onClick={() => updateParams({ city, district, neighborhood })}
-              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-brand-dark transition-colors shadow-sm ml-2"
+              className="bg-blue-500 text-white px-6 py-2 rounded text-sm font-bold hover:bg-blue-600 transition-colors shadow-sm"
             >
               적용
             </button>

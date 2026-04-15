@@ -6,6 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { getProfileImageUrl } from '@/utils/imageUtils';
+import { SORRY_IMAGE_BASE64 } from '@/assets/images/sorry_base64';
 
 interface HeaderProps {
   onLogout: () => void;
@@ -91,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
       <div className="max-w-[1200px] mx-auto px-6">
-        {/* Main Header Row */}
+        {/* 메인 헤더 */}
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-1 shrink-0 group">
@@ -101,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             <span className="text-2xl font-bold text-gray-800 tracking-tighter italic">JAVAJAVA</span>
           </Link>
 
-          {/* Search Bar */}
+          {/* 검색창 */}
           <div className="flex-1 max-w-2xl mx-12 hidden md:block relative">
             <form onSubmit={handleSearch} className="relative group flex items-center">
               <input
@@ -560,13 +561,32 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const [showErrorScreen, setShowErrorScreen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    // 애니메이션을 보여주기 위한 짧은 지연 후 새로고침
-    setTimeout(() => {
+    try {
+      // 프론트엔드 서버가 닫혀있을 때 reload하면 브라우저 기본 오류페이지로 넘어가므로 이를 방지하기 위해 가벼운 ping 체크
+      await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+      // 정상 응답을 받으면(서버가 다시 켜졌으면) 화면을 새로고침하여 앱 마운트
       window.location.reload();
-    }, 800);
+    } catch (error) {
+      // fetch가 실패했다면 서버가 아직 내려가있는 것이므로 스피너만 끄고 오류화면 유지
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 500);
+    }
   };
+
+  // 전역 서버 에러 이벤트 리스너 등록
+  useEffect(() => {
+    const handleServerError = () => {
+      setShowErrorScreen(true);
+    };
+
+    window.addEventListener('serverError', handleServerError);
+    return () => {
+      window.removeEventListener('serverError', handleServerError);
+    };
+  }, []);
 
   // 로그아웃 확인 모달 오픈
   const handleLogout = () => {
@@ -611,7 +631,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </div>
       )}
 
-      {/* Logout Confirmation Modal */}
+      {/* 로그아웃 모달 */}
       {isLogoutModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setIsLogoutModalOpen(false)}></div>
@@ -651,7 +671,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               {/* 점검 안내 이미지 영역 */}
               <div className="relative mx-auto w-48 h-48 mb-8">
                 <img
-                  src="/images/죄송합니다.png"
+                  src={SORRY_IMAGE_BASE64}
                   alt="Sorry"
                   className="w-full h-full object-cover rounded-3xl shadow-lg"
                 />

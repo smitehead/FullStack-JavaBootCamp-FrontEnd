@@ -40,6 +40,7 @@ function mapToProduct(item: any): Product {
   };
 }
 
+
 export const SellerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
