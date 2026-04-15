@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Toaster } from 'sonner';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -61,6 +61,12 @@ import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 // ㅎㅇ요
 
 const App: React.FC = () => {
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = '[data-sonner-toaster]{left:50dvw!important;transform:translateX(-50%)!important;}';
+    document.head.appendChild(style);
+  }, []);
+
   return (
     <BrowserRouter>
       <AppProvider>
