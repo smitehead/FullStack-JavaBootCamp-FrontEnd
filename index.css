@@ -14,7 +14,7 @@
   --color-brand-light: #FF8080;
 }
 
-[data-sonner-toaster][data-x-position="center"] {
+[data-sonner-toaster] {
   left: 50dvw !important;
   transform: translateX(-50%) !important;
 }
