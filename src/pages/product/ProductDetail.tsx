@@ -1118,9 +1118,11 @@ export const ProductDetail: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {product.bids.slice().reverse().slice(0, visibleBidsCount).map(bid => (
+                    {product.bids.slice().sort((a, b) => (b.amount || 0) - (a.amount || 0)).slice(0, visibleBidsCount).map(bid => (
                       <tr key={bid.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 font-medium text-gray-900">{bid.bidderName}</td>
+                        <td className="px-6 py-4 font-medium text-gray-900 max-w-[150px] truncate" title={bid.bidderName}>
+                          {bid.bidderName}
+                        </td>
                         <td className="px-6 py-4 text-right font-bold text-orange-500">{(bid.amount || 0).toLocaleString()}원</td>
                         <td className="px-6 py-4 text-right text-gray-400">{new Date(bid.timestamp).toLocaleString()}</td>
                       </tr>
