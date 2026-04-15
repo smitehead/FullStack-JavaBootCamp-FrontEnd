@@ -62,18 +62,23 @@ import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 
 const App: React.FC = () => {
   useEffect(() => {
-    const apply = (el: HTMLElement) => {
-      el.style.setProperty('left', '50%', 'important');
-      el.style.setProperty('right', 'auto', 'important');
-      el.style.setProperty('transform', 'translateX(-50%)', 'important');
+    const applyAll = () => {
+      const toaster = document.querySelector<HTMLElement>('[data-sonner-toaster]');
+      if (!toaster) return;
+      // ol을 viewport 전체 너비로 만들고 transform 제거
+      toaster.style.setProperty('left', '0', 'important');
+      toaster.style.setProperty('right', '0', 'important');
+      toaster.style.setProperty('width', '100vw', 'important');
+      toaster.style.setProperty('transform', 'none', 'important');
+      // 각 toast li를 ol 안에서 가운데 정렬
+      toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((toast) => {
+        toast.style.setProperty('left', '50%', 'important');
+        toast.style.setProperty('transform', 'translateX(-50%)', 'important');
+      });
     };
-    const observer = new MutationObserver(() => {
-      const el = document.querySelector<HTMLElement>('[data-sonner-toaster]');
-      if (el) apply(el);
-    });
+    const observer = new MutationObserver(applyAll);
     observer.observe(document.body, { childList: true, subtree: true });
-    const el = document.querySelector<HTMLElement>('[data-sonner-toaster]');
-    if (el) apply(el);
+    applyAll();
     return () => observer.disconnect();
   }, []);
 
