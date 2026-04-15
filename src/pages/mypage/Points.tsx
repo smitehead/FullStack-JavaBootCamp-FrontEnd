@@ -105,7 +105,7 @@ export const Points: React.FC = () => {
       case 'all': return '전체유형';
       case 'charge': return '충전';
       case 'withdraw': return '출금';
-      case '입찰정산': return '입찰정산';
+      case 'use': return '입찰정산';
       case '낙찰차감': return '낙찰대금결제';
       case '입찰차감': return '입찰보증금';
       case '입찰참여': return '입찰보증금';
