@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, User, Heart, Package } from 'lucide-react';
+import { Package } from 'lucide-react';
+import { BsPerson, BsHeart, BsClock } from 'react-icons/bs';
 import { Product } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -116,7 +117,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Participant Count */}
         <div className="absolute top-3 left-3 bg-black/40 text-white text-[10px] px-2 py-1 rounded-full flex items-center backdrop-blur-sm">
-          <User className="w-3 h-3 mr-1" />
+          <BsPerson className="w-3 h-3 mr-1" />
           {product.participantCount}명 참여
         </div>
 
@@ -126,7 +127,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             onClick={toggleWishlist}
             className={`absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-all z-10 ${isWishlisted ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
           >
-            <Heart className={`w-4 h-4 transition-colors ${isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-400'}`} />
+            <BsHeart className={`w-4 h-4 transition-colors ${isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-400'}`} />
           </button>
         )}
 
@@ -209,7 +210,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             ) : (
               <div className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
+                <BsClock className="w-3.5 h-3.5" />
                 <span>{timeLeft}</span>
               </div>
             )}

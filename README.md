@@ -11,6 +11,7 @@
    'npm install sonner motion lucide-react'
    'npm install @stomp/stompjs sockjs-client'
    'npm install -D @types/sockjs-client'
+   'npm install react-icons'
 
 원격 저장소의 특정 브랜치(예: main) 코드로 내 로컬 코드를 싹 다 밀어버리고 싶을 때 아래 두 줄을 차례대로 입력합니다.
 

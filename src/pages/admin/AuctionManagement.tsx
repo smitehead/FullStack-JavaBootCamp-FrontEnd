@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Gavel, Search, Filter, AlertCircle, Clock, Users, Ban, CheckCircle2 } from 'lucide-react';
+import { Gavel, Filter, AlertCircle, Ban, CheckCircle2 } from 'lucide-react';
+import { BiSearch } from 'react-icons/bi';
+import { BsClock } from 'react-icons/bs';
+import { BsPeople } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { Product } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -70,7 +73,7 @@ export const AuctionManagement: React.FC = () => {
         <div className="flex flex-wrap items-center justify-end gap-3">
           <div className="relative w-64 flex items-center h-10">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <Search className="text-gray-400 w-4 h-4" />
+              <BiSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"
@@ -147,11 +150,11 @@ export const AuctionManagement: React.FC = () => {
                       <span className="text-[10px] text-gray-400">시작 {product.startPrice.toLocaleString()}원</span>
                       <span className="text-gray-300">|</span>
                       <span className="inline-flex items-center gap-1 text-blue-600 font-bold">
-                        <Users className="w-3 h-3" /> {product.participantCount}명
+                        <BsPeople className="w-3 h-3" /> {product.participantCount}명
                       </span>
                       <span className="text-gray-300">|</span>
                       <span className="inline-flex items-center gap-1 text-gray-500 font-medium">
-                        <Clock className="w-3 h-3" /> {getRemainingTime(product)}
+                        <BsClock className="w-3.5 h-3.5" /> {getRemainingTime(product)}
                       </span>
                     </div>
                   </div>

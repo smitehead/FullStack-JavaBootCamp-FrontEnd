@@ -2,7 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, MessageSquare } from 'lucide-react';
+import { Package, ShoppingBag, Star, Trash2, RefreshCw, AlertTriangle, Gavel, CheckCircle2 } from 'lucide-react';
+import { BiX, BiXCircle } from 'react-icons/bi';
+import { BsHeart, BsGear, BsChatLeft, BsWallet } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -375,7 +377,7 @@ export const MyPage: React.FC = () => {
             <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-indigo-600 hover:text-white transition-all duration-300 border border-gray-100 disabled:opacity-50">
               {uploadingProfile
                 ? <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                : <Settings className="w-5 h-5" />
+                : <BsGear className="w-5 h-5" />
               }
             </button>
             <input type="file" ref={fileInputRef} onChange={handleProfileImageChange} accept="image/*" className="hidden" />
@@ -417,7 +419,7 @@ export const MyPage: React.FC = () => {
                 </button>
                 <button onClick={() => setActiveTab('wishlist')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group text-left">
                   <div className="bg-pink-50 p-2.5 rounded-xl group-hover:bg-pink-100 transition-colors">
-                    <Heart className="w-5 h-5 text-pink-500 fill-pink-500" />
+                    <BsHeart className="w-5 h-5 text-pink-500 fill-pink-500" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">찜목록</p>
@@ -433,7 +435,7 @@ export const MyPage: React.FC = () => {
                 <div className="flex flex-col gap-2">
                   <Link to="/points" className="flex items-center gap-3 group cursor-pointer">
                     <div className="bg-white/10 p-2 rounded-xl group-hover:bg-white/20 transition-colors">
-                      <Wallet className="w-5 h-5 text-white" />
+                      <BsWallet className="w-5 h-5 text-white" />
                     </div>
                     <p className="text-xs font-bold text-indigo-300 uppercase tracking-widest group-hover:text-white transition-colors">보유 포인트</p>
                   </Link>
@@ -469,7 +471,7 @@ export const MyPage: React.FC = () => {
               <ShoppingBag className="w-5 h-5 mr-3" /> 구매 내역
             </button>
             <button onClick={() => setActiveTab('wishlist')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'wishlist' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <Heart className="w-5 h-5 mr-3" /> 찜 목록
+              <BsHeart className="w-5 h-5 mr-3" /> 찜 목록
             </button>
             <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
               <Star className="w-5 h-5 mr-3" /> 리뷰 관리
@@ -478,7 +480,7 @@ export const MyPage: React.FC = () => {
                to="/chat"
                className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
              >
-               <MessageSquare className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
+               <BsChatLeft className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
             </Link>
           </nav>
         </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Plus, Search, Edit2, Trash2, FileText } from "lucide-react";
+import { Edit2, Trash2, FileText } from "lucide-react";
+import { BiPlus, BiSearch } from 'react-icons/bi';
 import { NoticeCategory } from "@/types";
 import api from "@/services/api";
 import { showToast } from "@/components/toastService";
@@ -149,7 +150,7 @@ export const NoticeManagement: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="relative w-full sm:w-64 flex items-center h-10">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <Search className="text-gray-400 w-4 h-4" />
+              <BiSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"
@@ -163,7 +164,7 @@ export const NoticeManagement: React.FC = () => {
             onClick={() => handleOpenModal()}
             className="bg-[#FF5A5A] text-white px-6 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-sm"
           >
-            <Plus className="w-4 h-4 mr-2" /> 새 공지 등록
+            <BiPlus className="w-5 h-5 mr-2" /> 새 공지사항
           </button>
         </div>
       </header>

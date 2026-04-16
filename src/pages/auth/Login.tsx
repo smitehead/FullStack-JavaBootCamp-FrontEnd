@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, AlertCircle, ChevronRight, Sparkles } from 'lucide-react';
+import { Lock, AlertCircle, Sparkles } from 'lucide-react';
+import { BsEnvelope, BsPerson } from 'react-icons/bs';
+import { BiChevronRight } from 'react-icons/bi';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
 
@@ -64,7 +66,7 @@ export const Login: React.FC = () => {
               <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">아이디</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <BsEnvelope className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   type="text"
@@ -128,7 +130,7 @@ export const Login: React.FC = () => {
             className="mt-4 inline-flex items-center justify-center w-full py-3.5 px-4 border-2 border-gray-100 text-sm font-bold rounded-2xl text-gray-700 hover:bg-gray-50 hover:border-gray-200 transition-all group"
           >
             회원가입 하러가기
-            <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+            <BiChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>

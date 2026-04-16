@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Category, CategoryItem, TransactionMethod, Product } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { useAppContext } from '@/context/AppContext';
-import { Camera, Calendar, DollarSign, MapPin, Truck, Info, AlignLeft, LocateFixed } from 'lucide-react';
+import { AlignLeft, LocateFixed } from 'lucide-react';
+import { BsCurrencyDollar, BsTruck, BsInfoCircle, BsCamera, BsCalendarCheck, BsGeoAlt } from 'react-icons/bs';
 import api from '@/services/api';
 import { ProductRequestDto } from '@/types';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -297,7 +298,7 @@ export const ProductRegister: React.FC = () => {
           </div>
           <div className="flex flex-wrap gap-4">
             <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 hover:border-brand transition-all text-gray-400 hover:text-brand group">
-              <Camera className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
+              <BsCamera className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
               <span className="text-[10px] font-bold uppercase tracking-wider">Add Photo</span>
               <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
             </label>
@@ -315,7 +316,7 @@ export const ProductRegister: React.FC = () => {
             ))}
           </div>
           <p className="text-[11px] text-gray-400 mt-3 flex items-center">
-            <Info className="w-3 h-3 mr-1" /> 상품 이미지는 최대 5장까지 등록 가능합니다.
+            <BsInfoCircle className="w-3 h-3 mr-1" /> 상품 이미지는 최대 5장까지 등록 가능합니다.
           </p>
         </section>
 
@@ -384,7 +385,7 @@ export const ProductRegister: React.FC = () => {
         {/* Auction Settings */}
         <section className="bg-gray-50 p-8 rounded-3xl space-y-8 border border-gray-100">
           <h3 className="font-bold text-lg text-gray-900 flex items-center">
-            <DollarSign className="w-5 h-5 mr-2 text-brand-dark" /> 경매 설정
+            <BsCurrencyDollar className="w-5 h-5 mr-2 text-brand-dark" /> 경매 설정
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -450,7 +451,7 @@ export const ProductRegister: React.FC = () => {
                 <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
               </div>
               <div className="bg-white/50 border border-gray-200 p-3 rounded-xl flex items-start gap-2">
-                <Info className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                <BsInfoCircle className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                 <div className="text-[11px] text-gray-500 leading-relaxed">
                   <p className="font-bold text-gray-700 mb-0.5">입찰 단위 안내</p>
                   <p>· 1만원 미만 : 100원 단위 입찰 가능 (예: 300원, 700원)</p>
@@ -504,7 +505,7 @@ export const ProductRegister: React.FC = () => {
             <div className="bg-gray-900 text-white p-5 rounded-2xl flex items-center justify-between shadow-lg">
               <div className="flex items-center gap-3">
                 <div className="bg-white/10 p-2.5 rounded-xl">
-                  <Calendar className="w-5 h-5 text-brand" />
+                  <BsCalendarCheck className="w-5 h-5 text-brand" />
                 </div>
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">경매 마감 예정</span>
               </div>
@@ -523,7 +524,7 @@ export const ProductRegister: React.FC = () => {
               className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${methods.face ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.face ? 'bg-brand text-white' : 'bg-gray-100 text-gray-400'}`}>
-                <MapPin className="w-5 h-5" />
+                <BsGeoAlt className="w-5 h-5" />
               </div>
               <p className={`font-bold ${methods.face ? 'text-brand-dark' : 'text-gray-900'}`}>대면 거래</p>
               <p className="text-xs text-gray-400 font-medium mt-1">직접 만나서 거래</p>
@@ -534,7 +535,7 @@ export const ProductRegister: React.FC = () => {
               className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${methods.delivery ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.delivery ? 'bg-brand text-white' : 'bg-gray-100 text-gray-400'}`}>
-                <Truck className="w-5 h-5" />
+                <BsTruck className="w-5 h-5" />
               </div>
               <p className={`font-bold ${methods.delivery ? 'text-brand-dark' : 'text-gray-900'}`}>택배 거래</p>
               <p className="text-xs text-gray-400 font-medium mt-1">택배를 통한 비대면 거래</p>

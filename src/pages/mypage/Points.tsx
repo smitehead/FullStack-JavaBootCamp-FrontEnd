@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, CreditCard, ChevronDown, ChevronUp } from 'lucide-react';
+import { BsCreditCard, BsArrowLeft, BsFilterRight, BsCalendar3 } from 'react-icons/bs';
+import { BiArrowBack, BiChevronDown, BiChevronUp } from 'react-icons/bi';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 
@@ -129,7 +130,7 @@ export const Points: React.FC = () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <ArrowLeft className="w-6 h-6 text-gray-900" />
+            <BiArrowBack className="w-6 h-6 text-gray-900" />
           </button>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">포인트</h1>
         </div>
@@ -137,7 +138,7 @@ export const Points: React.FC = () => {
           to="/points/charge"
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all"
         >
-          <CreditCard className="w-3.5 h-3.5" /> 카드 관리
+          <BsCreditCard className="w-3.5 h-3.5" /> 카드 관리
         </Link>
       </div>
 
@@ -174,7 +175,7 @@ export const Points: React.FC = () => {
                 className="text-xs font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1"
               >
                 {typeFilter === 'all' ? '전체유형' : getTypeLabel(typeFilter)}
-                {showTypeFilters ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                {showTypeFilters ? <BiChevronUp className="w-3 h-3" /> : <BiChevronDown className="w-3 h-3" />}
               </button>
               {showTypeFilters && (
                 <div className="absolute right-0 mt-2 w-28 bg-white border border-gray-100 rounded-xl shadow-xl z-10 overflow-hidden">
@@ -202,7 +203,7 @@ export const Points: React.FC = () => {
                 className="text-xs font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1"
               >
                 {dateFilter === 'all' ? '전체기간' : dateFilter === '1m' ? '1개월' : dateFilter === '3m' ? '3개월' : '6개월'}
-                {showDateFilters ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                {showDateFilters ? <BiChevronUp className="w-3 h-3" /> : <BiChevronDown className="w-3 h-3" />}
               </button>
               {showDateFilters && (
                 <div className="absolute right-0 mt-2 w-24 bg-white border border-gray-100 rounded-xl shadow-xl z-10 overflow-hidden">

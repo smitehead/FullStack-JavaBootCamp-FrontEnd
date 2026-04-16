@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageSquare, AlertCircle, DollarSign, FileText } from 'lucide-react';
+import { AlertCircle, FileText } from 'lucide-react';
+import { BsChatLeft, BsCurrencyDollar } from 'react-icons/bs';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -79,8 +80,8 @@ export const AdminDashboard: React.FC = () => {
 
   const stats = [
     { label: '미처리 신고', value: unprocessedReports, icon: AlertCircle, color: 'bg-red-500', path: '/admin/reports' },
-    { label: '미처리 문의', value: unprocessedInquiries, icon: MessageSquare, color: 'bg-orange-500', path: '/admin/inquiries' },
-    { label: '미처리 출금', value: unprocessedWithdraws, icon: DollarSign, color: 'bg-emerald-500', path: '/admin/withdraws' },
+    { label: '미처리 문의', value: unprocessedInquiries, icon: BsChatLeft, color: 'bg-orange-500', path: '/admin/inquiries' },
+    { label: '미처리 출금', value: unprocessedWithdraws, icon: BsCurrencyDollar, color: 'bg-emerald-500', path: '/admin/withdraws' },
   ];
 
   return (
@@ -188,7 +189,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             )) : (
               <div className="py-10 text-center text-gray-400 text-sm font-bold">
-                <MessageSquare className="w-8 h-8 mx-auto mb-2 text-gray-100" />
+                <BsChatLeft className="w-8 h-8 mx-auto mb-2 text-gray-100" />
                 문의사항이 없습니다.
               </div>
             )}

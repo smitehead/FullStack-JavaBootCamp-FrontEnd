@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Bell, Shield, ShieldCheck, UserMinus, X, AlertCircle, CheckCircle2, User, CreditCard, Landmark, ChevronDown } from 'lucide-react';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { BsHeart, BsBell, BsShield, BsShieldCheck, BsGear, BsCreditCard, BsBank, BsPersonDash } from 'react-icons/bs';
+import { BiChevronDown, BiX } from 'react-icons/bi';
+import { BsPerson, BsPersonFillGear } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
@@ -17,8 +20,8 @@ export const Settings: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const initialTab = queryParams.get('tab') as 'notification' | 'block' | 'profile' | 'card' | null;
-  const [activeTab, setActiveTab] = useState<'notification' | 'block' | 'profile' | 'card'>(initialTab || 'notification');
+  const initialTab = queryParams.get('tab') as 'notification' | 'block' | 'profile' | 'card' | 'account' | null;
+  const [activeTab, setActiveTab] = useState<'notification' | 'block' | 'profile' | 'card' | 'account'>( (initialTab as any) || 'notification');
 
   useEffect(() => {
     if (initialTab) {
@@ -432,37 +435,37 @@ export const Settings: React.FC = () => {
                 onClick={() => setActiveTab('notification')}
                 className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'notification' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <Bell className="w-5 h-5 mr-3" /> 알림 설정
+                <BsBell className="w-5 h-5 mr-3" /> 알림 설정
               </button>
               <button
                 onClick={() => setActiveTab('profile')}
                 className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'profile' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <User className="w-5 h-5 mr-3" /> 프로필 수정
+                <BsPersonFillGear className="w-5 h-5 mr-3" /> 프로필 수정
               </button>
               <button
                 onClick={() => setActiveTab('block')}
                 className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'block' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <Shield className="w-5 h-5 mr-3" /> 차단 사용자 관리
+                <BsShield className="w-5 h-5 mr-3" /> 차단 사용자 관리
               </button>
               <button
                 onClick={() => setActiveTab('card')}
                 className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'card' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <CreditCard className="w-5 h-5 mr-3" /> 카드 관리
+                <BsCreditCard className="w-5 h-5 mr-3" /> 카드 관리
               </button>
               <button
                 onClick={() => setActiveTab('account')}
                 className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'account' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <Landmark className="w-5 h-5 mr-3" /> 계좌 관리
+                <BsBank className="w-5 h-5 mr-3" /> 계좌 관리
               </button>
               <button
                 onClick={openWithdrawModal}
                 className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors"
               >
-                <UserMinus className="w-5 h-5 mr-3" /> 회원 탈퇴
+                <BsPersonDash className="w-5 h-5 mr-3" /> 회원 탈퇴
               </button>
             </div>
           </div>
@@ -673,7 +676,7 @@ export const Settings: React.FC = () => {
                 <div className="flex items-center justify-between p-5 rounded-2xl border border-indigo-200 bg-indigo-50/30">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
-                      <CreditCard className="w-6 h-6 text-indigo-600" />
+                      <BsCreditCard className="w-6 h-6 text-indigo-600" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
@@ -694,7 +697,7 @@ export const Settings: React.FC = () => {
                 </div>
               ) : (
                 <div className="py-10 text-center text-gray-400">
-                  <CreditCard className="w-10 h-10 mx-auto mb-3 text-gray-200" />
+                  <BsCreditCard className="w-10 h-10 mx-auto mb-3 text-gray-200" />
                   <p className="text-sm font-medium">등록된 카드가 없습니다.</p>
                   <p className="text-xs text-gray-300 mt-1 mb-4">카드를 등록하면 포인트를 간편하게 충전할 수 있습니다.</p>
                   <button
@@ -733,7 +736,7 @@ export const Settings: React.FC = () => {
                 </div>
               ) : accounts.length === 0 ? (
                 <div className="py-10 text-center text-gray-400">
-                  <Landmark className="w-10 h-10 mx-auto mb-3 text-gray-200" />
+                  <BsBank className="w-10 h-10 mx-auto mb-3 text-gray-200" />
                   <p className="text-sm font-medium">등록된 계좌가 없습니다.</p>
                   <p className="text-xs text-gray-300 mt-1">출금 시 사용할 계좌를 등록하세요.</p>
                 </div>
@@ -743,7 +746,7 @@ export const Settings: React.FC = () => {
                     <div key={acc.accountNo} className="flex items-center justify-between p-5 rounded-2xl border border-gray-100 bg-white">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
-                          <Landmark className="w-5 h-5 text-indigo-600" />
+                          <BsBank className="w-5 h-5 text-indigo-600" />
                         </div>
                         <div>
                           <p className="font-bold text-gray-900">{acc.bankName}</p>
@@ -898,7 +901,7 @@ export const Settings: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-bold text-gray-900">비밀번호 변경</h3>
                 <button onClick={() => setIsPasswordModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                  <X className="w-6 h-6" />
+                  <BiX className="w-6 h-6" />
                 </button>
               </div>
 
@@ -941,7 +944,7 @@ export const Settings: React.FC = () => {
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">비밀번호 확인</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <ShieldCheck
+                        <BsShieldCheck
                           className={`h-5 w-5 ${passwordData.confirm === '' ? 'text-gray-400' : (passwordData.new === passwordData.confirm ? 'text-emerald-500' : 'text-red-500')}`}
                           title={passwordData.confirm !== '' && passwordData.new !== passwordData.confirm ? "비밀번호가 맞지 않습니다." : ""}
                         />
@@ -990,7 +993,7 @@ export const Settings: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-bold text-gray-900">이메일 변경</h3>
                 <button onClick={() => setIsEmailModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                  <X className="w-6 h-6" />
+                  <BiX className="w-6 h-6" />
                 </button>
               </div>
 
@@ -1035,7 +1038,7 @@ export const Settings: React.FC = () => {
                             <option value="custom">직접 입력</option>
                           </select>
                           <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 font-bold">
-                            <ChevronDown className="w-4 h-4" />
+                            <BiChevronDown className="w-4 h-4" />
                           </div>
                         </div>
                       </div>
@@ -1142,7 +1145,7 @@ export const Settings: React.FC = () => {
                 onClick={() => setIsWithdrawModalOpen(false)}
                 className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <X className="w-6 h-6" />
+                <BiX className="w-6 h-6" />
               </button>
             )}
 

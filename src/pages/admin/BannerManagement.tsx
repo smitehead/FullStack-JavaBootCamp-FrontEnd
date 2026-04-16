@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, Image, Link as LinkIcon, CheckCircle2, XCircle, ChevronLeft, ChevronRight, Upload } from 'lucide-react';
+import { Trash2, Edit2, Image, Link as LinkIcon, CheckCircle2, Upload } from 'lucide-react';
+import { BiPlus, BiXCircle } from 'react-icons/bi';
+import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'motion/react';
 import { HeroBanner, BannerType } from '@/types';
 import api from '@/services/api';
@@ -157,7 +159,7 @@ export const BannerManagement: React.FC = () => {
           onClick={() => handleOpenModal()}
           className="bg-[#FF5A5A] text-white px-6 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-sm"
         >
-          <Plus className="w-4 h-4 mr-2" /> 새 배너 등록
+          <BiPlus className="w-5 h-5 mr-2" /> 새 배너 등록
         </button>
       </header>
 
@@ -242,7 +244,7 @@ export const BannerManagement: React.FC = () => {
                 }}
                 className="absolute left-6 top-1/2 -translate-y-1/2 z-20 p-4 bg-white/20 backdrop-blur-md text-white hover:bg-white/40 rounded-none transition-all opacity-0 group-hover:opacity-100"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <BiChevronLeft className="w-6 h-6" />
               </button>
               <button
                 onClick={() => {
@@ -251,7 +253,7 @@ export const BannerManagement: React.FC = () => {
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 z-20 p-4 bg-white/20 backdrop-blur-md text-white hover:bg-white/40 rounded-none transition-all opacity-0 group-hover:opacity-100"
               >
-                <ChevronRight className="w-6 h-6" />
+                <BiChevronRight className="w-6 h-6" />
               </button>
               <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
                 {activeBannersForPreview.map((_, idx) => (
@@ -305,7 +307,7 @@ export const BannerManagement: React.FC = () => {
                     </span>
                   ) : (
                     <span className="flex items-center text-[9px] font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-none">
-                      <XCircle className="w-2.5 h-2.5 mr-1" /> 비활성
+                      <BiXCircle className="w-4 h-4 mr-1.5" /> 비활성
                     </span>
                   )}
                 </div>

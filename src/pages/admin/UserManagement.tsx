@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Search, Thermometer, Coins, UserX, UserCheck, Shield, User as UserIcon, ArrowUpDown, Filter } from 'lucide-react';
+import { Search, Thermometer, Coins, ArrowUpDown, Filter } from 'lucide-react';
+import { BsPersonX, BsPersonCheck, BsShield } from 'react-icons/bs';
+import { BsPerson } from 'react-icons/bs';
 import { useSearchParams } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { User, WithdrawnUser } from '@/types';
@@ -228,7 +230,7 @@ export const UserManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <UserIcon className="w-5 h-5 text-gray-400" /> 사용자 목록
+            <BsPerson className="w-5 h-5 text-gray-400" /> 사용자 목록
           </h2>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 flex-wrap">
@@ -267,7 +269,7 @@ export const UserManagement: React.FC = () => {
                       {!user.isWithdrawn && (
                         <div className="relative inline-flex group/role">
                           <span className={`inline-flex items-center h-[18px] px-2 rounded-none text-[10px] font-bold cursor-pointer ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-                            {user.isAdmin ? <Shield className="w-2.5 h-2.5 mr-1" /> : <UserIcon className="w-2.5 h-2.5 mr-1" />}
+                            {user.isAdmin ? <BsShield className="w-2.5 h-2.5 mr-1" /> : <BsPerson className="w-2.5 h-2.5 mr-1" />}
                             {user.isAdmin ? '관리자' : '일반'}
                           </span>
                           <div className="absolute left-0 mt-1 w-24 bg-white border border-gray-100 rounded-none shadow-xl py-1 z-10 opacity-0 invisible group-hover/role:opacity-100 group-hover/role:visible transition-all">
@@ -333,7 +335,7 @@ export const UserManagement: React.FC = () => {
                       className={`p-2 rounded-none transition-colors ${user.isSuspended ? 'hover:bg-green-100 text-green-600' : 'hover:bg-red-100 text-red-600'}`}
                       title={user.isSuspended ? "정지 해제" : "계정 정지"}
                     >
-                      {user.isSuspended ? <UserCheck className="w-4 h-4" /> : <UserX className="w-4 h-4" />}
+                      {user.isSuspended ? <BsPersonCheck className="w-4 h-4" /> : <BsPersonX className="w-4 h-4" />}
                     </button>
                   </div>
                 )}
@@ -342,7 +344,7 @@ export const UserManagement: React.FC = () => {
           ))}
           {filteredAndSortedUsers.length === 0 && (
             <div className="px-8 py-20 text-center">
-              <UserIcon className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <BsPerson className="w-12 h-12 text-gray-100 mx-auto mb-4" />
               <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
             </div>
           )}

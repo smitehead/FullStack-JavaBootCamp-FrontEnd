@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Search, HelpCircle, MessageCircle, Phone } from 'lucide-react';
+import { BiSearch, BiChevronDown, BiChevronUp, BiHelpCircle } from 'react-icons/bi';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
 
 interface FAQItem {
@@ -95,7 +95,7 @@ export const FAQ: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <div className="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center">
-              <Search className="w-5 h-5 text-gray-400" />
+              <BiSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
           </div>
 
@@ -128,13 +128,13 @@ export const FAQ: React.FC = () => {
                     className="w-full px-8 py-5 flex items-center justify-between text-left"
                   >
                     <div className="flex items-center gap-4">
-                      <HelpCircle className="w-5 h-5 text-gray-400 shrink-0" />
+                      <BiHelpCircle className="w-5 h-5 text-gray-400 shrink-0" />
                       <span className="text-sm font-semibold text-gray-900">{faq.question}</span>
                     </div>
                     {openId === faq.id ? (
-                      <ChevronDown className="w-5 h-5 text-gray-400 rotate-180 transition-transform" />
+                      <BiChevronDown className="w-5 h-5 text-gray-400 rotate-180 transition-transform" />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-400 transition-transform" />
+                      <BiChevronDown className="w-5 h-5 text-gray-400 transition-transform" />
                     )}
                   </button>
                   {openId === faq.id && (

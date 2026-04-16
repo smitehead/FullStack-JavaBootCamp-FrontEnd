@@ -1,6 +1,8 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Calendar, Clock, CheckCircle2, MessageSquare, User, ShieldCheck, AlertCircle, Info, List } from 'lucide-react';
+import { CheckCircle2, AlertCircle, List } from 'lucide-react';
+import { BsShieldCheck, BsChatLeft, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck } from 'react-icons/bs';
+import { BiChevronLeft } from 'react-icons/bi';
 import { format } from 'date-fns';
 import api from '@/services/api';
 import { Inquiry } from '@/types';
@@ -77,7 +79,7 @@ export const InquiryDetail: React.FC = () => {
     <div className="max-w-[1000px] mx-auto px-6 py-12">
       {/* Back Button */}
       <Link to="/inquiry" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
-        <ChevronLeft className="w-4 h-4" />
+        <BiChevronLeft className="w-4 h-4" />
         문의 목록으로
       </Link>
 
@@ -111,7 +113,7 @@ export const InquiryDetail: React.FC = () => {
           
           <div className="flex items-center gap-6 text-sm text-gray-400 font-bold">
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
+              <BsCalendarCheck className="w-4 h-4" />
               작성일: {format(new Date(inquiry.createdAt), 'yyyy.MM.dd HH:mm')}
             </div>
           </div>
@@ -121,7 +123,7 @@ export const InquiryDetail: React.FC = () => {
         <div className="p-10">
           <div className="flex items-start gap-4 mb-8">
             <div className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center shrink-0">
-              <User className="w-5 h-5 text-gray-400" />
+              <BsPerson className="w-5 h-5 text-gray-400" />
             </div>
             <div className="flex-1">
               <div className="text-sm font-semibold text-gray-900 mb-2">문의 내용</div>
@@ -150,7 +152,7 @@ export const InquiryDetail: React.FC = () => {
             <div className="mt-12 p-8 bg-gray-50 rounded-3xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-red-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/20">
-                  <ShieldCheck className="w-5 h-5 text-white" />
+                  <BsShieldCheck className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-4 mb-4">
@@ -168,7 +170,7 @@ export const InquiryDetail: React.FC = () => {
                   </div>
                   
                   <div className="mt-8 pt-6 border-t border-gray-200/50 flex items-center gap-2 text-xs text-gray-400 font-bold italic">
-                    <Info className="w-3.5 h-3.5" />
+                    <BsClock className="w-3.5 h-3.5" />
                     추가 문의가 필요하신 경우 새로운 문의를 작성해 주시기 바랍니다.
                   </div>
                 </div>
@@ -180,7 +182,7 @@ export const InquiryDetail: React.FC = () => {
             <div className="mt-12 p-8 bg-gray-50 rounded-2xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-gray-200 flex items-center justify-center shrink-0">
-                  <Clock className="w-5 h-5 text-gray-400" />
+                  <BsClock className="w-5 h-5 text-gray-400" />
                 </div>
                 
                 <div className="flex-1">
@@ -204,7 +206,7 @@ export const InquiryDetail: React.FC = () => {
               to="/inquiry"
               className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
             >
-              <List className="w-4 h-4" />
+              <BsInfoCircle className="w-5 h-5" />
               목록으로
             </Link>
           </div>
