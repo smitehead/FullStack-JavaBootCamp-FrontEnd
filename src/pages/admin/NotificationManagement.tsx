@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, Link as LinkIcon } from 'lucide-react';
+import { BsSend, BsLink } from 'react-icons/bs';
+
 import { BsInfoCircle, BsChatLeft, BsWallet, BsBell } from 'react-icons/bs';
 import { BiPlus, BiX } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -111,7 +112,7 @@ export const NotificationManagement: React.FC = () => {
             className="bg-white rounded-none p-8 shadow-sm border border-gray-100"
           >
             <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <Send className="w-5 h-5 text-[#FF5A5A]" /> 새 알림 발송
+              <BsSend className="w-5 h-5 text-[#FF5A5A]" /> 새 알림 발송
             </h2>
 
             <form onSubmit={handleSend} className="flex flex-col lg:flex-row items-end gap-6">
@@ -148,7 +149,7 @@ export const NotificationManagement: React.FC = () => {
               <div className="w-full lg:w-72 shrink-0">
                 <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">이동 링크 (URL)</label>
                 <div className="relative">
-                  <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <BsLink className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-medium text-sm"
@@ -204,7 +205,7 @@ export const NotificationManagement: React.FC = () => {
                         <>
                           <span className="text-[10px] font-medium text-gray-300">|</span>
                           <span className="text-[10px] font-medium text-gray-400 flex items-center gap-1">
-                            <LinkIcon className="w-2.5 h-2.5" /> {noti.linkUrl}
+                            <BsLink className="w-2.5 h-2.5" /> {noti.linkUrl}
                           </span>
                         </>
                       )}

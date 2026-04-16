@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock } from 'lucide-react';
+import { BsLock } from 'react-icons/bs';
+
 import { BsCheckCircle } from 'react-icons/bs';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
@@ -157,7 +158,7 @@ export const CardRegistration: React.FC = () => {
           <div className="p-8 border-b border-gray-50">
             <div className="flex items-center gap-3 mb-1">
               <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
-                <Lock className="w-4 h-4 text-indigo-600" />
+                <BsLock className="w-4 h-4 text-indigo-600" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">카드 등록</h1>
             </div>

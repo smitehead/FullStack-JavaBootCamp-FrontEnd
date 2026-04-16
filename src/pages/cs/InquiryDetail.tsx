@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { List } from 'lucide-react';
+import { BsList } from 'react-icons/bs';
+
 import { BsCheckCircle, BsExclamationCircle, BsShieldCheck, BsChatLeft, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck } from 'react-icons/bs';
 import { BiChevronLeft } from 'react-icons/bi';
 import { format } from 'date-fns';

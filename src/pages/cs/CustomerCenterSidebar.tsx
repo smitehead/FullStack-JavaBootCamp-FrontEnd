@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { HelpCircle } from 'lucide-react';
+import { BsQuestionCircle } from 'react-icons/bs';
+
 import { BsChatLeft } from 'react-icons/bs';
 import { BsBell } from 'react-icons/bs';
 

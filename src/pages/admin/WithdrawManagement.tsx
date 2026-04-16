@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { BsArrowRepeat } from 'react-icons/bs';
+
 import { BsWallet, BsExclamationTriangle, BsCheckCircle, BsFilter } from 'react-icons/bs';
 import { BiSearch, BiXCircle } from 'react-icons/bi';
 import api from '@/services/api';
@@ -232,7 +233,7 @@ export const WithdrawManagement: React.FC = () => {
                         className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-none transition-all"
                         title="처리중으로 변경"
                       >
-                        <RefreshCw className="w-4 h-4" />
+                        <BsArrowRepeat className="w-4 h-4" />
                       </button>
                     )}
                     <button
@@ -279,7 +280,7 @@ export const WithdrawManagement: React.FC = () => {
                   confirmModal.action === '처리중' ? 'bg-blue-50' : 'bg-rose-50'
                 }`}>
                 {confirmModal.action === '완료' ? <BsCheckCircle className="w-6 h-6 text-emerald-500" /> :
-                  confirmModal.action === '처리중' ? <RefreshCw className="w-6 h-6 text-blue-500" /> :
+                  confirmModal.action === '처리중' ? <BsArrowRepeat className="w-6 h-6 text-blue-500" /> :
                     <BsExclamationTriangle className="w-6 h-6 text-rose-500" />}
               </div>
               <div>

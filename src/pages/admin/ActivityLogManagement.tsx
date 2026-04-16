@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Gavel } from 'lucide-react';
+import { BsBag } from 'react-icons/bs';
+
 import { BsInfoCircle, BsShieldCheck, BsPerson, BsCalendarCheck, BsChatLeft, BsCurrencyDollar, BsWallet, BsExclamationTriangle, BsClockHistory } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
 import { useAppContext } from '@/context/AppContext';

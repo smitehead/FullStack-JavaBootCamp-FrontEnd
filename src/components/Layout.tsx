@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { BsStars } from 'react-icons/bs';
+
 import { BsArrowUpRight, BsChatLeft, BsPerson, BsGear, BsBell, BsGeoAlt, BsClock, BsInstagram, BsYoutube } from 'react-icons/bs';
 import { BiListOl, BiSearch, BiX, BiShareAlt, BiListUl } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -99,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-1 shrink-0 group">
             <div className="bg-[#FF5A5A] p-2 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
-              <Sparkles className="w-6 h-6 text-white" />
+              <BsStars className="w-6 h-6 text-white" />
             </div>
             <span className="text-2xl font-bold text-gray-800 tracking-tighter italic">JAVAJAVA</span>
           </Link>
@@ -486,10 +487,10 @@ const Footer: React.FC = () => {
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
           {/* Company Info */}
-          <div className="md:col-span-5">
+          <div className="md:col-span-6">
             <div className="flex items-center space-x-2 mb-6">
               <div className="bg-gray-400 p-1.5 rounded-lg">
-                <Sparkles className="w-5 h-5 text-white" />
+                <BsStars className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-gray-700 tracking-tight">JAVAJAVA</span>
             </div>
@@ -503,7 +504,7 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Links */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-3">
             <h4 className="text-sm font-bold text-gray-800 mb-6 uppercase tracking-wider">서비스 및 정책</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
               <li><Link to="/about?tab=intro" className="hover:text-[#FF5A5A] transition-colors">서비스 소개</Link></li>
@@ -513,29 +514,13 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          <div className="md:col-span-2">
+          <div className="md:col-span-3">
             <h4 className="text-sm font-bold text-gray-800 mb-6 uppercase tracking-wider">고객지원</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
               <li className="flex items-center gap-2"><Link to="/notice" className="hover:text-[#FF5A5A] transition-colors">공지사항</Link></li>
               <li className="flex items-center gap-2"><Link to="/faq" className="hover:text-[#FF5A5A] transition-colors">자주 묻는 질문 (FAQ)</Link></li>
               <li className="flex items-center gap-2"><Link to="/inquiry" className="hover:text-[#FF5A5A] transition-colors">1:1 문의하기</Link></li>
             </ul>
-          </div>
-
-          {/* Social */}
-          <div className="md:col-span-3">
-            <h4 className="text-sm font-bold text-gray-800 mb-6 uppercase tracking-wider">FOLLOW US</h4>
-            <div className="flex items-center gap-3">
-              <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <BiShareAlt className="w-6 h-6" />
-              </a>
-              <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <BsInstagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <BsYoutube className="w-5 h-5" />
-              </a>
-            </div>
           </div>
         </div>
 

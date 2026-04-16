@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Send, Image as ImageIcon, MoreVertical,
-  ShoppingBag, RefreshCw,
-  Wifi, WifiOff
-} from 'lucide-react';
+import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical } from 'react-icons/bs';
 import { BiArrowBack } from 'react-icons/bi';
 import { BsChatLeft, BsExclamationCircle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
@@ -334,7 +330,7 @@ export const Chat: React.FC = () => {
   // ══════════════════════════════════════════════════
   // 4. 메시지 전송 (낙관적 UI)
   // ══════════════════════════════════════════════════
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleBsSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedRoom || !memberNo) return;
     if (newMessage.length > MAX_CONTENT_LENGTH) return;
@@ -500,14 +496,7 @@ export const Chat: React.FC = () => {
       {/* ──── Sidebar: 채팅방 목록 ──── */}
       <div className={`w-full md:w-80 flex-shrink-0 border-r border-gray-100 flex flex-col ${selectedRoom ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-black text-gray-900 tracking-tight">채팅</h2>
-            {/* 연결 상태 표시 */}
-            <div className={`flex items-center gap-1 text-xs ${isConnected ? 'text-green-500' : 'text-gray-400'}`}>
-              {isConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
-              {isConnected ? '연결됨' : '연결 중...'}
-            </div>
-          </div>
+          <h2 className="text-xl font-black text-gray-900 tracking-tight mb-4">채팅</h2>
           {/* 필터 칩 */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {([
@@ -526,7 +515,7 @@ export const Chat: React.FC = () => {
           {filteredRooms.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center p-8 text-center">
               <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
-                <Send className="w-8 h-8 text-gray-300" />
+                <BsSend className="w-8 h-8 text-gray-300" />
               </div>
               <p className="text-sm font-bold text-gray-400">대화 내역이 없습니다.</p>
             </div>
@@ -580,13 +569,13 @@ export const Chat: React.FC = () => {
               <div className="relative" ref={menuRef}>
                 <button onClick={() => setShowMoreMenu(!showMoreMenu)}
                   className="p-2 text-gray-400 hover:text-gray-600">
-                  <MoreVertical className="w-5 h-5" />
+                  <BsThreeDotsVertical className="w-5 h-5" />
                 </button>
                 {showMoreMenu && (
                   <div className="absolute right-0 top-10 w-40 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-10">
                     <button onClick={() => navigate(`/products/${selectedRoom.productId}`)}
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                      <ShoppingBag className="w-4 h-4" /> 상품 보기
+                      <BsCartCheck className="w-4 h-4" /> 상품 보기
                     </button>
                     <button onClick={async () => {
                       if (window.confirm('이 채팅방을 나가시겠습니까?')) {
@@ -659,7 +648,7 @@ export const Chat: React.FC = () => {
                               <button onClick={() => handleRetry(msg)}
                                 className="flex items-center gap-0.5 text-red-500 text-[10px] font-bold hover:underline">
                                 <BsExclamationCircle className="w-3 h-3" />
-                                <RefreshCw className="w-3 h-3" />
+                                <BsArrowRepeat className="w-3 h-3" />
                                 재전송
                               </button>
                             )}
@@ -682,7 +671,7 @@ export const Chat: React.FC = () => {
 
             {/* 입력 영역 */}
             <div className="p-4 bg-white border-t border-gray-100">
-              <form onSubmit={handleSendMessage} className="flex items-center gap-3">
+              <form onSubmit={handleBsSendMessage} className="flex items-center gap-3">
                 <div className="flex-1 relative">
                   <input type="text" value={newMessage}
                     onChange={(e) => {
@@ -700,7 +689,7 @@ export const Chat: React.FC = () => {
                 <button type="submit"
                   disabled={!newMessage.trim() || !isConnected}
                   className="p-3 bg-orange-500 text-white rounded-2xl hover:bg-orange-600 transition-all disabled:opacity-50 disabled:hover:bg-orange-500 shadow-lg shadow-orange-100">
-                  <Send className="w-5 h-5" />
+                  <BsSend className="w-5 h-5" />
                 </button>
               </form>
             </div>

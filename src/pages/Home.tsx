@@ -1,7 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Grid } from 'lucide-react';
-import { BsArrowUpRight } from 'react-icons/bs';
 import { BiRightArrowAlt, BiChevronLeft, BiChevronRight } from 'react-icons/bi';
 import api from '@/services/api';
 import { ProductCard } from '@/components/ProductCard';

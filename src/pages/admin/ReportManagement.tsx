@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Filter, Gavel, ShieldAlert, FileText } from 'lucide-react';
+import { BsFunnel, BsBag, BsShieldExclamation, BsFileEarmarkText } from 'react-icons/bs';
+
 import { BsChatLeft, BsExclamationTriangle } from 'react-icons/bs';
 import { BiSearch, BiX } from 'react-icons/bi';
 import { BsPerson } from 'react-icons/bs';
@@ -176,7 +177,7 @@ export const ReportManagement: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-none px-4 py-2.5 shadow-sm">
-            <Filter className="w-3.5 h-3.5 text-gray-400" />
+            <BsFunnel className="w-3.5 h-3.5 text-gray-400" />
             <select
               className="bg-transparent text-xs font-bold text-gray-600 focus:outline-none cursor-pointer"
               value={statusFilter}
@@ -258,7 +259,7 @@ export const ReportManagement: React.FC = () => {
                         className="p-2 text-gray-400 hover:text-[#FF5A5A] hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0"
                         title="신고 처리"
                       >
-                        <ShieldAlert className="w-4 h-4" />
+                        <BsShieldExclamation className="w-4 h-4" />
                       </button>
                     )}
                   </div>
@@ -302,7 +303,7 @@ export const ReportManagement: React.FC = () => {
               <div className="flex items-center justify-between px-8 pt-8 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-none bg-red-50 flex items-center justify-center shrink-0">
-                    <FileText className="w-5 h-5 text-[#FF5A5A]" />
+                    <BsFileEarmarkText className="w-5 h-5 text-[#FF5A5A]" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900">신고 상세</h3>
                 </div>
@@ -418,7 +419,7 @@ export const ReportManagement: React.FC = () => {
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 rounded-none bg-red-50 flex items-center justify-center shrink-0">
-                  <ShieldAlert className="w-6 h-6 text-[#FF5A5A]" />
+                  <BsShieldExclamation className="w-6 h-6 text-[#FF5A5A]" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">신고 처리</h3>

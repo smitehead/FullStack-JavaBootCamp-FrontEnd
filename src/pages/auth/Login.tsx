@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Lock, Sparkles } from 'lucide-react';
+import { BsLock, BsStars } from 'react-icons/bs';
+
 import { BsExclamationCircle } from 'react-icons/bs';
 import { BsEnvelope, BsPerson } from 'react-icons/bs';
 import { BiChevronRight } from 'react-icons/bi';
@@ -51,7 +52,7 @@ export const Login: React.FC = () => {
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-[32px] shadow-xl border border-gray-100">
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-[#FF5A5A] rounded-2xl flex items-center justify-center shadow-lg shadow-red-100">
-            <Sparkles className="h-10 w-10 text-white" />
+            <BsStars className="h-10 w-10 text-white" />
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900 tracking-tight">
             로그인
@@ -83,7 +84,7 @@ export const Login: React.FC = () => {
               <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">비밀번호</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <BsLock className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   type="password"

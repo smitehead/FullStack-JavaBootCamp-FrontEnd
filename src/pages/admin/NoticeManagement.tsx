@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Edit2, Trash2, FileText } from "lucide-react";
+import { BsPen, BsTrash3, BsFileEarmarkText } from 'react-icons/bs';
+
 import { BiPlus, BiSearch } from 'react-icons/bi';
 import { NoticeCategory } from "@/types";
 import api from "@/services/api";
@@ -173,7 +174,7 @@ export const NoticeManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-gray-400" /> 공지 목록
+            <BsFileEarmarkText className="w-5 h-5 text-gray-400" /> 공지 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredNotices.length}건</span>
         </div>
@@ -224,13 +225,13 @@ export const NoticeManagement: React.FC = () => {
                       onClick={() => handleOpenModal(notice)}
                       className="p-2 hover:bg-gray-100 text-gray-600 rounded-none transition-colors"
                     >
-                      <Edit2 className="w-4 h-4" />
+                      <BsPen className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(notice.id)}
                       className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <BsTrash3 className="w-4 h-4" />
                     </button>
                   </div>
                 )}
@@ -366,7 +367,7 @@ export const NoticeManagement: React.FC = () => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-w-sm rounded-2xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
             <div className="w-16 h-16 bg-red-50 rounded-none flex items-center justify-center mb-4 mx-auto">
-              <Trash2 className="w-8 h-8 text-red-500" />
+              <BsTrash3 className="w-8 h-8 text-red-500" />
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2 text-center tracking-tight">
               정말 삭제하시겠습니까?

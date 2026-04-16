@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Gavel, Filter } from 'lucide-react';
+import { BsBag, BsFunnel } from 'react-icons/bs';
+
 import { BiSearch } from 'react-icons/bi';
 import { BsClock, BsPeople, BsExclamationCircle, BsCheckCircle, BsBan } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
@@ -84,7 +85,7 @@ export const AuctionManagement: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-none px-4 py-2.5 shadow-sm">
-            <Filter className="w-3.5 h-3.5 text-gray-400" />
+            <BsFunnel className="w-3.5 h-3.5 text-gray-400" />
             <select
               className="bg-transparent text-xs font-bold text-gray-600 focus:outline-none cursor-pointer"
               value={statusFilter}
@@ -102,7 +103,7 @@ export const AuctionManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Gavel className="w-5 h-5 text-gray-400" /> 경매 목록
+            <BsBag className="w-5 h-5 text-gray-400" /> 경매 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredProducts.length}건</span>
         </div>
@@ -174,7 +175,7 @@ export const AuctionManagement: React.FC = () => {
           ))}
           {filteredProducts.length === 0 && (
             <div className="px-8 py-20 text-center">
-              <Gavel className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <BsBag className="w-12 h-12 text-gray-100 mx-auto mb-4" />
               <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
             </div>
           )}

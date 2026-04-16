@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Send } from 'lucide-react';
+import { BsSend } from 'react-icons/bs';
+
 import { BsExclamationTriangle, BsCheckCircle, BsInfoCircle, BsArrowLeft } from 'react-icons/bs';
 import { BiX } from 'react-icons/bi';
 import { BiChevronLeft } from 'react-icons/bi';
@@ -242,7 +243,7 @@ export const Report: React.FC = () => {
                 disabled={isSubmitting}
                 className="w-full py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <Send className="w-5 h-5" />
+                <BsSend className="w-5 h-5" />
                 {isSubmitting ? '접수 중...' : '신고 접수하기'}
               </button>
             </form>

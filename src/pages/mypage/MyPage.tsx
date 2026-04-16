@@ -2,9 +2,10 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { ShoppingBag, Star, Trash2, RefreshCw, Gavel } from 'lucide-react';
+import { BsCartCheck, BsStar, BsTrash3, BsArrowRepeat, BsBag } from 'react-icons/bs';
+
 import { BiX, BiXCircle } from 'react-icons/bi';
-import { BsHeart, BsGear, BsChatLeft, BsWallet, BsBox2, BsExclamationTriangle, BsCheckCircle } from 'react-icons/bs';
+import { BsHeart, BsHeartFill, BsGear, BsChatLeft, BsWallet, BsBox2, BsExclamationTriangle, BsCheckCircle } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -405,7 +406,7 @@ export const MyPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <button onClick={() => setActiveTab('bidding')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group text-left">
                   <div className="bg-blue-50 p-2.5 rounded-xl group-hover:bg-blue-100 transition-colors">
-                    <Gavel className="w-5 h-5 text-blue-500" />
+                    <BsBag className="w-5 h-5 text-blue-500" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">입찰내역</p>
@@ -414,7 +415,7 @@ export const MyPage: React.FC = () => {
                 </button>
                 <button onClick={() => setActiveTab('wishlist')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group text-left">
                   <div className="bg-pink-50 p-2.5 rounded-xl group-hover:bg-pink-100 transition-colors">
-                    <BsHeart className="w-5 h-5 text-pink-500 fill-pink-500" />
+                    <BsHeartFill className="w-5 h-5 text-pink-500" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">찜목록</p>
@@ -460,16 +461,16 @@ export const MyPage: React.FC = () => {
               <BsBox2 className="w-5 h-5 mr-3" /> 판매 내역
             </button>
             <button onClick={() => setActiveTab('bidding')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'bidding' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <Gavel className="w-5 h-5 mr-3" /> 입찰 내역
+              <BsBag className="w-5 h-5 mr-3" /> 입찰 내역
             </button>
             <button onClick={() => setActiveTab('purchased')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'purchased' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <ShoppingBag className="w-5 h-5 mr-3" /> 구매 내역
+              <BsCartCheck className="w-5 h-5 mr-3" /> 구매 내역
             </button>
             <button onClick={() => setActiveTab('wishlist')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'wishlist' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <BsHeart className="w-5 h-5 mr-3" /> 찜 목록
+              <BsHeartFill className="w-5 h-5 mr-3 text-pink-500" /> 찜 목록
             </button>
             <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <Star className="w-5 h-5 mr-3" /> 리뷰 관리
+              <BsStar className="w-5 h-5 mr-3" /> 리뷰 관리
             </button>
             <Link 
                to="/chat"
@@ -528,12 +529,12 @@ export const MyPage: React.FC = () => {
                     <div className="flex gap-2">
                       <button onClick={() => handleDeleteClick(p)}
                         className="flex-1 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center gap-1.5">
-                        <Trash2 className="w-3.5 h-3.5" /> 삭제하기
+                        <BsTrash3 className="w-3.5 h-3.5" /> 삭제하기
                       </button>
                       {p.status === 'completed' && (p.participantCount === 0 || p.auctionResultStatus === '유찰') && (
                         <button onClick={() => handleRepost(p)}
                           className="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-all flex items-center justify-center gap-1.5">
-                          <RefreshCw className="w-3.5 h-3.5" /> 재게시
+                          <BsArrowRepeat className="w-3.5 h-3.5" /> 재게시
                         </button>
                       )}
                     </div>

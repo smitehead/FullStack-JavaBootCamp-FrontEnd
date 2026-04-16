@@ -4,9 +4,8 @@ import api from '@/services/api';
 import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
-import { 
-  XCircle, Sparkles, Clock, Share2, List, ShoppingBag
-} from 'lucide-react';
+import { BsXCircle, BsStars, BsList, BsCartCheck } from 'react-icons/bs';
+
 import { BsCheckCircle, BsBox2, BsExclamationCircle, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGeoAlt } from 'react-icons/bs';
 import { BiChevronLeft, BiChevronRight, BiArrowBack } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
@@ -447,7 +446,7 @@ export const WonProductDetail: React.FC = () => {
 
                   {isCanceled && (
                     <div className="bg-red-50 border border-red-100 p-6 rounded-2xl text-center">
-                      <XCircle className="w-10 h-10 text-red-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
+                      <BsXCircle className="w-10 h-10 text-red-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
                       <p className="text-sm font-bold text-red-500">거래가 취소되었습니다.</p>
                     </div>
                   )}
@@ -574,7 +573,7 @@ export const WonProductDetail: React.FC = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
-              <XCircle className="w-8 h-8 text-red-600" />
+              <BsXCircle className="w-8 h-8 text-red-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">낙찰을 취소하시겠습니까?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">

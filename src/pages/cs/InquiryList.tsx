@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Filter } from 'lucide-react';
+import { BsFunnel } from 'react-icons/bs';
+
 import { BiPlus } from 'react-icons/bi';
 import { BsChatLeft, BsClock, BsInfoCircle, BsCheckCircle } from 'react-icons/bs';
 import { BiSearch, BiChevronRight } from 'react-icons/bi';

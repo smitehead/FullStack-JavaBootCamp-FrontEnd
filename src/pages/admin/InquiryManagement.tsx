@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Trash2, Send } from 'lucide-react';
+import { BsTrash3, BsSend } from 'react-icons/bs';
+
 import { BsChatLeft, BsCheckCircle, BsPerson } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
 import { Inquiry } from '@/types';
@@ -195,7 +196,7 @@ export const InquiryManagement: React.FC = () => {
                 onClick={() => handleDelete(selectedInquiry.inquiryNo)}
                 className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
               >
-                <Trash2 className="w-5 h-5" />
+                <BsTrash3 className="w-5 h-5" />
               </button>
             </div>
 
@@ -264,7 +265,7 @@ export const InquiryManagement: React.FC = () => {
                 disabled={!answer.trim()}
                 className="w-full py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-500/10 active:scale-95 disabled:opacity-50 disabled:active:scale-100 text-sm"
               >
-                <Send className="w-4 h-4 mr-2" /> 확인
+                <BsSend className="w-4 h-4 mr-2" /> 확인
               </button>
             </div>
           </div>
@@ -292,7 +293,7 @@ export const InquiryManagement: React.FC = () => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-w-sm rounded-2xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
             <div className="w-16 h-16 bg-red-50 rounded-none flex items-center justify-center mb-4 mx-auto">
-              <Trash2 className="w-8 h-8 text-red-500" />
+              <BsTrash3 className="w-8 h-8 text-red-500" />
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2 text-center tracking-tight">
               정말 삭제하시겠습니까?

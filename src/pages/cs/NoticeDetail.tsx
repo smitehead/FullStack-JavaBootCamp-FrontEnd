@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { List } from 'lucide-react';
+import { BsList } from 'react-icons/bs';
+
 import { BsExclamationTriangle, BsInfoCircle } from 'react-icons/bs';
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
 import { BsCalendarCheck } from 'react-icons/bs';
@@ -133,7 +134,7 @@ export const NoticeDetail: React.FC = () => {
               to="/notice"
               className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
             >
-              <List className="w-4 h-4" />
+              <BsList className="w-4 h-4" />
               <BiChevronRight className="w-4 h-4 ml-2" />
               목록으로
             </Link>

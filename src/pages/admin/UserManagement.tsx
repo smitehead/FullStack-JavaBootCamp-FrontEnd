@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Search, Thermometer, Coins, ArrowUpDown, Filter } from 'lucide-react';
+import { BsSearch, BsThermometerHalf, BsCoin, BsArrowDownUp, BsFunnel } from 'react-icons/bs';
+
 import { BsPersonX, BsPersonCheck, BsShield } from 'react-icons/bs';
 import { BsPerson } from 'react-icons/bs';
 import { useSearchParams } from 'react-router-dom';
@@ -189,7 +190,7 @@ export const UserManagement: React.FC = () => {
         <div className="flex flex-wrap items-center justify-end gap-3">
           <div className="relative w-64 flex items-center h-10">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <Search className="text-gray-400 w-4 h-4" />
+              <BsSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"
@@ -201,7 +202,7 @@ export const UserManagement: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-none px-4 py-2.5 shadow-sm">
-            <Filter className="w-3.5 h-3.5 text-gray-400" />
+            <BsFunnel className="w-3.5 h-3.5 text-gray-400" />
             <select
               className="bg-transparent text-xs font-bold text-gray-600 focus:outline-none cursor-pointer"
               value={filterRole}
@@ -243,7 +244,7 @@ export const UserManagement: React.FC = () => {
                     className={`inline-flex items-center gap-1 px-2 py-1 rounded-none text-[10px] font-bold transition-colors ${sortField === field ? 'bg-[#FF5A5A] text-white' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
                   >
                     {labels[field]}
-                    <ArrowUpDown className="w-2.5 h-2.5" />
+                    <BsArrowDownUp className="w-2.5 h-2.5" />
                   </button>
                 );
               })}
@@ -300,12 +301,12 @@ export const UserManagement: React.FC = () => {
                       {!user.isWithdrawn && (
                         <>
                           <span className="inline-flex items-center gap-1 font-bold text-gray-600">
-                            <Thermometer className={`w-3 h-3 ${user.mannerTemp >= 36.5 ? 'text-orange-500' : 'text-blue-500'}`} />
+                            <BsThermometerHalf className={`w-3 h-3 ${user.mannerTemp >= 36.5 ? 'text-orange-500' : 'text-blue-500'}`} />
                             {Number(user.mannerTemp).toFixed(1)}°C
                           </span>
                           <span className="text-gray-300">|</span>
                           <span className="font-bold text-gray-600">
-                            <Coins className="w-3 h-3 inline mr-1 text-yellow-500" />{user.points.toLocaleString()}P
+                            <BsCoin className="w-3 h-3 inline mr-1 text-yellow-500" />{user.points.toLocaleString()}P
                           </span>
                           <span className="text-gray-300">|</span>
                           <span className="font-medium text-gray-500">경매 {user.postCount || 0}건</span>
@@ -322,13 +323,13 @@ export const UserManagement: React.FC = () => {
                       onClick={() => handleOpenModal(user as any, 'manner')}
                       className="p-2 hover:bg-orange-100 text-orange-600 rounded-none transition-colors" title="온도 조절"
                     >
-                      <Thermometer className="w-4 h-4" />
+                      <BsThermometerHalf className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleOpenModal(user as any, 'points')}
                       className="p-2 hover:bg-blue-100 text-blue-600 rounded-none transition-colors" title="포인트 지급"
                     >
-                      <Coins className="w-4 h-4" />
+                      <BsCoin className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => user.isSuspended ? toggleSuspension(user as any) : handleOpenModal(user as any, 'suspend')}
@@ -400,7 +401,7 @@ export const UserManagement: React.FC = () => {
                   {/* Manner History Section */}
                   <div className="pt-6 border-t border-gray-100">
                     <h3 className="text-xs font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <Thermometer className="w-3 h-3 text-orange-500" />
+                      <BsThermometerHalf className="w-3 h-3 text-orange-500" />
                       매너온도 히스토리
                     </h3>
                     <div className="max-h-48 overflow-y-auto pr-2 space-y-2 custom-scrollbar">

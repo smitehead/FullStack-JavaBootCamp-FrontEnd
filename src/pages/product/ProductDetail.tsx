@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsHeart, BsClock, BsGeoAlt, BsPeople, BsPerson, BsWallet, BsThreeDotsVertical } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsGeoAlt, BsPeople, BsPerson, BsWallet, BsThreeDotsVertical } from 'react-icons/bs';
 import { BiArrowBack, BiChevronRight, BiX, BiShareAlt, BiRefresh, BiTrash } from 'react-icons/bi';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
@@ -1034,7 +1034,11 @@ export const ProductDetail: React.FC = () => {
                 onClick={toggleWishlist}
                 className={`flex flex-col items-center justify-center transition-all min-w-[48px] ${isWishlisted ? 'text-red-500' : 'text-gray-300 hover:text-gray-400'}`}
               >
-                <BsHeart className={`w-8 h-8 mb-1 ${isWishlisted ? 'fill-current' : ''}`} />
+                {isWishlisted ? (
+                  <BsHeartFill className="w-8 h-8 mb-1" />
+                ) : (
+                  <BsHeart className="w-8 h-8 mb-1" />
+                )}
                 <span className="text-xs font-bold text-gray-500">
                   {product.wishlistCount || 0}
                 </span>
@@ -1145,7 +1149,7 @@ export const ProductDetail: React.FC = () => {
               <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-bold text-gray-800 flex items-center">
-                    <BsArrowUpRight className="w-5 h-5 mr-2 text-orange-500" /> 실시간 입찰 현황
+                    <BsGraphUpArrow className="w-5 h-5 mr-2 text-orange-500" /> 실시간 입찰 현황
                   </h3>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-gray-400">시작가 대비</span>

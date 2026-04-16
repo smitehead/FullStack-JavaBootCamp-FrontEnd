@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { BsPerson, BsHeart, BsClock, BsBox2 } from 'react-icons/bs';
+import { BsPerson, BsHeart, BsHeartFill, BsClock, BsBox2 } from 'react-icons/bs';
 import { Product } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -126,7 +126,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             onClick={toggleWishlist}
             className={`absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-all z-10 ${isWishlisted ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
           >
-            <BsHeart className={`w-4 h-4 transition-colors ${isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-400'}`} />
+            {isWishlisted ? (
+              <BsHeartFill className="w-4 h-4 text-red-500 transition-colors" />
+            ) : (
+              <BsHeart className="w-4 h-4 text-gray-400 transition-colors" />
+            )}
           </button>
         )}
 

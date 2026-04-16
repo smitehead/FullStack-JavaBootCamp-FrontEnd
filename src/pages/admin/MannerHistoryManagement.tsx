@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Thermometer, TrendingDown } from 'lucide-react';
-import { BsArrowUpRight } from 'react-icons/bs';
+import { BsThermometerHalf } from 'react-icons/bs';
+
 import { BsPerson } from 'react-icons/bs';
 import { BsCalendarCheck } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
@@ -63,7 +63,7 @@ export const MannerHistoryManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Thermometer className="w-5 h-5 text-gray-400" /> 변경 이력
+            <BsThermometerHalf className="w-5 h-5 text-gray-400" /> 변경 이력
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredHistory.length}건</span>
         </div>
@@ -84,9 +84,8 @@ export const MannerHistoryManagement: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-gray-400">{history.previousTemp.toFixed(1)}°C</span>
                           <span className="text-xs text-gray-300">→</span>
-                          <div className={`flex items-center gap-1 px-2 py-0.5 rounded-none text-xs font-bold ${isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                          <div className={`flex items-center px-2 py-0.5 rounded-none text-xs font-bold ${isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
                             }`}>
-                            {isIncrease ? <BsArrowUpRight className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                             {history.newTemp.toFixed(1)}°C
                           </div>
                         </div>
@@ -109,7 +108,7 @@ export const MannerHistoryManagement: React.FC = () => {
           })}
           {filteredHistory.length === 0 && (
             <div className="px-8 py-20 text-center">
-              <Thermometer className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <BsThermometerHalf className="w-12 h-12 text-gray-100 mx-auto mb-4" />
               <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
             </div>
           )}

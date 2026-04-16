@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Edit2, Image, Link as LinkIcon, Upload } from 'lucide-react';
+import { BsTrash3, BsPen, BsImage, BsLink, BsUpload } from 'react-icons/bs';
+
 import { BiPlus, BiXCircle, BiChevronLeft, BiChevronRight } from 'react-icons/bi';
 import { BsCheckCircle } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'motion/react';
@@ -284,20 +285,20 @@ export const BannerManagement: React.FC = () => {
                   onClick={() => handleOpenModal(banner)}
                   className="p-2 bg-white/20 backdrop-blur-md text-white hover:bg-white/40 rounded-none transition-colors"
                 >
-                  <Edit2 className="w-4 h-4" />
+                  <BsPen className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleDelete(banner.bannerNo)}
                   className="p-2 bg-red-500/80 backdrop-blur-md text-white hover:bg-red-600 rounded-none transition-colors"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <BsTrash3 className="w-4 h-4" />
                 </button>
               </div>
             </div>
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-1.5 text-[10px] text-gray-500 font-medium">
-                  <LinkIcon className="w-3 h-3" />
+                  <BsLink className="w-3 h-3" />
                   <span className="max-w-[100px] truncate">{banner.linkUrl}</span>
                 </div>
                 <div className="flex items-center space-x-1.5">
@@ -368,7 +369,7 @@ export const BannerManagement: React.FC = () => {
                   <label
                     className={`flex items-center justify-center gap-2 w-full py-2.5 border-2 border-dashed border-gray-300 bg-gray-50 hover:border-[#FF5A5A] hover:bg-red-50/30 transition-all cursor-pointer text-sm font-bold text-gray-500 ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
                   >
-                    <Upload className="w-4 h-4" />
+                    <BsUpload className="w-4 h-4" />
                     {isUploading ? '업로드 중...' : '파일 선택하여 업로드'}
                     <input
                       type="file"
@@ -397,7 +398,7 @@ export const BannerManagement: React.FC = () => {
                 {/* 또는 URL 직접 입력 */}
                 <div className="flex space-x-3">
                   <div className="flex-1 relative flex items-center">
-                    <Image className="absolute left-3 text-gray-400 w-4 h-4" />
+                    <BsImage className="absolute left-3 text-gray-400 w-4 h-4" />
                     <input
                       type="text"
                       placeholder="또는 URL 직접 입력 (https://...)"
@@ -417,7 +418,7 @@ export const BannerManagement: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-2">연결 링크 (URL)</label>
                 <div className="relative flex items-center">
-                  <LinkIcon className="absolute left-3 text-gray-400 w-4 h-4" />
+                  <BsLink className="absolute left-3 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
                     placeholder="/search"
@@ -488,7 +489,7 @@ export const BannerManagement: React.FC = () => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-w-sm rounded-2xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
             <div className="w-16 h-16 bg-red-50 rounded-none flex items-center justify-center mb-4 mx-auto">
-              <Trash2 className="w-8 h-8 text-red-500" />
+              <BsTrash3 className="w-8 h-8 text-red-500" />
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2 text-center tracking-tight">
               정말 삭제하시겠습니까?

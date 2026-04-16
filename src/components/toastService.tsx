@@ -1,6 +1,7 @@
 import React from 'react';
 import { toast } from 'sonner';
-import { Sparkles } from 'lucide-react';
+import { BsStars } from 'react-icons/bs';
+
 import { BsCheckCircle, BsExclamationCircle, BsInfoCircle } from 'react-icons/bs';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning' | 'bid';
@@ -11,7 +12,7 @@ export const showToast = (message: string, type: ToastType = 'info') => {
     error: { icon: <BsExclamationCircle className="w-4 h-4 text-red-500" />, color: 'text-red-600' },
     info: { icon: <BsInfoCircle className="w-4 h-4 text-blue-500" />, color: 'text-blue-600' },
     warning: { icon: <BsExclamationCircle className="w-4 h-4 text-amber-500" />, color: 'text-amber-600' },
-    bid: { icon: <Sparkles className="w-4 h-4 text-red-500 animate-pulse" />, color: 'text-red-500' },
+    bid: { icon: <BsStars className="w-4 h-4 text-red-500 animate-pulse" />, color: 'text-red-500' },
   };
 
   const { icon, color } = config[type];

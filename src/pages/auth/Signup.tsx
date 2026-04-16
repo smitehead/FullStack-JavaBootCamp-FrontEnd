@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
-import { Check, Lock, Phone, Send, Sparkles } from 'lucide-react';
+import { BsCheckLg, BsLock, BsTelephone, BsSend, BsStars } from 'react-icons/bs';
+
 import { BsShieldCheck, BsEnvelope, BsInfoCircle, BsGeoAlt, BsCalendarCheck, BsPerson, BsExclamationCircle, BsCheckCircle } from 'react-icons/bs';
 import { BiChevronRight, BiChevronDown, BiX } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
@@ -359,7 +360,7 @@ export const Signup: React.FC = () => {
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${Object.values(terms).every(v => v) ? 'bg-[#FF5A5A] text-white' : 'bg-white text-gray-200 border border-gray-200'}`}>
-                    <Check className="w-4 h-4" />
+                    <BsCheckLg className="w-4 h-4" />
                   </div>
                   <span className="font-bold text-gray-800">전체 동의하기</span>
                 </div>
@@ -382,7 +383,7 @@ export const Signup: React.FC = () => {
                           onClick={() => handleTermToggle(item.key as keyof typeof terms)}
                           className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${terms[item.key as keyof typeof terms] ? 'bg-[#FF5A5A] text-white' : 'bg-white text-gray-200 border border-gray-200'}`}
                         >
-                          <Check className="w-3.5 h-3.5 shrink-0" />
+                          <BsCheckLg className="w-3.5 h-3.5 shrink-0" />
                         </button>
                         <span className={`text-sm font-bold ${item.required ? 'text-gray-700' : 'text-gray-400'}`}>
                           {item.label} {item.required ? <span className="text-[#FF5A5A]">(필수)</span> : '(선택)'}

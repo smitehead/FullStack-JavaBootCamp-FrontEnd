@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Send } from 'lucide-react';
+import { BsSend } from 'react-icons/bs';
+
 import { BsExclamationCircle, BsCheckCircle, BsInfoCircle, BsCamera } from 'react-icons/bs';
 import { BiX, BiChevronLeft } from 'react-icons/bi';
 import { InquiryType, BugType } from '@/types';

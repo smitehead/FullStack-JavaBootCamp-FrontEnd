@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Gavel, Eye, Sparkles } from 'lucide-react';
+import { BsBag, BsEye, BsStars } from 'react-icons/bs';
+
 import { BsShieldCheck, BsCreditCard } from 'react-icons/bs';
 
 type AboutTab = 'intro' | 'privacy' | 'terms' | 'policy';
@@ -74,7 +75,7 @@ export const AboutUs: React.FC = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-[0.03] pointer-events-none">
           <div className="grid grid-cols-6 gap-4 rotate-12 scale-150">
             {Array.from({ length: 24 }).map((_, i) => (
-              <Sparkles key={i} className="w-12 h-12" />
+              <BsStars key={i} className="w-12 h-12" />
             ))}
           </div>
         </div>
@@ -111,7 +112,7 @@ export const AboutUs: React.FC = () => {
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="flex items-center gap-4 mb-10">
                 <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
+                  <BsStars className="w-5 h-5 text-white" />
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900 tracking-tight">서비스 소개</h2>
               </div>
