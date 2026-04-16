@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
-import { BsArrowUpRight, BsChatLeft, BsPerson, BsGear, BsBell, BsGeoAlt, BsClock } from 'react-icons/bs';
-import { BiListOl, BiSearch, BiX, BiShareAlt, BiListUl, BiLogoInstagram, BiLogoYoutube } from 'react-icons/bi';
+import { BsArrowUpRight, BsChatLeft, BsPerson, BsGear, BsBell, BsGeoAlt, BsClock, BsInstagram, BsYoutube } from 'react-icons/bs';
+import { BiListOl, BiSearch, BiX, BiShareAlt, BiListUl } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
@@ -468,7 +468,6 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               onClick={() => navigate(user ? '/settings?tab=profile' : '/login')}
               className="flex items-center text-xs font-bold text-gray-400 bg-white border border-gray-100 px-3 py-1.5 rounded-full shadow-sm hover:border-[#FF5A5A] hover:text-[#FF5A5A] transition-all group overflow-hidden"
             >
-              <BsGeoAlt className="w-3.5 h-3.5 mr-1.5 text-[#FF5A5A] shrink-0" />
               <span className="whitespace-nowrap">{user?.address || '위치를 확인할 수 없습니다.'}</span>
               <span className="text-[10px] max-w-0 opacity-0 group-hover:max-w-[100px] group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap ml-0 group-hover:ml-2 border-l border-transparent group-hover:border-gray-200 pl-0 group-hover:pl-2">
                 위치 변경하기
@@ -531,10 +530,10 @@ const Footer: React.FC = () => {
                 <BiShareAlt className="w-6 h-6" />
               </a>
               <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <BiLogoInstagram className="w-6 h-6" />
+                <BsInstagram className="w-5 h-5" />
               </a>
               <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <BiLogoYoutube className="w-6 h-6" />
+                <BsYoutube className="w-5 h-5" />
               </a>
             </div>
           </div>
@@ -725,7 +724,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                   transition={{ repeat: Infinity, duration: 2 }}
                   className="w-2 h-2 bg-[#FF5A5A] rounded-full"
                 />
-                <span>자동 복구 시도 중</span>
+                <span>페이지 로딩 중</span>
               </div>
             </div>
           </motion.div>

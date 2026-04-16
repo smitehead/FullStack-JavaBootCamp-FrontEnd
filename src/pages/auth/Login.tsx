@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Lock, AlertCircle, Sparkles } from 'lucide-react';
+import { Lock, Sparkles } from 'lucide-react';
+import { BsExclamationCircle } from 'react-icons/bs';
 import { BsEnvelope, BsPerson } from 'react-icons/bs';
 import { BiChevronRight } from 'react-icons/bi';
 import { useAppContext } from '@/context/AppContext';
@@ -98,7 +99,7 @@ export const Login: React.FC = () => {
 
           {error && (
             <div className="flex items-center gap-2 text-red-500 text-xs font-bold bg-red-50 p-3 rounded-xl animate-shake">
-              <AlertCircle className="w-4 h-4" />
+              <BsExclamationCircle className="w-4 h-4" />
               <span>{error}</span>
             </div>
           )}

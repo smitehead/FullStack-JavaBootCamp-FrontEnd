@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Lock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
-import { BsEnvelope } from 'react-icons/bs';
-import { BiSearch } from 'react-icons/bi';
-import { BsPerson } from 'react-icons/bs';
-import { BiChevronLeft, BiChevronDown } from 'react-icons/bi';
+import { BsEnvelope, BsCheckCircle, BsExclamationCircle, BsPerson, BsLock, BsChevronLeft, BsChevronDown } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
 
@@ -271,7 +267,7 @@ export const FindAccount: React.FC = () => {
                               <option value="custom">직접 입력</option>
                             </select>
                             <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 font-bold">
-                              <BiChevronDown className="w-4 h-4" />
+                              <BsChevronDown className="w-4 h-4" />
                             </div>
                           </div>
                         </div>
@@ -325,7 +321,7 @@ export const FindAccount: React.FC = () => {
                               </div>
                               {pwVerificationError && (
                                 <p className="text-[10px] text-red-500 mt-1 font-bold flex items-center justify-center gap-1 animate-in fade-in slide-in-from-top-1">
-                                  <AlertCircle className="w-3 h-3" /> {pwVerificationError}
+                                  <BsExclamationCircle className="w-3 h-3" /> {pwVerificationError}
                                 </p>
                               )}
                             </div>
@@ -351,7 +347,7 @@ export const FindAccount: React.FC = () => {
                       )}
                       {isPwVerified && (
                         <p className="text-[10px] text-emerald-500 mt-1 ml-1 font-bold flex items-center justify-center gap-1">
-                          <CheckCircle2 className="w-3 h-3" /> 인증이 완료되었습니다.
+                          <BsCheckCircle className="w-3 h-3" /> 인증이 완료되었습니다.
                         </p>
                       )}
                     </div>
@@ -393,7 +389,7 @@ export const FindAccount: React.FC = () => {
               onClick={() => navigate('/login')}
               className="inline-flex items-center text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <BiChevronLeft className="w-4 h-4 mr-1" /> 로그인 화면으로 돌아가기
+              <BsChevronLeft className="w-4 h-4 mr-1" /> 로그인 화면으로 돌아가기
             </button>
           </div>
         </div>

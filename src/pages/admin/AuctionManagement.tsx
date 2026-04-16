@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Gavel, Filter, AlertCircle, Ban, CheckCircle2 } from 'lucide-react';
+import { Gavel, Filter } from 'lucide-react';
 import { BiSearch } from 'react-icons/bi';
-import { BsClock } from 'react-icons/bs';
-import { BsPeople } from 'react-icons/bs';
+import { BsClock, BsPeople, BsExclamationCircle, BsCheckCircle, BsBan } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { Product } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -168,7 +167,7 @@ export const AuctionManagement: React.FC = () => {
                     className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0"
                     title="경매 강제 종료"
                   >
-                    <Ban className="w-4 h-4" />
+                    <BsBan className="w-4 h-4" />
                   </button>
                 )}
               </div>
@@ -210,7 +209,7 @@ export const AuctionManagement: React.FC = () => {
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 rounded-none bg-red-50 flex items-center justify-center shrink-0">
-                  <AlertCircle className="w-6 h-6 text-red-500" />
+                  <BsExclamationCircle className="w-6 h-6 text-red-500" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">경매 강제 종료</h3>

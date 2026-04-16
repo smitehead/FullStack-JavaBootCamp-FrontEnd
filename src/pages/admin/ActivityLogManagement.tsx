@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { History, Gavel, AlertTriangle } from 'lucide-react';
-import { BsInfoCircle, BsShieldCheck, BsPerson, BsCalendarCheck, BsChatLeft, BsCurrencyDollar, BsWallet } from 'react-icons/bs';
+import { Gavel } from 'lucide-react';
+import { BsInfoCircle, BsShieldCheck, BsPerson, BsCalendarCheck, BsChatLeft, BsCurrencyDollar, BsWallet, BsExclamationTriangle, BsClockHistory } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
 import { useAppContext } from '@/context/AppContext';
 import { ActivityLog } from '@/types';
@@ -67,7 +67,7 @@ export const ActivityLogManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <History className="w-5 h-5 text-gray-400" /> 활동 내역
+            <BsClockHistory className="w-5 h-5 text-gray-400" /> 활동 내역
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredLogs.length}건</span>
         </div>
@@ -81,7 +81,7 @@ export const ActivityLogManagement: React.FC = () => {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 min-w-0 flex-1">
                     <div className="w-8 h-8 rounded-none bg-red-50 flex items-center justify-center shrink-0 mt-0.5">
-                      <BsShieldCheck className="w-4 h-4 text-[#FF5A5A]" />
+                      <BsExclamationTriangle className="w-4 h-4 text-[#FF5A5A]" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -105,7 +105,7 @@ export const ActivityLogManagement: React.FC = () => {
           })}
           {filteredLogs.length === 0 && (
             <div className="px-8 py-20 text-center">
-              <History className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <BsClockHistory className="w-12 h-12 text-gray-100 mx-auto mb-4" />
               <p className="text-gray-400 font-bold">활동 로그가 없습니다.</p>
             </div>
           )}

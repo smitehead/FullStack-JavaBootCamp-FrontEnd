@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { AlertTriangle, Filter, Gavel, ShieldAlert, FileText } from 'lucide-react';
-import { BsChatLeft } from 'react-icons/bs';
+import { Filter, Gavel, ShieldAlert, FileText } from 'lucide-react';
+import { BsChatLeft, BsExclamationTriangle } from 'react-icons/bs';
 import { BiSearch, BiX } from 'react-icons/bi';
 import { BsPerson } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -193,7 +193,7 @@ export const ReportManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-gray-400" /> 신고 목록
+            <BsExclamationTriangle className="w-5 h-5 text-gray-400" /> 신고 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredReports.length}건</span>
         </div>
@@ -267,7 +267,7 @@ export const ReportManagement: React.FC = () => {
             })}
             {filteredReports.length === 0 && (
               <div className="px-8 py-20 text-center">
-                <AlertTriangle className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+                <BsExclamationTriangle className="w-12 h-12 text-gray-100 mx-auto mb-4" />
                 <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
               </div>
             )}

@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { AlertTriangle, Package, Reply, Ban, AlertCircle, MoreVertical } from 'lucide-react';
-import { BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight } from 'react-icons/bs';
+import { MoreVertical } from 'lucide-react';
+import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight } from 'react-icons/bs';
 import { BiArrowBack, BiChevronRight, BiX, BiShareAlt, BiRefresh, BiTrash } from 'react-icons/bi';
 import { BsHeart, BsClock, BsGeoAlt, BsPeople, BsPerson } from 'react-icons/bs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -487,7 +487,7 @@ export const ProductDetail: React.FC = () => {
   if (product === undefined) return (
     <div className="max-w-[1200px] mx-auto px-10 py-32 text-center">
       <div className="bg-white rounded-2xl border border-gray-100 p-20 shadow-sm">
-        <Package className="w-20 h-20 text-gray-200 mx-auto mb-8" />
+        <BsBox2 className="w-20 h-20 text-gray-200 mx-auto mb-8" />
         <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight">상품을 찾을 수 없거나 접근 권한이 없습니다.</h2>
         <p className="text-gray-400 font-medium mb-10 leading-relaxed">
           해당 상품이 삭제되었거나, 종료된 경매로 접근이 제한되었습니다.<br />
@@ -835,7 +835,7 @@ export const ProductDetail: React.FC = () => {
               <img src={product.images[selectedImage]} alt={product.title} className="w-full h-full object-cover transition-transform duration-500" />
             ) : (
               <div className="flex flex-col items-center text-gray-300">
-                <Package className="w-20 h-20 mb-2" />
+                <BsBox2 className="w-20 h-20 mb-2" />
                 <span className="text-sm font-medium">등록된 이미지가 없습니다.</span>
               </div>
             )}
@@ -1300,7 +1300,7 @@ export const ProductDetail: React.FC = () => {
                             onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: true }))}
                             className="mt-2 ml-6 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-orange-500"
                           >
-                            <Reply className="w-3 h-3" /> 답글 달기
+                            <BsReply className="w-3 h-3" /> 답글 달기
                           </button>
                         )
                       )
@@ -1931,7 +1931,7 @@ export const ProductDetail: React.FC = () => {
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 text-center animate-in zoom-in-95 duration-200">
             <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <AlertTriangle className="w-10 h-10 text-orange-500" />
+              <BsExclamationTriangle className="w-10 h-10 text-orange-500" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-3">포인트가 부족합니다</h3>
             <p className="text-gray-500 mb-8 leading-relaxed">

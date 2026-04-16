@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Package } from 'lucide-react';
-import { BsPerson, BsHeart, BsClock } from 'react-icons/bs';
+import { BsPerson, BsHeart, BsClock, BsBox2 } from 'react-icons/bs';
 import { Product } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -110,7 +109,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
-            <Package className="w-12 h-12 mb-1" />
+            <BsBox2 className="w-12 h-12 mb-1" />
             <span className="text-[10px] font-medium">이미지 없음</span>
           </div>
         )}

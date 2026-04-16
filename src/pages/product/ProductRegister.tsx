@@ -3,8 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Category, CategoryItem, TransactionMethod, Product } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { useAppContext } from '@/context/AppContext';
-import { AlignLeft, LocateFixed } from 'lucide-react';
-import { BsCurrencyDollar, BsTruck, BsInfoCircle, BsCamera, BsCalendarCheck, BsGeoAlt } from 'react-icons/bs';
+import { BsCurrencyDollar, BsTruck, BsInfoCircle, BsCamera, BsCalendarCheck, BsGeoAlt, BsJustifyLeft, BsCrosshair } from 'react-icons/bs';
 import api from '@/services/api';
 import { ProductRequestDto } from '@/types';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -336,7 +335,7 @@ export const ProductRegister: React.FC = () => {
 
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-              <AlignLeft className="w-4 h-4 mr-1.5 text-gray-400" /> 상품 설명 <span className="text-red-500 ml-1">*</span>
+              <BsJustifyLeft className="w-4 h-4 mr-1.5 text-gray-400" /> 상품 설명 <span className="text-red-500 ml-1">*</span>
             </label>
             <textarea
               rows={8}
@@ -601,7 +600,7 @@ export const ProductRegister: React.FC = () => {
                   className="p-2.5 text-gray-400 hover:text-[#FF5A5A] transition-colors group relative flex items-center justify-center shrink-0"
                   title="내 주소 불러오기"
                 >
-                  <LocateFixed className="w-5 h-5" />
+                  <BsCrosshair className="w-5 h-5" />
                   <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10 w-max">
                     내 주소 불러오기
                   </div>

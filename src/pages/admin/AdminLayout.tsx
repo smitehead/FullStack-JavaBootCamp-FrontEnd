@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Image, Home, LayoutDashboard, LogOut, Megaphone, Gavel, Thermometer, AlertTriangle, History } from 'lucide-react';
-import { BsChatLeft, BsWallet } from 'react-icons/bs';
-import { BsPersonX } from 'react-icons/bs';
-import { BsPeople, BsBell, BsGear } from 'react-icons/bs';
+import { 
+  BsGrid, BsPeople, BsThermometerHalf, BsExclamationTriangle, 
+  BsMegaphone, BsChatLeft, BsBell, BsImage, BsWallet, 
+  BsClockHistory, BsHouse, BsBoxArrowRight, BsHammer
+} from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
 
@@ -37,25 +38,25 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     {
       title: '대시보드',
       items: [
-        { path: '/admin', icon: LayoutDashboard, label: '대시보드' },
+        { path: '/admin', icon: BsGrid, label: '대시보드' },
       ]
     },
     {
       title: '사용자 관리',
       items: [
         { path: '/admin/users', icon: BsPeople, label: '사용자 관리' },
-        { path: '/admin/manner-history', icon: Thermometer, label: '매너온도 히스토리' },
+        { path: '/admin/manner-history', icon: BsThermometerHalf, label: '매너온도 히스토리' },
       ]
     },
     {
       title: '콘텐츠 관리',
       items: [
-        { path: '/admin/auctions', icon: Gavel, label: '경매 관리' },
-        { path: '/admin/reports', icon: AlertTriangle, label: '신고 관리' },
-        { path: '/admin/notices', icon: Megaphone, label: '공지사항 관리' },
+        { path: '/admin/auctions', icon: BsHammer, label: '경매 관리' },
+        { path: '/admin/reports', icon: BsExclamationTriangle, label: '신고 관리' },
+        { path: '/admin/notices', icon: BsMegaphone, label: '공지사항 관리' },
         { path: '/admin/inquiries', icon: BsChatLeft, label: '문의사항 관리' },
         { path: '/admin/notifications', icon: BsBell, label: '알림 관리' },
-        { path: '/admin/banners', icon: Image, label: '배너 관리' },
+        { path: '/admin/banners', icon: BsImage, label: '배너 관리' },
       ]
     },
     {
@@ -67,7 +68,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     {
       title: '시스템',
       items: [
-        { path: '/admin/activity-logs', icon: History, label: '관리자 활동 로그' },
+        { path: '/admin/activity-logs', icon: BsClockHistory, label: '관리자 활동 로그' },
       ]
     }
   ];
@@ -117,14 +118,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             to="/"
             className="flex items-center space-x-3 px-4 py-2 text-gray-400 hover:text-white transition-colors text-xs"
           >
-            <Home className="w-4 h-4" />
+            <BsHouse className="w-4 h-4" />
             <span className="font-bold">사용자 페이지</span>
           </Link>
           <button
             onClick={handleLogout}
             className="w-full flex items-center space-x-3 px-4 py-2 text-gray-400 hover:text-white transition-colors mt-0.5 text-xs"
           >
-            <LogOut className="w-4 h-4" />
+            <BsBoxArrowRight className="w-4 h-4" />
             <span className="font-bold">로그아웃</span>
           </button>
         </div>
