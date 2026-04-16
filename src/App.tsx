@@ -65,21 +65,24 @@ const App: React.FC = () => {
     const applyAll = () => {
       const toaster = document.querySelector<HTMLElement>('[data-sonner-toaster]');
       if (!toaster) return;
-      // 컨테이너를 100% 너비로 확장 (viewport 기준 중앙 정렬을 위해)
       toaster.style.setProperty('width', '100%', 'important');
       toaster.style.setProperty('max-width', '100%', 'important');
       toaster.style.setProperty('left', '0', 'important');
+      toaster.style.setProperty('right', 'auto', 'important');
       toaster.style.setProperty('transform', 'none', 'important');
       toaster.style.setProperty('pointer-events', 'none', 'important');
-      // 각 toast pill을 viewport 기준으로 수평 중앙 정렬
-      toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((toast) => {
-        toast.style.setProperty('pointer-events', 'auto', 'important');
-        toast.style.setProperty('left', '50%', 'important');
-        toast.style.setProperty('transform', 'var(--y) translateX(-50%)', 'important');
+      toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((el) => {
+        el.style.setProperty('pointer-events', 'auto', 'important');
+        el.style.setProperty('left', '50%', 'important');
+        el.style.setProperty('right', 'auto', 'important');
+        el.style.setProperty('transform', 'var(--y) translateX(-50%)', 'important');
       });
     };
-    const observer = new MutationObserver(applyAll);
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+    // attributes 감시 제거 - 무한루프 방지 (style 변경 → observer 발동 → style 변경 반복)
+    const observer = new MutationObserver((mutations) => {
+      if (mutations.some(m => m.type === 'childList')) applyAll();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
     applyAll();
     return () => observer.disconnect();
   }, []);
