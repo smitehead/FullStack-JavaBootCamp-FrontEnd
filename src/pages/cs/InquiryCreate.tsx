@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import { BsExclamationCircle, BsInfoCircle, BsCamera } from 'react-icons/bs';
-import { BiX, BiChevronLeft } from 'react-icons/bi';
+import { BsExclamationCircle, BsInfoCircle, BsCamera, BsX, BsChevronLeft } from 'react-icons/bs';
 import { InquiryType, BugType } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -75,7 +74,7 @@ export const InquiryCreate: React.FC = () => {
     <div className="max-w-[800px] mx-auto px-6 py-12">
       {/* Back Button */}
       <Link to="/inquiry" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
-        <BiChevronLeft className="w-4 h-4" />
+        <BsChevronLeft className="w-4 h-4" />
         문의 목록으로
       </Link>
 
@@ -165,7 +164,7 @@ export const InquiryCreate: React.FC = () => {
                   onClick={() => removeImage(index)}
                   className="absolute top-1 right-1 w-6 h-6 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
                 >
-                  <BiX className="w-4 h-4" />
+                  <BsX className="w-4 h-4" />
                 </button>
               </div>
             ))}

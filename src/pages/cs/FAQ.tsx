@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BiSearch, BiChevronDown, BiHelpCircle } from 'react-icons/bi';
+import { BsSearch, BsChevronDown, BsQuestionCircle } from 'react-icons/bs';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
 
 interface FAQItem {
@@ -95,7 +95,7 @@ export const FAQ: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <div className="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center">
-              <BiSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <BsSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
           </div>
 
@@ -128,13 +128,13 @@ export const FAQ: React.FC = () => {
                     className="w-full px-8 py-5 flex items-center justify-between text-left"
                   >
                     <div className="flex items-center gap-4">
-                      <BiHelpCircle className="w-5 h-5 text-gray-400 shrink-0" />
+                      <BsQuestionCircle className="w-5 h-5 text-gray-400 shrink-0" />
                       <span className="text-sm font-semibold text-gray-900">{faq.question}</span>
                     </div>
                     {openId === faq.id ? (
-                      <BiChevronDown className="w-5 h-5 text-gray-400 rotate-180 transition-transform" />
+                      <BsChevronDown className="w-5 h-5 text-gray-400 rotate-180 transition-transform" />
                     ) : (
-                      <BiChevronDown className="w-5 h-5 text-gray-400 transition-transform" />
+                      <BsChevronDown className="w-5 h-5 text-gray-400 transition-transform" />
                     )}
                   </button>
                   {openId === faq.id && (

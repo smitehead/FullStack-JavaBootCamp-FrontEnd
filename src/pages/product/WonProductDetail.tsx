@@ -6,8 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { BsXCircle, BsStars } from 'react-icons/bs';
 
-import { BsCheckCircle, BsBox2, BsExclamationCircle, BsInfoCircle, BsCreditCard, BsGeoAltFill } from 'react-icons/bs';
-import { BiChevronLeft, BiChevronRight, BiChat } from 'react-icons/bi';
+import { BsCheckCircle, BsBox2, BsExclamationCircle, BsInfoCircle, BsCreditCard, BsGeoAltFill, BsChat, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
 interface AuctionResultDetail {
@@ -232,7 +231,7 @@ export const WonProductDetail: React.FC = () => {
             onClick={() => navigate(-1)}
             className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors group"
           >
-            <BiChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
+            <BsChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
             뒤로가기
           </button>
           <div className="flex items-center gap-2">
@@ -261,13 +260,13 @@ export const WonProductDetail: React.FC = () => {
                             onClick={() => setImgIndex(i => Math.max(0, i - 1))}
                             className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-r"
                           >
-                            <BiChevronLeft className="w-3 h-3" />
+                            <BsChevronLeft className="w-3 h-3" />
                           </button>
                           <button
                             onClick={() => setImgIndex(i => Math.min(images.length - 1, i + 1))}
                             className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-l"
                           >
-                            <BiChevronRight className="w-3 h-3" />
+                            <BsChevronRight className="w-3 h-3" />
                           </button>
                         </>
                       )}
@@ -504,7 +503,7 @@ export const WonProductDetail: React.FC = () => {
                     <p className="text-xs text-white/50">매너온도 {Number(result.seller.mannerTemp).toFixed(1)}°</p>
                   </div>
                   <Link to={`/seller/${result.seller.sellerNo}`} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors shrink-0">
-                    <BiChevronRight className="w-4 h-4" />
+                    <BsChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
 
@@ -514,7 +513,7 @@ export const WonProductDetail: React.FC = () => {
                       onClick={handleChatWithSeller}
                       className="w-full py-5 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
                     >
-                      <BiChat className="w-5 h-5 text-gray-900" />
+                      <BsChat className="w-5 h-5 text-gray-900" />
                       판매자와 채팅하기
                     </button>
                   </div>

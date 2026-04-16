@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BsSend } from 'react-icons/bs';
 
-import { BsExclamationTriangle, BsCheckCircle, BsInfoCircle } from 'react-icons/bs';
-import { BiX } from 'react-icons/bi';
-import { BiChevronLeft } from 'react-icons/bi';
-import { BsCamera } from 'react-icons/bs';
+import { BsExclamationTriangle, BsCheckCircle, BsInfoCircle, BsCamera, BsX, BsChevronLeft } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -135,7 +132,7 @@ export const Report: React.FC = () => {
           onClick={() => navigate(-1)}
           className="flex items-center text-sm font-bold text-gray-400 hover:text-gray-900 transition-colors mb-6 group"
         >
-          <BiChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
+          <BsChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
           뒤로가기
         </button>
 
@@ -207,7 +204,7 @@ export const Report: React.FC = () => {
                         onClick={() => removeImage(idx)}
                         className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                       >
-                        <BiX className="w-4 h-4" />
+                        <BsX className="w-4 h-4" />
                       </button>
                     </div>
                   ))}

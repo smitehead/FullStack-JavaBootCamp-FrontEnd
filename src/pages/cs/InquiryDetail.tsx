@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
-import { BsShieldCheck, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck } from 'react-icons/bs';
-import { BiChevronLeft } from 'react-icons/bi';
+import { BsShieldCheck, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck, BsChevronLeft } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
 import { Inquiry } from '@/types';
@@ -79,7 +78,7 @@ export const InquiryDetail: React.FC = () => {
     <div className="max-w-[1000px] mx-auto px-6 py-12">
       {/* Back Button */}
       <Link to="/inquiry" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
-        <BiChevronLeft className="w-4 h-4" />
+        <BsChevronLeft className="w-4 h-4" />
         문의 목록으로
       </Link>
 

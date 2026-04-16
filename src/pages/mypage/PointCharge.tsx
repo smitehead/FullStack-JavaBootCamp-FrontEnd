@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BsCheckCircle, BsExclamationCircle } from 'react-icons/bs';
-import { BsCreditCard } from 'react-icons/bs';
-import { BiArrowBack } from 'react-icons/bi';
+import { BsCreditCard, BsArrowLeft } from 'react-icons/bs';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -149,7 +148,7 @@ export const PointCharge: React.FC = () => {
       {/* 헤더 */}
       <div className="flex items-center gap-4 mb-10">
         <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-          <BiArrowBack className="w-6 h-6 text-gray-900" />
+          <BsArrowLeft className="w-6 h-6 text-gray-900" />
         </button>
         <h2 className="text-2xl font-bold text-gray-900 tracking-tight">포인트 충전</h2>
       </div>

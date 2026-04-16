@@ -3,8 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
 import { BsCheckLg } from 'react-icons/bs';
 
-import { BsShieldCheck, BsEnvelope, BsCheckCircle } from 'react-icons/bs';
-import { BiChevronRight, BiChevronDown } from 'react-icons/bi';
+import { BsShieldCheck, BsEnvelope, BsCheckCircle, BsChevronRight, BsChevronDown } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
 declare global {
@@ -412,7 +411,7 @@ export const Signup: React.FC = () => {
               className={`w-full mt-10 py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
             >
               다음 단계로
-              <BiChevronRight className="w-4 h-4" />
+              <BsChevronRight className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -564,7 +563,7 @@ export const Signup: React.FC = () => {
                           <option value="custom">직접 입력</option>
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                          <BiChevronDown className="w-4 h-4" />
+                          <BsChevronDown className="w-4 h-4" />
                         </div>
                       </div>
                     </div>

@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BsSend, BsLink } from 'react-icons/bs';
 
-import { BsInfoCircle, BsBell } from 'react-icons/bs';
-import { BiPlus, BiX } from 'react-icons/bi';
+import { BsInfoCircle, BsBell, BsPlusLg, BsX } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
@@ -98,7 +97,7 @@ export const NotificationManagement: React.FC = () => {
           onClick={() => setShowForm(!showForm)}
           className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-sm"
         >
-          {showForm ? <BiX className="w-4 h-4" /> : <BiPlus className="w-4 h-4" />}
+          {showForm ? <BsX className="w-4 h-4" /> : <BsPlusLg className="w-4 h-4" />}
           {showForm ? '닫기' : '새 알림 등록'}
         </button>
       </header>

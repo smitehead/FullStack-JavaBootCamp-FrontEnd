@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { BiSearch, BiChevronLeft, BiChevronRight } from 'react-icons/bi';
+import { BsSearch, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { NoticeCategory } from '@/types';
 import { format } from 'date-fns';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
@@ -78,7 +78,7 @@ export const NoticeList: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button type="submit" className="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center">
-                <BiSearch className="w-5 h-5 text-gray-400" />
+                <BsSearch className="w-5 h-5 text-gray-400" />
             </button>
           </form>
 
@@ -148,7 +148,7 @@ export const NoticeList: React.FC = () => {
                 disabled={currentPage === 1}
                 className="p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-30"
               >
-                <BiChevronLeft className="w-4 h-4 text-gray-400" />
+                <BsChevronLeft className="w-4 h-4 text-gray-400" />
               </button>
               {pageNumbers.map(page => (
                 <button
@@ -167,7 +167,7 @@ export const NoticeList: React.FC = () => {
                 disabled={currentPage === totalPages}
                 className="p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-30"
               >
-                <BiChevronRight className="w-4 h-4 text-gray-400" />
+                <BsChevronRight className="w-4 h-4 text-gray-400" />
               </button>
             </div>
           )}

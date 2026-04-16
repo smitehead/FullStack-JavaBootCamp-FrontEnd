@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BiRightArrowAlt, BiChevronLeft, BiChevronRight } from 'react-icons/bi';
+import { BsArrowRight, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import api from '@/services/api';
 import { ProductCard } from '@/components/ProductCard';
 import { CATEGORY_DATA } from '@/constants';
@@ -230,10 +230,10 @@ export const Home: React.FC = () => {
           </div>
           <div className="flex gap-2 ml-4">
             <button onClick={prevBanner} className="p-2 rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-sm text-white transition-colors">
-              <BiChevronLeft className="w-5 h-5" />
+              <BsChevronLeft className="w-5 h-5" />
             </button>
             <button onClick={nextBanner} className="p-2 rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-sm text-white transition-colors">
-              <BiChevronRight className="w-5 h-5" />
+              <BsChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -246,7 +246,7 @@ export const Home: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-900">카테고리별 탐색</h2>
             <div className="flex items-center gap-4">
               <Link to="/search" className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors flex items-center group">
-                전체보기 <BiRightArrowAlt className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                전체보기 <BsArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
@@ -281,7 +281,7 @@ export const Home: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-gray-900">실시간 인기 경매</h2>
             <Link to="/search?sort=popular" className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors flex items-center group">
-              더보기 <BiRightArrowAlt className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              더보기 <BsArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 

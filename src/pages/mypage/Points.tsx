@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BsCreditCard } from 'react-icons/bs';
-import { BiArrowBack, BiChevronDown, BiChevronUp } from 'react-icons/bi';
+import { BsCreditCard, BsArrowLeft, BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 
@@ -130,7 +129,7 @@ export const Points: React.FC = () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <BiArrowBack className="w-6 h-6 text-gray-900" />
+            <BsArrowLeft className="w-6 h-6 text-gray-900" />
           </button>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">포인트</h1>
         </div>
@@ -175,7 +174,7 @@ export const Points: React.FC = () => {
                 className="text-xs font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1"
               >
                 {typeFilter === 'all' ? '전체유형' : getTypeLabel(typeFilter)}
-                {showTypeFilters ? <BiChevronUp className="w-3 h-3" /> : <BiChevronDown className="w-3 h-3" />}
+                {showTypeFilters ? <BsChevronUp className="w-3 h-3" /> : <BsChevronDown className="w-3 h-3" />}
               </button>
               {showTypeFilters && (
                 <div className="absolute right-0 mt-2 w-28 bg-white border border-gray-100 rounded-xl shadow-xl z-10 overflow-hidden">
@@ -203,7 +202,7 @@ export const Points: React.FC = () => {
                 className="text-xs font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1"
               >
                 {dateFilter === 'all' ? '전체기간' : dateFilter === '1m' ? '1개월' : dateFilter === '3m' ? '3개월' : '6개월'}
-                {showDateFilters ? <BiChevronUp className="w-3 h-3" /> : <BiChevronDown className="w-3 h-3" />}
+                {showDateFilters ? <BsChevronUp className="w-3 h-3" /> : <BsChevronDown className="w-3 h-3" />}
               </button>
               {showDateFilters && (
                 <div className="absolute right-0 mt-2 w-24 bg-white border border-gray-100 rounded-xl shadow-xl z-10 overflow-hidden">

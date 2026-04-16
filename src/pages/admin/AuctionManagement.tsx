@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsBag, BsFunnel } from 'react-icons/bs';
 
-import { BiSearch } from 'react-icons/bi';
-import { BsClock, BsPeople, BsExclamationCircle, BsBan } from 'react-icons/bs';
+import { BsClock, BsPeople, BsExclamationCircle, BsBan, BsSearch } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { Product } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -73,7 +72,7 @@ export const AuctionManagement: React.FC = () => {
         <div className="flex flex-wrap items-center justify-end gap-3">
           <div className="relative w-64 flex items-center h-10">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <BiSearch className="text-gray-400 w-4 h-4" />
+              <BsSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"

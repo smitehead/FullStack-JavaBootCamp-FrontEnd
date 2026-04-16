@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat } from 'react-icons/bs';
-import { BiArrowBack, BiChevronRight, BiX, BiShareAlt, BiRefresh, BiTrash } from 'react-icons/bi';
+import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShare, BsArrowRepeat, BsTrash3 } from 'react-icons/bs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -792,7 +791,7 @@ export const ProductDetail: React.FC = () => {
           onClick={() => navigate(-1)}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <BiArrowBack className="w-6 h-6 text-gray-900" />
+          <BsArrowLeft className="w-6 h-6 text-gray-900" />
         </button>
 
         {isSeller && (
@@ -809,14 +808,14 @@ export const ProductDetail: React.FC = () => {
                   onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
                   className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors border-b border-gray-50"
                 >
-                  <BiTrash className="w-4 h-4 mr-2.5" /> 삭제하기
+                  <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
                 </button>
                 {isFinished && (product.participantCount === 0 || product.status === 'closed_failed') && (
                   <button
                     onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
                     className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                   >
-                    <BiRefresh className="w-4 h-4 mr-2.5" /> 재게시하기
+                    <BsArrowRepeat className="w-4 h-4 mr-2.5" /> 재게시하기
                   </button>
                 )}
               </div>
@@ -861,13 +860,13 @@ export const ProductDetail: React.FC = () => {
                   onClick={() => setSelectedImage(prev => (prev === 0 ? product.images.length - 1 : prev - 1))}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
                 >
-                  <BiChevronRight className="w-6 h-6 rotate-180" />
+                  <BsChevronRight className="w-6 h-6 rotate-180" />
                 </button>
                 <button
                   onClick={() => setSelectedImage(prev => (prev === product.images.length - 1 ? 0 : prev + 1))}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
                 >
-                  <BiChevronRight className="w-6 h-6" />
+                  <BsChevronRight className="w-6 h-6" />
                 </button>
               </>
             )}
@@ -892,7 +891,7 @@ export const ProductDetail: React.FC = () => {
             <div className="flex items-center justify-between mb-2">
               <nav className="flex items-center text-xs text-gray-400 space-x-1">
                 <Link to="/search" className="hover:text-gray-900 transition-colors">홈</Link>
-                <BiChevronRight className="w-3 h-3" />
+                <BsChevronRight className="w-3 h-3" />
                 {product.categoryPath && product.categoryPath.length > 0 ? (
                   product.categoryPath.map((cat, index) => {
                     // 대/중/소 분류 단계에 맞는 쿼리 파라미터 생성
@@ -909,7 +908,7 @@ export const ProductDetail: React.FC = () => {
                         >
                           {cat.name}
                         </Link>
-                        {index < product.categoryPath!.length - 1 && <BiChevronRight className="w-3 h-3" />}
+                        {index < product.categoryPath!.length - 1 && <BsChevronRight className="w-3 h-3" />}
                       </React.Fragment>
                     );
                   })
@@ -949,7 +948,7 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => setIsShareModalOpen(true)}
                     className="flex items-center hover:text-gray-600 transition-colors font-medium"
                   >
-                    <BiShareAlt className="w-3 h-3 mr-1" /> 공유하기
+                    <BsShare className="w-3 h-3 mr-1" /> 공유하기
                   </button>
                   <Link to={`/report?productId=${product.id}`} className="flex items-center hover:text-red-500 transition-colors font-medium">
                     <BsFlag className="w-3 h-3 mr-1" /> 신고하기
@@ -1362,7 +1361,7 @@ export const ProductDetail: React.FC = () => {
                 {modalType === 'bid' ? '입찰 참여하기' : '자동 입찰 설정'}
               </h3>
               <button onClick={() => setIsBidModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <BiX className="w-6 h-6 text-gray-400" />
+                <BsX className="w-6 h-6 text-gray-400" />
               </button>
             </div>
 
@@ -1542,7 +1541,7 @@ export const ProductDetail: React.FC = () => {
             <div className="p-6 border-b border-gray-50 flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900">공유하기</h3>
               <button onClick={() => setIsShareModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <BiX className="w-5 h-5 text-gray-400" />
+                <BsX className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             <div className="p-8">
@@ -1734,7 +1733,7 @@ export const ProductDetail: React.FC = () => {
                   disabled={isBidCancelling}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <BiX className="w-6 h-6 text-gray-300" />
+                  <BsX className="w-6 h-6 text-gray-300" />
                 </button>
               </div>
 
@@ -1960,37 +1959,37 @@ export const ProductDetail: React.FC = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && product && (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-10 text-left animate-in zoom-in-95 duration-200">
-            <h3 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">게시글을 삭제하시겠습니까?</h3>
+        <div className="fixed inset-0 z-[130] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}></div>
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">게시글을 삭제하시겠습니까?</h3>
 
-            {product.participantCount > 0 && !isFinished ? (
-              <div className="bg-red-50 p-5 rounded-2xl mb-8 border border-red-100/50">
-                <p className="text-sm text-red-600 font-bold leading-relaxed">
-                  현재 입찰자가 {product.participantCount}명 있습니다.<br />
-                  경매 도중 삭제 시 매너온도가 차감될 수 있습니다.
+              {product.participantCount > 0 && !isFinished ? (
+                <div className="bg-red-50 p-4 rounded-2xl mb-6">
+                  <p className="text-sm text-red-600 font-bold leading-relaxed">
+                    현재 입찰자가 {product.participantCount}명 있습니다. <br />
+                    경매 도중 삭제 시 매너온도가 차감될 수 있습니다.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                  삭제된 게시글은 복구할 수 없습니다.
                 </p>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500 mb-10 font-medium leading-relaxed">
-                삭제된 게시글은 복구할 수 없습니다.
-              </p>
-            )}
+              )}
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
-              >
-                취소
-              </button>
-              <button
-                onClick={handleDeleteProduct}
-                disabled={isDeleting}
-                className="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-2"
-              >
-                {isDeleting ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : '삭제하기'}
-              </button>
+              <div className="flex gap-3 w-full">
+                <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm">
+                  취소
+                </button>
+                <button 
+                  onClick={handleDeleteProduct} 
+                  disabled={isDeleting}
+                  className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-2"
+                >
+                  {isDeleting ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : '삭제하기'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -2000,14 +1999,14 @@ export const ProductDetail: React.FC = () => {
       {showRepostModal && product && (
         <div className="fixed inset-0 z-[130] flex items-center justify-center px-6">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowRepostModal(false)}></div>
-          <div className="bg-white w-full max-w-sm relative z-10 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">재게시하시겠습니까?</h3>
               <p className="text-gray-500 text-sm font-medium mb-8 leading-relaxed">
                 기존 정보를 유지한 채 경매를 다시 시작합니다.
               </p>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 w-full">
                 <button 
                   onClick={() => setShowRepostModal(false)} 
                   className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"

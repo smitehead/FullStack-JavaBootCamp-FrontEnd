@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsBag } from 'react-icons/bs';
 
-import { BsInfoCircle, BsPerson, BsCalendarCheck, BsExclamationTriangle, BsClockHistory } from 'react-icons/bs';
-import { BiSearch } from 'react-icons/bi';
+import { BsInfoCircle, BsPerson, BsCalendarCheck, BsExclamationTriangle, BsClockHistory, BsSearch } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { ActivityLog } from '@/types';
 
@@ -53,7 +52,7 @@ export const ActivityLogManagement: React.FC = () => {
         </div>
         <div className="relative w-full sm:w-64 flex items-center h-10">
           <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-            <BiSearch className="text-gray-400 w-4 h-4" />
+            <BsSearch className="text-gray-400 w-4 h-4" />
           </div>
           <input
             type="text"

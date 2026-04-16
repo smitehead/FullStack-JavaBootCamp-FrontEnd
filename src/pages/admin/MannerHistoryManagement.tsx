@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsThermometerHalf } from 'react-icons/bs';
 
-import { BsPerson } from 'react-icons/bs';
-import { BsCalendarCheck } from 'react-icons/bs';
-import { BiSearch } from 'react-icons/bi';
+import { BsPerson, BsCalendarCheck, BsSearch } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 
 const ITEMS_PER_PAGE = 15;
@@ -48,7 +46,7 @@ export const MannerHistoryManagement: React.FC = () => {
         </div>
         <div className="relative w-64 flex items-center h-10">
           <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-            <BiSearch className="text-gray-400 w-4 h-4" />
+            <BsSearch className="text-gray-400 w-4 h-4" />
           </div>
           <input
             type="text"

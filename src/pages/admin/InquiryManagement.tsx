@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BsTrash3, BsSend, BsCheckCircle, BsPerson, BsChatLeftDots } from 'react-icons/bs';
-import { BiSearch } from 'react-icons/bi';
+import { BsTrash3, BsSend, BsCheckCircle, BsPerson, BsChatLeftDots, BsSearch } from 'react-icons/bs';
 import { Inquiry } from '@/types';
 import { showToast } from '@/components/toastService';
 import { ImageLightbox } from '@/components/ImageLightbox';
@@ -136,7 +135,7 @@ export const InquiryManagement: React.FC = () => {
         <div className="flex justify-end">
           <div className="relative flex items-center h-10 w-64">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <BiSearch className="text-gray-400 w-4 h-4" />
+              <BsSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"

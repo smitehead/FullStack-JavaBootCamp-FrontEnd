@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsExclamationCircleFill } from 'react-icons/bs';
-import { BiChevronRight } from 'react-icons/bi';
+import { BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsExclamationCircleFill, BsChevronRight } from 'react-icons/bs';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -131,7 +130,7 @@ export const SellerProfile: React.FC = () => {
       {/* Breadcrumb */}
       <nav className="flex items-center text-sm text-gray-500 space-x-2 mb-8">
         <Link to="/" className="hover:text-gray-900 transition-colors">홈</Link>
-        <BiChevronRight className="w-4 h-4" />
+        <BsChevronRight className="w-4 h-4" />
         <span className="font-bold text-gray-900">판매자 프로필</span>
       </nav>
 

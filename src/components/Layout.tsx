@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BsStars } from 'react-icons/bs';
 
-import { BsArrowUpRight, BsPersonSquare, BsGear, BsBell, BsClock, BsList } from 'react-icons/bs';
-import { BiSearch, BiX, BiChat } from 'react-icons/bi';
+import { BsArrowUpRight, BsPersonSquare, BsGear, BsBell, BsClock, BsList, BsChat, BsSearch, BsX } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
@@ -118,7 +117,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
               />
               <button type="submit" className="absolute right-4 h-full flex items-center justify-center text-gray-400 group-focus-within:text-gray-600 transition-colors">
-                <BiSearch className="w-5 h-5" />
+                <BsSearch className="w-5 h-5" />
               </button>
             </form>
 
@@ -152,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               <BsClock className="w-3.5 h-3.5 text-gray-300" />
                               {term}
                             </div>
-                            <BiX
+                            <BsX
                               className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -341,7 +340,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                       to="/chat"
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                     >
-                      <BiChat className="w-4 h-4 mr-2.5" /> 채팅방 가기
+                      <BsChat className="w-4 h-4 mr-2.5" /> 채팅방 가기
                     </Link>
                     <Link
                       to="/settings"

@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 
-import { BsClock, BsChatLeftDots } from 'react-icons/bs';
-import { BiSearch } from 'react-icons/bi';
+import { BsClock, BsChatLeftDots, BsSearch } from 'react-icons/bs';
 import { Inquiry, InquiryType } from '@/types';
 import { format } from 'date-fns';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
@@ -77,7 +76,7 @@ export const InquiryList: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <div className="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center">
-              <BiSearch className="w-5 h-5 text-gray-400" />
+              <BsSearch className="w-5 h-5 text-gray-400" />
             </div>
           </div>
 

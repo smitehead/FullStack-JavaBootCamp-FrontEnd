@@ -5,8 +5,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { CATEGORY_DATA, LOCATION_DATA } from '@/constants';
 import { showToast } from '@/components/toastService';
 
-import { BsCrosshair, BsDash, BsArrowCounterclockwise } from 'react-icons/bs';
-import { BiSearch, BiChevronRight, BiX, BiPlus } from 'react-icons/bi';
+import { BsCrosshair, BsDash, BsArrowCounterclockwise, BsSearch, BsChevronRight, BsX, BsPlusLg } from 'react-icons/bs';
 import { Product } from '@/types';
 import { resolveImageUrls } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
@@ -305,23 +304,23 @@ export const ProductList: React.FC = () => {
       {/* Breadcrumb */}
       <nav className="flex items-center text-sm text-gray-500 space-x-2">
         <span className="cursor-pointer hover:text-gray-900" onClick={() => navigate('/')}>홈</span>
-        <BiChevronRight className="w-4 h-4" />
+        <BsChevronRight className="w-4 h-4" />
         <span className={`cursor-pointer ${!largeCat ? 'font-bold text-gray-900' : 'hover:text-gray-900'}`} onClick={() => handleLargeClick('')}>전체</span>
         {selectedLarge && (
           <>
-            <BiChevronRight className="w-4 h-4" />
+            <BsChevronRight className="w-4 h-4" />
             <span className={`cursor-pointer ${!mediumCat ? 'font-bold text-gray-900' : 'hover:text-gray-900'}`} onClick={() => handleLargeClick(largeCat)}>{selectedLarge.name}</span>
           </>
         )}
         {selectedMedium && (
           <>
-            <BiChevronRight className="w-4 h-4" />
+            <BsChevronRight className="w-4 h-4" />
             <span className={`cursor-pointer ${!smallCat ? 'font-bold text-gray-900' : 'hover:text-gray-900'}`} onClick={() => handleMediumClick(mediumCat)}>{selectedMedium.name}</span>
           </>
         )}
         {selectedSmall && (
           <>
-            <BiChevronRight className="w-4 h-4" />
+            <BsChevronRight className="w-4 h-4" />
             <span className="font-bold text-gray-900">{selectedSmall.name}</span>
           </>
         )}
@@ -337,7 +336,7 @@ export const ProductList: React.FC = () => {
               {isCategoryExpanded ? (
                 <BsDash className="w-3 h-3 ml-auto text-gray-400 group-hover:text-brand transition-colors" />
               ) : (
-                <BiPlus className="w-3 h-3 ml-auto text-gray-400 group-hover:text-brand transition-colors" />
+                <BsPlusLg className="w-3 h-3 ml-auto text-gray-400 group-hover:text-brand transition-colors" />
               )}
             </div>
           </div>
@@ -351,7 +350,7 @@ export const ProductList: React.FC = () => {
               </button>
               {selectedLarge && (
                 <>
-                  <BiChevronRight className="w-3 h-3 text-gray-300" />
+                  <BsChevronRight className="w-3 h-3 text-gray-300" />
                   <button
                     onClick={() => { setMediumCat(''); setSmallCat(''); updateParams({ medium: '', small: '' }); }}
                     className={`font-bold ${!mediumCat ? 'text-brand' : 'text-gray-900 hover:underline'}`}
@@ -362,7 +361,7 @@ export const ProductList: React.FC = () => {
               )}
               {selectedMedium && (
                 <>
-                  <BiChevronRight className="w-3 h-3 text-gray-300" />
+                  <BsChevronRight className="w-3 h-3 text-gray-300" />
                   <button
                     onClick={() => { setSmallCat(''); updateParams({ small: '' }); }}
                     className={`font-bold ${!smallCat ? 'text-brand' : 'text-gray-900 hover:underline'}`}
@@ -373,7 +372,7 @@ export const ProductList: React.FC = () => {
               )}
               {selectedSmall && (
                 <>
-                  <BiChevronRight className="w-3 h-3 text-gray-300" />
+                  <BsChevronRight className="w-3 h-3 text-gray-300" />
                   <span className="font-bold text-brand">{selectedSmall.name}</span>
                 </>
               )}
@@ -562,19 +561,19 @@ export const ProductList: React.FC = () => {
             {largeCat && (
               <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>{CATEGORY_DATA.find(c => c.id === largeCat)?.name}</span>
-                <button onClick={() => removeFilter('large')} className="ml-2 hover:text-brand-dark"><BiX className="w-3 h-3" /></button>
+                <button onClick={() => removeFilter('large')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {mediumCat && (
               <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>{selectedMedium?.name}</span>
-                <button onClick={() => removeFilter('medium')} className="ml-2 hover:text-brand-dark"><BiX className="w-3 h-3" /></button>
+                <button onClick={() => removeFilter('medium')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {smallCat && (
               <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>{selectedSmall?.name}</span>
-                <button onClick={() => removeFilter('small')} className="ml-2 hover:text-brand-dark"><BiX className="w-3 h-3" /></button>
+                <button onClick={() => removeFilter('small')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {(searchParams.get('minPrice') || searchParams.get('maxPrice')) && (
@@ -583,7 +582,7 @@ export const ProductList: React.FC = () => {
                   {searchParams.get('minPrice') ? `${Number(searchParams.get('minPrice')).toLocaleString()}원` : '0원'} ~
                   {searchParams.get('maxPrice') ? `${Number(searchParams.get('maxPrice')).toLocaleString()}원` : '무제한'}
                 </span>
-                <button onClick={() => removeFilter('price')} className="ml-2 hover:text-brand-dark"><BiX className="w-3 h-3" /></button>
+                <button onClick={() => removeFilter('price')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {(searchParams.get('city') || searchParams.get('district') || searchParams.get('neighborhood')) && (
@@ -604,31 +603,31 @@ export const ProductList: React.FC = () => {
                   setDistrict('');
                   setNeighborhood('');
                 }} className="ml-2 hover:text-brand-dark">
-                  <BiX className="w-3 h-3" />
+                  <BsX className="w-3 h-3" />
                 </button>
               </div>
             )}
             {delivery && (
               <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>택배거래</span>
-                <button onClick={() => removeFilter('delivery')} className="ml-2 hover:text-brand-dark"><BiX className="w-3 h-3" /></button>
+                <button onClick={() => removeFilter('delivery')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {faceToFace && (
               <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>대면거래</span>
-                <button onClick={() => removeFilter('face')} className="ml-2 hover:text-brand-dark"><BiX className="w-3 h-3" /></button>
+                <button onClick={() => removeFilter('face')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {searchParams.get('q') && (
               <div className="flex items-center bg-white border border-blue-200 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
-                <BiSearch className="w-3 h-3 mr-1" />
+                <BsSearch className="w-3 h-3 mr-1" />
                 <span>"{searchParams.get('q')}"</span>
                 <button
                   onClick={() => removeFilter('q')}
                   className="ml-2 hover:text-blue-800"
                 >
-                  <BiX className="w-3 h-3" />
+                  <BsX className="w-3 h-3" />
                 </button>
               </div>
             )}
@@ -689,7 +688,7 @@ export const ProductList: React.FC = () => {
 
       {!loading && products.length === 0 && (
         <div className="py-32 text-center bg-white rounded-3xl border border-gray-100 shadow-sm">
-          <BiSearch className="w-16 h-16 text-gray-200 mx-auto mb-6" />
+          <BsSearch className="w-16 h-16 text-gray-200 mx-auto mb-6" />
           <p className="text-gray-500 text-xl font-bold mb-2">조건에 맞는 상품이 없습니다.</p>
           <p className="text-gray-400 text-sm mb-8">다른 검색어나 필터를 사용해보세요.</p>
           <button

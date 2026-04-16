@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BsArrowRepeat } from 'react-icons/bs';
 
-import { BsWallet, BsExclamationTriangle, BsCheckCircle, BsFilter } from 'react-icons/bs';
-import { BiSearch, BiXCircle } from 'react-icons/bi';
+import { BsWallet, BsExclamationTriangle, BsCheckCircle, BsFilter, BsSearch, BsXCircle } from 'react-icons/bs';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -146,7 +145,7 @@ export const WithdrawManagement: React.FC = () => {
         <div className="flex flex-wrap items-center justify-end gap-3">
           <div className="relative w-64 flex items-center h-10">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <BiSearch className="text-gray-400 w-4 h-4" />
+              <BsSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"
@@ -248,7 +247,7 @@ export const WithdrawManagement: React.FC = () => {
                       className="p-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-none transition-all"
                       title="신청 거절"
                     >
-                      <BiXCircle className="w-4 h-4" />
+                      <BsXCircle className="w-4 h-4" />
                     </button>
                   </div>
                 )}

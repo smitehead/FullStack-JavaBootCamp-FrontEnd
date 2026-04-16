@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { BsFunnel, BsBag, BsShieldExclamation, BsFileEarmarkText } from 'react-icons/bs';
+import { BsFunnel, BsBag, BsShieldExclamation, BsFileEarmarkText, BsChat } from 'react-icons/bs';
 
-import { BsExclamationTriangle } from 'react-icons/bs';
-import { BiSearch, BiX, BiChat } from 'react-icons/bi';
+import { BsExclamationTriangle, BsSearch, BsX } from 'react-icons/bs';
 import { BsPerson } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -148,7 +147,7 @@ export const ReportManagement: React.FC = () => {
     }
     return {
       name: '알 수 없는 대상',
-      icon: BiChat,
+      icon: BsChat,
       color: 'text-gray-500',
       bgColor: 'bg-gray-50',
       link: '#',
@@ -165,7 +164,7 @@ export const ReportManagement: React.FC = () => {
         <div className="flex flex-wrap items-center justify-end gap-3">
           <div className="relative w-64 flex items-center h-10">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <BiSearch className="text-gray-400 w-4 h-4" />
+              <BsSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"
@@ -311,7 +310,7 @@ export const ReportManagement: React.FC = () => {
                   onClick={() => setShowDetailModal(false)}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                 >
-                  <BiX className="w-5 h-5 text-gray-400" />
+                  <BsX className="w-5 h-5 text-gray-400" />
                 </button>
               </div>
 

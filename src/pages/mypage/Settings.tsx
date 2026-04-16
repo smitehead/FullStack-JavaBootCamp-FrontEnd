@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsBell, BsShield, BsShieldCheck, BsCreditCard, BsBank, BsPersonDash, BsExclamationCircle, BsCheckCircle } from 'react-icons/bs';
-import { BiChevronDown, BiX } from 'react-icons/bi';
-import { BsPersonFillGear } from 'react-icons/bs';
+import { BsBell, BsShield, BsShieldCheck, BsCreditCard, BsBank, BsPersonDash, BsExclamationCircle, BsCheckCircle, BsPersonFillGear, BsChevronDown, BsX } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
@@ -900,7 +898,7 @@ export const Settings: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-bold text-gray-900">비밀번호 변경</h3>
                 <button onClick={() => setIsPasswordModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                  <BiX className="w-6 h-6" />
+                  <BsX className="w-6 h-6" />
                 </button>
               </div>
 
@@ -992,7 +990,7 @@ export const Settings: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-bold text-gray-900">이메일 변경</h3>
                 <button onClick={() => setIsEmailModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                  <BiX className="w-6 h-6" />
+                  <BsX className="w-6 h-6" />
                 </button>
               </div>
 
@@ -1037,7 +1035,7 @@ export const Settings: React.FC = () => {
                             <option value="custom">직접 입력</option>
                           </select>
                           <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 font-bold">
-                            <BiChevronDown className="w-4 h-4" />
+                            <BsChevronDown className="w-4 h-4" />
                           </div>
                         </div>
                       </div>
@@ -1144,7 +1142,7 @@ export const Settings: React.FC = () => {
                 onClick={() => setIsWithdrawModalOpen(false)}
                 className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <BiX className="w-6 h-6" />
+                <BsX className="w-6 h-6" />
               </button>
             )}
 

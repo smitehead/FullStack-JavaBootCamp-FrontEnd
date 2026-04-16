@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BsCheckCircle, BsBank, BsXLg, BsArrowLeft } from 'react-icons/bs';
-import { BiPlus } from 'react-icons/bi';
+import { BsCheckCircle, BsBank, BsXLg, BsArrowLeft, BsPlusLg } from 'react-icons/bs';
 import { motion } from 'motion/react';
 import { useAppContext } from '@/context/AppContext';
 import api from '@/services/api';
@@ -159,7 +158,7 @@ export const PointWithdraw: React.FC = () => {
             className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${withdrawType === 'new' ? 'border-indigo-600 bg-indigo-50/50 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${withdrawType === 'new' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-              <BiPlus className="w-6 h-6" />
+              <BsPlusLg className="w-6 h-6" />
             </div>
             <p className={`font-bold ${withdrawType === 'new' ? 'text-indigo-900' : 'text-gray-900'}`}>새로운 계좌로</p>
             <p className="text-xs text-gray-400 font-medium mt-1">직접 입력하여 출금</p>

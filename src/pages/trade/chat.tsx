@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical } from 'react-icons/bs';
-import { BiArrowBack, BiChat } from 'react-icons/bi';
+import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft } from 'react-icons/bs';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
@@ -567,7 +566,7 @@ export const Chat: React.FC = () => {
             {/* 헤더 */}
             <div className="px-6 py-4 bg-white border-b border-gray-100 flex items-center gap-4">
               <button onClick={() => setSelectedRoom(null)} className="md:hidden p-1 text-gray-600">
-                <BiArrowBack className="w-5 h-5" />
+                <BsArrowLeft className="w-5 h-5" />
               </button>
               <img src={selectedRoom.otherUser.profileImage || '/default-profile.png'}
                 alt="" className="w-10 h-10 rounded-full object-cover bg-gray-100" />
@@ -707,7 +706,7 @@ export const Chat: React.FC = () => {
       ) : (
         <div className="flex-1 hidden md:flex flex-col items-center justify-center p-12 text-center">
           <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-gray-100">
-            <BiChat className="w-10 h-10 text-gray-200" />
+            <BsChat className="w-10 h-10 text-gray-200" />
           </div>
           <h3 className="text-xl font-black text-gray-900 mb-2 tracking-tight">채팅을 시작해보세요</h3>
           <p className="text-sm text-gray-400 font-medium leading-relaxed">

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BsBox2 } from 'react-icons/bs';
-import { BsBell, BsClock } from 'react-icons/bs';
-import { BiChevronRight, BiChat } from 'react-icons/bi';
+import { BsBox2, BsChat, BsChevronRight, BsBell, BsClock } from 'react-icons/bs';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { getProfileImageUrl } from '@/utils/imageUtils';
@@ -170,7 +168,7 @@ export const Inbox: React.FC = () => {
                     {new Date(noti.createdAt).toLocaleString()}
                   </div>
                 </div>
-                <BiChevronRight className="w-5 h-5 text-gray-300 self-center" />
+                <BsChevronRight className="w-5 h-5 text-gray-300 self-center" />
               </Link>
             ))
           ) : (
@@ -216,12 +214,12 @@ export const Inbox: React.FC = () => {
                     <span>{new Date(chat.lastMessageAt).toLocaleDateString()}</span>
                   </div>
                 </div>
-                <BiChevronRight className="w-5 h-5 text-gray-300" />
+                <BsChevronRight className="w-5 h-5 text-gray-300" />
               </Link>
             ))
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
-              <BiChat className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <BsChat className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 font-bold">대화 내역이 없습니다.</p>
             </div>
           )

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { BsList } from 'react-icons/bs';
 
-import { BsExclamationTriangle, BsInfoCircle } from 'react-icons/bs';
-import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
+import { BsExclamationTriangle, BsInfoCircle, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { BsCalendarCheck } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
@@ -65,7 +64,7 @@ export const NoticeDetail: React.FC = () => {
     <div className="max-w-[1000px] mx-auto px-6 py-12">
       {/* Back Button */}
       <Link to="/notice" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
-        <BiChevronLeft className="w-4 h-4 mr-2" />
+        <BsChevronLeft className="w-4 h-4 mr-2" />
         공지사항 목록
       </Link>
 
@@ -135,7 +134,7 @@ export const NoticeDetail: React.FC = () => {
               className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
             >
               <BsList className="w-4 h-4" />
-              <BiChevronRight className="w-4 h-4 ml-2" />
+              <BsChevronRight className="w-4 h-4 ml-2" />
               목록으로
             </Link>
           </div>
