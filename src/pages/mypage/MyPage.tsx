@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { BsCartCheck, BsStar, BsTrash3, BsArrowRepeat, BsBag, BsCart, BsBagFill } from 'react-icons/bs';
+import { BsCartCheck, BsTrash3, BsArrowRepeat, BsBag, BsCart, BsBagFill, BsPencilSquare } from 'react-icons/bs';
 
-import { BiX, BiXCircle } from 'react-icons/bi';
-import { BsHeart, BsHeartFill, BsGear, BsChatLeft, BsWallet, BsBox2, BsExclamationTriangle, BsCheckCircle } from 'react-icons/bs';
+import { BiX, BiXCircle, BiChat, BiStore, BiTrophy } from 'react-icons/bi';
+import { BsHeart, BsHeartFill, BsGear, BsWallet, BsBox2, BsExclamationTriangle, BsCheckCircle } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -458,25 +458,25 @@ export const MyPage: React.FC = () => {
         <div className="w-full md:w-64 flex-shrink-0">
           <nav className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <button onClick={() => setActiveTab('selling')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <BsBox2 className="w-5 h-5 mr-3" /> 판매 내역
+              <BiStore className="w-5 h-5 mr-3" /> 판매 내역
             </button>
             <button onClick={() => setActiveTab('bidding')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'bidding' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <BsBagFill className="w-5 h-5 mr-3" /> 입찰 내역
+              <BsBag className="w-5 h-5 mr-3" /> 입찰 내역
             </button>
             <button onClick={() => setActiveTab('purchased')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'purchased' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <BsCart className="w-5 h-5 mr-3" /> 구매 내역
+              <BiTrophy className="w-5 h-5 mr-3" /> 구매 내역
             </button>
             <button onClick={() => setActiveTab('wishlist')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'wishlist' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <BsHeart className="w-5 h-5 mr-3 text-pink-500" /> 찜 목록
+              <BsHeart className="w-5 h-5 mr-3" /> 찜 목록
             </button>
             <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <BsStar className="w-5 h-5 mr-3" /> 리뷰 관리
+              <BsPencilSquare className="w-5 h-5 mr-3" /> 리뷰 관리
             </button>
             <Link 
                to="/chat"
                className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
              >
-               <BsChatLeft className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
+               <BiChat className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
             </Link>
           </nav>
         </div>

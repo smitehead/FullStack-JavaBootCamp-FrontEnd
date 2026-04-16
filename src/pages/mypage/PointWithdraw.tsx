@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BsCheckCircle, BsBank, BsPlusLg, BsXLg, BsArrowLeft } from 'react-icons/bs';
+import { BsCheckCircle, BsBank, BsPlusLg, BsXLg, BsArrowLeft, BsPlus } from 'react-icons/bs';
+import { BiPlus } from 'react-icons/bi';
 import { motion } from 'motion/react';
 import { useAppContext } from '@/context/AppContext';
 import api from '@/services/api';
@@ -137,7 +138,7 @@ export const PointWithdraw: React.FC = () => {
         >
           <BsArrowLeft className="w-6 h-6 text-gray-900" />
         </button>
-        <h2 className="text-3xl font-bold text-gray-900 tracking-normal">포인트 출금</h2>
+        <h2 className="text-2xl font-bold text-gray-900 tracking-tight">포인트 출금</h2>
       </div>
 
       <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -158,7 +159,7 @@ export const PointWithdraw: React.FC = () => {
             className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${withdrawType === 'new' ? 'border-indigo-600 bg-indigo-50/50 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${withdrawType === 'new' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-              <BsPlusLg className="w-5 h-5 mr-1" /> 계좌 추가하기
+              <BiPlus className="w-6 h-6" />
             </div>
             <p className={`font-bold ${withdrawType === 'new' ? 'text-indigo-900' : 'text-gray-900'}`}>새로운 계좌로</p>
             <p className="text-xs text-gray-400 font-medium mt-1">직접 입력하여 출금</p>
@@ -191,7 +192,7 @@ export const PointWithdraw: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setIsMethodModalOpen(true)}
-                    className="px-4 py-2 bg-gray-50 text-indigo-600 text-xs font-bold rounded-xl hover:bg-indigo-50 transition-all"
+                    className="px-4 py-2 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
                   >
                     변경
                   </button>
@@ -269,7 +270,7 @@ export const PointWithdraw: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setNewBank('')}
-                      className="px-3 py-1.5 text-[10px] font-bold text-gray-400 border border-gray-200 rounded-lg hover:bg-white transition-all hover:text-gray-900"
+                      className="px-4 py-2 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
                     >
                       변경
                     </button>

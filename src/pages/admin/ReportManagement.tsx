@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsFunnel, BsBag, BsShieldExclamation, BsFileEarmarkText } from 'react-icons/bs';
 
-import { BsChatLeft, BsExclamationTriangle } from 'react-icons/bs';
-import { BiSearch, BiX } from 'react-icons/bi';
+import { BsExclamationTriangle } from 'react-icons/bs';
+import { BiSearch, BiX, BiChat } from 'react-icons/bi';
 import { BsPerson } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -148,7 +148,7 @@ export const ReportManagement: React.FC = () => {
     }
     return {
       name: '알 수 없는 대상',
-      icon: BsChatLeft,
+      icon: BiChat,
       color: 'text-gray-500',
       bgColor: 'bg-gray-50',
       link: '#',

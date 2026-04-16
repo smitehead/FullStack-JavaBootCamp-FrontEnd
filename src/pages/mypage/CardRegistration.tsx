@@ -156,13 +156,8 @@ export const CardRegistration: React.FC = () => {
 
           {/* 헤더 */}
           <div className="p-8 border-b border-gray-50">
-            <div className="flex items-center gap-3 mb-1">
-              <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
-                <BsLock className="w-4 h-4 text-indigo-600" />
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">카드 등록</h1>
-            </div>
-            <p className="text-sm text-gray-400 font-medium mt-2 ml-12">
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">카드 등록</h1>
+            <p className="text-sm text-gray-400 font-medium mt-2">
               카드를 한 번 등록하면 간편하게 포인트를 충전할 수 있습니다.
             </p>
           </div>

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BsStars } from 'react-icons/bs';
 
-import { BsArrowUpRight, BsChatLeft, BsPerson, BsGear, BsBell, BsClock, BsInstagram, BsYoutube, BsList } from 'react-icons/bs';
-import { BiListOl, BiSearch, BiX, BiShareAlt, BiListUl } from 'react-icons/bi';
+import { BsArrowUpRight, BsPersonSquare, BsGear, BsBell, BsClock, BsInstagram, BsYoutube, BsList } from 'react-icons/bs';
+import { BiListOl, BiSearch, BiX, BiShareAlt, BiListUl, BiChat } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
@@ -335,13 +335,13 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                       to="/mypage"
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                     >
-                      <BsPerson className="w-4 h-4 mr-2.5" /> 프로필 보기
+                      <BsPersonSquare className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </Link>
                     <Link
                       to="/chat"
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                     >
-                      <BsChatLeft className="w-4 h-4 mr-2.5" /> 채팅방 가기
+                      <BiChat className="w-4 h-4 mr-2.5" /> 채팅방 가기
                     </Link>
                     <Link
                       to="/settings"

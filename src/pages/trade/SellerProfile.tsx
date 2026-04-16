@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBox2, BsExclamationCircle, BsChatLeft, BsShield } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsChatLeft, BsShield, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsExclamationCircleFill } from 'react-icons/bs';
 import { BiChevronRight } from 'react-icons/bi';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
@@ -158,13 +158,13 @@ export const SellerProfile: React.FC = () => {
                       onClick={handleBlockToggle}
                       className={`text-xs font-bold transition-colors flex items-center gap-1 ${isBlocked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
                     >
-                      <BsShield className={`w-3 h-3 ${isBlocked ? 'fill-blue-500' : ''}`} /> {isBlocked ? '차단풀기' : '차단하기'}
+                      <BsShieldFill className={`w-3 h-3 ${isBlocked ? 'text-blue-500' : ''}`} /> {isBlocked ? '차단풀기' : '차단하기'}
                     </button>
                     <button
                       onClick={() => navigate(`/report?sellerId=${seller.sellerNo}&sellerNickname=${encodeURIComponent(seller.nickname)}`)}
                       className="text-xs font-bold text-red-400 hover:text-red-600 transition-colors flex items-center gap-1"
                     >
-                      <BsExclamationCircle className="w-3 h-3" /> 신고하기
+                      <BsExclamationCircleFill className="w-3 h-3" /> 신고하기
                     </button>
                   </div>
                 </div>
@@ -188,7 +188,7 @@ export const SellerProfile: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
                 <div className="bg-emerald-100 p-3 rounded-xl">
-                  <BsBox2 className="w-6 h-6 text-emerald-600" />
+                  <BsBox2Fill className="w-6 h-6 text-emerald-600" />
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">전체 판매</p>
@@ -197,7 +197,7 @@ export const SellerProfile: React.FC = () => {
               </div>
               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
                 <div className="bg-indigo-100 p-3 rounded-xl">
-                  <BsChatLeft className="w-6 h-6 text-indigo-600" />
+                  <BsChatLeftFill className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">받은 후기</p>

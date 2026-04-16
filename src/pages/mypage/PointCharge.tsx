@@ -151,7 +151,7 @@ export const PointCharge: React.FC = () => {
         <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
           <BiArrowBack className="w-6 h-6 text-gray-900" />
         </button>
-        <h2 className="text-3xl font-bold text-gray-900 tracking-normal">포인트 충전</h2>
+        <h2 className="text-2xl font-bold text-gray-900 tracking-tight">포인트 충전</h2>
       </div>
 
       <div className="space-y-8">

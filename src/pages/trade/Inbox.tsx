@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BsBox2 } from 'react-icons/bs';
-import { BsChatLeft } from 'react-icons/bs';
 import { BsBell, BsClock } from 'react-icons/bs';
-import { BiChevronRight } from 'react-icons/bi';
+import { BiChevronRight, BiChat } from 'react-icons/bi';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { getProfileImageUrl } from '@/utils/imageUtils';
@@ -222,7 +221,7 @@ export const Inbox: React.FC = () => {
             ))
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
-              <BsChatLeft className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <BiChat className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 font-bold">대화 내역이 없습니다.</p>
             </div>
           )

@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsGeoAltFill, BsPeople, BsPerson, BsWallet, BsThreeDotsVertical } from 'react-icons/bs';
-import { BiArrowBack, BiChevronRight, BiX, BiShareAlt, BiRefresh, BiTrash } from 'react-icons/bi';
+import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsGeoAltFill, BsPeople, BsPerson, BsWallet, BsThreeDotsVertical } from 'react-icons/bs';
+import { BiArrowBack, BiChevronRight, BiX, BiShareAlt, BiRefresh, BiTrash, BiChat } from 'react-icons/bi';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -807,16 +807,18 @@ export const ProductDetail: React.FC = () => {
               <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[150] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
                 <button
                   onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
-                  className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors"
+                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors border-b border-gray-50"
                 >
                   <BiTrash className="w-4 h-4 mr-2.5" /> 삭제하기
                 </button>
-                <button
-                  onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
-                  className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
-                >
-                  <BiRefresh className="w-4 h-4 mr-2.5" /> 재게시하기
-                </button>
+                {isFinished && (product.participantCount === 0 || product.status === 'closed_failed') && (
+                  <button
+                    onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
+                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                  >
+                    <BiRefresh className="w-4 h-4 mr-2.5" /> 재게시하기
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -978,7 +980,7 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => navigate(`/chat?id=chat_1`)}
                     className="px-3 py-1.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-lg border border-gray-200 transition-all flex items-center gap-1.5"
                   >
-                    <BsChatLeft className="w-4 h-4" />
+                    <BiChat className="w-4 h-4" />
                     <span className="text-xs font-bold">채팅하기</span>
                   </button>
                 )}
@@ -1928,12 +1930,9 @@ export const ProductDetail: React.FC = () => {
       {/* Recharge Prompt Modal */}
       {showRechargePrompt && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 text-center animate-in zoom-in-95 duration-200">
-            <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <BsExclamationTriangle className="w-10 h-10 text-orange-500" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">포인트가 부족합니다</h3>
-            <p className="text-gray-500 mb-8 leading-relaxed">
+          <div className="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-10 text-left animate-in zoom-in-95 duration-200">
+            <h3 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">포인트가 부족합니다</h3>
+            <p className="text-sm text-gray-500 mb-10 leading-relaxed font-medium">
               입찰을 진행하기 위해 포인트 충전이 필요합니다.<br />
               현재 보유 포인트: <span className="text-indigo-600 font-bold">{(user?.points || 0).toLocaleString()}P</span><br />
               지금 충전하러 가시겠습니까?
@@ -1941,15 +1940,83 @@ export const ProductDetail: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowRechargePrompt(false)}
-                className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-colors"
+                className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-colors text-sm"
               >
                 나중에
               </button>
               <button
-                onClick={() => navigate('/points/charge')}
-                className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-100 flex items-center justify-center gap-2"
+                onClick={() => { setShowRechargePrompt(false); navigate('/points/charge'); }}
+                className="flex-1 py-4 bg-orange-600 text-white font-bold rounded-2xl hover:bg-orange-700 transition-colors shadow-lg shadow-orange-100 flex items-center justify-center gap-2 text-sm"
               >
                 충전하기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && product && (
+        <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-10 text-left animate-in zoom-in-95 duration-200">
+            <h3 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">게시글을 삭제하시겠습니까?</h3>
+            
+            {product.participantCount > 0 && !isFinished ? (
+              <div className="bg-red-50 p-5 rounded-2xl mb-8 border border-red-100/50">
+                <p className="text-sm text-red-600 font-bold leading-relaxed">
+                  현재 입찰자가 {product.participantCount}명 있습니다.<br />
+                  경매 도중 삭제 시 매너온도가 차감될 수 있습니다.
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500 mb-10 font-medium leading-relaxed">
+                삭제된 게시글은 복구할 수 없습니다.
+              </p>
+            )}
+
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowDeleteModal(false)} 
+                className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+              >
+                취소
+              </button>
+              <button 
+                onClick={handleDeleteProduct}
+                disabled={isDeleting}
+                className="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-2"
+              >
+                {isDeleting ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : '삭제하기'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Repost Confirmation Modal */}
+      {showRepostModal && product && (
+        <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-10 text-left animate-in zoom-in-95 duration-200">
+            <h3 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">재게시하시겠습니까?</h3>
+            <p className="text-gray-500 text-sm font-medium mb-10 leading-relaxed">
+              기존 정보를 유지한 채 경매를 다시 시작합니다.
+            </p>
+
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowRepostModal(false)} 
+                className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+              >
+                닫기
+              </button>
+              <button 
+                onClick={() => {
+                  setShowRepostModal(false);
+                  navigate('/register', { state: { product: product } });
+                }} 
+                className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 text-sm"
+              >
+                재게시하기
               </button>
             </div>
           </div>

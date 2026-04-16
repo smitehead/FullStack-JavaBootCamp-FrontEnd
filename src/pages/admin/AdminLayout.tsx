@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   BsGrid, BsPeople, BsThermometerHalf, BsExclamationTriangle, 
-  BsMegaphone, BsChatLeft, BsBell, BsImage, BsWallet, 
-  BsClockHistory, BsHouse, BsBoxArrowRight, BsHammer
+  BsMegaphone, BsBell, BsImage, BsWallet, 
+  BsClockHistory, BsHouse, BsBoxArrowRight, BsHammer, BsChatLeftDots
 } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -54,7 +54,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         { path: '/admin/auctions', icon: BsHammer, label: '경매 관리' },
         { path: '/admin/reports', icon: BsExclamationTriangle, label: '신고 관리' },
         { path: '/admin/notices', icon: BsMegaphone, label: '공지사항 관리' },
-        { path: '/admin/inquiries', icon: BsChatLeft, label: '문의사항 관리' },
+        { path: '/admin/inquiries', icon: BsChatLeftDots, label: '문의사항 관리' },
         { path: '/admin/notifications', icon: BsBell, label: '알림 관리' },
         { path: '/admin/banners', icon: BsImage, label: '배너 관리' },
       ]

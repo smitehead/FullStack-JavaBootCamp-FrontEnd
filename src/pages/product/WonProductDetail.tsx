@@ -6,8 +6,8 @@ import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { BsXCircle, BsStars, BsList, BsCartCheck } from 'react-icons/bs';
 
-import { BsCheckCircle, BsBox2, BsExclamationCircle, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGeoAltFill } from 'react-icons/bs';
-import { BiChevronLeft, BiChevronRight, BiArrowBack } from 'react-icons/bi';
+import { BsCheckCircle, BsBox2, BsExclamationCircle, BsShieldCheck, BsFlag, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGeoAltFill } from 'react-icons/bs';
+import { BiChevronLeft, BiChevronRight, BiArrowBack, BiChat } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
 
 interface AuctionResultDetail {
@@ -514,7 +514,7 @@ export const WonProductDetail: React.FC = () => {
                       onClick={handleChatWithSeller}
                       className="w-full py-5 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
                     >
-                      <BsChatLeft className="w-5 h-5 text-gray-900" />
+                      <BiChat className="w-5 h-5 text-gray-900" />
                       판매자와 채팅하기
                     </button>
                   </div>

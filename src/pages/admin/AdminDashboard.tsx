@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BsCalendarCheck, BsExclamationCircle, BsChatLeft, BsCurrencyDollar, BsFileText, BsCheckCircle } from 'react-icons/bs';
+import { BsCalendarCheck, BsExclamationCircle, BsCurrencyDollar, BsFileText, BsCheckCircle, BsChatLeftDots } from 'react-icons/bs';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -79,7 +79,7 @@ export const AdminDashboard: React.FC = () => {
 
   const stats = [
     { label: '미처리 신고', value: unprocessedReports, icon: BsExclamationCircle, color: 'bg-red-500', path: '/admin/reports' },
-    { label: '미처리 문의', value: unprocessedInquiries, icon: BsChatLeft, color: 'bg-orange-500', path: '/admin/inquiries' },
+    { label: '미처리 문의', value: unprocessedInquiries, icon: BsChatLeftDots, color: 'bg-orange-500', path: '/admin/inquiries' },
     { label: '미처리 출금', value: unprocessedWithdraws, icon: BsCurrencyDollar, color: 'bg-emerald-500', path: '/admin/withdraws' },
   ];
 
@@ -145,7 +145,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-4">
                 {popularCategories.map((cat) => (
                   <div key={cat.name} className="flex items-center space-x-1.5 whitespace-nowrap">
-                    <BsExclamationCircle className="w-4 h-4" style={{ color: cat.color }} />
+                    <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
                     <span className="text-[10px] font-bold text-gray-600">{cat.name} ({cat.count}건)</span>
                   </div>
                 ))}
@@ -188,7 +188,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             )) : (
               <div className="py-10 text-center text-gray-400 text-sm font-bold">
-                <BsChatLeft className="w-8 h-8 mx-auto mb-2 text-gray-100" />
+                <BsChatLeftDots className="w-8 h-8 mx-auto mb-2 text-gray-100" />
                 문의사항이 없습니다.
               </div>
             )}

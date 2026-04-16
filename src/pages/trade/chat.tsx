@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical } from 'react-icons/bs';
-import { BiArrowBack } from 'react-icons/bi';
-import { BsChatLeft, BsExclamationCircle } from 'react-icons/bs';
+import { BiArrowBack, BiChat } from 'react-icons/bi';
+import { BsExclamationCircle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -707,7 +707,7 @@ export const Chat: React.FC = () => {
       ) : (
         <div className="flex-1 hidden md:flex flex-col items-center justify-center p-12 text-center">
           <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-gray-100">
-            <BsChatLeft className="w-10 h-10 text-gray-200" />
+            <BiChat className="w-10 h-10 text-gray-200" />
           </div>
           <h3 className="text-xl font-black text-gray-900 mb-2 tracking-tight">채팅을 시작해보세요</h3>
           <p className="text-sm text-gray-400 font-medium leading-relaxed">

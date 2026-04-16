@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BsTrash3, BsSend } from 'react-icons/bs';
-
-import { BsChatLeft, BsCheckCircle, BsPerson } from 'react-icons/bs';
+import { BsTrash3, BsSend, BsCheckCircle, BsPerson, BsChatLeftDots } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
 import { Inquiry } from '@/types';
 import { showToast } from '@/components/toastService';
@@ -272,7 +270,7 @@ export const InquiryManagement: React.FC = () => {
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <div className="w-20 h-20 bg-gray-50 rounded-none flex items-center justify-center mb-4">
-              <BsChatLeft className="w-8 h-8 text-gray-300" />
+              <BsChatLeftDots className="w-8 h-8 text-gray-300" />
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-1">문의를 선택해주세요</h3>
             <p className="text-gray-400 text-sm font-medium">왼쪽 목록에서 답변할 문의사항을 선택하세요.</p>

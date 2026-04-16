@@ -161,7 +161,11 @@ export const AccountRegistration: React.FC = () => {
                     </div>
                     <p className="text-lg font-bold text-gray-900">{selectedBank}</p>
                   </div>
-                  <button type="button" onClick={() => setSelectedBank(null)} className="px-3 py-1.5 text-[10px] font-bold text-gray-400 border border-gray-200 rounded-lg hover:bg-white transition-all hover:text-gray-900">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedBank(null)}
+                    className="px-4 py-2 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
+                  >
                     변경
                   </button>
                 </div>
