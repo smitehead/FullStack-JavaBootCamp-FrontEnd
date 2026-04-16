@@ -12,9 +12,10 @@
       font-family: 'Noto Sans KR', sans-serif;
     }
 
-    /* sonner: toast li 너비 고정 → mx-auto 중앙정렬 활성화 */
+    /* sonner: toast 중앙 정렬 */
     [data-sonner-toast] {
-      width: 356px !important;
+      left: 50% !important;
+      transform: var(--y) translateX(-50%) !important;
     }
 
     /* Custom scrollbar for better aesthetics */
