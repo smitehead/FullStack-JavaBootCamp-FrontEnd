@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
-import { Package, AlertCircle } from 'lucide-react';
-import { BsChatLeft, BsShield } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsChatLeft, BsShield } from 'react-icons/bs';
 import { BiChevronRight } from 'react-icons/bi';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
@@ -165,7 +164,7 @@ export const SellerProfile: React.FC = () => {
                       onClick={() => navigate(`/report?sellerId=${seller.sellerNo}&sellerNickname=${encodeURIComponent(seller.nickname)}`)}
                       className="text-xs font-bold text-red-400 hover:text-red-600 transition-colors flex items-center gap-1"
                     >
-                      <AlertCircle className="w-3 h-3" /> 신고하기
+                      <BsExclamationCircle className="w-3 h-3" /> 신고하기
                     </button>
                   </div>
                 </div>
@@ -189,7 +188,7 @@ export const SellerProfile: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
                 <div className="bg-emerald-100 p-3 rounded-xl">
-                  <Package className="w-6 h-6 text-emerald-600" />
+                  <BsBox2 className="w-6 h-6 text-emerald-600" />
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">전체 판매</p>
@@ -219,7 +218,7 @@ export const SellerProfile: React.FC = () => {
               onClick={() => setActiveTab('selling')}
               className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-emerald-50 text-emerald-900' : 'text-gray-600 hover:bg-gray-50'}`}
             >
-              <Package className="w-5 h-5 mr-3" /> 판매 상품
+              <BsBox2 className="w-5 h-5 mr-3" /> 판매 상품
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
@@ -255,7 +254,7 @@ export const SellerProfile: React.FC = () => {
                 filteredProducts.map(p => <ProductCard key={p.id} product={p} isSold={p.status === 'completed'} />)
               ) : (
                 <div className="col-span-full py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
-                  <Package className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                  <BsBox2 className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                   <p className="text-gray-500 font-medium">등록된 상품이 없습니다.</p>
                 </div>
               )}
@@ -293,7 +292,7 @@ export const SellerProfile: React.FC = () => {
                         to={`/products/${review.productNo}`}
                         className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
                       >
-                        <Package className="w-3.5 h-3.5" />
+                        <BsBox2 className="w-3.5 h-3.5" />
                         {review.productTitle}
                       </Link>
                     )}

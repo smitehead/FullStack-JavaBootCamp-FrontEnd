@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { AlertTriangle, Send, CheckCircle2 } from 'lucide-react';
-import { BsInfoCircle, BsChatLeft } from 'react-icons/bs';
+import { Send } from 'lucide-react';
+import { BsExclamationTriangle, BsCheckCircle, BsInfoCircle, BsArrowLeft } from 'react-icons/bs';
 import { BiX } from 'react-icons/bi';
 import { BiChevronLeft } from 'react-icons/bi';
 import { BsCamera } from 'react-icons/bs';
@@ -114,7 +114,7 @@ export const Report: React.FC = () => {
       <div className="min-h-[calc(100vh-64px)] bg-gray-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white p-12 rounded-[40px] shadow-2xl text-center border border-gray-100">
           <div className="w-24 h-24 bg-emerald-100 rounded-3xl flex items-center justify-center mx-auto mb-8">
-            <CheckCircle2 className="w-12 h-12 text-emerald-600" />
+            <BsCheckCircle className="w-12 h-12 text-emerald-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">신고 접수 완료</h2>
           <p className="text-gray-500 font-medium leading-relaxed">
@@ -142,7 +142,7 @@ export const Report: React.FC = () => {
           <div className="p-8 md:p-12">
             <div className="flex items-center gap-4 mb-8">
               <div className="bg-red-100 p-3 rounded-2xl">
-                <AlertTriangle className="w-8 h-8 text-red-500" />
+                <BsExclamationTriangle className="w-8 h-8 text-red-500" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 tracking-tight">

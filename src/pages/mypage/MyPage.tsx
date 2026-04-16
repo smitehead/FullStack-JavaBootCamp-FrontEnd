@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { Package, ShoppingBag, Star, Trash2, RefreshCw, AlertTriangle, Gavel, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Star, Trash2, RefreshCw, Gavel } from 'lucide-react';
 import { BiX, BiXCircle } from 'react-icons/bi';
-import { BsHeart, BsGear, BsChatLeft, BsWallet } from 'react-icons/bs';
+import { BsHeart, BsGear, BsChatLeft, BsWallet, BsBox2, BsExclamationTriangle, BsCheckCircle } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -457,7 +457,7 @@ export const MyPage: React.FC = () => {
         <div className="w-full md:w-64 flex-shrink-0">
           <nav className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <button onClick={() => setActiveTab('selling')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <Package className="w-5 h-5 mr-3" /> 판매 내역
+              <BsBox2 className="w-5 h-5 mr-3" /> 판매 내역
             </button>
             <button onClick={() => setActiveTab('bidding')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'bidding' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
               <Gavel className="w-5 h-5 mr-3" /> 입찰 내역
@@ -643,7 +643,7 @@ export const MyPage: React.FC = () => {
                               to={`/products/${review.productNo}`}
                               className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
                             >
-                              <Package className="w-3.5 h-3.5" />
+                              <BsBox2 className="w-3.5 h-3.5" />
                               {review.productTitle}
                             </Link>
                           )}
@@ -729,7 +729,7 @@ export const MyPage: React.FC = () => {
 
 const EmptyState = ({ message }: { message: string }) => (
   <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-500">
-    <Package className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+    <BsBox2 className="w-12 h-12 mx-auto mb-4 text-gray-300" />
     <p>{message}</p>
   </div>
 );

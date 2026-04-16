@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { CheckCircle2, AlertTriangle, RefreshCw, Filter } from 'lucide-react';
-import { BsWallet } from 'react-icons/bs';
+import { RefreshCw } from 'lucide-react';
+import { BsWallet, BsExclamationTriangle, BsCheckCircle, BsFilter } from 'react-icons/bs';
 import { BiSearch, BiXCircle } from 'react-icons/bi';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
@@ -157,7 +157,7 @@ export const WithdrawManagement: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-none px-4 py-2.5 shadow-sm">
-            <Filter className="w-3.5 h-3.5 text-gray-400" />
+            <BsFilter className="w-3.5 h-3.5 text-gray-400" />
             <select
               className="bg-transparent text-xs font-bold text-gray-600 focus:outline-none cursor-pointer"
               value={statusFilter}
@@ -240,7 +240,7 @@ export const WithdrawManagement: React.FC = () => {
                       className="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-none transition-all"
                       title="출금 완료"
                     >
-                      <CheckCircle2 className="w-4 h-4" />
+                      <BsCheckCircle className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => openConfirm(item, '거절')}
@@ -278,9 +278,9 @@ export const WithdrawManagement: React.FC = () => {
               <div className={`w-12 h-12 rounded-none flex items-center justify-center ${confirmModal.action === '완료' ? 'bg-emerald-50' :
                   confirmModal.action === '처리중' ? 'bg-blue-50' : 'bg-rose-50'
                 }`}>
-                {confirmModal.action === '완료' ? <CheckCircle2 className="w-6 h-6 text-emerald-500" /> :
+                {confirmModal.action === '완료' ? <BsCheckCircle className="w-6 h-6 text-emerald-500" /> :
                   confirmModal.action === '처리중' ? <RefreshCw className="w-6 h-6 text-blue-500" /> :
-                    <AlertTriangle className="w-6 h-6 text-rose-500" />}
+                    <BsExclamationTriangle className="w-6 h-6 text-rose-500" />}
               </div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900 tracking-tight">출금 {confirmModal.action} 처리</h3>
@@ -312,7 +312,7 @@ export const WithdrawManagement: React.FC = () => {
               {/* 완료 처리 시 경고 문구 */}
               {confirmModal.action === '완료' && (
                 <div className="flex items-start gap-3 bg-emerald-50 rounded-none p-4 border border-emerald-100">
-                  <AlertTriangle className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                  <BsExclamationTriangle className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
                   <p className="text-[11px] text-emerald-700 font-bold leading-relaxed">
                     실제 계좌이체 완료 후 처리하세요. 완료 처리 후에는 포인트가 복구되지 않습니다.
                   </p>
@@ -331,7 +331,7 @@ export const WithdrawManagement: React.FC = () => {
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 outline-none resize-none font-medium"
                   />
                   <div className="flex items-start gap-2 text-[10px] text-gray-400 font-medium">
-                    <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
+                    <BsExclamationTriangle className="w-3 h-3 mt-0.5 shrink-0" />
                     <p>거절 시 별도의 포인트 처리는 발생하지 않습니다. (포인트는 완료 시에만 차감됩니다)</p>
                   </div>
                 </div>

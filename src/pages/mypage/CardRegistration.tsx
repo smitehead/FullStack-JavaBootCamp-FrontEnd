@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
+import { BsCheckCircle } from 'react-icons/bs';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -115,7 +116,7 @@ export const CardRegistration: React.FC = () => {
       <div className="min-h-[calc(100vh-64px)] bg-gray-50 flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white p-12 rounded-3xl shadow-xl text-center border border-gray-100 animate-in fade-in zoom-in duration-500">
           <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+            <BsCheckCircle className="w-10 h-10 text-emerald-500" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">카드 등록 완료</h2>
           <p className="text-gray-500 font-medium">결제 카드가 성공적으로 등록되었습니다.</p>

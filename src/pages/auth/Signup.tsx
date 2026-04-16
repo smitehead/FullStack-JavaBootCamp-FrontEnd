@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
-import { Package, Check, Lock, Phone, AlertCircle, Send, CheckCircle2, Sparkles } from 'lucide-react';
-import { BsShieldCheck, BsEnvelope, BsInfoCircle, BsGeoAlt, BsCalendarCheck, BsPerson } from 'react-icons/bs';
+import { Check, Lock, Phone, Send, Sparkles } from 'lucide-react';
+import { BsShieldCheck, BsEnvelope, BsInfoCircle, BsGeoAlt, BsCalendarCheck, BsPerson, BsExclamationCircle, BsCheckCircle } from 'react-icons/bs';
 import { BiChevronRight, BiChevronDown, BiX } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
 
@@ -382,7 +382,7 @@ export const Signup: React.FC = () => {
                           onClick={() => handleTermToggle(item.key as keyof typeof terms)}
                           className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${terms[item.key as keyof typeof terms] ? 'bg-[#FF5A5A] text-white' : 'bg-white text-gray-200 border border-gray-200'}`}
                         >
-                          <AlertCircle className="h-4 w-4 text-emerald-500 shrink-0" />
+                          <Check className="w-3.5 h-3.5 shrink-0" />
                         </button>
                         <span className={`text-sm font-bold ${item.required ? 'text-gray-700' : 'text-gray-400'}`}>
                           {item.label} {item.required ? <span className="text-[#FF5A5A]">(필수)</span> : '(선택)'}
@@ -640,7 +640,7 @@ export const Signup: React.FC = () => {
                   {verificationError && <p className="text-[10px] text-red-500 mt-1 ml-1 font-bold text-center">{verificationError}</p>}
                   {isEmailVerified && (
                     <p className="text-[10px] text-emerald-500 mt-1 ml-1 font-bold flex items-center justify-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> 인증이 완료되었습니다.
+                      <BsCheckCircle className="w-3 h-3" /> 인증이 완료되었습니다.
                     </p>
                   )}
                 </div>

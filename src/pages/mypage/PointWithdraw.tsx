@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2 } from 'lucide-react';
-import { BsBank } from 'react-icons/bs';
-import { BiPlus, BiX } from 'react-icons/bi';
-import { BiArrowBack } from 'react-icons/bi';
+import { BsCheckCircle, BsBank, BsPlusLg, BsXLg, BsArrowLeft } from 'react-icons/bs';
 import { motion } from 'motion/react';
 import { useAppContext } from '@/context/AppContext';
 import api from '@/services/api';
@@ -105,7 +102,7 @@ export const PointWithdraw: React.FC = () => {
     return (
       <div className="max-w-md mx-auto px-6 py-20 text-center animate-in fade-in zoom-in duration-500">
         <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8">
-          <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+          <BsCheckCircle className="w-12 h-12 text-emerald-500" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-4">출금 신청 완료!</h2>
         <p className="text-gray-500 font-medium mb-6">{result.message}</p>
@@ -138,7 +135,7 @@ export const PointWithdraw: React.FC = () => {
           onClick={() => navigate(-1)}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <BiArrowBack className="w-6 h-6 text-gray-900" />
+          <BsArrowLeft className="w-6 h-6 text-gray-900" />
         </button>
         <h2 className="text-3xl font-bold text-gray-900 tracking-normal">포인트 출금</h2>
       </div>
@@ -161,7 +158,7 @@ export const PointWithdraw: React.FC = () => {
             className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${withdrawType === 'new' ? 'border-indigo-600 bg-indigo-50/50 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${withdrawType === 'new' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-              <BiPlus className="w-5 h-5 mr-1" /> 계좌 추가하기
+              <BsPlusLg className="w-5 h-5 mr-1" /> 계좌 추가하기
             </div>
             <p className={`font-bold ${withdrawType === 'new' ? 'text-indigo-900' : 'text-gray-900'}`}>새로운 계좌로</p>
             <p className="text-xs text-gray-400 font-medium mt-1">직접 입력하여 출금</p>
@@ -359,7 +356,7 @@ export const PointWithdraw: React.FC = () => {
                   추가/수정
                 </button>
                 <button onClick={() => setIsMethodModalOpen(false)} className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                  <BiX className="w-8 h-8" />
+                  <BsXLg className="w-8 h-8" />
                 </button>
               </div>
             </div>

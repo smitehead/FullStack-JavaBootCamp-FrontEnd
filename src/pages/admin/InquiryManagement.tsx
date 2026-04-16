@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { CheckCircle2, Trash2, Send } from 'lucide-react';
-import { BsChatLeft } from 'react-icons/bs';
+import { Trash2, Send } from 'lucide-react';
+import { BsChatLeft, BsCheckCircle, BsPerson } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
-import { BsPerson } from 'react-icons/bs';
 import { Inquiry } from '@/types';
 import { showToast } from '@/components/toastService';
 import { ImageLightbox } from '@/components/ImageLightbox';
@@ -237,7 +236,7 @@ export const InquiryManagement: React.FC = () => {
                 <div className="p-5 bg-[#FF5A5A]/5 rounded-none border border-[#FF5A5A]/10">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="w-8 h-8 bg-[#FF5A5A] rounded-none flex items-center justify-center shadow-lg shadow-red-900/10">
-                      <CheckCircle2 className="w-4 h-4 text-white" />
+                      <BsCheckCircle className="w-4 h-4 text-white" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-gray-900">

@@ -1,10 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, Send } from 'lucide-react';
-import { BsInfoCircle } from 'react-icons/bs';
-import { BiX } from 'react-icons/bi';
-import { BiChevronLeft } from 'react-icons/bi';
-import { BsCamera } from 'react-icons/bs';
+import { Send } from 'lucide-react';
+import { BsExclamationCircle, BsCheckCircle, BsInfoCircle, BsCamera } from 'react-icons/bs';
+import { BiX, BiChevronLeft } from 'react-icons/bi';
 import { InquiryType, BugType } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -222,7 +220,7 @@ export const InquiryCreate: React.FC = () => {
       {/* Guide Box */}
       <div className="mt-12 p-6 bg-gray-50 rounded-3xl border border-gray-100">
         <div className="flex items-center gap-2 mb-4 text-gray-900">
-          <AlertCircle className="w-5 h-5" />
+          <BsExclamationCircle className="w-5 h-5" />
           <span className="font-bold">문의 전 확인해주세요</span>
         </div>
         <ul className="space-y-3 text-sm text-gray-500 font-medium">

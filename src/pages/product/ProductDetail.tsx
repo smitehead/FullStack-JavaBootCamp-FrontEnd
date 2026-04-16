@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { Heart, Share2, AlertTriangle, Clock, MapPin, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, ArrowLeft, Package, Users, MessageSquare, Reply, Ban, AlertCircle, RefreshCw, MoreVertical, Trash2 } from 'lucide-react';
+import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsHeart, BsClock, BsGeoAlt, BsPeople, BsPerson, BsWallet, BsThreeDotsVertical } from 'react-icons/bs';
+import { BiArrowBack, BiChevronRight, BiX, BiShareAlt, BiRefresh, BiTrash } from 'react-icons/bi';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -484,7 +485,7 @@ export const ProductDetail: React.FC = () => {
   if (product === undefined) return (
     <div className="max-w-[1200px] mx-auto px-10 py-32 text-center">
       <div className="bg-white rounded-2xl border border-gray-100 p-20 shadow-sm">
-        <Package className="w-20 h-20 text-gray-200 mx-auto mb-8" />
+        <BsBox2 className="w-20 h-20 text-gray-200 mx-auto mb-8" />
         <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight">상품을 찾을 수 없거나 접근 권한이 없습니다.</h2>
         <p className="text-gray-400 font-medium mb-10 leading-relaxed">
           해당 상품이 삭제되었거나, 종료된 경매로 접근이 제한되었습니다.<br />
@@ -791,7 +792,7 @@ export const ProductDetail: React.FC = () => {
           onClick={() => navigate(-1)}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <ArrowLeft className="w-6 h-6 text-gray-900" />
+          <BiArrowBack className="w-6 h-6 text-gray-900" />
         </button>
 
         {isSeller && (
@@ -800,7 +801,7 @@ export const ProductDetail: React.FC = () => {
               onClick={() => setShowMoreMenu(!showMoreMenu)}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <MoreVertical className="w-6 h-6 text-gray-900" />
+              <BsThreeDotsVertical className="w-6 h-6 text-gray-900" />
             </button>
             {showMoreMenu && (
               <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[150] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
@@ -808,13 +809,13 @@ export const ProductDetail: React.FC = () => {
                   onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
                   className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors"
                 >
-                  <Trash2 className="w-4 h-4 mr-2.5" /> 삭제하기
+                  <BiTrash className="w-4 h-4 mr-2.5" /> 삭제하기
                 </button>
                 <button
                   onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
                   className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                 >
-                  <RefreshCw className="w-4 h-4 mr-2.5" /> 재게시하기
+                  <BiRefresh className="w-4 h-4 mr-2.5" /> 재게시하기
                 </button>
               </div>
             )}
@@ -832,7 +833,7 @@ export const ProductDetail: React.FC = () => {
               <img src={product.images[selectedImage]} alt={product.title} className="w-full h-full object-cover transition-transform duration-500" />
             ) : (
               <div className="flex flex-col items-center text-gray-300">
-                <Package className="w-20 h-20 mb-2" />
+                <BsBox2 className="w-20 h-20 mb-2" />
                 <span className="text-sm font-medium">등록된 이미지가 없습니다.</span>
               </div>
             )}
@@ -858,13 +859,13 @@ export const ProductDetail: React.FC = () => {
                   onClick={() => setSelectedImage(prev => (prev === 0 ? product.images.length - 1 : prev - 1))}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
                 >
-                  <ChevronRight className="w-6 h-6 rotate-180" />
+                  <BiChevronRight className="w-6 h-6 rotate-180" />
                 </button>
                 <button
                   onClick={() => setSelectedImage(prev => (prev === product.images.length - 1 ? 0 : prev + 1))}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <BiChevronRight className="w-6 h-6" />
                 </button>
               </>
             )}
@@ -889,7 +890,7 @@ export const ProductDetail: React.FC = () => {
             <div className="flex items-center justify-between mb-2">
               <nav className="flex items-center text-xs text-gray-400 space-x-1">
                 <Link to="/search" className="hover:text-gray-900 transition-colors">홈</Link>
-                <ChevronRight className="w-3 h-3" />
+                <BiChevronRight className="w-3 h-3" />
                 {product.categoryPath && product.categoryPath.length > 0 ? (
                   product.categoryPath.map((cat, index) => {
                     // 대/중/소 분류 단계에 맞는 쿼리 파라미터 생성
@@ -906,7 +907,7 @@ export const ProductDetail: React.FC = () => {
                         >
                           {cat.name}
                         </Link>
-                        {index < product.categoryPath!.length - 1 && <ChevronRight className="w-3 h-3" />}
+                        {index < product.categoryPath!.length - 1 && <BiChevronRight className="w-3 h-3" />}
                       </React.Fragment>
                     );
                   })
@@ -915,7 +916,7 @@ export const ProductDetail: React.FC = () => {
                 )}
                 <span className="mx-1 text-gray-300">•</span>
                 <span className="flex items-center">
-                  <Clock className="w-3 h-3 mr-1" />
+                  <BsClock className="w-3 h-3 mr-1" />
                   {formatDistanceToNow(new Date(product.startTime || Date.now()), { addSuffix: true, locale: ko })}
                 </span>
               </nav>
@@ -937,7 +938,7 @@ export const ProductDetail: React.FC = () => {
                 <div className="flex items-center">
                   {(product.transactionMethod !== 'delivery' && product.location) && (
                     <>
-                      <MapPin className="w-3 h-3 mr-1" /> {product.location}
+                      <BsGeoAlt className="w-3 h-3 mr-1" /> {product.location}
                     </>
                   )}
                 </div>
@@ -946,10 +947,10 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => setIsShareModalOpen(true)}
                     className="flex items-center hover:text-gray-600 transition-colors font-medium"
                   >
-                    <Share2 className="w-3 h-3 mr-1" /> 공유하기
+                    <BiShareAlt className="w-3 h-3 mr-1" /> 공유하기
                   </button>
                   <Link to={`/report?productId=${product.id}`} className="flex items-center hover:text-red-500 transition-colors font-medium">
-                    <Flag className="w-3 h-3 mr-1" /> 신고하기
+                    <BsFlag className="w-3 h-3 mr-1" /> 신고하기
                   </Link>
                 </div>
               </div>
@@ -977,7 +978,7 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => navigate(`/chat?id=chat_1`)}
                     className="px-3 py-1.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-lg border border-gray-200 transition-all flex items-center gap-1.5"
                   >
-                    <MessageSquare className="w-4 h-4" />
+                    <BsChatLeft className="w-4 h-4" />
                     <span className="text-xs font-bold">채팅하기</span>
                   </button>
                 )}
@@ -994,13 +995,13 @@ export const ProductDetail: React.FC = () => {
               <div>
                 <p className="text-xs font-bold text-gray-400 mb-2">남은 시간</p>
                 <div className={`flex items-center text-2xl font-bold font-mono tracking-tight ${isFinished ? 'text-gray-400' : 'text-red-500'}`}>
-                  <Clock className="w-6 h-6 mr-3 shrink-0" />
+                  <BsClock className="w-6 h-6 mr-3 shrink-0" />
                   <span>{timeLeft || '--:--:--'}</span>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-xs font-bold text-gray-400 mb-2 flex items-center justify-end">
-                  <Users className="w-3 h-3 mr-1" />
+                  <BsPeople className="w-3 h-3 mr-1" />
                   {product.participantCount}명 참여 중
                 </p>
               </div>
@@ -1033,7 +1034,7 @@ export const ProductDetail: React.FC = () => {
                 onClick={toggleWishlist}
                 className={`flex flex-col items-center justify-center transition-all min-w-[48px] ${isWishlisted ? 'text-red-500' : 'text-gray-300 hover:text-gray-400'}`}
               >
-                <Heart className={`w-8 h-8 mb-1 ${isWishlisted ? 'fill-current' : ''}`} />
+                <BsHeart className={`w-8 h-8 mb-1 ${isWishlisted ? 'fill-current' : ''}`} />
                 <span className="text-xs font-bold text-gray-500">
                   {product.wishlistCount || 0}
                 </span>
@@ -1144,7 +1145,7 @@ export const ProductDetail: React.FC = () => {
               <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-bold text-gray-800 flex items-center">
-                    <TrendingUp className="w-5 h-5 mr-2 text-orange-500" /> 실시간 입찰 현황
+                    <BsArrowUpRight className="w-5 h-5 mr-2 text-orange-500" /> 실시간 입찰 현황
                   </h3>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-gray-400">시작가 대비</span>
@@ -1297,7 +1298,7 @@ export const ProductDetail: React.FC = () => {
                             onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: true }))}
                             className="mt-2 ml-6 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-orange-500"
                           >
-                            <Reply className="w-3 h-3" /> 답글 달기
+                            <BsReply className="w-3 h-3" /> 답글 달기
                           </button>
                         )
                       )
@@ -1315,7 +1316,7 @@ export const ProductDetail: React.FC = () => {
               <div className="space-y-6">
                 <div className="flex gap-3">
                   <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                    <BsShieldCheck className="w-5 h-5 text-emerald-500" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 mb-1">안심 결제 사용</p>
@@ -1324,7 +1325,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
                 <div className="flex gap-3">
                   <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-orange-500" />
+                    <BsGeoAlt className="w-5 h-5 text-orange-500" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 mb-1">대면 거래는 공공장소에서</p>
@@ -1333,7 +1334,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
                 <div className="flex gap-3">
                   <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Info className="w-5 h-5 text-blue-500" />
+                    <BsInfoCircle className="w-5 h-5 text-blue-500" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 mb-1">상품 꼼꼼히 확인</p>
@@ -1355,7 +1356,7 @@ export const ProductDetail: React.FC = () => {
                 {modalType === 'bid' ? '입찰 참여하기' : '자동 입찰 설정'}
               </h3>
               <button onClick={() => setIsBidModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <X className="w-6 h-6 text-gray-400" />
+                <BiX className="w-6 h-6 text-gray-400" />
               </button>
             </div>
 
@@ -1384,7 +1385,7 @@ export const ProductDetail: React.FC = () => {
               <div className="bg-gray-900 rounded-2xl p-5 text-white flex justify-between items-center shadow-lg">
                 <div className="flex items-center gap-3">
                   <div className="bg-white/10 p-2 rounded-xl">
-                    <Wallet className="w-5 h-5 text-white" />
+                    <BsWallet className="w-5 h-5 text-white" />
                   </div>
                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-widest">보유 포인트</span>
                 </div>
@@ -1428,7 +1429,7 @@ export const ProductDetail: React.FC = () => {
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
                     </div>
                     <p className="text-xs text-gray-400 mt-2 flex items-center">
-                      <Info className="w-3 h-3 mr-1" /> 최소 {((product.currentPrice || 0) + (product.minBidIncrement || 0)).toLocaleString()}원 이상 입찰 가능
+                      <BsInfoCircle className="w-3 h-3 mr-1" /> 최소 {((product.currentPrice || 0) + (product.minBidIncrement || 0)).toLocaleString()}원 이상 입찰 가능
                     </p>
                   </div>
                 ) : (
@@ -1452,7 +1453,7 @@ export const ProductDetail: React.FC = () => {
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
                     </div>
                     <p className="text-xs text-gray-400 mt-2 flex items-center">
-                      <Info className="w-3 h-3 mr-1" /> 설정한 금액까지 자동으로 상위 입찰을 진행합니다.
+                      <BsInfoCircle className="w-3 h-3 mr-1" /> 설정한 금액까지 자동으로 상위 입찰을 진행합니다.
                     </p>
                   </div>
                 )}
@@ -1535,7 +1536,7 @@ export const ProductDetail: React.FC = () => {
             <div className="p-6 border-b border-gray-50 flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900">공유하기</h3>
               <button onClick={() => setIsShareModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <X className="w-5 h-5 text-gray-400" />
+                <BiX className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             <div className="p-8">
@@ -1623,7 +1624,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="space-y-6">
                       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                         <div className="flex items-center gap-2 mb-4">
-                          <AlertCircle className="w-4 h-4 text-red-500" />
+                          <BsExclamationCircle className="w-4 h-4 text-red-500" />
                           <p className="text-sm font-black text-gray-900">주의: 취소 패널티가 발생합니다</p>
                         </div>
                         <ul className="space-y-3">
@@ -1667,7 +1668,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="space-y-6">
                       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                         <div className="flex items-center gap-2 mb-3">
-                          <AlertCircle className="w-4 h-4 text-orange-500" />
+                          <BsExclamationCircle className="w-4 h-4 text-orange-500" />
                           <p className="text-sm font-black text-gray-900">마감 임박 (12시간 이내)</p>
                         </div>
                         <p className="text-xs text-gray-600 leading-relaxed font-bold">
@@ -1715,7 +1716,7 @@ export const ProductDetail: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center shadow-sm">
-                    <Ban className="w-7 h-7 text-red-500" />
+                    <BsBan className="w-7 h-7 text-red-500" />
                   </div>
                   <div>
                     <h3 className="text-2xl font-black text-gray-900 tracking-tight">입찰 취소</h3>
@@ -1727,7 +1728,7 @@ export const ProductDetail: React.FC = () => {
                   disabled={isBidCancelling}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <X className="w-6 h-6 text-gray-300" />
+                  <BiX className="w-6 h-6 text-gray-300" />
                 </button>
               </div>
 
@@ -1740,7 +1741,7 @@ export const ProductDetail: React.FC = () => {
                   <div className="space-y-6 mb-8">
                     <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
                       <div className="flex items-center gap-2 mb-4">
-                        <AlertTriangle className="w-4 h-4 text-red-500" />
+                        <BsExclamationTriangle className="w-4 h-4 text-red-500" />
                         <p className="text-sm font-black text-red-600">취소 시 위약금이 즉시 차감됩니다</p>
                       </div>
                       <div className="space-y-3">
@@ -1768,7 +1769,7 @@ export const ProductDetail: React.FC = () => {
                     {/* 보유 포인트 표시 */}
                     <div className="bg-gray-900 rounded-2xl p-4 flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <Wallet className="w-4 h-4 text-orange-400" />
+                        <BsWallet className="w-4 h-4 text-orange-400" />
                         <span className="text-xs font-bold text-gray-400">현재 보유 포인트</span>
                       </div>
                       <span className={`text-base font-bold ${canAfford ? 'text-orange-400' : 'text-red-400'}`}>
@@ -1779,7 +1780,7 @@ export const ProductDetail: React.FC = () => {
                     {/* 포인트 부족 경고 */}
                     {!canAfford && (
                       <div className="flex items-start gap-2 bg-orange-50 border border-orange-200 rounded-xl p-4">
-                        <AlertCircle className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                        <BsExclamationCircle className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
                         <p className="text-xs font-bold text-orange-700 leading-relaxed">
                           위약금 납부를 위한 포인트가 부족합니다. 포인트를 충전하셔야 취소가 가능합니다.
                         </p>
@@ -1925,7 +1926,7 @@ export const ProductDetail: React.FC = () => {
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 text-center animate-in zoom-in-95 duration-200">
             <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <AlertTriangle className="w-10 h-10 text-orange-500" />
+              <BsExclamationTriangle className="w-10 h-10 text-orange-500" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-3">포인트가 부족합니다</h3>
             <p className="text-gray-500 mb-8 leading-relaxed">

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { CheckCircle2, AlertCircle, List } from 'lucide-react';
-import { BsShieldCheck, BsChatLeft, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck } from 'react-icons/bs';
+import { List } from 'lucide-react';
+import { BsCheckCircle, BsExclamationCircle, BsShieldCheck, BsChatLeft, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck } from 'react-icons/bs';
 import { BiChevronLeft } from 'react-icons/bi';
 import { format } from 'date-fns';
 import api from '@/services/api';
@@ -206,7 +206,7 @@ export const InquiryDetail: React.FC = () => {
               to="/inquiry"
               className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
             >
-              <BsInfoCircle className="w-5 h-5" />
+              <BsInfoCircle className="w-4 h-4" />
               목록으로
             </Link>
           </div>
