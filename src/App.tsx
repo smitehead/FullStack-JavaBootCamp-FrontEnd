@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import { Toaster } from 'sonner';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
 
 // [ Context & Components ]
 import { AppProvider } from '@/context/AppContext';
@@ -98,6 +104,7 @@ const App: React.FC = () => {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppProvider>
         <Toaster
           position="top-center"
