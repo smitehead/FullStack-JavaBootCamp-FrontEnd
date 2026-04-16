@@ -39,7 +39,7 @@ export const ActivityLogManagement: React.FC = () => {
   const getTargetLabel = (type?: ActivityLog['targetType']) => {
     switch (type) {
       case 'user': return { icon: BsPerson, label: '사용자', color: 'bg-blue-50 text-blue-600' };
-      case 'product': return { icon: Gavel, label: '상품/경매', color: 'bg-purple-50 text-purple-600' };
+      case 'product': return { icon: BsBag, label: '상품/경매', color: 'bg-purple-50 text-purple-600' };
       default: return { icon: BsInfoCircle, label: '기타', color: 'bg-gray-50 text-gray-600' };
     }
   };

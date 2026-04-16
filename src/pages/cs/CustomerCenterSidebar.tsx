@@ -11,7 +11,7 @@ export const CustomerCenterSidebar: React.FC = () => {
 
   const menuItems = [
     { path: '/notice', label: '공지사항', icon: BsBell },
-    { path: '/faq', label: '자주 묻는 질문', icon: HelpCircle },
+    { path: '/faq', label: '자주 묻는 질문', icon: BsQuestionCircle },
     { path: '/inquiry', label: '문의하기', icon: BsChatLeft },
   ];
 

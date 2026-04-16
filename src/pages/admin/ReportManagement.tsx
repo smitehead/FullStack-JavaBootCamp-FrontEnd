@@ -140,7 +140,7 @@ export const ReportManagement: React.FC = () => {
     } else if (report.targetProductNo) {
       return {
         name: `상품 #${report.targetProductNo}`,
-        icon: Gavel,
+        icon: BsBag,
         color: 'text-orange-500',
         bgColor: 'bg-orange-50',
         link: `/admin/auctions`,
