@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Toaster } from 'sonner';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -61,6 +61,34 @@ import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 // ㅎㅇ요
 
 const App: React.FC = () => {
+  useEffect(() => {
+    let rafId = 0;
+    const applyCenter = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const toaster = document.querySelector<HTMLElement>('[data-sonner-toaster]');
+        if (!toaster) return;
+        toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((el) => {
+          if (el.style.getPropertyValue('left') !== '50%') {
+            el.style.setProperty('left', '50%', 'important');
+          }
+          if (!el.style.getPropertyValue('transform').includes('translateX(-50%)')) {
+            el.style.setProperty('transform', 'var(--y) translateX(-50%)', 'important');
+          }
+        });
+      });
+    };
+    const observer = new MutationObserver(applyCenter);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style'],
+    });
+    applyCenter();
+    return () => { observer.disconnect(); cancelAnimationFrame(rafId); };
+  }, []);
+
   return (
     <BrowserRouter>
       <AppProvider>
