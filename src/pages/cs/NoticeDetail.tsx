@@ -41,7 +41,7 @@ export const NoticeDetail: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-gray-400">불러오는 중...</p>
+        <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
       </div>
     );
   }

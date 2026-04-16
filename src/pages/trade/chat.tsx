@@ -30,6 +30,7 @@ export const Chat: React.FC = () => {
 
   // 채팅방 목록
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+  const [isRoomsLoading, setIsRoomsLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
   const [filter, setFilter] = useState<'all' | 'seller' | 'buyer'>('all');
 
@@ -84,6 +85,8 @@ export const Chat: React.FC = () => {
       setChatRooms(rooms);
     } catch (err) {
       console.error('[Chat] 채팅방 목록 로딩 실패', err);
+    } finally {
+      setIsRoomsLoading(false);
     }
   }, [memberNo]);
 
@@ -495,6 +498,12 @@ export const Chat: React.FC = () => {
   // ══════════════════════════════════════════════════
   // 렌더링
   // ══════════════════════════════════════════════════
+  if (isRoomsLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
+
   return (
     <div className="max-w-6xl mx-auto h-[calc(100vh-240px)] flex bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm my-4">
       {/* ──── Sidebar: 채팅방 목록 ──── */}
