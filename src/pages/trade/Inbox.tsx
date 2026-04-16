@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, MessageSquare, ChevronRight, Package, Clock } from 'lucide-react';
+import { Package } from 'lucide-react';
+import { BsChatLeft } from 'react-icons/bs';
+import { BsBell, BsClock } from 'react-icons/bs';
+import { BiChevronRight } from 'react-icons/bi';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { getProfileImageUrl } from '@/utils/imageUtils';
@@ -159,21 +162,21 @@ export const Inbox: React.FC = () => {
                     noti.type === 'activity' ? 'bg-indigo-50 text-indigo-600' :
                       'bg-gray-50 text-gray-600'
                   }`}>
-                  <Bell className="w-6 h-6" />
+                  <BsBell className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
                   <p className="text-gray-900 font-bold leading-snug mb-2">{noti.message}</p>
                   <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-                    <Clock className="w-3.5 h-3.5" />
+                    <BsClock className="w-3 h-3" />
                     {new Date(noti.createdAt).toLocaleString()}
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-300 self-center" />
+                <BiChevronRight className="w-5 h-5 text-gray-300 self-center" />
               </Link>
             ))
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
-              <Bell className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <BsBell className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 font-bold">알림이 없습니다.</p>
             </div>
           )
@@ -214,12 +217,12 @@ export const Inbox: React.FC = () => {
                     <span>{new Date(chat.lastMessageAt).toLocaleDateString()}</span>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-300" />
+                <BiChevronRight className="w-5 h-5 text-gray-300" />
               </Link>
             ))
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
-              <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <BsChatLeft className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 font-bold">대화 내역이 없습니다.</p>
             </div>
           )

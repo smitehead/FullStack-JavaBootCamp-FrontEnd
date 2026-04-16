@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
-import { Package, MessageSquare, ChevronRight, AlertCircle, Shield } from 'lucide-react';
+import { Package, AlertCircle } from 'lucide-react';
+import { BsChatLeft, BsShield } from 'react-icons/bs';
+import { BiChevronRight } from 'react-icons/bi';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -130,7 +132,7 @@ export const SellerProfile: React.FC = () => {
       {/* Breadcrumb */}
       <nav className="flex items-center text-sm text-gray-500 space-x-2 mb-8">
         <Link to="/" className="hover:text-gray-900 transition-colors">홈</Link>
-        <ChevronRight className="w-4 h-4" />
+        <BiChevronRight className="w-4 h-4" />
         <span className="font-bold text-gray-900">판매자 프로필</span>
       </nav>
 
@@ -157,7 +159,7 @@ export const SellerProfile: React.FC = () => {
                       onClick={handleBlockToggle}
                       className={`text-xs font-bold transition-colors flex items-center gap-1 ${isBlocked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
                     >
-                      <Shield className={`w-3 h-3 ${isBlocked ? 'fill-blue-500' : ''}`} /> {isBlocked ? '차단풀기' : '차단하기'}
+                      <BsShield className={`w-3 h-3 ${isBlocked ? 'fill-blue-500' : ''}`} /> {isBlocked ? '차단풀기' : '차단하기'}
                     </button>
                     <button
                       onClick={() => navigate(`/report?sellerId=${seller.sellerNo}&sellerNickname=${encodeURIComponent(seller.nickname)}`)}
@@ -196,7 +198,7 @@ export const SellerProfile: React.FC = () => {
               </div>
               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
                 <div className="bg-indigo-100 p-3 rounded-xl">
-                  <MessageSquare className="w-6 h-6 text-indigo-600" />
+                  <BsChatLeft className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">받은 후기</p>
@@ -223,7 +225,7 @@ export const SellerProfile: React.FC = () => {
               onClick={() => setActiveTab('reviews')}
               className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-emerald-50 text-emerald-900' : 'text-gray-600 hover:bg-gray-50'}`}
             >
-              <MessageSquare className="w-5 h-5 mr-3" /> 거래 후기
+              <BsChatLeft className="w-5 h-5 mr-3" /> 거래 후기
             </button>
           </nav>
         </div>
@@ -263,7 +265,7 @@ export const SellerProfile: React.FC = () => {
           {activeTab === 'reviews' && (
             reviews.length === 0 ? (
               <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
-                <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <BsChatLeft className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                 <p className="text-gray-500 font-medium">받은 후기가 없습니다.</p>
               </div>
             ) : (

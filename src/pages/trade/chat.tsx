@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  Send, Image as ImageIcon, MoreVertical, ArrowLeft,
-  ShoppingBag, ChevronRight, MessageSquare, RefreshCw,
-  AlertCircle, Loader2, Wifi, WifiOff
+  Send, Image as ImageIcon, MoreVertical,
+  ShoppingBag, RefreshCw,
+  AlertCircle, Wifi, WifiOff
 } from 'lucide-react';
+import { BiArrowBack } from 'react-icons/bi';
+import { BsChatLeft } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -567,7 +569,7 @@ export const Chat: React.FC = () => {
             {/* 헤더 */}
             <div className="px-6 py-4 bg-white border-b border-gray-100 flex items-center gap-4">
               <button onClick={() => setSelectedRoom(null)} className="md:hidden p-1 text-gray-600">
-                <ArrowLeft className="w-5 h-5" />
+                <BiArrowBack className="w-5 h-5" />
               </button>
               <img src={selectedRoom.otherUser.profileImage || '/default-profile.png'}
                 alt="" className="w-10 h-10 rounded-full object-cover bg-gray-100" />
@@ -610,7 +612,9 @@ export const Chat: React.FC = () => {
               {/* 더 불러오기 로딩 */}
               {isLoadingMore && (
                 <div className="flex justify-center py-2">
-                  <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+                  <div className="spinner-border w-5 h-5 text-gray-400" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div>
                 </div>
               )}
               {!hasMore && messages.length > 0 && (
@@ -647,7 +651,9 @@ export const Chat: React.FC = () => {
                           <div className="flex items-center gap-1 mt-1">
                             {/* 전송 상태 표시 */}
                             {isMe && msg.status === 'SENDING' && (
-                              <Loader2 className="w-3 h-3 text-gray-400 animate-spin" />
+                              <div className="spinner-border w-3 h-3 text-gray-400" role="status">
+                                <span className="sr-only">Loading...</span>
+                              </div>
                             )}
                             {isMe && msg.status === 'FAILED' && (
                               <button onClick={() => handleRetry(msg)}
@@ -703,7 +709,7 @@ export const Chat: React.FC = () => {
       ) : (
         <div className="flex-1 hidden md:flex flex-col items-center justify-center p-12 text-center">
           <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-gray-100">
-            <MessageSquare className="w-10 h-10 text-gray-200" />
+            <BsChatLeft className="w-10 h-10 text-gray-200" />
           </div>
           <h3 className="text-xl font-black text-gray-900 mb-2 tracking-tight">채팅을 시작해보세요</h3>
           <p className="text-sm text-gray-400 font-medium leading-relaxed">

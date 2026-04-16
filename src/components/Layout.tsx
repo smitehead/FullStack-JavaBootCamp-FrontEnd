@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Bell, Search, Menu, X, User as UserIcon, Sparkles, MapPin, Share2, Instagram, Youtube, Settings as SettingsIcon, Clock, TrendingUp, MessageSquare } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { BsArrowUpRight, BsChatLeft, BsPerson, BsGear, BsBell, BsGeoAlt, BsClock } from 'react-icons/bs';
+import { BiListOl, BiSearch, BiX, BiShareAlt, BiListUl, BiLogoInstagram, BiLogoYoutube } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
@@ -115,7 +117,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
               />
               <button type="submit" className="absolute right-4 h-full flex items-center justify-center text-gray-400 group-focus-within:text-gray-600 transition-colors">
-                <Search className="w-5 h-5" />
+                <BiSearch className="w-5 h-5" />
               </button>
             </form>
 
@@ -146,11 +148,11 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                             className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-between group"
                           >
                             <div className="flex items-center gap-3">
-                              <Clock className="w-3.5 h-3.5 text-gray-300" />
+                              <BsClock className="w-3.5 h-3.5 text-gray-300" />
                               {term}
                             </div>
-                            <X
-                              className="w-3 h-3 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
+                            <BiX
+                              className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 removeRecentSearch(idx);
@@ -179,7 +181,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                             }}
                             className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors flex items-center gap-3"
                           >
-                            <TrendingUp className="w-3.5 h-3.5 text-gray-300" />
+                            <BsArrowUpRight className="w-3.5 h-3.5 text-gray-300" />
                             {term}
                           </button>
                         ))
@@ -228,7 +230,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                     }}
                     className="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all relative"
                   >
-                    <Bell className="w-6 h-6" />
+                    <BsBell className="w-6 h-6" />
                     {(unreadNotificationsCount > 0 || unreadChatsCount > 0) && (
                       <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#FF5A5A] rounded-full border-2 border-white"></span>
                     )}
@@ -330,19 +332,19 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                       to="/mypage"
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                     >
-                      <UserIcon className="w-4 h-4 mr-2.5" /> 프로필 보기
+                      <BsPerson className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </Link>
                     <Link
                       to="/chat"
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                     >
-                      <MessageSquare className="w-4 h-4 mr-2.5" /> 채팅방 가기
+                      <BsChatLeft className="w-4 h-4 mr-2.5" /> 채팅방 가기
                     </Link>
                     <Link
                       to="/settings"
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                     >
-                      <SettingsIcon className="w-4 h-4 mr-2.5" /> 계정 설정
+                      <BsGear className="w-4 h-4 mr-2.5" /> 계정 설정
                     </Link>
                     <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
                       <button
@@ -381,7 +383,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
               onClick={() => setIsCategoryOpen(!isCategoryOpen)}
             >
-              <Menu className="w-5 h-5 mr-2.5 opacity-70" />
+              <BiListUl className="w-5 h-5 mr-2.5 opacity-70" />
               카테고리
             </button>
 
@@ -466,7 +468,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               onClick={() => navigate(user ? '/settings?tab=profile' : '/login')}
               className="flex items-center text-xs font-bold text-gray-400 bg-white border border-gray-100 px-3 py-1.5 rounded-full shadow-sm hover:border-[#FF5A5A] hover:text-[#FF5A5A] transition-all group overflow-hidden"
             >
-              <MapPin className="w-3.5 h-3.5 mr-1.5 text-[#FF5A5A] shrink-0" />
+              <BsGeoAlt className="w-3.5 h-3.5 mr-1.5 text-[#FF5A5A] shrink-0" />
               <span className="whitespace-nowrap">{user?.address || '위치를 확인할 수 없습니다.'}</span>
               <span className="text-[10px] max-w-0 opacity-0 group-hover:max-w-[100px] group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap ml-0 group-hover:ml-2 border-l border-transparent group-hover:border-gray-200 pl-0 group-hover:pl-2">
                 위치 변경하기
@@ -526,13 +528,13 @@ const Footer: React.FC = () => {
             <h4 className="text-sm font-bold text-gray-800 mb-6 uppercase tracking-wider">FOLLOW US</h4>
             <div className="flex items-center gap-3">
               <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <Share2 className="w-5 h-5" />
+                <BiShareAlt className="w-6 h-6" />
               </a>
               <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <Instagram className="w-5 h-5" />
+                <BiLogoInstagram className="w-6 h-6" />
               </a>
               <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <Youtube className="w-5 h-5" />
+                <BiLogoYoutube className="w-6 h-6" />
               </a>
             </div>
           </div>

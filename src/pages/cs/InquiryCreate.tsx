@@ -1,6 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, Camera, X, AlertCircle, CheckCircle2, Send, Info } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Send } from 'lucide-react';
+import { BsInfoCircle } from 'react-icons/bs';
+import { BiX } from 'react-icons/bi';
+import { BiChevronLeft } from 'react-icons/bi';
+import { BsCamera } from 'react-icons/bs';
 import { InquiryType, BugType } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -73,7 +77,7 @@ export const InquiryCreate: React.FC = () => {
     <div className="max-w-[800px] mx-auto px-6 py-12">
       {/* Back Button */}
       <Link to="/inquiry" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
-        <ChevronLeft className="w-4 h-4" />
+        <BiChevronLeft className="w-4 h-4" />
         문의 목록으로
       </Link>
 
@@ -163,7 +167,7 @@ export const InquiryCreate: React.FC = () => {
                   onClick={() => removeImage(index)}
                   className="absolute top-1 right-1 w-6 h-6 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <BiX className="w-4 h-4" />
                 </button>
               </div>
             ))}
@@ -174,7 +178,7 @@ export const InquiryCreate: React.FC = () => {
                 onClick={() => fileInputRef.current?.click()}
                 className="w-24 h-24 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 text-gray-400 hover:border-red-200 hover:text-red-500 hover:bg-red-50/30 transition-all"
               >
-                <Camera className="w-6 h-6" />
+                <BsCamera className="w-6 h-6" />
                 <span className="text-[10px] font-bold">사진 추가</span>
               </button>
             )}
@@ -188,7 +192,7 @@ export const InquiryCreate: React.FC = () => {
             multiple
           />
           <p className="text-xs text-gray-400 font-medium flex items-center gap-1.5">
-            <Info className="w-3.5 h-3.5" />
+            <BsInfoCircle className="w-3.5 h-3.5" />
             JPG, PNG 형식의 이미지만 업로드 가능합니다.
           </p>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Gavel, ShieldCheck, Eye, CreditCard, Sparkles } from 'lucide-react';
+import { Gavel, Eye, Sparkles } from 'lucide-react';
+import { BsShieldCheck, BsCreditCard } from 'react-icons/bs';
 
 type AboutTab = 'intro' | 'privacy' | 'terms' | 'policy';
 
@@ -43,7 +44,7 @@ export const AboutUs: React.FC = () => {
     {
       title: '안전한 거래',
       description: '검증된 판매자와 안전 결제 시스템으로 믿고 거래할 수 있습니다.',
-      icon: ShieldCheck,
+      icon: BsShieldCheck,
       color: 'bg-gray-50',
       iconColor: 'text-gray-500',
       borderColor: 'border-gray-100'
@@ -59,7 +60,7 @@ export const AboutUs: React.FC = () => {
     {
       title: '간편한 결제',
       description: '다양한 결제 수단을 지원하여 낙찰 후 빠르게 결제할 수 있습니다.',
-      icon: CreditCard,
+      icon: BsCreditCard,
       color: 'bg-red-50',
       iconColor: 'text-red-500',
       borderColor: 'border-red-100'

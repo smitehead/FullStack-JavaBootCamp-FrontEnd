@@ -123,6 +123,7 @@ interface AppContextType {
   toggleMaintenanceMode: (enabled: boolean, message?: string) => void;
   unreadNotificationsCount: number;
   unreadChatsCount: number;
+  refreshActivityLogs: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -697,7 +698,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       sendAdminMessage,
       toggleMaintenanceMode,
       unreadNotificationsCount,
-      unreadChatsCount
+      unreadChatsCount,
+      refreshActivityLogs
     }}>
       {children}
     </AppContext.Provider>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, Wallet, CheckCircle2, XCircle, AlertTriangle, RefreshCw, Filter } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, RefreshCw, Filter } from 'lucide-react';
+import { BsWallet } from 'react-icons/bs';
+import { BiSearch, BiXCircle } from 'react-icons/bi';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -20,7 +22,7 @@ interface WithdrawItem {
 }
 
 export const WithdrawManagement: React.FC = () => {
-  const { user, addActivityLog } = useAppContext();
+  const { user, refreshActivityLogs } = useAppContext();
   const [withdraws, setWithdraws] = useState<WithdrawItem[]>([]);
   const [statusFilter, setStatusFilter] = useState('전체');
   const [searchTerm, setSearchTerm] = useState('');
@@ -99,16 +101,9 @@ export const WithdrawManagement: React.FC = () => {
         rejectReason: confirmModal.action === '거절' ? rejectReason : null,
       });
 
-      // 관리자 활동 로그 기록
-      const item = confirmModal.item;
-      // AppContext의 addActivityLog 존재 여부 확인 후 호출
-      if (addActivityLog) {
-        addActivityLog(
-          `출금 ${confirmModal.action}`,
-          `${item.memberNickname}님 출금 신청 ${confirmModal.action} — ${item.amount.toLocaleString()}원 (${item.bankName} ${item.accountNumber})${confirmModal.action === '거절' ? ' / 사유: ' + rejectReason : ''}`,
-          String(item.memberNo),
-          'user'
-        );
+      // 활동 로그 갱신 (백엔드에서 자동 생성됨)
+      if (refreshActivityLogs) {
+        await refreshActivityLogs();
       }
 
       showToast(`출금 신청이 ${confirmModal.action} 처리되었습니다.`, 'success');
@@ -150,7 +145,7 @@ export const WithdrawManagement: React.FC = () => {
         <div className="flex flex-wrap items-center justify-end gap-3">
           <div className="relative w-64 flex items-center h-10">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <Search className="text-gray-400 w-4 h-4" />
+              <BiSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"
@@ -181,7 +176,7 @@ export const WithdrawManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-gray-400" /> 출금 신청 목록
+            <BsWallet className="w-5 h-5 text-gray-400" /> 출금 신청 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredWithdraws.length}건</span>
         </div>
@@ -192,7 +187,7 @@ export const WithdrawManagement: React.FC = () => {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 min-w-0 flex-1">
                   <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <Wallet className="w-4 h-4 text-gray-400" />
+                    <BsWallet className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -252,7 +247,7 @@ export const WithdrawManagement: React.FC = () => {
                       className="p-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-none transition-all"
                       title="신청 거절"
                     >
-                      <XCircle className="w-4 h-4" />
+                      <BiXCircle className="w-4 h-4" />
                     </button>
                   </div>
                 )}
@@ -261,7 +256,7 @@ export const WithdrawManagement: React.FC = () => {
           ))}
           {!isLoading && filteredWithdraws.length === 0 && (
             <div className="px-8 py-20 text-center">
-              <Wallet className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+              <BsWallet className="w-12 h-12 text-gray-100 mx-auto mb-4" />
               <p className="text-gray-400 font-bold">출금 신청 내역이 없습니다.</p>
             </div>
           )}

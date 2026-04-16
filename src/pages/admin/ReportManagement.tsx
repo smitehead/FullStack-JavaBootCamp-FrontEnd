@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { AlertTriangle, Search, Filter, User, Gavel, MessageSquare, ShieldAlert, X, FileText } from 'lucide-react';
+import { AlertTriangle, Filter, Gavel, ShieldAlert, FileText } from 'lucide-react';
+import { BsChatLeft } from 'react-icons/bs';
+import { BiSearch, BiX } from 'react-icons/bi';
+import { BsPerson } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { showToast } from '@/components/toastService';
@@ -128,7 +131,7 @@ export const ReportManagement: React.FC = () => {
     if (report.targetMemberNo) {
       return {
         name: report.targetMemberNickname || `사용자 #${report.targetMemberNo}`,
-        icon: User,
+        icon: BsPerson,
         color: 'text-blue-500',
         bgColor: 'bg-blue-50',
         link: `/admin/users?nickname=${report.targetMemberNickname || ''}`,
@@ -144,7 +147,7 @@ export const ReportManagement: React.FC = () => {
     }
     return {
       name: '알 수 없는 대상',
-      icon: MessageSquare,
+      icon: BsChatLeft,
       color: 'text-gray-500',
       bgColor: 'bg-gray-50',
       link: '#',
@@ -161,7 +164,7 @@ export const ReportManagement: React.FC = () => {
         <div className="flex flex-wrap items-center justify-end gap-3">
           <div className="relative w-64 flex items-center h-10">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <Search className="text-gray-400 w-4 h-4" />
+              <BiSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"
@@ -307,7 +310,7 @@ export const ReportManagement: React.FC = () => {
                   onClick={() => setShowDetailModal(false)}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-400" />
+                  <BiX className="w-5 h-5 text-gray-400" />
                 </button>
               </div>
 

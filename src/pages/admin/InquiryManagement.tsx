@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Search, MessageSquare, CheckCircle2, Trash2, Send, User } from 'lucide-react';
+import { CheckCircle2, Trash2, Send } from 'lucide-react';
+import { BsChatLeft } from 'react-icons/bs';
+import { BiSearch } from 'react-icons/bi';
+import { BsPerson } from 'react-icons/bs';
 import { Inquiry } from '@/types';
 import { showToast } from '@/components/toastService';
 import { ImageLightbox } from '@/components/ImageLightbox';
@@ -135,7 +138,7 @@ export const InquiryManagement: React.FC = () => {
         <div className="flex justify-end">
           <div className="relative flex items-center h-10 w-64">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <Search className="text-gray-400 w-4 h-4" />
+              <BiSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"
@@ -201,7 +204,7 @@ export const InquiryManagement: React.FC = () => {
               <div className="p-5 bg-gray-50 rounded-none border border-gray-100">
                 <div className="flex items-center space-x-2 mb-3">
                   <div className="w-8 h-8 bg-white rounded-none flex items-center justify-center shadow-sm">
-                    <User className="w-4 h-4 text-gray-400" />
+                    <BsPerson className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
                     <Link
@@ -269,7 +272,7 @@ export const InquiryManagement: React.FC = () => {
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <div className="w-20 h-20 bg-gray-50 rounded-none flex items-center justify-center mb-4">
-              <MessageSquare className="w-8 h-8 text-gray-300" />
+              <BsChatLeft className="w-8 h-8 text-gray-300" />
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-1">문의를 선택해주세요</h3>
             <p className="text-gray-400 text-sm font-medium">왼쪽 목록에서 답변할 문의사항을 선택하세요.</p>

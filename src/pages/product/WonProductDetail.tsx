@@ -5,9 +5,11 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { 
-  ChevronLeft, ChevronRight, MapPin, CreditCard, MessageSquare, 
-  CheckCircle2, XCircle, Package, AlertCircle
+  CheckCircle2, XCircle, Package, AlertCircle, Sparkles, Clock, Share2, List, ShoppingBag
 } from 'lucide-react';
+import { BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight } from 'react-icons/bs';
+import { BiChevronLeft, BiChevronRight, BiArrowBack } from 'react-icons/bi';
+import { BsGeoAlt } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
 interface AuctionResultDetail {
@@ -231,7 +233,7 @@ export const WonProductDetail: React.FC = () => {
             onClick={() => navigate(-1)}
             className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors group"
           >
-            <ChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
+            <BiChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
             뒤로가기
           </button>
           <div className="flex items-center gap-2">
@@ -260,13 +262,13 @@ export const WonProductDetail: React.FC = () => {
                             onClick={() => setImgIndex(i => Math.max(0, i - 1))}
                             className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-r"
                           >
-                            <ChevronLeft className="w-3 h-3" />
+                            <BiChevronLeft className="w-3 h-3" />
                           </button>
                           <button 
                             onClick={() => setImgIndex(i => Math.min(images.length - 1, i + 1))}
                             className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-l"
                           >
-                            <ChevronRight className="w-3 h-3" />
+                            <BiChevronRight className="w-3 h-3" />
                           </button>
                         </>
                       )}
@@ -330,7 +332,7 @@ export const WonProductDetail: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-start gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 flex-shrink-0">
-                          <MapPin className="w-5 h-5 text-indigo-600" />
+                          <BsGeoAlt className="w-5 h-5 text-indigo-600" />
                         </div>
                         <div>
                           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">희망 거래 장소</p>
@@ -389,7 +391,7 @@ export const WonProductDetail: React.FC = () => {
               {/* Payment Summary */}
               <section className="p-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                   <CreditCard className="w-5 h-5 text-indigo-500" /> 결제 정보
+                   <BsCreditCard className="w-5 h-5 text-indigo-500" /> 결제 정보
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
@@ -474,7 +476,7 @@ export const WonProductDetail: React.FC = () => {
                     <p className="text-xs text-white/50">매너온도 {Number(result.seller.mannerTemp).toFixed(1)}°</p>
                   </div>
                   <Link to={`/seller/${result.seller.sellerNo}`} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors shrink-0">
-                    <ChevronRight className="w-4 h-4" />
+                    <BiChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
 
@@ -484,7 +486,7 @@ export const WonProductDetail: React.FC = () => {
                       onClick={handleChatWithSeller}
                       className="w-full py-5 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
                     >
-                      <MessageSquare className="w-5 h-5 text-gray-900" />
+                      <BsChatLeft className="w-5 h-5 text-gray-900" />
                       판매자와 채팅하기
                     </button>
                   </div>
@@ -494,7 +496,7 @@ export const WonProductDetail: React.FC = () => {
               {/* Safety Notice */}
               <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                 <div className="flex gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                  <BsInfoCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold text-gray-900 mb-1">안전 거래 안내</p>
                     <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
@@ -513,7 +515,7 @@ export const WonProductDetail: React.FC = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
-              <CreditCard className="w-8 h-8 text-indigo-600" />
+              <BsCreditCard className="w-8 h-8 text-indigo-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">결제를 진행할까요?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-8">

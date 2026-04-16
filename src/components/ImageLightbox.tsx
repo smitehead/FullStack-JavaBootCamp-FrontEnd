@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BiChevronLeft, BiChevronRight, BiX } from 'react-icons/bi';
 
 interface Props {
   urls: string[];
@@ -33,7 +33,7 @@ export const ImageLightbox: React.FC<Props> = ({ urls, index, onClose, onNav }) 
         className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
         onClick={onClose}
       >
-        <X className="w-6 h-6" />
+        <BiX className="w-8 h-8" />
       </button>
 
       {/* 이전 */}
@@ -42,7 +42,7 @@ export const ImageLightbox: React.FC<Props> = ({ urls, index, onClose, onNav }) 
           className="absolute left-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
           onClick={(e) => { e.stopPropagation(); onNav(index - 1); }}
         >
-          <ChevronLeft className="w-7 h-7" />
+          <BiChevronLeft className="w-7 h-7" />
         </button>
       )}
 
@@ -60,7 +60,7 @@ export const ImageLightbox: React.FC<Props> = ({ urls, index, onClose, onNav }) 
           className="absolute right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
           onClick={(e) => { e.stopPropagation(); onNav(index + 1); }}
         >
-          <ChevronRight className="w-7 h-7" />
+          <BiChevronRight className="w-7 h-7" />
         </button>
       )}
 
