@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { CreditCard } from 'lucide-react';
+import { BsCreditCard, BsArrowLeft, BsFilterRight, BsCalendar3 } from 'react-icons/bs';
 import { BiArrowBack, BiChevronDown, BiChevronUp } from 'react-icons/bi';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
@@ -138,7 +138,7 @@ export const Points: React.FC = () => {
           to="/points/charge"
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all"
         >
-          <CreditCard className="w-3.5 h-3.5" /> 카드 관리
+          <BsCreditCard className="w-3.5 h-3.5" /> 카드 관리
         </Link>
       </div>
 

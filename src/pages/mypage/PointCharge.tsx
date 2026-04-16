@@ -1,7 +1,8 @@
 // src/pages/mypage/PointCharge.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { BsCreditCard } from 'react-icons/bs';
 import { BiArrowBack } from 'react-icons/bi';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
@@ -160,7 +161,9 @@ export const PointCharge: React.FC = () => {
 
           {isCardLoading ? (
             <div className="flex items-center gap-3 py-2">
-              <Loader2 className="w-5 h-5 animate-spin text-gray-300" />
+              <div className="spinner-border w-5 h-5 text-gray-300" role="status">
+                <span className="sr-only">Loading...</span>
+              </div>
               <span className="text-sm text-gray-400">카드 정보를 불러오는 중...</span>
             </div>
           ) : registeredCard ? (
@@ -168,7 +171,7 @@ export const PointCharge: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100">
-                  <CreditCard className="w-6 h-6 text-indigo-600" />
+                  <BsCreditCard className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
                   <p className="font-bold text-gray-900">{registeredCard.cardName || '등록된 카드'}</p>
@@ -188,7 +191,7 @@ export const PointCharge: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100">
-                    <CreditCard className="w-6 h-6 text-gray-400" />
+                    <BsCreditCard className="w-6 h-6 text-gray-400" />
                   </div>
                   <div>
                     <p className="font-bold text-gray-500">등록된 카드 없음</p>
@@ -251,7 +254,9 @@ export const PointCharge: React.FC = () => {
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <div className="spinner-border w-5 h-5" role="status">
+                  <span className="sr-only">Loading...</span>
+                </div>
                 결제 중...
               </>
             ) : (

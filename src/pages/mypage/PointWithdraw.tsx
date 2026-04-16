@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Landmark, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import { BsBank } from 'react-icons/bs';
 import { BiPlus, BiX } from 'react-icons/bi';
 import { BiArrowBack } from 'react-icons/bi';
 import { motion } from 'motion/react';
@@ -150,7 +151,7 @@ export const PointWithdraw: React.FC = () => {
             className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${withdrawType === 'my' ? 'border-indigo-600 bg-indigo-50/50 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${withdrawType === 'my' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-              <Landmark className="w-5 h-5" />
+              <BsBank className="w-5 h-5" />
             </div>
             <p className={`font-bold ${withdrawType === 'my' ? 'text-indigo-900' : 'text-gray-900'}`}>내 계좌로</p>
             <p className="text-xs text-gray-400 font-medium mt-1">등록된 계좌로 출금</p>
@@ -182,7 +183,7 @@ export const PointWithdraw: React.FC = () => {
                         return bankInfo?.logo ? (
                           <img src={bankInfo.logo} alt={selectedMethod.bankName} className="w-full h-full object-cover p-1" />
                         ) : (
-                          <Landmark className="w-6 h-6 text-indigo-600" />
+                          <BsBank className="w-6 h-6 text-indigo-600" />
                         );
                       })()}
                     </div>
@@ -391,7 +392,7 @@ export const PointWithdraw: React.FC = () => {
                             {bankInfo?.logo ? (
                               <img src={bankInfo.logo} alt={method.bankName} className={`w-full h-full object-cover p-1 ${selectedMethodId === method.accountNo ? 'brightness-0 invert' : ''}`} />
                             ) : (
-                              <Landmark className={`w-5 h-5 ${selectedMethodId === method.accountNo ? 'text-white' : 'text-gray-400'}`} />
+                              <BsBank className={`w-5 h-5 ${selectedMethodId === method.accountNo ? 'text-white' : 'text-gray-400'}`} />
                             )}
                           </div>
                           <div>

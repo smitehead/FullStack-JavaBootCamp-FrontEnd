@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { AlertTriangle, Filter, Gavel, MessageSquare, ShieldAlert, FileText } from 'lucide-react';
+import { AlertTriangle, Filter, Gavel, ShieldAlert, FileText } from 'lucide-react';
+import { BsChatLeft } from 'react-icons/bs';
 import { BiSearch, BiX } from 'react-icons/bi';
 import { BsPerson } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -146,7 +147,7 @@ export const ReportManagement: React.FC = () => {
     }
     return {
       name: '알 수 없는 대상',
-      icon: MessageSquare,
+      icon: BsChatLeft,
       color: 'text-gray-500',
       bgColor: 'bg-gray-50',
       link: '#',

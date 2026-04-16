@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { AlertTriangle, Send, Info, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, Send, CheckCircle2 } from 'lucide-react';
+import { BsInfoCircle, BsChatLeft } from 'react-icons/bs';
 import { BiX } from 'react-icons/bi';
 import { BiChevronLeft } from 'react-icons/bi';
 import { BsCamera } from 'react-icons/bs';
@@ -228,7 +229,7 @@ export const Report: React.FC = () => {
 
               <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100">
                 <div className="flex gap-3">
-                  <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <BsInfoCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <p className="text-xs text-amber-800 leading-relaxed font-medium">
                     허위 신고로 판명될 경우 서비스 이용에 제한이 있을 수 있습니다.
                     신고 내용은 운영팀에서 신중하게 검토하겠습니다.

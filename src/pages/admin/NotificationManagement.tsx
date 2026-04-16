@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, Link as LinkIcon, Info } from 'lucide-react';
+import { Send, Link as LinkIcon } from 'lucide-react';
+import { BsInfoCircle, BsChatLeft, BsWallet, BsBell } from 'react-icons/bs';
 import { BiPlus, BiX } from 'react-icons/bi';
-import { BsBell } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
@@ -168,7 +168,7 @@ export const NotificationManagement: React.FC = () => {
               </button>
             </form>
             <p className="text-[10px] text-gray-400 mt-4 font-medium flex items-center gap-1">
-              <Info className="w-3 h-3" /> 내부 경로(/products/...) 또는 외부 URL을 입력하세요.
+              <BsInfoCircle className="w-3 h-3" /> 내부 경로(/products/...) 또는 외부 URL을 입력하세요.
             </p>
           </motion.div>
         )}

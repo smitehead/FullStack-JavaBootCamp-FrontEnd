@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { MessageSquare, CheckCircle2, Trash2, Send } from 'lucide-react';
+import { CheckCircle2, Trash2, Send } from 'lucide-react';
+import { BsChatLeft } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
 import { BsPerson } from 'react-icons/bs';
 import { Inquiry } from '@/types';
@@ -271,7 +272,7 @@ export const InquiryManagement: React.FC = () => {
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <div className="w-20 h-20 bg-gray-50 rounded-none flex items-center justify-center mb-4">
-              <MessageSquare className="w-8 h-8 text-gray-300" />
+              <BsChatLeft className="w-8 h-8 text-gray-300" />
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-1">문의를 선택해주세요</h3>
             <p className="text-gray-400 text-sm font-medium">왼쪽 목록에서 답변할 문의사항을 선택하세요.</p>

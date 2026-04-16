@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { Package, ShoppingBag, Star, Wallet, Trash2, RefreshCw, AlertTriangle, Gavel, CheckCircle2, MessageSquare } from 'lucide-react';
+import { Package, ShoppingBag, Star, Trash2, RefreshCw, AlertTriangle, Gavel, CheckCircle2 } from 'lucide-react';
 import { BiX, BiXCircle } from 'react-icons/bi';
-import { BsHeart, BsGear } from 'react-icons/bs';
+import { BsHeart, BsGear, BsChatLeft, BsWallet } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -435,7 +435,7 @@ export const MyPage: React.FC = () => {
                 <div className="flex flex-col gap-2">
                   <Link to="/points" className="flex items-center gap-3 group cursor-pointer">
                     <div className="bg-white/10 p-2 rounded-xl group-hover:bg-white/20 transition-colors">
-                      <Wallet className="w-5 h-5 text-white" />
+                      <BsWallet className="w-5 h-5 text-white" />
                     </div>
                     <p className="text-xs font-bold text-indigo-300 uppercase tracking-widest group-hover:text-white transition-colors">보유 포인트</p>
                   </Link>
@@ -480,7 +480,7 @@ export const MyPage: React.FC = () => {
                to="/chat"
                className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
              >
-               <MessageSquare className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
+               <BsChatLeft className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
             </Link>
           </nav>
         </div>

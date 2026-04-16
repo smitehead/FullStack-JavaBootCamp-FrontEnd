@@ -1,9 +1,8 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { CheckCircle2, MessageSquare, ShieldCheck, AlertCircle, Info, List } from 'lucide-react';
-import { BsClock } from 'react-icons/bs';
+import { CheckCircle2, AlertCircle, List } from 'lucide-react';
+import { BsShieldCheck, BsChatLeft, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck } from 'react-icons/bs';
 import { BiChevronLeft } from 'react-icons/bi';
-import { BsPerson, BsCalendarCheck } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
 import { Inquiry } from '@/types';
@@ -153,7 +152,7 @@ export const InquiryDetail: React.FC = () => {
             <div className="mt-12 p-8 bg-gray-50 rounded-3xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-red-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/20">
-                  <ShieldCheck className="w-5 h-5 text-white" />
+                  <BsShieldCheck className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-4 mb-4">
@@ -183,7 +182,7 @@ export const InquiryDetail: React.FC = () => {
             <div className="mt-12 p-8 bg-gray-50 rounded-2xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-gray-200 flex items-center justify-center shrink-0">
-                  <Clock className="w-5 h-5 text-gray-400" />
+                  <BsClock className="w-5 h-5 text-gray-400" />
                 </div>
                 
                 <div className="flex-1">
@@ -207,7 +206,7 @@ export const InquiryDetail: React.FC = () => {
               to="/inquiry"
               className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
             >
-              <List className="w-4 h-4" />
+              <BsInfoCircle className="w-5 h-5" />
               목록으로
             </Link>
           </div>

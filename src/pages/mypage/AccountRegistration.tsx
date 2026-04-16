@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { BsBank } from 'react-icons/bs';
 import { useAppContext } from '../../context/AppContext';
 import { showToast } from '@/components/toastService';
 
@@ -81,9 +82,7 @@ export const AccountRegistration: React.FC = () => {
         >
           <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-8">
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}>
-              <svg className="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-              </svg>
+              <BsBank className="w-8 h-8 text-indigo-600" />
             </motion.div>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">계좌 등록 완료</h2>

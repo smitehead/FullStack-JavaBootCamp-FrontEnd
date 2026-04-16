@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Info, AlertTriangle, List } from 'lucide-react';
+import { AlertTriangle, List } from 'lucide-react';
+import { BsInfoCircle } from 'react-icons/bs';
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
 import { BsCalendarCheck } from 'react-icons/bs';
 import { format } from 'date-fns';
@@ -98,7 +99,7 @@ export const NoticeDetail: React.FC = () => {
           {notice.category === '점검' && (
             <div className="mt-10 p-8 bg-gray-50 rounded-2xl border border-gray-100">
               <div className="flex items-center gap-3 mb-4 text-blue-500">
-                <Info className="w-5 h-5" />
+                <BsInfoCircle className="w-5 h-5" />
                 <span className="font-bold">점검 상세 안내</span>
               </div>
               <div className="space-y-3 text-sm">

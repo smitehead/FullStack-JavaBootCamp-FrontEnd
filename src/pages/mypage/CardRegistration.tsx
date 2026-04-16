@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Loader2, Lock } from 'lucide-react';
+import { CheckCircle2, Lock } from 'lucide-react';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -128,7 +128,9 @@ export const CardRegistration: React.FC = () => {
   if (isCheckLoading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
+        <div className="spinner-border w-10 h-10 text-indigo-600" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
       </div>
     );
   }
@@ -269,7 +271,11 @@ export const CardRegistration: React.FC = () => {
                 className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
               >
                 {isSubmitting
-                  ? <><Loader2 className="w-5 h-5 animate-spin" />등록 중...</>
+                  ? <>
+                        <div className="spinner-border w-5 h-5 mr-2" role="status">
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                        등록 중...</>
                   : '카드 등록하기'
                 }
               </button>

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Thermometer, TrendingUp, TrendingDown } from 'lucide-react';
+import { Thermometer, TrendingDown } from 'lucide-react';
+import { BsArrowUpRight } from 'react-icons/bs';
 import { BsPerson } from 'react-icons/bs';
 import { BsCalendarCheck } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
@@ -85,7 +86,7 @@ export const MannerHistoryManagement: React.FC = () => {
                           <span className="text-xs text-gray-300">→</span>
                           <div className={`flex items-center gap-1 px-2 py-0.5 rounded-none text-xs font-bold ${isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
                             }`}>
-                            {isIncrease ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                            {isIncrease ? <BsArrowUpRight className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                             {history.newTemp.toFixed(1)}°C
                           </div>
                         </div>

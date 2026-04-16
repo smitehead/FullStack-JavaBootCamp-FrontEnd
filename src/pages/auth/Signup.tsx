@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
-import { Package, Check, Mail, Lock, ShieldCheck, Phone, AlertCircle, Send, CheckCircle2, Sparkles } from 'lucide-react';
-import { BsGeoAlt, BsCalendarCheck, BsPerson } from 'react-icons/bs';
+import { Package, Check, Lock, Phone, AlertCircle, Send, CheckCircle2, Sparkles } from 'lucide-react';
+import { BsShieldCheck, BsEnvelope, BsInfoCircle, BsGeoAlt, BsCalendarCheck, BsPerson } from 'react-icons/bs';
 import { BiChevronRight, BiChevronDown, BiX } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
 
@@ -359,7 +359,7 @@ export const Signup: React.FC = () => {
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${Object.values(terms).every(v => v) ? 'bg-[#FF5A5A] text-white' : 'bg-white text-gray-200 border border-gray-200'}`}>
-                    <BsPerson className="inline-block" />
+                    <Check className="w-4 h-4" />
                   </div>
                   <span className="font-bold text-gray-800">전체 동의하기</span>
                 </div>
@@ -382,7 +382,7 @@ export const Signup: React.FC = () => {
                           onClick={() => handleTermToggle(item.key as keyof typeof terms)}
                           className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${terms[item.key as keyof typeof terms] ? 'bg-[#FF5A5A] text-white' : 'bg-white text-gray-200 border border-gray-200'}`}
                         >
-                          <Check className="w-3 h-3" />
+                          <AlertCircle className="h-4 w-4 text-emerald-500 shrink-0" />
                         </button>
                         <span className={`text-sm font-bold ${item.required ? 'text-gray-700' : 'text-gray-400'}`}>
                           {item.label} {item.required ? <span className="text-[#FF5A5A]">(필수)</span> : '(선택)'}
@@ -473,7 +473,7 @@ export const Signup: React.FC = () => {
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">비밀번호 확인</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <ShieldCheck className={`h-5 w-5 ${formData.confirmPassword === '' ? 'text-gray-400' : (formData.password === formData.confirmPassword ? 'text-emerald-500' : 'text-red-500')}`} />
+                        <BsShieldCheck className={`h-5 w-5 ${formData.confirmPassword === '' ? 'text-gray-400' : (formData.password === formData.confirmPassword ? 'text-emerald-500' : 'text-red-500')}`} />
                       </div>
                       <input
                         type="password"
@@ -525,11 +525,14 @@ export const Signup: React.FC = () => {
                   <div className="flex flex-col gap-2 mb-2">
                     <div className="flex items-center gap-2">
                       <div className="relative flex-1">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <BsEnvelope className="h-5 w-5 text-gray-400" />
+                        </div>
                         <input
                           type="text"
                           required
                           disabled={isEmailVerified}
-                          className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50"
+                          className="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50"
                           placeholder="이메일 아이디"
                           value={emailId}
                           onChange={(e) => setEmailId(e.target.value)}

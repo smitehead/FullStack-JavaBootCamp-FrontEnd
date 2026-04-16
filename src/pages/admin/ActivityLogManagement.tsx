@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { History, ShieldCheck, Gavel, AlertTriangle, Info } from 'lucide-react';
+import { History, Gavel, AlertTriangle } from 'lucide-react';
+import { BsInfoCircle, BsShieldCheck, BsPerson, BsCalendarCheck, BsChatLeft, BsCurrencyDollar, BsWallet } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
-import { BsCalendarCheck, BsPerson } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { ActivityLog } from '@/types';
 
@@ -39,8 +39,7 @@ export const ActivityLogManagement: React.FC = () => {
     switch (type) {
       case 'user': return { icon: BsPerson, label: '사용자', color: 'bg-blue-50 text-blue-600' };
       case 'product': return { icon: Gavel, label: '상품/경매', color: 'bg-purple-50 text-purple-600' };
-      case 'report': return { icon: AlertTriangle, label: '신고', color: 'bg-orange-50 text-orange-600' };
-      default: return { icon: Info, label: '기타', color: 'bg-gray-50 text-gray-600' };
+      default: return { icon: BsInfoCircle, label: '기타', color: 'bg-gray-50 text-gray-600' };
     }
   };
 
@@ -82,7 +81,7 @@ export const ActivityLogManagement: React.FC = () => {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 min-w-0 flex-1">
                     <div className="w-8 h-8 rounded-none bg-red-50 flex items-center justify-center shrink-0 mt-0.5">
-                      <ShieldCheck className="w-4 h-4 text-[#FF5A5A]" />
+                      <BsShieldCheck className="w-4 h-4 text-[#FF5A5A]" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap mb-1">

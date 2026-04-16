@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, Send, Info } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Send } from 'lucide-react';
+import { BsInfoCircle } from 'react-icons/bs';
 import { BiX } from 'react-icons/bi';
 import { BiChevronLeft } from 'react-icons/bi';
 import { BsCamera } from 'react-icons/bs';
@@ -191,7 +192,7 @@ export const InquiryCreate: React.FC = () => {
             multiple
           />
           <p className="text-xs text-gray-400 font-medium flex items-center gap-1.5">
-            <Info className="w-3.5 h-3.5" />
+            <BsInfoCircle className="w-3.5 h-3.5" />
             JPG, PNG 형식의 이미지만 업로드 가능합니다.
           </p>
         </div>

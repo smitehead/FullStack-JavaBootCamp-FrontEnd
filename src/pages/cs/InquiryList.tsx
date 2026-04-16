@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { MessageSquare, CheckCircle2, Filter } from 'lucide-react';
+import { CheckCircle2, Filter } from 'lucide-react';
 import { BiPlus } from 'react-icons/bi';
-import { BsClock } from 'react-icons/bs';
+import { BsChatLeft, BsClock, BsInfoCircle } from 'react-icons/bs';
 import { BiSearch, BiChevronRight } from 'react-icons/bi';
 import { Inquiry, InquiryType, InquiryStatus } from '@/types';
 import { format } from 'date-fns';
@@ -129,7 +129,7 @@ export const InquiryList: React.FC = () => {
             ) : (
               <div className="py-20 text-center">
                 <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="w-8 h-8 text-gray-200" />
+                  <BsChatLeft className="w-8 h-8 text-gray-200" />
                 </div>
                 <p className="text-gray-400 font-bold">문의 내역이 없습니다.</p>
               </div>

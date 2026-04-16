@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Sparkles, Instagram, Youtube, TrendingUp, MessageSquare } from 'lucide-react';
-import { BiList, BiSearch, BiX, BiShareAlt } from 'react-icons/bi';
-import { BsPerson, BsGear, BsBell, BsGeoAlt, BsClock } from 'react-icons/bs';
+import { Sparkles } from 'lucide-react';
+import { BsArrowUpRight, BsChatLeft, BsPerson, BsGear, BsBell, BsGeoAlt, BsClock } from 'react-icons/bs';
+import { BiListOl, BiSearch, BiX, BiShareAlt, BiListUl, BiLogoInstagram, BiLogoYoutube } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
@@ -181,7 +181,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                             }}
                             className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors flex items-center gap-3"
                           >
-                            <TrendingUp className="w-3.5 h-3.5 text-gray-300" />
+                            <BsArrowUpRight className="w-3.5 h-3.5 text-gray-300" />
                             {term}
                           </button>
                         ))
@@ -338,7 +338,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                       to="/chat"
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                     >
-                      <MessageSquare className="w-4 h-4 mr-2.5" /> 채팅방 가기
+                      <BsChatLeft className="w-4 h-4 mr-2.5" /> 채팅방 가기
                     </Link>
                     <Link
                       to="/settings"
@@ -383,7 +383,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
               onClick={() => setIsCategoryOpen(!isCategoryOpen)}
             >
-              <BiList className="w-5 h-5 mr-2.5 opacity-70" />
+              <BiListUl className="w-5 h-5 mr-2.5 opacity-70" />
               카테고리
             </button>
 
@@ -531,10 +531,10 @@ const Footer: React.FC = () => {
                 <BiShareAlt className="w-6 h-6" />
               </a>
               <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <Instagram className="w-5 h-5" />
+                <BiLogoInstagram className="w-6 h-6" />
               </a>
               <a href="#" className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-gray-400 hover:bg-[#FF5A5A] hover:text-white transition-all shadow-sm border border-gray-100">
-                <Youtube className="w-5 h-5" />
+                <BiLogoYoutube className="w-6 h-6" />
               </a>
             </div>
           </div>

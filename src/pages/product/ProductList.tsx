@@ -4,8 +4,9 @@ import api from '@/services/api';
 import { ProductCard } from '@/components/ProductCard';
 import { CATEGORY_DATA, LOCATION_DATA } from '@/constants';
 import { showToast } from '@/components/toastService';
-import { Minus, Loader2, LocateFixed } from 'lucide-react';
+import { LocateFixed } from 'lucide-react';
 import { BiSearch, BiChevronRight, BiX, BiPlus } from 'react-icons/bi';
+import { BsDash } from 'react-icons/bs';
 import { BsArrowCounterclockwise } from 'react-icons/bs';
 import { Product } from '@/types';
 import { resolveImageUrls } from '@/utils/imageUtils';
@@ -329,7 +330,7 @@ export const ProductList: React.FC = () => {
             <div className="flex items-center cursor-pointer group" onClick={() => setIsCategoryExpanded(!isCategoryExpanded)}>
               <span className="text-sm font-bold text-gray-700 group-hover:text-brand transition-colors">카테고리</span>
               {isCategoryExpanded ? (
-                <Minus className="w-3 h-3 ml-auto text-gray-400 group-hover:text-brand transition-colors" />
+                <BsDash className="w-3 h-3 ml-auto text-gray-400 group-hover:text-brand transition-colors" />
               ) : (
                 <BiPlus className="w-3 h-3 ml-auto text-gray-400 group-hover:text-brand transition-colors" />
               )}
@@ -675,7 +676,9 @@ export const ProductList: React.FC = () => {
       {/* Loading & No Results */}
       {loading && (
         <div className="flex justify-center py-10">
-          <Loader2 className="w-8 h-8 text-brand animate-spin" />
+          <div className="spinner-border w-8 h-8 text-brand" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
         </div>
       )}
 

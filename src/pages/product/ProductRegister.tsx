@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Category, CategoryItem, TransactionMethod, Product } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { useAppContext } from '@/context/AppContext';
-import { DollarSign, Truck, Info, AlignLeft, LocateFixed } from 'lucide-react';
-import { BsCamera, BsCalendarCheck, BsGeoAlt } from 'react-icons/bs';
+import { AlignLeft, LocateFixed } from 'lucide-react';
+import { BsCurrencyDollar, BsTruck, BsInfoCircle, BsCamera, BsCalendarCheck, BsGeoAlt } from 'react-icons/bs';
 import api from '@/services/api';
 import { ProductRequestDto } from '@/types';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -316,7 +316,7 @@ export const ProductRegister: React.FC = () => {
             ))}
           </div>
           <p className="text-[11px] text-gray-400 mt-3 flex items-center">
-            <Info className="w-3 h-3 mr-1" /> 상품 이미지는 최대 5장까지 등록 가능합니다.
+            <BsInfoCircle className="w-3 h-3 mr-1" /> 상품 이미지는 최대 5장까지 등록 가능합니다.
           </p>
         </section>
 
@@ -385,7 +385,7 @@ export const ProductRegister: React.FC = () => {
         {/* Auction Settings */}
         <section className="bg-gray-50 p-8 rounded-3xl space-y-8 border border-gray-100">
           <h3 className="font-bold text-lg text-gray-900 flex items-center">
-            <DollarSign className="w-5 h-5 mr-2 text-brand-dark" /> 경매 설정
+            <BsCurrencyDollar className="w-5 h-5 mr-2 text-brand-dark" /> 경매 설정
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -451,7 +451,7 @@ export const ProductRegister: React.FC = () => {
                 <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
               </div>
               <div className="bg-white/50 border border-gray-200 p-3 rounded-xl flex items-start gap-2">
-                <Info className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                <BsInfoCircle className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                 <div className="text-[11px] text-gray-500 leading-relaxed">
                   <p className="font-bold text-gray-700 mb-0.5">입찰 단위 안내</p>
                   <p>· 1만원 미만 : 100원 단위 입찰 가능 (예: 300원, 700원)</p>
@@ -535,7 +535,7 @@ export const ProductRegister: React.FC = () => {
               className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${methods.delivery ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.delivery ? 'bg-brand text-white' : 'bg-gray-100 text-gray-400'}`}>
-                <Truck className="w-5 h-5" />
+                <BsTruck className="w-5 h-5" />
               </div>
               <p className={`font-bold ${methods.delivery ? 'text-brand-dark' : 'text-gray-900'}`}>택배 거래</p>
               <p className="text-xs text-gray-400 font-medium mt-1">택배를 통한 비대면 거래</p>

@@ -5,9 +5,9 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { 
-  CheckCircle2, XCircle, Package, AlertCircle, Sparkles, TrendingUp, ShieldCheck, Clock, Share2, Info,
-  CreditCard, MessageSquare, List, ShoppingBag
+  CheckCircle2, XCircle, Package, AlertCircle, Sparkles, Clock, Share2, List, ShoppingBag
 } from 'lucide-react';
+import { BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight } from 'react-icons/bs';
 import { BiChevronLeft, BiChevronRight, BiArrowBack } from 'react-icons/bi';
 import { BsGeoAlt } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
@@ -391,7 +391,7 @@ export const WonProductDetail: React.FC = () => {
               {/* Payment Summary */}
               <section className="p-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                   <CreditCard className="w-5 h-5 text-indigo-500" /> 결제 정보
+                   <BsCreditCard className="w-5 h-5 text-indigo-500" /> 결제 정보
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
@@ -486,7 +486,7 @@ export const WonProductDetail: React.FC = () => {
                       onClick={handleChatWithSeller}
                       className="w-full py-5 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
                     >
-                      <MessageSquare className="w-5 h-5 text-gray-900" />
+                      <BsChatLeft className="w-5 h-5 text-gray-900" />
                       판매자와 채팅하기
                     </button>
                   </div>
@@ -496,7 +496,7 @@ export const WonProductDetail: React.FC = () => {
               {/* Safety Notice */}
               <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                 <div className="flex gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                  <BsInfoCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold text-gray-900 mb-1">안전 거래 안내</p>
                     <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
@@ -515,7 +515,7 @@ export const WonProductDetail: React.FC = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
-              <CreditCard className="w-8 h-8 text-indigo-600" />
+              <BsCreditCard className="w-8 h-8 text-indigo-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">결제를 진행할까요?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-8">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, Package } from 'lucide-react';
+import { Package } from 'lucide-react';
+import { BsChatLeft } from 'react-icons/bs';
 import { BsBell, BsClock } from 'react-icons/bs';
 import { BiChevronRight } from 'react-icons/bi';
 import { Link, useLocation } from 'react-router-dom';
@@ -221,7 +222,7 @@ export const Inbox: React.FC = () => {
             ))
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
-              <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <BsChatLeft className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 font-bold">대화 내역이 없습니다.</p>
             </div>
           )
