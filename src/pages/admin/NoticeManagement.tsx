@@ -52,8 +52,9 @@ export const NoticeManagement: React.FC = () => {
 
   const filteredNotices = notices.filter(
     (n) =>
-      n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      n.content.toLowerCase().includes(searchTerm.toLowerCase()),
+      !n.isDeleted &&
+      (n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        n.content.toLowerCase().includes(searchTerm.toLowerCase())),
   );
 
   useEffect(() => {
