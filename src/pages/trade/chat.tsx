@@ -3,10 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Send, Image as ImageIcon, MoreVertical,
   ShoppingBag, RefreshCw,
-  AlertCircle, Wifi, WifiOff
+  Wifi, WifiOff
 } from 'lucide-react';
 import { BiArrowBack } from 'react-icons/bi';
-import { BsChatLeft } from 'react-icons/bs';
+import { BsChatLeft, BsExclamationCircle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -667,7 +667,7 @@ export const Chat: React.FC = () => {
                             {isMe && msg.status === 'FAILED' && (
                               <button onClick={() => handleRetry(msg)}
                                 className="flex items-center gap-0.5 text-red-500 text-[10px] font-bold hover:underline">
-                                <AlertCircle className="w-3 h-3" />
+                                <BsExclamationCircle className="w-3 h-3" />
                                 <RefreshCw className="w-3 h-3" />
                                 재전송
                               </button>

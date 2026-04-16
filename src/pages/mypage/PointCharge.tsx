@@ -1,7 +1,7 @@
 // src/pages/mypage/PointCharge.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { BsCheckCircle, BsExclamationCircle } from 'react-icons/bs';
 import { BsCreditCard } from 'react-icons/bs';
 import { BiArrowBack } from 'react-icons/bi';
 import api from '@/services/api';
@@ -103,7 +103,7 @@ export const PointCharge: React.FC = () => {
     return (
       <div className="max-w-md mx-auto px-6 py-20 text-center animate-in fade-in zoom-in duration-500">
         <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8">
-          <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+          <BsCheckCircle className="w-12 h-12 text-emerald-500" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-4">충전 완료!</h2>
         <p className="text-gray-500 font-medium mb-10">{result.message}</p>
@@ -130,7 +130,7 @@ export const PointCharge: React.FC = () => {
     return (
       <div className="max-w-md mx-auto px-6 py-20 text-center animate-in fade-in zoom-in duration-500">
         <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-8">
-          <AlertCircle className="w-12 h-12 text-red-500" />
+          <BsExclamationCircle className="w-12 h-12 text-red-500" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-4">충전 실패</h2>
         <p className="text-gray-500 font-medium mb-10">{result.message}</p>

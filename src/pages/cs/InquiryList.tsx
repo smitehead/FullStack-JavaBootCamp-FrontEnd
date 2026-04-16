@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { CheckCircle2, Filter } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import { BiPlus } from 'react-icons/bi';
-import { BsChatLeft, BsClock, BsInfoCircle } from 'react-icons/bs';
+import { BsChatLeft, BsClock, BsInfoCircle, BsCheckCircle } from 'react-icons/bs';
 import { BiSearch, BiChevronRight } from 'react-icons/bi';
 import { Inquiry, InquiryType, InquiryStatus } from '@/types';
 import { format } from 'date-fns';

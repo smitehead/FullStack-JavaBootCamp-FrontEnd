@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package } from 'lucide-react';
+import { BsBox2 } from 'react-icons/bs';
 import { BsChatLeft } from 'react-icons/bs';
 import { BsBell, BsClock } from 'react-icons/bs';
 import { BiChevronRight } from 'react-icons/bi';
@@ -211,7 +211,7 @@ export const Inbox: React.FC = () => {
                   </div>
                   <p className="text-sm text-gray-500 truncate font-medium">{chat.lastMessage}</p>
                   <div className="flex items-center gap-2 mt-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                    <Package className="w-3 h-3" />
+                    <BsBox2 className="w-3 h-3" />
                     <span className="truncate">{chat.productTitle}</span>
                     <span className="mx-1">•</span>
                     <span>{new Date(chat.lastMessageAt).toLocaleDateString()}</span>

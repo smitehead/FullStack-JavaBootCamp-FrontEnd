@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
-import { BsHeart, BsBell, BsShield, BsShieldCheck, BsGear, BsCreditCard, BsBank, BsPersonDash } from 'react-icons/bs';
+import { BsHeart, BsBell, BsShield, BsShieldCheck, BsGear, BsCreditCard, BsBank, BsPersonDash, BsExclamationCircle, BsCheckCircle, BsWallet2, BsArrowDownCircle, BsArrowUpCircle } from 'react-icons/bs';
 import { BiChevronDown, BiX } from 'react-icons/bi';
 import { BsPerson, BsPersonFillGear } from 'react-icons/bs';
 import api from '@/services/api';
@@ -876,7 +875,7 @@ export const Settings: React.FC = () => {
           <div className="relative bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+                <BsCheckCircle className="w-8 h-8 text-emerald-500" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">수정 완료</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium">프로필 정보가 성공적으로 수정되었습니다.</p>
@@ -973,7 +972,7 @@ export const Settings: React.FC = () => {
               {passwordStep === 'success' && (
                 <div className="text-center py-8">
                   <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+                    <BsCheckCircle className="w-10 h-10 text-emerald-500" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">변경 완료</h3>
                   <p className="text-sm text-gray-500">비밀번호가 성공적으로 변경되었습니다.</p>
@@ -1093,7 +1092,7 @@ export const Settings: React.FC = () => {
                             </div>
                             {emailVerificationError && (
                               <p className="text-[10px] text-red-500 mt-1 font-bold flex items-center justify-center gap-1 animate-in fade-in slide-in-from-top-1">
-                                <AlertCircle className="w-3 h-3" /> {emailVerificationError}
+                                <BsExclamationCircle className="w-3 h-3" /> {emailVerificationError}
                               </p>
                             )}
                           </div>
@@ -1124,7 +1123,7 @@ export const Settings: React.FC = () => {
               {emailStep === 'success' && (
                 <div className="text-center py-8">
                   <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+                    <BsCheckCircle className="w-10 h-10 text-emerald-500" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">변경 완료</h3>
                   <p className="text-sm text-gray-500">이메일 주소가 성공적으로 변경되었습니다.</p>
@@ -1160,7 +1159,7 @@ export const Settings: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-red-700">보유 포인트 0원</span>
                         {(user?.points || 0) === 0 ? (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                          <BsCheckCircle className="w-4 h-4 text-emerald-500" />
                         ) : (
                           <span className="text-[10px] font-bold text-red-500 bg-white px-2 py-0.5 rounded-md shadow-sm">
                             {user?.points?.toLocaleString()}P 보유 중
@@ -1170,7 +1169,7 @@ export const Settings: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-red-700">판매 중인 물건 없음</span>
                         {activeProductCount === 0 ? (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                          <BsCheckCircle className="w-4 h-4 text-emerald-500" />
                         ) : (
                           <span className="text-[10px] font-bold text-red-500 bg-white px-2 py-0.5 rounded-md shadow-sm">
                             {activeProductCount}건 진행 중
@@ -1180,7 +1179,7 @@ export const Settings: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-red-700">거래 중인 물품 없음</span>
                         {tradingProductCount === 0 ? (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                          <BsCheckCircle className="w-4 h-4 text-emerald-500" />
                         ) : (
                           <span className="text-[10px] font-bold text-red-500 bg-white px-2 py-0.5 rounded-md shadow-sm">
                             {tradingProductCount}건 거래 중
@@ -1310,7 +1309,7 @@ export const Settings: React.FC = () => {
               {withdrawStep === 'success' && (
                 <div className="text-center py-10">
                   <div className="w-20 h-20 bg-emerald-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+                    <BsCheckCircle className="w-10 h-10 text-emerald-500" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">탈퇴 처리가 완료되었습니다</h3>
                   <p className="text-sm text-gray-500">그동안 이용해주셔서 감사합니다.<br />잠시 후 메인 화면으로 이동합니다.</p>

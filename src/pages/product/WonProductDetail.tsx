@@ -5,11 +5,10 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { 
-  CheckCircle2, XCircle, Package, AlertCircle, Sparkles, Clock, Share2, List, ShoppingBag
+  XCircle, Sparkles, Clock, Share2, List, ShoppingBag
 } from 'lucide-react';
-import { BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight } from 'react-icons/bs';
+import { BsCheckCircle, BsBox2, BsExclamationCircle, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGeoAlt } from 'react-icons/bs';
 import { BiChevronLeft, BiChevronRight, BiArrowBack } from 'react-icons/bi';
-import { BsGeoAlt } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
 interface AuctionResultDetail {
@@ -31,6 +30,7 @@ interface AuctionResultDetail {
   };
   deliveryEmdNo: number | null;
   deliveryAddrDetail: string | null;
+  buyerCashback: number;
 }
 
 const REVIEW_TAGS = [
@@ -250,7 +250,7 @@ export const WonProductDetail: React.FC = () => {
               {/* Product Summary */}
               <section className="p-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  <Package className="w-5 h-5 text-emerald-500" /> 낙찰 상품 정보
+                  <BsBox2 className="w-5 h-5 text-emerald-500" /> 낙찰 상품 정보
                 </h3>
                 <div className="flex gap-6">
                   {images.length > 0 && (
@@ -402,9 +402,38 @@ export const WonProductDetail: React.FC = () => {
                     <span className="text-gray-500 font-medium">배송비</span>
                     <span className="text-gray-900 font-bold">0원 (무료배송)</span>
                   </div>
+
+                  {result.buyerCashback > 0 && (
+                    <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 space-y-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
+                        <span className="text-xs font-bold text-emerald-700">입찰 취소 위약금 보상</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-600 leading-relaxed font-medium">
+                        경쟁 입찰자의 취소로 쌓인 위약금 풀이 결제 완료 시 자동 지급됩니다.
+                      </p>
+                      <div className="flex justify-between items-center pt-1 border-t border-emerald-100">
+                        <span className="text-xs font-bold text-emerald-700">내 캐시백 (풀의 50%)</span>
+                        <span className="text-base font-bold text-emerald-600">+{result.buyerCashback.toLocaleString()}P</span>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
                     <span className="text-base font-bold text-gray-900">총 결제 금액</span>
-                    <span className="text-2xl font-bold text-[#FF5A5A]">{result.finalPrice.toLocaleString()}원</span>
+                    <div className="text-right">
+                      {result.buyerCashback > 0 ? (
+                        <>
+                          <p className="text-xs text-gray-400 line-through font-medium">{result.finalPrice.toLocaleString()}원</p>
+                          <p className="text-2xl font-bold text-[#FF5A5A]">
+                            {(result.finalPrice - result.buyerCashback).toLocaleString()}원
+                          </p>
+                          <p className="text-[11px] text-emerald-600 font-bold">{result.buyerCashback.toLocaleString()}P 캐시백 적용</p>
+                        </>
+                      ) : (
+                        <span className="text-2xl font-bold text-[#FF5A5A]">{result.finalPrice.toLocaleString()}원</span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -441,7 +470,7 @@ export const WonProductDetail: React.FC = () => {
 
                   {isCompleted && (
                     <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl text-center">
-                      <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
+                      <BsCheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
                       <p className="text-sm font-bold text-emerald-600">거래가 성공적으로 완료되었습니다.</p>
                     </div>
                   )}
@@ -544,14 +573,14 @@ export const WonProductDetail: React.FC = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
-              <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+              <BsCheckCircle className="w-8 h-8 text-emerald-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">구매를 확정하시겠습니까?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
               물건을 정상적으로 수령하셨나요?
             </p>
             <p className="text-xs text-red-500 font-bold mb-8 flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" /> 구매 확정 시 다시 되돌릴 수 없습니다.
+              <BsExclamationCircle className="w-3.5 h-3.5" /> 구매 확정 시 다시 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-3">
               <button 
@@ -582,7 +611,7 @@ export const WonProductDetail: React.FC = () => {
               정말 취소하시겠습니까?
             </p>
             <p className="text-xs text-red-500 font-bold mb-8 flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" /> 취소 시 서비스 이용 패널티가 부과될 수 있습니다.
+              <BsExclamationCircle className="w-3.5 h-3.5" /> 취소 시 서비스 이용 패널티가 부과될 수 있습니다.
             </p>
             <div className="flex gap-3">
               <button 
@@ -674,7 +703,7 @@ export const WonProductDetail: React.FC = () => {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[120] flex items-center justify-center p-4">
           <div className="bg-white rounded-[40px] max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="w-20 h-20 bg-emerald-50 rounded-[24px] flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+              <BsCheckCircle className="w-10 h-10 text-emerald-500" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">후기 등록 완료!</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed">

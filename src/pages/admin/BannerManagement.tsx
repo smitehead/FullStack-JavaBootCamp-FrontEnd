@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Edit2, Image, Link as LinkIcon, CheckCircle2, Upload } from 'lucide-react';
-import { BiPlus, BiXCircle } from 'react-icons/bi';
-import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
+import { Trash2, Edit2, Image, Link as LinkIcon, Upload } from 'lucide-react';
+import { BiPlus, BiXCircle, BiChevronLeft, BiChevronRight } from 'react-icons/bi';
+import { BsCheckCircle } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'motion/react';
 import { HeroBanner, BannerType } from '@/types';
 import api from '@/services/api';
@@ -303,7 +303,7 @@ export const BannerManagement: React.FC = () => {
                 <div className="flex items-center space-x-1.5">
                   {banner.isActive === 1 ? (
                     <span className="flex items-center text-[9px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-none">
-                      <CheckCircle2 className="w-2.5 h-2.5 mr-1" /> 활성
+                      <BsCheckCircle className="w-2.5 h-2.5 mr-1" /> 활성
                     </span>
                   ) : (
                     <span className="flex items-center text-[9px] font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-none">

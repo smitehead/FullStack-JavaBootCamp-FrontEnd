@@ -4,10 +4,9 @@ import api from '@/services/api';
 import { ProductCard } from '@/components/ProductCard';
 import { CATEGORY_DATA, LOCATION_DATA } from '@/constants';
 import { showToast } from '@/components/toastService';
-import { LocateFixed } from 'lucide-react';
+import { Gavel } from 'lucide-react';
+import { BsCrosshair, BsChevronDown, BsArrowRight, BsSliders, BsCalendarCheck, BsGeoAlt, BsDash, BsArrowCounterclockwise } from 'react-icons/bs';
 import { BiSearch, BiChevronRight, BiX, BiPlus } from 'react-icons/bi';
-import { BsDash } from 'react-icons/bs';
-import { BsArrowCounterclockwise } from 'react-icons/bs';
 import { Product } from '@/types';
 import { resolveImageUrls } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
@@ -522,7 +521,7 @@ export const ProductList: React.FC = () => {
               className="p-2 text-gray-400 hover:text-[#FF5A5A] transition-colors group relative"
               title="내 위치로 필터링"
             >
-              <LocateFixed className="w-5 h-5" />
+              <BsCrosshair className="w-5 h-5" />
               <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                 내 위치로 찾기
               </div>
