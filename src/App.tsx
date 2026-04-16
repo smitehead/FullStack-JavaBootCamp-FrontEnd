@@ -65,13 +65,21 @@ const App: React.FC = () => {
     const applyAll = () => {
       const toaster = document.querySelector<HTMLElement>('[data-sonner-toaster]');
       if (!toaster) return;
+      // 컨테이너를 100% 너비로 확장 (viewport 기준 중앙 정렬을 위해)
+      toaster.style.setProperty('width', '100%', 'important');
+      toaster.style.setProperty('max-width', '100%', 'important');
+      toaster.style.setProperty('left', '0', 'important');
+      toaster.style.setProperty('transform', 'none', 'important');
+      toaster.style.setProperty('pointer-events', 'none', 'important');
+      // 각 toast pill을 viewport 기준으로 수평 중앙 정렬
       toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((toast) => {
+        toast.style.setProperty('pointer-events', 'auto', 'important');
         toast.style.setProperty('left', '50%', 'important');
         toast.style.setProperty('transform', 'var(--y) translateX(-50%)', 'important');
       });
     };
     const observer = new MutationObserver(applyAll);
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
     applyAll();
     return () => observer.disconnect();
   }, []);
