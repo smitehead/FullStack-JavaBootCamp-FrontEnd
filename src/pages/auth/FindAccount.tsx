@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { BsEnvelope, BsCheckCircle, BsExclamationCircle, BsPerson, BsLock, BsChevronLeft, BsChevronDown } from 'react-icons/bs';
+import { BsEnvelope, BsCheckCircle, BsExclamationCircle, BsChevronLeft, BsChevronDown } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BsCheckCircle, BsBank, BsPlusLg, BsXLg, BsArrowLeft, BsPlus } from 'react-icons/bs';
+import { BsCheckCircle, BsBank, BsXLg, BsArrowLeft } from 'react-icons/bs';
 import { BiPlus } from 'react-icons/bi';
 import { motion } from 'motion/react';
 import { useAppContext } from '@/context/AppContext';

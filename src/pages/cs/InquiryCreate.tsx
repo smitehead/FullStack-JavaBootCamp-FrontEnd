@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BsSend } from 'react-icons/bs';
 
-import { BsExclamationCircle, BsCheckCircle, BsInfoCircle, BsCamera } from 'react-icons/bs';
+import { BsExclamationCircle, BsInfoCircle, BsCamera } from 'react-icons/bs';
 import { BiX, BiChevronLeft } from 'react-icons/bi';
 import { InquiryType, BugType } from '@/types';
 import { showToast } from '@/components/toastService';

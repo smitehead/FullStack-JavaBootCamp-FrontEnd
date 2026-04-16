@@ -1,10 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { BsFunnel } from 'react-icons/bs';
 
-import { BiPlus } from 'react-icons/bi';
-import { BsClock, BsInfoCircle, BsCheckCircle, BsChatLeftDots } from 'react-icons/bs';
-import { BiSearch, BiChevronRight } from 'react-icons/bi';
-import { Inquiry, InquiryType, InquiryStatus } from '@/types';
+import { BsClock, BsChatLeftDots } from 'react-icons/bs';
+import { BiSearch } from 'react-icons/bi';
+import { Inquiry, InquiryType } from '@/types';
 import { format } from 'date-fns';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
 import api from '@/services/api';

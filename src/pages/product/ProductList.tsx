@@ -4,9 +4,8 @@ import api from '@/services/api';
 import { ProductCard } from '@/components/ProductCard';
 import { CATEGORY_DATA, LOCATION_DATA } from '@/constants';
 import { showToast } from '@/components/toastService';
-import { BsBag } from 'react-icons/bs';
 
-import { BsCrosshair, BsChevronDown, BsArrowRight, BsSliders, BsCalendarCheck, BsGeoAltFill, BsDash, BsArrowCounterclockwise } from 'react-icons/bs';
+import { BsCrosshair, BsDash, BsArrowCounterclockwise } from 'react-icons/bs';
 import { BiSearch, BiChevronRight, BiX, BiPlus } from 'react-icons/bi';
 import { Product } from '@/types';
 import { resolveImageUrls } from '@/utils/imageUtils';

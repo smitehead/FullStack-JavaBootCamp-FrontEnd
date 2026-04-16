@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBox2, BsExclamationCircle, BsChatLeft, BsShield, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsExclamationCircleFill } from 'react-icons/bs';
+import { BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsExclamationCircleFill } from 'react-icons/bs';
 import { BiChevronRight } from 'react-icons/bi';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';

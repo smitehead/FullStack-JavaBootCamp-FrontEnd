@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { BsList } from 'react-icons/bs';
 
-import { BsCheckCircle, BsExclamationCircle, BsShieldCheck, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck } from 'react-icons/bs';
+import { BsShieldCheck, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck } from 'react-icons/bs';
 import { BiChevronLeft } from 'react-icons/bi';
 import { format } from 'date-fns';
 import api from '@/services/api';
@@ -98,7 +97,7 @@ export const InquiryDetail: React.FC = () => {
                 </span>
               )}
             </div>
-            
+
             {inquiry.status === 1 ? (
               <div className="px-4 py-2 bg-green-50 text-green-600 rounded-full text-xs font-bold shadow-lg shadow-green-500/10">
                 답변 완료
@@ -111,7 +110,7 @@ export const InquiryDetail: React.FC = () => {
           </div>
 
           <h1 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">{inquiry.title}</h1>
-          
+
           <div className="flex items-center gap-6 text-sm text-gray-400 font-bold">
             <div className="flex items-center gap-2">
               <BsCalendarCheck className="w-4 h-4" />
@@ -131,7 +130,7 @@ export const InquiryDetail: React.FC = () => {
               <div className="text-gray-600 leading-relaxed whitespace-pre-wrap font-medium">
                 {inquiry.content}
               </div>
-              
+
               {/* Images (if any) */}
               {inquiry.imageUrls && inquiry.imageUrls.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-4">
@@ -169,7 +168,7 @@ export const InquiryDetail: React.FC = () => {
                   <div className="text-gray-700 leading-relaxed whitespace-pre-wrap font-medium">
                     {inquiry.answer}
                   </div>
-                  
+
                   <div className="mt-8 pt-6 border-t border-gray-200/50 flex items-center gap-2 text-xs text-gray-400 font-bold italic">
                     <BsClock className="w-3.5 h-3.5" />
                     추가 문의가 필요하신 경우 새로운 문의를 작성해 주시기 바랍니다.
@@ -178,19 +177,19 @@ export const InquiryDetail: React.FC = () => {
               </div>
             </div>
           )}
-          
+
           {inquiry.status === 0 && (
             <div className="mt-12 p-8 bg-gray-50 rounded-2xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-gray-200 flex items-center justify-center shrink-0">
                   <BsClock className="w-5 h-5 text-gray-400" />
                 </div>
-                
+
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-4 mb-4">
                     <div className="text-sm font-bold text-gray-400">운영팀 답변</div>
                   </div>
-                  
+
                   <div className="text-gray-400 leading-relaxed font-bold italic">
                     답변을 준비 중입니다.
                   </div>

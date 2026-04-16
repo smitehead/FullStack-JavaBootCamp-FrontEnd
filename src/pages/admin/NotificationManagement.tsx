@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BsSend, BsLink } from 'react-icons/bs';
 
-import { BsInfoCircle, BsWallet, BsBell } from 'react-icons/bs';
+import { BsInfoCircle, BsBell } from 'react-icons/bs';
 import { BiPlus, BiX } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/services/api';

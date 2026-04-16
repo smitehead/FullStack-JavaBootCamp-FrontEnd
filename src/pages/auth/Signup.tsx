@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
-import { BsCheckLg, BsLock, BsTelephone, BsSend, BsStars } from 'react-icons/bs';
+import { BsCheckLg } from 'react-icons/bs';
 
-import { BsShieldCheck, BsEnvelope, BsInfoCircle, BsGeoAltFill, BsCalendarCheck, BsPerson, BsExclamationCircle, BsCheckCircle } from 'react-icons/bs';
-import { BiChevronRight, BiChevronDown, BiX } from 'react-icons/bi';
+import { BsShieldCheck, BsEnvelope, BsCheckCircle } from 'react-icons/bs';
+import { BiChevronRight, BiChevronDown } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
 
 declare global {
@@ -75,7 +75,7 @@ export const Signup: React.FC = () => {
   // 닉네임 중복확인 상태
   const [nicknameCheckMessage, setNicknameCheckMessage] = useState<{ text: string; isError: boolean } | null>(null);
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
-  
+
   // 이메일 분리 입력 상태
   const [emailId, setEmailId] = useState('');
   const [emailDomain, setEmailDomain] = useState('');
@@ -568,7 +568,7 @@ export const Signup: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     {isCustomDomain && !isEmailVerified && (
                       <div className="animate-in slide-in-from-top-1 duration-200">
                         <input
@@ -581,7 +581,7 @@ export const Signup: React.FC = () => {
                         />
                       </div>
                     )}
-                    
+
                     <button
                       type="button"
                       onClick={() => sendVerificationCode(false)}
@@ -747,7 +747,7 @@ export const Signup: React.FC = () => {
         {step === 'success' && (
           <div className="bg-white p-12 rounded-[40px] shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-500">
             <div className="flex flex-col items-center mb-10 text-center">
-              
+
               <h3 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">회원가입이 성공적으로 완료되었습니다.</h3>
               <p className="text-gray-500 font-medium leading-relaxed">
                 지금 바로 JAVAJAVA의 실시간 중고 경매를 시작해보세요.

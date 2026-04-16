@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsBag } from 'react-icons/bs';
 
-import { BsInfoCircle, BsShieldCheck, BsPerson, BsCalendarCheck, BsCurrencyDollar, BsWallet, BsExclamationTriangle, BsClockHistory } from 'react-icons/bs';
+import { BsInfoCircle, BsPerson, BsCalendarCheck, BsExclamationTriangle, BsClockHistory } from 'react-icons/bs';
 import { BiSearch } from 'react-icons/bi';
 import { useAppContext } from '@/context/AppContext';
 import { ActivityLog } from '@/types';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BsCalendarCheck, BsExclamationCircle, BsCurrencyDollar, BsFileText, BsCheckCircle, BsChatLeftDots } from 'react-icons/bs';
+import { BsExclamationCircle, BsCurrencyDollar, BsFileText, BsChatLeftDots } from 'react-icons/bs';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
 } from 'recharts';

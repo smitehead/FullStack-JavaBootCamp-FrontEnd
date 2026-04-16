@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BsLock } from 'react-icons/bs';
 
 import { BsCheckCircle } from 'react-icons/bs';
 import api from '@/services/api';
@@ -155,7 +154,7 @@ export const CardRegistration: React.FC = () => {
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
 
           {/* 헤더 */}
-          <div className="p-8 border-b border-gray-50">
+          <div className="p-8 border-b border-gray-50 text-left">
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">카드 등록</h1>
             <p className="text-sm text-gray-400 font-medium mt-2">
               카드를 한 번 등록하면 간편하게 포인트를 충전할 수 있습니다.
@@ -269,14 +268,14 @@ export const CardRegistration: React.FC = () => {
               >
                 {isSubmitting
                   ? <>
-                        <div className="spinner-border w-5 h-5 mr-2" role="status">
-                          <span className="sr-only">Loading...</span>
-                        </div>
-                        등록 중...</>
+                    <div className="spinner-border w-5 h-5 mr-2" role="status">
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                    등록 중...</>
                   : '카드 등록하기'
                 }
               </button>
-              
+
               <p className="text-center text-[11px] text-gray-400 font-medium leading-relaxed">
                 카드는 1개만 등록 가능하며,<br />설정에서 언제든지 변경할 수 있습니다.
               </p>

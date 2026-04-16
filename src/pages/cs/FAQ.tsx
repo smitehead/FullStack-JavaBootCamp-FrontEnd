@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BiSearch, BiChevronDown, BiChevronUp, BiHelpCircle } from 'react-icons/bi';
+import { BiSearch, BiChevronDown, BiHelpCircle } from 'react-icons/bi';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
 
 interface FAQItem {

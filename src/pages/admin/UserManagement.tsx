@@ -5,7 +5,7 @@ import { BsPersonX, BsPersonCheck, BsShield } from 'react-icons/bs';
 import { BsPerson } from 'react-icons/bs';
 import { useSearchParams } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
-import { User, WithdrawnUser } from '@/types';
+import { User } from '@/types';
 import { showToast } from '@/components/toastService';
 import { getProfileImageUrl } from '@/utils/imageUtils';
 

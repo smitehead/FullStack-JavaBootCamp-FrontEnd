@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BsCreditCard, BsArrowLeft, BsFilterRight, BsCalendar3 } from 'react-icons/bs';
+import { BsCreditCard } from 'react-icons/bs';
 import { BiArrowBack, BiChevronDown, BiChevronUp } from 'react-icons/bi';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';

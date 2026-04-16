@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsBag, BsFunnel } from 'react-icons/bs';
 
 import { BiSearch } from 'react-icons/bi';
-import { BsClock, BsPeople, BsExclamationCircle, BsCheckCircle, BsBan } from 'react-icons/bs';
+import { BsClock, BsPeople, BsExclamationCircle, BsBan } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { Product } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';

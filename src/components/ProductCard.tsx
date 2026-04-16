@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { BsPerson, BsHeart, BsHeartFill, BsClock, BsBox2 } from 'react-icons/bs';
 import { Product } from '@/types';
-import { formatDistanceToNow } from 'date-fns';
-import { ko } from 'date-fns/locale';
 import { useAppContext } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import api from '@/services/api';
@@ -137,7 +135,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* 경매 종료 오버레이 디자인 (일반 사용자 시점 & 입찰자 없음 공통) */}
         {product.status === 'completed' && !showBadge && (
           <div className="absolute inset-0 bg-gray-900/70 flex flex-col items-center justify-center backdrop-blur-[2px] p-4 text-center">
-            
+
             {/* 상단 메인 칩: 낙찰 성공/판매 완료와 동일한 스타일 */}
             <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               경매 종료

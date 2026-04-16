@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Category, CategoryItem, TransactionMethod, Product } from '@/types';
+import { Product } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { useAppContext } from '@/context/AppContext';
 import { BsCurrencyDollar, BsTruck, BsInfoCircle, BsCamera, BsCalendarCheck, BsGeoAltFill, BsJustifyLeft, BsCrosshair } from 'react-icons/bs';

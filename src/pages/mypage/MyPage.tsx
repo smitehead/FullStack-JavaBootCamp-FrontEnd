@@ -2,10 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { BsCartCheck, BsTrash3, BsArrowRepeat, BsBag, BsCart, BsBagFill, BsPencilSquare } from 'react-icons/bs';
+import { BsBag, BsBagFill, BsPencilSquare } from 'react-icons/bs';
 
-import { BiX, BiXCircle, BiChat, BiStore, BiTrophy } from 'react-icons/bi';
-import { BsHeart, BsHeartFill, BsGear, BsWallet, BsBox2, BsExclamationTriangle, BsCheckCircle } from 'react-icons/bs';
+import { BsHeart, BsHeartFill, BsGear, BsWallet, BsBox2, BsShop, BsTrophy, BsChat } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -363,11 +362,11 @@ export const MyPage: React.FC = () => {
           {/* Profile Image */}
           <div className="relative group">
             <div className="w-32 h-32 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-gray-100 flex items-center justify-center">
-              <img 
-                src={getProfileImageUrl(profileImage)} 
-                alt="Profile" 
-                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" 
-                referrerPolicy="no-referrer" 
+              <img
+                src={getProfileImageUrl(profileImage)}
+                alt="Profile"
+                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                referrerPolicy="no-referrer"
               />
             </div>
             <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-indigo-600 hover:text-white transition-all duration-300 border border-gray-100 disabled:opacity-50">
@@ -458,13 +457,13 @@ export const MyPage: React.FC = () => {
         <div className="w-full md:w-64 flex-shrink-0">
           <nav className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <button onClick={() => setActiveTab('selling')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <BiStore className="w-5 h-5 mr-3" /> 판매 내역
+              <BsShop className="w-5 h-5 mr-3" /> 판매 내역
             </button>
             <button onClick={() => setActiveTab('bidding')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'bidding' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
               <BsBag className="w-5 h-5 mr-3" /> 입찰 내역
             </button>
             <button onClick={() => setActiveTab('purchased')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'purchased' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <BiTrophy className="w-5 h-5 mr-3" /> 구매 내역
+              <BsTrophy className="w-5 h-5 mr-3" /> 구매 내역
             </button>
             <button onClick={() => setActiveTab('wishlist')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'wishlist' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
               <BsHeart className="w-5 h-5 mr-3" /> 찜 목록
@@ -472,11 +471,11 @@ export const MyPage: React.FC = () => {
             <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
               <BsPencilSquare className="w-5 h-5 mr-3" /> 리뷰 관리
             </button>
-            <Link 
-               to="/chat"
-               className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
-             >
-               <BiChat className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
+            <Link
+              to="/chat"
+              className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
+            >
+              <BsChat className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
             </Link>
           </nav>
         </div>
@@ -543,7 +542,7 @@ export const MyPage: React.FC = () => {
 
                 {/* 입찰 내역 */}
                 {activeTab === 'bidding' && filteredBiddingProducts.map(p => {
-                    const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
+                  const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
                   return (
                     <div key={p.id} className="flex flex-col gap-2">
                       <ProductCard
@@ -556,11 +555,10 @@ export const MyPage: React.FC = () => {
                         {effectiveStatus === 'won' && (
                           <button
                             onClick={() => navigate(`/won/${p.id}`)}
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold transition-all font-sans ${
-                              p.auctionResultStatus === '결제완료' 
-                              ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200' 
-                              : 'bg-amber-100 text-amber-600 hover:bg-amber-200'
-                            }`}
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold transition-all font-sans ${p.auctionResultStatus === '결제완료'
+                                ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200'
+                                : 'bg-amber-100 text-amber-600 hover:bg-amber-200'
+                              }`}
                           >
                             {p.auctionResultStatus === '결제완료' ? '거래대기' : '결제대기'}
                           </button>
@@ -710,11 +708,11 @@ export const MyPage: React.FC = () => {
                 <button onClick={() => setShowRepostModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
                   닫기
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     setShowRepostModal(false);
                     navigate('/register', { state: { product: repostProduct } });
-                  }} 
+                  }}
                   className="flex-1 py-3.5 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
                 >
                   재게시하기

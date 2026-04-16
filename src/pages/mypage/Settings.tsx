@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsHeart, BsBell, BsShield, BsShieldCheck, BsGear, BsCreditCard, BsBank, BsPersonDash, BsExclamationCircle, BsCheckCircle, BsWallet2, BsArrowDownCircle, BsArrowUpCircle } from 'react-icons/bs';
+import { BsBell, BsShield, BsShieldCheck, BsCreditCard, BsBank, BsPersonDash, BsExclamationCircle, BsCheckCircle } from 'react-icons/bs';
 import { BiChevronDown, BiX } from 'react-icons/bi';
-import { BsPerson, BsPersonFillGear } from 'react-icons/bs';
+import { BsPersonFillGear } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
@@ -20,7 +20,7 @@ export const Settings: React.FC = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const initialTab = queryParams.get('tab') as 'notification' | 'block' | 'profile' | 'card' | 'account' | null;
-  const [activeTab, setActiveTab] = useState<'notification' | 'block' | 'profile' | 'card' | 'account'>( (initialTab as any) || 'notification');
+  const [activeTab, setActiveTab] = useState<'notification' | 'block' | 'profile' | 'card' | 'account'>((initialTab as any) || 'notification');
 
   useEffect(() => {
     if (initialTab) {
@@ -45,13 +45,13 @@ export const Settings: React.FC = () => {
       const list = res.data?.content ?? res.data ?? [];
       setActiveProductCount(list.filter((p: any) => p.status === 0).length);
       setTradingProductCount(list.filter((p: any) => p.status === 0).length);
-    }).catch(() => {});
+    }).catch(() => { });
   }, [user]);
 
   // 프로필 초기 데이터를 API에서 로드
   useEffect(() => {
     if (!user) return;
-    
+
     // API 로드 전 초기값 설정 (user context 기반)
     setFormData(prev => ({
       ...prev,
@@ -221,12 +221,12 @@ export const Settings: React.FC = () => {
         addrDetail: formData.addrDetail,
         addrShort: formData.addrShort,
       });
-      
+
       // 전역 상태(Header 등) 업데이트를 위해 호출
       if (updateCurrentUserAddress) {
         updateCurrentUserAddress(formData.addrShort);
       }
-      
+
       setIsProfileSaveModalOpen(true);
       setIsProfileEditMode(false);
     } catch (e: any) {
@@ -502,7 +502,7 @@ export const Settings: React.FC = () => {
                       {/* 이메일 */}
                       <div className="md:col-start-1">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일</p>
-                        <div 
+                        <div
                           className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900 truncate"
                           title={formData.email}
                         >
@@ -1266,7 +1266,7 @@ export const Settings: React.FC = () => {
                 </div>
               )}
 
-               {withdrawStep === 'input' && (
+              {withdrawStep === 'input' && (
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">필수 정보 입력</h3>
                   <p className="text-sm text-gray-500 mb-8">안전한 탈퇴를 위해 본인 확인이 필요합니다.</p>
@@ -1294,7 +1294,7 @@ export const Settings: React.FC = () => {
                     onChange={(e) => setWithdrawPassword(e.target.value)}
                     className="block w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none mb-4 focus:border-red-500 transition-all"
                   />
-                  
+
                   {withdrawError && <p className="text-xs text-red-500 mb-6 ml-2">{withdrawError}</p>}
 
                   <button

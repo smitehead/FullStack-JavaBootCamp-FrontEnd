@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BsSend } from 'react-icons/bs';
 
-import { BsExclamationTriangle, BsCheckCircle, BsInfoCircle, BsArrowLeft } from 'react-icons/bs';
+import { BsExclamationTriangle, BsCheckCircle, BsInfoCircle } from 'react-icons/bs';
 import { BiX } from 'react-icons/bi';
 import { BiChevronLeft } from 'react-icons/bi';
 import { BsCamera } from 'react-icons/bs';
@@ -166,11 +166,10 @@ export const Report: React.FC = () => {
                       key={idx}
                       type="button"
                       onClick={() => setReason(r)}
-                      className={`w-full p-4 text-left rounded-2xl border-2 transition-all font-bold text-sm ${
-                        reason === r
+                      className={`w-full p-4 text-left rounded-2xl border-2 transition-all font-bold text-sm ${reason === r
                           ? 'border-red-500 bg-red-50 text-red-600'
                           : 'border-gray-50 bg-gray-50 text-gray-600 hover:border-gray-200'
-                      }`}
+                        }`}
                     >
                       {r}
                     </button>
