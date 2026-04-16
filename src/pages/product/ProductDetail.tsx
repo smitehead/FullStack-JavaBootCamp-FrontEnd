@@ -242,23 +242,18 @@ export const ProductDetail: React.FC = () => {
       setAutoBidMaxAmount((priceToUse || 0) + (mappedProduct.minBidIncrement || 0) * 5);
       setIsWishlisted(mappedProduct.isWishlisted || false);
 
-      // 입찰 참여 여부 및 최고입찰자 여부 계산 (timestamp 기준 정렬 후 마지막 입찰자 확인)
+      // 입찰 참여 여부: 닉네임 비교 (hasBid 뱃지용)
       if (user?.nickname) {
-        const sortedBids = [...mappedProduct.bids].sort(
-          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-        );
-        const userHasBid = sortedBids.some(b => b.bidderName === user.nickname);
+        const userHasBid = mappedProduct.bids.some(b => b.bidderName === user.nickname);
         setHasBid(userHasBid);
-        // SSE가 이미 최고입찰자 여부를 판단했다면 fetchProduct가 덮어쓰지 않음
-        if (!sseHasRunRef.current) {
-          const userIsHighest = sortedBids.length > 0 && sortedBids[0].bidderName === user.nickname;
-          setIsHighestBidder(userIsHighest);
-        }
       } else {
         setHasBid(false);
-        if (!sseHasRunRef.current) {
-          setIsHighestBidder(false);
-        }
+      }
+
+      // 최고입찰자 여부: 백엔드가 memberNo 기반으로 직접 판별한 값을 사용
+      // SSE가 이미 실시간으로 업데이트했다면 fetchProduct의 응답으로 덮어쓰지 않음
+      if (!sseHasRunRef.current) {
+        setIsHighestBidder(data.isHighestBidder === true);
       }
 
       // 활성 자동입찰 조회 (로그인 사용자만)
