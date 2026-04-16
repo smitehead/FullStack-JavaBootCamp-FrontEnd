@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Search, Lock, ChevronLeft, User, Send, CheckCircle2, ChevronDown, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { BiSearch } from 'react-icons/bi';
+import { BsPerson } from 'react-icons/bs';
+import { BiChevronLeft, BiChevronDown } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
 
@@ -267,7 +270,7 @@ export const FindAccount: React.FC = () => {
                               <option value="custom">직접 입력</option>
                             </select>
                             <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 font-bold">
-                              <ChevronDown className="w-4 h-4" />
+                              <BiChevronDown className="w-4 h-4" />
                             </div>
                           </div>
                         </div>
@@ -365,7 +368,7 @@ export const FindAccount: React.FC = () => {
                 <div className="space-y-8 animate-in zoom-in-95 duration-300 text-left">
                   <div className="bg-emerald-50 p-8 rounded-2xl text-left border border-emerald-100">
                     <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 shadow-sm">
-                      <Send className="w-6 h-6 text-emerald-600" />
+                      <BiSearch className="w-8 h-8 text-indigo-600" />
                     </div>
                     <p className="text-sm font-bold text-emerald-800 mb-2">임시 비밀번호 전송 완료</p>
                     <p className="text-xs text-emerald-600 leading-relaxed font-medium">
@@ -389,7 +392,7 @@ export const FindAccount: React.FC = () => {
               onClick={() => navigate('/login')}
               className="inline-flex items-center text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <ChevronLeft className="w-4 h-4 mr-1" /> 로그인 화면으로 돌아가기
+              <BiChevronLeft className="w-4 h-4 mr-1" /> 로그인 화면으로 돌아가기
             </button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Search, HelpCircle, MessageCircle, Phone } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
+import { BiSearch, BiChevronDown, BiChevronUp } from 'react-icons/bi';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
 
 interface FAQItem {
@@ -95,7 +96,7 @@ export const FAQ: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <div className="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center">
-              <Search className="w-5 h-5 text-gray-400" />
+              <BiSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
           </div>
 
@@ -128,15 +129,17 @@ export const FAQ: React.FC = () => {
                     className="w-full px-8 py-5 flex items-center justify-between text-left"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-20 shrink-0">
-                        <span className="text-xs font-bold px-2 py-1 bg-gray-50 text-gray-400 rounded-md shadow-lg shadow-gray-100/50">{faq.category}</span>
+                      <div className="w-12 shrink-0 flex justify-center">
+                        <div className="bg-gray-50 p-2.5 rounded-2xl border border-gray-100/50">
+                          <HelpCircle className="w-5 h-5 text-gray-400" />
+                        </div>
                       </div>
                       <span className="text-sm font-semibold text-gray-900">{faq.question}</span>
                     </div>
                     {openId === faq.id ? (
-                      <ChevronDown className="w-5 h-5 text-gray-400 rotate-180 transition-transform" />
+                      <BiChevronDown className="w-5 h-5 text-gray-400 rotate-180 transition-transform" />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-400 transition-transform" />
+                      <BiChevronDown className="w-5 h-5 text-gray-400 transition-transform" />
                     )}
                   </button>
                   {openId === faq.id && (

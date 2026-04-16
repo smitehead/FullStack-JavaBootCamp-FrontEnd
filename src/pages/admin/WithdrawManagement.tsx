@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, Wallet, CheckCircle2, XCircle, AlertTriangle, RefreshCw, Filter } from 'lucide-react';
+import { Wallet, CheckCircle2, AlertTriangle, RefreshCw, Filter } from 'lucide-react';
+import { BiSearch, BiXCircle } from 'react-icons/bi';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -192,7 +193,7 @@ export const WithdrawManagement: React.FC = () => {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 min-w-0 flex-1">
                   <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <Wallet className="w-4 h-4 text-gray-400" />
+                    <BiSearch className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -252,7 +253,7 @@ export const WithdrawManagement: React.FC = () => {
                       className="p-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-none transition-all"
                       title="신청 거절"
                     >
-                      <XCircle className="w-4 h-4" />
+                      <BiXCircle className="w-4 h-4" />
                     </button>
                   </div>
                 )}

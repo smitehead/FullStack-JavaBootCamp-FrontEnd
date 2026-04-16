@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Bell, HelpCircle, MessageSquare } from 'lucide-react';
+import { HelpCircle, MessageSquare } from 'lucide-react';
+import { BsBell } from 'react-icons/bs';
 
 export const CustomerCenterSidebar: React.FC = () => {
   const location = useLocation();
   const activePath = location.pathname;
 
   const menuItems = [
-    { path: '/notice', label: '공지사항', icon: Bell },
+    { path: '/notice', label: '공지사항', icon: BsBell },
     { path: '/faq', label: '자주 묻는 질문', icon: HelpCircle },
     { path: '/inquiry', label: '문의하기', icon: MessageSquare },
   ];

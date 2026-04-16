@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, AlertCircle, ChevronRight, Sparkles } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Sparkles } from 'lucide-react';
+import { BiChevronRight } from 'react-icons/bi';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
 
@@ -128,7 +129,7 @@ export const Login: React.FC = () => {
             className="mt-4 inline-flex items-center justify-center w-full py-3.5 px-4 border-2 border-gray-100 text-sm font-bold rounded-2xl text-gray-700 hover:bg-gray-50 hover:border-gray-200 transition-all group"
           >
             회원가입 하러가기
-            <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+            <BiChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>

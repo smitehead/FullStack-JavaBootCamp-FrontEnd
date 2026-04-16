@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { History, Search, ShieldCheck, User, Gavel, AlertTriangle, Calendar, Info } from 'lucide-react';
+import { History, ShieldCheck, Gavel, AlertTriangle, Info } from 'lucide-react';
+import { BiSearch } from 'react-icons/bi';
+import { BsCalendarCheck, BsPerson } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { ActivityLog } from '@/types';
 
@@ -35,7 +37,7 @@ export const ActivityLogManagement: React.FC = () => {
 
   const getTargetLabel = (type?: ActivityLog['targetType']) => {
     switch (type) {
-      case 'user': return { icon: User, label: '사용자', color: 'bg-blue-50 text-blue-600' };
+      case 'user': return { icon: BsPerson, label: '사용자', color: 'bg-blue-50 text-blue-600' };
       case 'product': return { icon: Gavel, label: '상품/경매', color: 'bg-purple-50 text-purple-600' };
       case 'report': return { icon: AlertTriangle, label: '신고', color: 'bg-orange-50 text-orange-600' };
       default: return { icon: Info, label: '기타', color: 'bg-gray-50 text-gray-600' };
@@ -51,7 +53,7 @@ export const ActivityLogManagement: React.FC = () => {
         </div>
         <div className="relative w-full sm:w-64 flex items-center h-10">
           <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-            <Search className="text-gray-400 w-4 h-4" />
+            <BiSearch className="text-gray-400 w-4 h-4" />
           </div>
           <input
             type="text"
@@ -95,7 +97,7 @@ export const ActivityLogManagement: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400 shrink-0">
-                    <Calendar className="w-3 h-3" />
+                    <BsCalendarCheck className="w-3 h-3" />
                     {new Date(log.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
                   </div>
                 </div>

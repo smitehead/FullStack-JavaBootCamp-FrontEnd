@@ -5,9 +5,11 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { 
-  ChevronLeft, ChevronRight, MapPin, CreditCard, MessageSquare, 
-  CheckCircle2, XCircle, Package, AlertCircle
+  CheckCircle2, XCircle, Package, AlertCircle, Sparkles, TrendingUp, ShieldCheck, Clock, Share2, Info,
+  CreditCard, MessageSquare, List, ShoppingBag
 } from 'lucide-react';
+import { BiChevronLeft, BiChevronRight, BiArrowBack } from 'react-icons/bi';
+import { BsGeoAlt } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
 interface AuctionResultDetail {
@@ -231,7 +233,7 @@ export const WonProductDetail: React.FC = () => {
             onClick={() => navigate(-1)}
             className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors group"
           >
-            <ChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
+            <BiChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
             뒤로가기
           </button>
           <div className="flex items-center gap-2">
@@ -260,13 +262,13 @@ export const WonProductDetail: React.FC = () => {
                             onClick={() => setImgIndex(i => Math.max(0, i - 1))}
                             className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-r"
                           >
-                            <ChevronLeft className="w-3 h-3" />
+                            <BiChevronLeft className="w-3 h-3" />
                           </button>
                           <button 
                             onClick={() => setImgIndex(i => Math.min(images.length - 1, i + 1))}
                             className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-l"
                           >
-                            <ChevronRight className="w-3 h-3" />
+                            <BiChevronRight className="w-3 h-3" />
                           </button>
                         </>
                       )}
@@ -330,7 +332,7 @@ export const WonProductDetail: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-start gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 flex-shrink-0">
-                          <MapPin className="w-5 h-5 text-indigo-600" />
+                          <BsGeoAlt className="w-5 h-5 text-indigo-600" />
                         </div>
                         <div>
                           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">희망 거래 장소</p>
@@ -474,7 +476,7 @@ export const WonProductDetail: React.FC = () => {
                     <p className="text-xs text-white/50">매너온도 {Number(result.seller.mannerTemp).toFixed(1)}°</p>
                   </div>
                   <Link to={`/seller/${result.seller.sellerNo}`} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors shrink-0">
-                    <ChevronRight className="w-4 h-4" />
+                    <BiChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
 

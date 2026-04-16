@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Bell, Send, Link as LinkIcon, Info, Plus, X } from 'lucide-react';
+import { Send, Link as LinkIcon, Info } from 'lucide-react';
+import { BiPlus, BiX } from 'react-icons/bi';
+import { BsBell } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
@@ -95,7 +97,7 @@ export const NotificationManagement: React.FC = () => {
           onClick={() => setShowForm(!showForm)}
           className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-sm"
         >
-          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          {showForm ? <BiX className="w-4 h-4" /> : <BiPlus className="w-4 h-4" />}
           {showForm ? '닫기' : '새 알림 등록'}
         </button>
       </header>
@@ -176,7 +178,7 @@ export const NotificationManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Bell className="w-5 h-5 text-gray-400" /> 발송 내역
+            <BsBell className="w-5 h-5 text-gray-400" /> 발송 내역
           </h2>
           <span className="text-xs font-bold text-gray-400">{recentNotifications.length}건</span>
         </div>
@@ -190,7 +192,7 @@ export const NotificationManagement: React.FC = () => {
                     noti.type === '활동' ? 'bg-purple-50 text-purple-500' :
                       'bg-orange-50 text-orange-500'
                     }`}>
-                    <Bell className="w-4 h-4" />
+                    <BsBell className="w-4 h-4" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 leading-relaxed">{noti.content}</p>

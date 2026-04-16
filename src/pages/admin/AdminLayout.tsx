@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Users, Bell, MessageSquare, Image, Home, LayoutDashboard, LogOut, UserX, Megaphone, Gavel, Thermometer, AlertTriangle, Settings, History, Wallet } from 'lucide-react';
+import { MessageSquare, Image, Home, LayoutDashboard, LogOut, UserX, Megaphone, Gavel, Thermometer, AlertTriangle, History, Wallet } from 'lucide-react';
+import { BsPeople, BsBell, BsGear } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
 
@@ -40,7 +41,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     {
       title: '사용자 관리',
       items: [
-        { path: '/admin/users', icon: Users, label: '사용자 관리' },
+        { path: '/admin/users', icon: BsPeople, label: '사용자 관리' },
         { path: '/admin/manner-history', icon: Thermometer, label: '매너온도 히스토리' },
       ]
     },
@@ -51,7 +52,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         { path: '/admin/reports', icon: AlertTriangle, label: '신고 관리' },
         { path: '/admin/notices', icon: Megaphone, label: '공지사항 관리' },
         { path: '/admin/inquiries', icon: MessageSquare, label: '문의사항 관리' },
-        { path: '/admin/notifications', icon: Bell, label: '알림 관리' },
+        { path: '/admin/notifications', icon: BsBell, label: '알림 관리' },
         { path: '/admin/banners', icon: Image, label: '배너 관리' },
       ]
     },

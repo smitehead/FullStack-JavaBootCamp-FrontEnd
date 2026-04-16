@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Bell, Shield, ShieldCheck, UserMinus, X, AlertCircle, CheckCircle2, User, CreditCard, Landmark, ChevronDown } from 'lucide-react';
+import { Shield, ShieldCheck, UserMinus, AlertCircle, CheckCircle2, CreditCard, Landmark } from 'lucide-react';
+import { BiChevronDown, BiX } from 'react-icons/bi';
+import { BsPerson, BsPersonFillGear, BsBell } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
@@ -432,13 +434,13 @@ export const Settings: React.FC = () => {
                 onClick={() => setActiveTab('notification')}
                 className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'notification' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <Bell className="w-5 h-5 mr-3" /> 알림 설정
+                <BsBell className="w-5 h-5 mr-3" /> 알림 설정
               </button>
               <button
                 onClick={() => setActiveTab('profile')}
                 className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'profile' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <User className="w-5 h-5 mr-3" /> 프로필 수정
+                <BsPersonFillGear className="w-5 h-5 mr-3" /> 프로필 수정
               </button>
               <button
                 onClick={() => setActiveTab('block')}
@@ -898,7 +900,7 @@ export const Settings: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-bold text-gray-900">비밀번호 변경</h3>
                 <button onClick={() => setIsPasswordModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                  <X className="w-6 h-6" />
+                  <BiX className="w-6 h-6" />
                 </button>
               </div>
 
@@ -990,7 +992,7 @@ export const Settings: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-bold text-gray-900">이메일 변경</h3>
                 <button onClick={() => setIsEmailModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                  <X className="w-6 h-6" />
+                  <BiX className="w-6 h-6" />
                 </button>
               </div>
 
@@ -1035,7 +1037,7 @@ export const Settings: React.FC = () => {
                             <option value="custom">직접 입력</option>
                           </select>
                           <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 font-bold">
-                            <ChevronDown className="w-4 h-4" />
+                            <BiChevronDown className="w-4 h-4" />
                           </div>
                         </div>
                       </div>

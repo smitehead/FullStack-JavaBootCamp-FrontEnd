@@ -1,5 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Plus, ChevronRight, MessageSquare, Clock, CheckCircle2, Filter } from 'lucide-react';
+import { MessageSquare, CheckCircle2, Filter } from 'lucide-react';
+import { BiPlus } from 'react-icons/bi';
+import { BsClock } from 'react-icons/bs';
+import { BiSearch, BiChevronRight } from 'react-icons/bi';
 import { Inquiry, InquiryType, InquiryStatus } from '@/types';
 import { format } from 'date-fns';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
@@ -69,7 +72,7 @@ export const InquiryList: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <div className="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center">
-              <Search className="w-5 h-5 text-gray-400" />
+              <BiSearch className="w-5 h-5 text-gray-400" />
             </div>
           </div>
 
@@ -100,7 +103,8 @@ export const InquiryList: React.FC = () => {
                     className="block px-8 py-5 transition-colors group"
                   >
                     <div className="flex items-center gap-4">
-                       <div className="w-20 shrink-0">
+                      <div className="w-24 shrink-0 flex items-center gap-1.5">
+                        <BsClock className="w-3.5 h-3.5 text-gray-400" />
                         <span className="text-xs font-bold px-2 py-1 bg-gray-50 text-gray-400 rounded-md shadow-lg shadow-gray-100/50">{inquiry.type}</span>
                       </div>
                       <div className="flex-1 flex items-center gap-4 min-w-0">

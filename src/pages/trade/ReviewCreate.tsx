@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import { BiChevronLeft } from 'react-icons/bi';
 
 const REVIEW_TAGS = [
   { id: 'tag_1', content: '응답이 빨라요' },
@@ -64,7 +65,7 @@ export const ReviewCreate: React.FC = () => {
             onClick={() => navigate(-1)}
             className="absolute left-0 flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors group"
           >
-            <ChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
+            <BiChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
             뒤로가기
           </button>
           <h2 className="text-2xl font-bold text-gray-900">거래 후기 작성</h2>

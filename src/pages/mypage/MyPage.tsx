@@ -2,7 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { Settings, Package, ShoppingBag, Heart, Star, Wallet, Trash2, RefreshCw, AlertTriangle, X, Gavel, CheckCircle2, XCircle, MessageSquare } from 'lucide-react';
+import { Package, ShoppingBag, Star, Wallet, Trash2, RefreshCw, AlertTriangle, Gavel, CheckCircle2, MessageSquare } from 'lucide-react';
+import { BiX, BiXCircle } from 'react-icons/bi';
+import { BsHeart, BsGear } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -414,7 +416,7 @@ export const MyPage: React.FC = () => {
                 </button>
                 <button onClick={() => setActiveTab('wishlist')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group text-left">
                   <div className="bg-pink-50 p-2.5 rounded-xl group-hover:bg-pink-100 transition-colors">
-                    <Heart className="w-5 h-5 text-pink-500 fill-pink-500" />
+                    <BsHeart className="w-5 h-5 text-pink-500 fill-pink-500" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">찜목록</p>
@@ -466,7 +468,7 @@ export const MyPage: React.FC = () => {
               <ShoppingBag className="w-5 h-5 mr-3" /> 구매 내역
             </button>
             <button onClick={() => setActiveTab('wishlist')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'wishlist' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <Heart className="w-5 h-5 mr-3" /> 찜 목록
+              <BsHeart className="w-5 h-5 mr-3" /> 찜 목록
             </button>
             <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-indigo-50 text-indigo-900' : 'text-gray-600 hover:bg-gray-50'}`}>
               <Star className="w-5 h-5 mr-3" /> 리뷰 관리
@@ -671,7 +673,7 @@ export const MyPage: React.FC = () => {
                   {deleteProduct.participantCount > 0 ? <AlertTriangle className="w-6 h-6" /> : <Trash2 className="w-6 h-6" />}
                 </div>
                 <button onClick={() => setShowDeleteModal(false)} className="text-gray-400 hover:text-gray-600">
-                  <X className="w-6 h-6" />
+                  <BiX className="w-6 h-6" />
                 </button>
               </div>
 

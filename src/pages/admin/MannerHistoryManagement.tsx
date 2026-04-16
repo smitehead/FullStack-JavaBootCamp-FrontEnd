@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Thermometer, Search, User, Calendar, TrendingUp, TrendingDown } from 'lucide-react';
+import { Thermometer, TrendingUp, TrendingDown } from 'lucide-react';
+import { BsPerson } from 'react-icons/bs';
+import { BsCalendarCheck } from 'react-icons/bs';
+import { BiSearch } from 'react-icons/bi';
 import { useAppContext } from '@/context/AppContext';
 
 const ITEMS_PER_PAGE = 15;
@@ -44,7 +47,7 @@ export const MannerHistoryManagement: React.FC = () => {
         </div>
         <div className="relative w-64 flex items-center h-10">
           <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-            <Search className="text-gray-400 w-4 h-4" />
+            <BiSearch className="text-gray-400 w-4 h-4" />
           </div>
           <input
             type="text"
@@ -72,7 +75,7 @@ export const MannerHistoryManagement: React.FC = () => {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 min-w-0 flex-1">
                     <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
-                      <User className="w-4 h-4 text-gray-400" />
+                      <BsPerson className="w-5 h-5 text-gray-400 group-hover:text-red-500 transition-colors" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-3 flex-wrap mb-1">
@@ -92,7 +95,7 @@ export const MannerHistoryManagement: React.FC = () => {
                   </div>
                   <div className="flex flex-col items-end shrink-0">
                     <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400">
-                      <Calendar className="w-3 h-3" />
+                      <BsCalendarCheck className="w-3 h-3" />
                       {new Date(history.createdAt).toLocaleDateString()}
                     </div>
                     <span className="text-[10px] text-gray-400 font-medium">

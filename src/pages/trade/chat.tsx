@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  Send, Image as ImageIcon, MoreVertical, ArrowLeft,
-  ShoppingBag, ChevronRight, MessageSquare, RefreshCw,
+  Send, Image as ImageIcon, MoreVertical,
+  ShoppingBag, MessageSquare, RefreshCw,
   AlertCircle, Loader2, Wifi, WifiOff
 } from 'lucide-react';
+import { BiArrowBack, BiChevronRight } from 'react-icons/bi';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -567,7 +568,7 @@ export const Chat: React.FC = () => {
             {/* 헤더 */}
             <div className="px-6 py-4 bg-white border-b border-gray-100 flex items-center gap-4">
               <button onClick={() => setSelectedRoom(null)} className="md:hidden p-1 text-gray-600">
-                <ArrowLeft className="w-5 h-5" />
+                <BiArrowBack className="w-5 h-5" />
               </button>
               <img src={selectedRoom.otherUser.profileImage || '/default-profile.png'}
                 alt="" className="w-10 h-10 rounded-full object-cover bg-gray-100" />

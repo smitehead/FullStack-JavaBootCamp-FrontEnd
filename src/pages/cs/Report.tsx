@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { AlertTriangle, ChevronLeft, Send, Info, CheckCircle2, Camera, X } from 'lucide-react';
+import { AlertTriangle, Send, Info, CheckCircle2 } from 'lucide-react';
+import { BiX } from 'react-icons/bi';
+import { BiChevronLeft } from 'react-icons/bi';
+import { BsCamera } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -130,7 +133,7 @@ export const Report: React.FC = () => {
           onClick={() => navigate(-1)}
           className="flex items-center text-sm font-bold text-gray-400 hover:text-gray-900 transition-colors mb-6 group"
         >
-          <ChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
+          <BiChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
           뒤로가기
         </button>
 
@@ -203,13 +206,13 @@ export const Report: React.FC = () => {
                         onClick={() => removeImage(idx)}
                         className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                       >
-                        <X className="w-3 h-3" />
+                        <BiX className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
                   {images.length < 5 && (
                     <label className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-300 hover:bg-red-50 transition-all group">
-                      <Camera className="w-6 h-6 text-gray-400 group-hover:text-red-500 transition-colors" />
+                      <BsCamera className="w-6 h-6 text-gray-400 group-hover:text-red-500 transition-colors" />
                       <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-500 transition-colors">사진 추가</span>
                       <input
                         type="file"

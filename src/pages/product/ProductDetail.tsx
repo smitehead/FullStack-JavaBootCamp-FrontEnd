@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { Heart, Share2, AlertTriangle, Clock, MapPin, Flag, ShieldCheck, ChevronRight, TrendingUp, Info, X, Wallet, ArrowLeft, Package, Users, MessageSquare, Reply, Ban, AlertCircle } from 'lucide-react';
+import { AlertTriangle, Flag, ShieldCheck, TrendingUp, Info, Wallet, Package, MessageSquare, Reply, Ban, AlertCircle } from 'lucide-react';
+import { BiArrowBack, BiChevronRight, BiShareAlt, BiX } from 'react-icons/bi';
+import { BsHeart, BsGeoAlt, BsPeople, BsClock } from 'react-icons/bs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -776,7 +778,7 @@ export const ProductDetail: React.FC = () => {
           onClick={() => navigate(-1)}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <ArrowLeft className="w-6 h-6 text-gray-900" />
+          <BiArrowBack className="w-6 h-6 text-gray-900" />
         </button>
       </div>
 
@@ -816,13 +818,13 @@ export const ProductDetail: React.FC = () => {
                   onClick={() => setSelectedImage(prev => (prev === 0 ? product.images.length - 1 : prev - 1))}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
                 >
-                  <ChevronRight className="w-6 h-6 rotate-180" />
+                  <BiChevronRight className="w-6 h-6 rotate-180" />
                 </button>
                 <button
                   onClick={() => setSelectedImage(prev => (prev === product.images.length - 1 ? 0 : prev + 1))}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <BiChevronRight className="w-6 h-6" />
                 </button>
               </>
             )}
@@ -847,7 +849,7 @@ export const ProductDetail: React.FC = () => {
             <div className="flex items-center justify-between mb-2">
               <nav className="flex items-center text-xs text-gray-400 space-x-1">
                 <Link to="/search" className="hover:text-gray-900 transition-colors">홈</Link>
-                <ChevronRight className="w-3 h-3" />
+                <BiChevronRight className="w-3 h-3" />
                 {product.categoryPath && product.categoryPath.length > 0 ? (
                   product.categoryPath.map((cat, index) => {
                     // 대/중/소 분류 단계에 맞는 쿼리 파라미터 생성
@@ -864,7 +866,7 @@ export const ProductDetail: React.FC = () => {
                         >
                           {cat.name}
                         </Link>
-                        {index < product.categoryPath!.length - 1 && <ChevronRight className="w-3 h-3" />}
+                        {index < product.categoryPath!.length - 1 && <BiChevronRight className="w-3 h-3" />}
                       </React.Fragment>
                     );
                   })
@@ -873,7 +875,7 @@ export const ProductDetail: React.FC = () => {
                 )}
                 <span className="mx-1 text-gray-300">•</span>
                 <span className="flex items-center">
-                  <Clock className="w-3 h-3 mr-1" />
+                  <BsClock className="w-3.5 h-3.5 mr-1.5" />
                   {formatDistanceToNow(new Date(product.startTime || Date.now()), { addSuffix: true, locale: ko })}
                 </span>
               </nav>
@@ -895,7 +897,7 @@ export const ProductDetail: React.FC = () => {
                 <div className="flex items-center">
                   {(product.transactionMethod !== 'delivery' && product.location) && (
                     <>
-                      <MapPin className="w-3 h-3 mr-1" /> {product.location}
+                      <BsGeoAlt className="w-3 h-3 mr-1" /> {product.location}
                     </>
                   )}
                 </div>
@@ -904,7 +906,7 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => setIsShareModalOpen(true)}
                     className="flex items-center hover:text-gray-600 transition-colors font-medium"
                   >
-                    <Share2 className="w-3 h-3 mr-1" /> 공유하기
+                    <BiShareAlt className="w-4 h-4 mr-1" /> 공유하기
                   </button>
                   <Link to={`/report?productId=${product.id}`} className="flex items-center hover:text-red-500 transition-colors font-medium">
                     <Flag className="w-3 h-3 mr-1" /> 신고하기
@@ -952,13 +954,13 @@ export const ProductDetail: React.FC = () => {
               <div>
                 <p className="text-xs font-bold text-gray-400 mb-2">남은 시간</p>
                 <div className={`flex items-center text-2xl font-bold font-mono tracking-tight ${isFinished ? 'text-gray-400' : 'text-red-500'}`}>
-                  <Clock className="w-6 h-6 mr-3 shrink-0" />
+                  <BsClock className="w-6 h-6 mr-3 shrink-0" />
                   <span>{timeLeft || '--:--:--'}</span>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-xs font-bold text-gray-400 mb-2 flex items-center justify-end">
-                  <Users className="w-3 h-3 mr-1" />
+                  <BsPeople className="w-3 h-3 mr-1" />
                   {product.participantCount}명 참여 중
                 </p>
               </div>
@@ -991,7 +993,7 @@ export const ProductDetail: React.FC = () => {
                 onClick={toggleWishlist}
                 className={`flex flex-col items-center justify-center transition-all min-w-[48px] ${isWishlisted ? 'text-red-500' : 'text-gray-300 hover:text-gray-400'}`}
               >
-                <Heart className={`w-8 h-8 mb-1 ${isWishlisted ? 'fill-current' : ''}`} />
+                <BsHeart className={`w-8 h-8 mb-1 ${isWishlisted ? 'fill-current' : ''}`} />
                 <span className="text-xs font-bold text-gray-500">
                   {product.wishlistCount || 0}
                 </span>
@@ -1291,7 +1293,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
                 <div className="flex gap-3">
                   <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-orange-500" />
+                    <BsGeoAlt className="w-5 h-5 text-orange-500" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 mb-1">대면 거래는 공공장소에서</p>
@@ -1322,7 +1324,7 @@ export const ProductDetail: React.FC = () => {
                 {modalType === 'bid' ? '입찰 참여하기' : '자동 입찰 설정'}
               </h3>
               <button onClick={() => setIsBidModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <X className="w-6 h-6 text-gray-400" />
+                <BiX className="w-6 h-6" />
               </button>
             </div>
 
@@ -1501,7 +1503,7 @@ export const ProductDetail: React.FC = () => {
             <div className="p-6 border-b border-gray-50 flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900">공유하기</h3>
               <button onClick={() => setIsShareModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <X className="w-5 h-5 text-gray-400" />
+                <BiX className="w-5 h-5" />
               </button>
             </div>
             <div className="p-8">
@@ -1693,7 +1695,7 @@ export const ProductDetail: React.FC = () => {
                   disabled={isBidCancelling}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <X className="w-6 h-6 text-gray-300" />
+                  <BiX className="w-6 h-6" />
                 </button>
               </div>
 

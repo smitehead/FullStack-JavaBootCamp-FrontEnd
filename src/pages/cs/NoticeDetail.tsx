@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Calendar, Info, AlertTriangle, List } from 'lucide-react';
+import { Info, AlertTriangle, List } from 'lucide-react';
+import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
+import { BsCalendarCheck } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
 
@@ -61,7 +63,7 @@ export const NoticeDetail: React.FC = () => {
     <div className="max-w-[1000px] mx-auto px-6 py-12">
       {/* Back Button */}
       <Link to="/notice" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
-        <ChevronLeft className="w-4 h-4" />
+        <BiChevronLeft className="w-4 h-4 mr-2" />
         공지사항 목록
       </Link>
 
@@ -80,7 +82,7 @@ export const NoticeDetail: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-6">{notice.title}</h1>
           <div className="flex items-center gap-6 text-sm text-gray-400 font-medium">
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
+              <BsCalendarCheck className="w-4 h-4" />
               {format(new Date(notice.createdAt), 'yyyy.MM.dd')}
             </div>
           </div>
@@ -131,6 +133,7 @@ export const NoticeDetail: React.FC = () => {
               className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
             >
               <List className="w-4 h-4" />
+              <BiChevronRight className="w-4 h-4 ml-2" />
               목록으로
             </Link>
           </div>

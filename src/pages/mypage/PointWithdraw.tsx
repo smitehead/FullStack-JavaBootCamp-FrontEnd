@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Landmark, Plus, CheckCircle2, ArrowLeft, X } from 'lucide-react';
+import { Landmark, CheckCircle2 } from 'lucide-react';
+import { BiPlus, BiX } from 'react-icons/bi';
+import { BiArrowBack } from 'react-icons/bi';
 import { motion } from 'motion/react';
 import { useAppContext } from '@/context/AppContext';
 import api from '@/services/api';
@@ -135,7 +137,7 @@ export const PointWithdraw: React.FC = () => {
           onClick={() => navigate(-1)}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <ArrowLeft className="w-6 h-6 text-gray-900" />
+          <BiArrowBack className="w-6 h-6 text-gray-900" />
         </button>
         <h2 className="text-3xl font-bold text-gray-900 tracking-normal">포인트 출금</h2>
       </div>
@@ -158,7 +160,7 @@ export const PointWithdraw: React.FC = () => {
             className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${withdrawType === 'new' ? 'border-indigo-600 bg-indigo-50/50 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${withdrawType === 'new' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-              <Plus className="w-5 h-5" />
+              <BiPlus className="w-5 h-5 mr-1" /> 계좌 추가하기
             </div>
             <p className={`font-bold ${withdrawType === 'new' ? 'text-indigo-900' : 'text-gray-900'}`}>새로운 계좌로</p>
             <p className="text-xs text-gray-400 font-medium mt-1">직접 입력하여 출금</p>
@@ -356,7 +358,7 @@ export const PointWithdraw: React.FC = () => {
                   추가/수정
                 </button>
                 <button onClick={() => setIsMethodModalOpen(false)} className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                  <X className="w-6 h-6" />
+                  <BiX className="w-8 h-8" />
                 </button>
               </div>
             </div>

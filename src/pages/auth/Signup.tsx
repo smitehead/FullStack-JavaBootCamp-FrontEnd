@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
-import { Package, Check, ChevronRight, Mail, User, Lock, ShieldCheck, MapPin, Phone, Calendar, AlertCircle, Send, CheckCircle2, X, Sparkles, ChevronDown } from 'lucide-react';
+import { Package, Check, Mail, Lock, ShieldCheck, Phone, AlertCircle, Send, CheckCircle2, Sparkles } from 'lucide-react';
+import { BsGeoAlt, BsCalendarCheck, BsPerson } from 'react-icons/bs';
+import { BiChevronRight, BiChevronDown, BiX } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
 
 declare global {
@@ -357,7 +359,7 @@ export const Signup: React.FC = () => {
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${Object.values(terms).every(v => v) ? 'bg-[#FF5A5A] text-white' : 'bg-white text-gray-200 border border-gray-200'}`}>
-                    <Check className="w-4 h-4" />
+                    <BsPerson className="inline-block" />
                   </div>
                   <span className="font-bold text-gray-800">전체 동의하기</span>
                 </div>
@@ -409,7 +411,7 @@ export const Signup: React.FC = () => {
               className={`w-full mt-10 py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
             >
               다음 단계로
-              <ChevronRight className="w-4 h-4" />
+              <BiChevronRight className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -558,7 +560,7 @@ export const Signup: React.FC = () => {
                           <option value="custom">직접 입력</option>
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                          <ChevronDown className="w-4 h-4" />
+                          <BiChevronDown className="w-4 h-4" />
                         </div>
                       </div>
                     </div>
