@@ -639,9 +639,9 @@ export const ProductDetail: React.FC = () => {
       setIsHighestBidder(true);
 
       if (modalType === 'auto') {
-        showToast('자동 입찰이 설정되었습니다! 입찰 내역으로 이동합니다.', 'success');
+        showToast('자동 입찰이 설정되었습니다!', 'success');
         setIsBidModalOpen(false);
-        setTimeout(() => navigate('/mypage?tab=bidding'), 800);
+        await fetchProduct();
         return;
       }
 
