@@ -1073,14 +1073,24 @@ export const ProductDetail: React.FC = () => {
                     {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
                   </button>
 
-                  {/* 입찰 참여하기 버튼 → 약관 동의 모달 오픈 */}
-                  <button
-                    onClick={() => setShowBidTermsModal(true)}
-                    disabled={isFinished}
-                    className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-                  >
-                    입찰 참여하기
-                  </button>
+                  {/* 최고 입찰자: 입찰 취소하기 / 일반: 입찰 참여하기 → 약관 모달 */}
+                  {isHighestBidder ? (
+                    <button
+                      onClick={() => setShowBidCancelModal(true)}
+                      disabled={isFinished}
+                      className="flex-1 py-4 bg-gray-50 border-2 border-gray-100 text-gray-500 font-bold rounded-xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      입찰 취소하기
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowBidTermsModal(true)}
+                      disabled={isFinished}
+                      className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    >
+                      입찰 참여하기
+                    </button>
+                  )}
                 </>
               )}
             </div>
