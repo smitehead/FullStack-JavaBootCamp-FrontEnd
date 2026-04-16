@@ -12,8 +12,8 @@
       font-family: 'Noto Sans KR', sans-serif;
     }
 
-    /* sonner: toast 중앙 정렬 */
-    [data-sonner-toast] {
+    /* sonner: toast 중앙 정렬 (3중 선택자로 sonner 내부 CSS 특이도 우선) */
+    [data-sonner-toast][data-sonner-toast][data-sonner-toast] {
       left: 50% !important;
       transform: var(--y) translateX(-50%) !important;
     }
