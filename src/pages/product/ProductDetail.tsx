@@ -1457,8 +1457,6 @@ export const ProductDetail: React.FC = () => {
                   </div>
                 )}
               </div>
-
-              {/* Action Button */}
               {modalType === 'bid' ? (
                 isHighestBidder ? (
                   <button
@@ -1472,12 +1470,6 @@ export const ProductDetail: React.FC = () => {
                   </button>
                 ) : (
                   <div className="flex gap-3">
-                    <button
-                      onClick={handleBidSubmit}
-                      className="flex-1 py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
-                    >
-                      입찰하기
-                    </button>
                     {product.instantPrice && (
                       <button
                         onClick={handleBuyout}
@@ -1486,6 +1478,12 @@ export const ProductDetail: React.FC = () => {
                         즉시 구매하기
                       </button>
                     )}
+                    <button
+                      onClick={handleBidSubmit}
+                      className="flex-1 py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                    >
+                      입찰하기
+                    </button>
                   </div>
                 )
               ) : (
