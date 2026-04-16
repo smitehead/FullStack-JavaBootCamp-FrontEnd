@@ -696,13 +696,7 @@ export const Settings: React.FC = () => {
                 <div className="py-10 text-center text-gray-400">
                   <BsCreditCard className="w-10 h-10 mx-auto mb-3 text-gray-200" />
                   <p className="text-sm font-medium">등록된 카드가 없습니다.</p>
-                  <p className="text-xs text-gray-300 mt-1 mb-4">카드를 등록하면 포인트를 간편하게 충전할 수 있습니다.</p>
-                  <button
-                    onClick={() => navigate('/points/charge')}
-                    className="px-6 py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all"
-                  >
-                    카드 등록하러 가기
-                  </button>
+                  <p className="text-xs text-gray-300 mt-1">카드를 등록하면 포인트를 간편하게 충전할 수 있습니다.</p>
                 </div>
               )}
             </section>

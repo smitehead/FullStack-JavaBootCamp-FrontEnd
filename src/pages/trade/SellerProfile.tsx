@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsExclamationCircleFill, BsChevronRight } from 'react-icons/bs';
+import { BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsFlag, BsChevronRight, BsArrowLeft } from 'react-icons/bs';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -127,12 +127,12 @@ export const SellerProfile: React.FC = () => {
 
   return (
     <div className="max-w-[1200px] mx-auto px-10 py-8">
-      {/* Breadcrumb */}
-      <nav className="flex items-center text-sm text-gray-500 space-x-2 mb-8">
-        <Link to="/" className="hover:text-gray-900 transition-colors">홈</Link>
-        <BsChevronRight className="w-4 h-4" />
-        <span className="font-bold text-gray-900">판매자 프로필</span>
-      </nav>
+      <button
+        onClick={() => navigate(-1)}
+        className="p-2 hover:bg-gray-100 rounded-full transition-colors mb-6"
+      >
+        <BsArrowLeft className="w-6 h-6 text-gray-900" />
+      </button>
 
       {/* Profile Header */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10 mb-8 relative overflow-hidden">
@@ -155,15 +155,15 @@ export const SellerProfile: React.FC = () => {
                   <div className="flex items-center gap-2 ml-2">
                     <button
                       onClick={handleBlockToggle}
-                      className={`text-xs font-bold transition-colors flex items-center gap-1 ${isBlocked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                      className={`text-xs font-medium transition-colors flex items-center gap-1 ${isBlocked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
                     >
                       <BsShieldFill className={`w-3 h-3 ${isBlocked ? 'text-blue-500' : ''}`} /> {isBlocked ? '차단풀기' : '차단하기'}
                     </button>
                     <button
                       onClick={() => navigate(`/report?sellerId=${seller.sellerNo}&sellerNickname=${encodeURIComponent(seller.nickname)}`)}
-                      className="text-xs font-bold text-red-400 hover:text-red-600 transition-colors flex items-center gap-1"
+                      className="text-xs font-medium text-red-500 hover:text-red-600 transition-colors flex items-center gap-1"
                     >
-                      <BsExclamationCircleFill className="w-3 h-3" /> 신고하기
+                      <BsFlag className="w-3 h-3" /> 신고하기
                     </button>
                   </div>
                 </div>

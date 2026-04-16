@@ -134,7 +134,7 @@ export const Points: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">포인트</h1>
         </div>
         <Link
-          to="/points/charge"
+          to="/settings?tab=card"
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all"
         >
           <BsCreditCard className="w-3.5 h-3.5" /> 카드 관리

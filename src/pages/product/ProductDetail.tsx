@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShare, BsArrowRepeat, BsTrash3 } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsShieldFillCheck, BsFlag, BsInfoCircle, BsInfoCircleFill, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShare, BsArrowRepeat, BsTrash3 } from 'react-icons/bs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -1321,7 +1321,7 @@ export const ProductDetail: React.FC = () => {
               <div className="space-y-6">
                 <div className="flex gap-3">
                   <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BsShieldCheck className="w-5 h-5 text-emerald-500" />
+                    <BsShieldFillCheck className="w-5 h-5 text-emerald-500" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 mb-1">안심 결제 사용</p>
@@ -1339,7 +1339,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
                 <div className="flex gap-3">
                   <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BsInfoCircle className="w-5 h-5 text-blue-500" />
+                    <BsInfoCircleFill className="w-5 h-5 text-blue-500" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 mb-1">상품 꼼꼼히 확인</p>

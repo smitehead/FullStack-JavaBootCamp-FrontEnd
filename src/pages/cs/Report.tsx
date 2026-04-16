@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { BsSend } from 'react-icons/bs';
-
-import { BsExclamationTriangle, BsCheckCircle, BsInfoCircle, BsCamera, BsX, BsChevronLeft } from 'react-icons/bs';
+import { BsCheckCircle, BsInfoCircle, BsCamera, BsX, BsChevronLeft } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -138,18 +136,13 @@ export const Report: React.FC = () => {
 
         <div className="bg-white rounded-[32px] shadow-xl border border-gray-100 overflow-hidden">
           <div className="p-8 md:p-12">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="bg-red-100 p-3 rounded-2xl">
-                <BsExclamationTriangle className="w-8 h-8 text-red-500" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-                  {sellerId ? `${sellerNickname}님 신고하기` : '상품 신고하기'}
-                </h1>
-                <p className="text-sm text-gray-500 font-medium">
-                  {sellerId ? '부적절한 판매자를 신고하여 안전한 거래 환경을 만들어주세요.' : '부적절한 상품을 신고해주세요.'}
-                </p>
-              </div>
+            <div className="mb-10">
+              <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-2">
+                {sellerId ? `${sellerNickname}님 신고하기` : '상품 신고하기'}
+              </h1>
+              <p className="text-sm text-gray-400 font-bold">
+                {sellerId ? '부적절한 판매자를 신고하여 안전한 거래 환경을 만들어주세요.' : '부적절한 상품을 신고해주세요.'}
+              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -237,9 +230,8 @@ export const Report: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-5 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <BsSend className="w-5 h-5" />
                 {isSubmitting ? '접수 중...' : '신고 접수하기'}
               </button>
             </form>
