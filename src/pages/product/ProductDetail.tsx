@@ -1076,7 +1076,7 @@ export const ProductDetail: React.FC = () => {
                     <button
                       onClick={() => setShowBidCancelModal(true)}
                       disabled={isFinished}
-                      className="flex-1 py-4 bg-gray-50 border-2 border-gray-100 text-gray-500 font-bold rounded-xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 py-4 bg-red-50 border-2 border-red-200 text-red-500 font-bold rounded-xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       입찰 취소하기
                     </button>
