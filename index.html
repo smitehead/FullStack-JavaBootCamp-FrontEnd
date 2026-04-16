@@ -29,6 +29,13 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #555;
     }
+
+    /* sonner: toast pill 수평 중앙 정렬 */
+    [data-sonner-toast] {
+      left: 50% !important;
+      transform: var(--y) translateX(-50%) !important;
+      transition: transform 0.2s ease, opacity 0.2s ease, height 0.2s ease !important;
+    }
   </style>
   <script type="importmap">
 {

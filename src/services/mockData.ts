@@ -345,60 +345,6 @@ export const NOTIFICATIONS: Notification[] = [
   },
 ];
 
-export const MOCK_CHAT_ROOMS: ChatRoom[] = [
-  {
-    id: 'chat_won_buy',
-    productId: 'prod_won_buy',
-    productTitle: '애플워치 울트라 2',
-    productImage: 'https://picsum.photos/seed/watch/200/200',
-    productPrice: 850000,
-    otherUser: {
-      id: 'user_2',
-      nickname: '테크매니아',
-      profileImage: 'https://picsum.photos/seed/user2/100/100',
-      role: 'seller'
-    },
-    lastMessage: '안녕하세요, 낙찰 축하드립니다! 직거래 장소 어디가 편하신가요?',
-    lastMessageAt: '2023-10-24T18:10:00',
-    unreadCount: 1,
-    messages: []
-  },
-  {
-    id: 'chat_won_sell',
-    productId: 'prod_won_sell',
-    productTitle: '닌텐도 스위치 OLED 화이트',
-    productImage: 'https://picsum.photos/seed/switch/200/200',
-    productPrice: 350000,
-    otherUser: {
-      id: 'user_3',
-      nickname: '홈스타일링',
-      profileImage: 'https://picsum.photos/seed/user3/100/100',
-      role: 'buyer'
-    },
-    lastMessage: '안녕하세요! 낙찰받은 사람입니다. 택배로 받고 싶은데 주소 보내드리면 될까요?',
-    lastMessageAt: '2023-10-24T20:10:00',
-    unreadCount: 1,
-    messages: []
-  },
-  {
-    id: 'chat_1',
-    productId: 'prod_1',
-    productTitle: '아이패드 프로 12.9 5세대 M1',
-    productImage: 'https://picsum.photos/seed/ipad/200/200',
-    productPrice: 1150000,
-    otherUser: {
-      id: 'user_2',
-      nickname: '테크매니아',
-      profileImage: 'https://picsum.photos/seed/user2/100/100',
-      role: 'seller'
-    },
-    lastMessage: '네, 직거래 가능합니다.',
-    lastMessageAt: '2023-10-25T14:20:00',
-    unreadCount: 2,
-    messages: []
-  }
-];
-
 export const MOCK_REVIEW_TAGS: ReviewTag[] = [
   { id: "tag_1", content: "응답이 빨라요", count: 12 },
   { id: "tag_2", content: "친절하고 매너가 좋아요", count: 8 },

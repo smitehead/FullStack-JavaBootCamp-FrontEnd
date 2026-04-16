@@ -425,7 +425,7 @@ export const ProductList: React.FC = () => {
                 placeholder="최소 금액"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value.replace(/[^0-9]/g, ''))}
-                className="w-40 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-brand"
+                className="w-40 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
               />
               <span className="absolute right-3 top-2 text-gray-400 text-sm">원</span>
             </div>
@@ -438,7 +438,7 @@ export const ProductList: React.FC = () => {
                 placeholder="최대 금액"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value.replace(/[^0-9]/g, ''))}
-                className="w-40 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-brand"
+                className="w-40 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
               />
               <span className="absolute right-3 top-2 text-gray-400 text-sm">원</span>
             </div>
@@ -466,7 +466,7 @@ export const ProductList: React.FC = () => {
                   setDistrict('');
                   setNeighborhood('');
                 }}
-                className="w-32 border border-gray-300 rounded px-2 py-2 text-sm focus:outline-none focus:border-brand"
+                className="w-32 border border-gray-300 rounded px-2 py-2 text-sm focus:outline-none focus:border-gray-400"
               >
                 <option value="">시/도 선택</option>
                 {LOCATION_DATA.map(l => (
@@ -534,7 +534,7 @@ export const ProductList: React.FC = () => {
                 type="checkbox"
                 checked={faceToFace}
                 onChange={(e) => { setFaceToFace(e.target.checked); updateParams({ face: e.target.checked ? 'true' : '' }); }}
-                className="w-4 h-4 rounded border-gray-300 text-brand focus:ring-brand"
+                className="w-4 h-4 rounded border-gray-300 text-gray-600 focus:ring-gray-400"
               />
               <span className="text-sm text-gray-600 group-hover:text-gray-900">대면거래</span>
             </label>
@@ -543,7 +543,7 @@ export const ProductList: React.FC = () => {
                 type="checkbox"
                 checked={delivery}
                 onChange={(e) => { setDelivery(e.target.checked); updateParams({ delivery: e.target.checked ? 'true' : '' }); }}
-                className="w-4 h-4 rounded border-gray-300 text-brand focus:ring-brand"
+                className="w-4 h-4 rounded border-gray-300 text-gray-600 focus:ring-gray-400"
               />
               <span className="text-sm text-gray-600 group-hover:text-gray-900">택배거래</span>
             </label>

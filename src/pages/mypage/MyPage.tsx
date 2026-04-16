@@ -93,6 +93,8 @@ export const MyPage: React.FC = () => {
 
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [repostProduct, setRepostProduct] = useState<Product | null>(null);
+  const [showRepostModal, setShowRepostModal] = useState(false);
 
   const [profileImage, setProfileImage] = useState(user?.profileImage || '');
   const [uploadingProfile, setUploadingProfile] = useState(false);
@@ -293,7 +295,8 @@ export const MyPage: React.FC = () => {
   };
 
   const handleRepost = (product: Product) => {
-    navigate('/register', { state: { product } });
+    setRepostProduct(product);
+    setShowRepostModal(true);
   };
 
   // 판매 필터링
@@ -374,7 +377,7 @@ export const MyPage: React.FC = () => {
             <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-indigo-600 hover:text-white transition-all duration-300 border border-gray-100 disabled:opacity-50">
               {uploadingProfile
                 ? <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                : <Settings className="w-5 h-5" />
+                : <BsGear className="w-5 h-5" />
               }
             </button>
             <input type="file" ref={fileInputRef} onChange={handleProfileImageChange} accept="image/*" className="hidden" />
@@ -432,7 +435,7 @@ export const MyPage: React.FC = () => {
                 <div className="flex flex-col gap-2">
                   <Link to="/points" className="flex items-center gap-3 group cursor-pointer">
                     <div className="bg-white/10 p-2 rounded-xl group-hover:bg-white/20 transition-colors">
-                      <Wallet className="w-5 h-5 text-indigo-400" />
+                      <Wallet className="w-5 h-5 text-white" />
                     </div>
                     <p className="text-xs font-bold text-indigo-300 uppercase tracking-widest group-hover:text-white transition-colors">보유 포인트</p>
                   </Link>
@@ -666,17 +669,8 @@ export const MyPage: React.FC = () => {
       {showDeleteModal && deleteProduct && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-md relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8">
-              <div className="flex items-center justify-between mb-6">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${deleteProduct.participantCount > 0 ? 'bg-red-50 text-red-500' : 'bg-gray-50 text-gray-500'}`}>
-                  {deleteProduct.participantCount > 0 ? <AlertTriangle className="w-6 h-6" /> : <Trash2 className="w-6 h-6" />}
-                </div>
-                <button onClick={() => setShowDeleteModal(false)} className="text-gray-400 hover:text-gray-600">
-                  <BiX className="w-6 h-6" />
-                </button>
-              </div>
-
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">게시글을 삭제하시겠습니까?</h3>
 
               {deleteProduct.participantCount > 0 && deleteProduct.status !== 'completed' ? (
@@ -687,18 +681,47 @@ export const MyPage: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                <p className="text-gray-500 text-sm font-medium mb-6 leading-relaxed">
-                  삭제된 게시글은 복구할 수 없습니다. <br />
-                  정말로 삭제하시겠습니까?
+                <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                  삭제된 게시글은 복구할 수 없습니다.
                 </p>
               )}
 
-              <div className="flex gap-3">
-                <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
+              <div className="flex gap-3 w-full">
+                <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
                   취소
                 </button>
-                <button onClick={confirmDelete} className="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-200">
+                <button onClick={confirmDelete} className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10">
                   삭제하기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Repost Confirmation Modal */}
+      {showRepostModal && repostProduct && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowRepostModal(false)}></div>
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">재게시하시겠습니까?</h3>
+              <p className="text-gray-500 text-sm font-medium mb-8 leading-relaxed">
+                기존 정보를 유지한 채 경매를 다시 시작합니다.
+              </p>
+
+              <div className="flex gap-3 w-full">
+                <button onClick={() => setShowRepostModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
+                  닫기
+                </button>
+                <button 
+                  onClick={() => {
+                    setShowRepostModal(false);
+                    navigate('/register', { state: { product: repostProduct } });
+                  }} 
+                  className="flex-1 py-3.5 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
+                >
+                  재게시하기
                 </button>
               </div>
             </div>

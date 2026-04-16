@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Toaster } from 'sonner';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -61,6 +61,21 @@ import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 // ㅎㅇ요
 
 const App: React.FC = () => {
+  useEffect(() => {
+    const applyAll = () => {
+      const toaster = document.querySelector<HTMLElement>('[data-sonner-toaster]');
+      if (!toaster) return;
+      toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((toast) => {
+        toast.style.setProperty('left', '50%', 'important');
+        toast.style.setProperty('transform', 'var(--y) translateX(-50%)', 'important');
+      });
+    };
+    const observer = new MutationObserver(applyAll);
+    observer.observe(document.body, { childList: true, subtree: true });
+    applyAll();
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <BrowserRouter>
       <AppProvider>

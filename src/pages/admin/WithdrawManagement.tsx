@@ -151,7 +151,7 @@ export const WithdrawManagement: React.FC = () => {
         <div className="flex flex-wrap items-center justify-end gap-3">
           <div className="relative w-64 flex items-center h-10">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
-              <Search className="text-gray-400 w-4 h-4" />
+              <BiSearch className="text-gray-400 w-4 h-4" />
             </div>
             <input
               type="text"
@@ -193,7 +193,7 @@ export const WithdrawManagement: React.FC = () => {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 min-w-0 flex-1">
                   <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <BiSearch className="w-4 h-4 text-gray-400" />
+                    <Wallet className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
