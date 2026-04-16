@@ -68,13 +68,20 @@ const App: React.FC = () => {
       rafId = requestAnimationFrame(() => {
         const toaster = document.querySelector<HTMLElement>('[data-sonner-toaster]');
         if (!toaster) return;
+        // 컨테이너 전체 너비
+        toaster.style.setProperty('width', '100vw', 'important');
+        toaster.style.setProperty('left', '0', 'important');
+        toaster.style.setProperty('right', '0', 'important');
+        toaster.style.setProperty('transform', 'none', 'important');
+        toaster.style.setProperty('pointer-events', 'none', 'important');
+        // 각 toast: margin auto 중앙 (transform 안 건드림)
         toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((el) => {
-          if (el.style.getPropertyValue('left') !== '50%') {
-            el.style.setProperty('left', '50%', 'important');
-          }
-          if (!el.style.getPropertyValue('transform').includes('translateX(-50%)')) {
-            el.style.setProperty('transform', 'var(--y) translateX(-50%)', 'important');
-          }
+          el.style.setProperty('left', '0', 'important');
+          el.style.setProperty('right', '0', 'important');
+          el.style.setProperty('margin-left', 'auto', 'important');
+          el.style.setProperty('margin-right', 'auto', 'important');
+          el.style.setProperty('width', 'fit-content', 'important');
+          el.style.setProperty('pointer-events', 'auto', 'important');
         });
       });
     };

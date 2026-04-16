@@ -12,10 +12,23 @@
       font-family: 'Noto Sans KR', sans-serif;
     }
 
-    /* sonner: toast 중앙 정렬 (3중 선택자로 sonner 내부 CSS 특이도 우선) */
+    /* sonner: 컨테이너를 뷰포트 전체로 확장 */
+    [data-sonner-toaster][data-sonner-toaster][data-sonner-toaster] {
+      width: 100vw !important;
+      left: 0 !important;
+      right: 0 !important;
+      transform: none !important;
+      pointer-events: none !important;
+    }
+
+    /* sonner: toast를 margin auto로 중앙 정렬 (transform 안 건드림 → 스택 유지) */
     [data-sonner-toast][data-sonner-toast][data-sonner-toast] {
-      left: 50% !important;
-      transform: var(--y) translateX(-50%) !important;
+      left: 0 !important;
+      right: 0 !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      width: fit-content !important;
+      pointer-events: auto !important;
     }
 
     /* Custom scrollbar for better aesthetics */
