@@ -1073,7 +1073,7 @@ export const ProductDetail: React.FC = () => {
                     <button
                       onClick={() => setShowBidCancelModal(true)}
                       disabled={isFinished}
-                      className="flex-1 py-4 bg-gray-50 border-2 border-gray-100 text-gray-500 font-bold rounded-xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 py-4 bg-red-50 border-2 border-red-200 text-red-500 font-bold rounded-xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       입찰 취소하기
                     </button>
@@ -1629,7 +1629,7 @@ export const ProductDetail: React.FC = () => {
                           <p className="text-sm font-black text-gray-900">주의: 취소 패널티가 발생합니다</p>
                         </div>
                         <ul className="space-y-3">
-                      <li className="flex items-center gap-2 text-xs font-bold text-gray-600">
+                          <li className="flex items-center gap-2 text-xs font-bold text-gray-600">
                             <div className="w-1 h-1 bg-gray-400 rounded-full" />
                             매너온도 <span className="text-red-500 font-black">10점</span> 즉시 차감
                           </li>
