@@ -3,16 +3,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { MoreVertical } from 'lucide-react';
-import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsHeart, BsClock, BsGeoAlt, BsPeople, BsPerson, BsWallet, BsThreeDotsVertical } from 'react-icons/bs';
 import { BiArrowBack, BiChevronRight, BiX, BiShareAlt, BiRefresh, BiTrash } from 'react-icons/bi';
-import { BsHeart, BsClock, BsGeoAlt, BsPeople, BsPerson } from 'react-icons/bs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { resolveImageUrls, getProfileImageUrl } from '../../utils/imageUtils';
+import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '../../utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 
@@ -87,7 +85,7 @@ export const ProductDetail: React.FC = () => {
 
   const handleQnaSubmit = async () => {
     if (!qnaInput.trim()) return;
-    if (!user) { showToast('로그인이 필요합니다.', 'error'); return; }
+    if (!user) { showToast("'로그인이 필요한 서비스입니다.' 로그인 페이지로 이동합니다.", 'error'); navigate('/login'); return; }
     try {
       await api.post(`/products/${id}/qna`, { content: qnaInput.trim() });
       setQnaInput('');
@@ -554,7 +552,7 @@ export const ProductDetail: React.FC = () => {
 
   const handleBuyout = async () => {
     if (!user) {
-      showToast("로그인이 필요한 서비스입니다.", 'error');
+      showToast("'로그인이 필요한 서비스입니다.' 로그인 페이지로 이동합니다.", 'error');
       navigate('/login');
       return;
     }
@@ -642,9 +640,9 @@ export const ProductDetail: React.FC = () => {
       setIsHighestBidder(true);
 
       if (modalType === 'auto') {
-        showToast('자동 입찰이 설정되었습니다! 입찰 내역으로 이동합니다.', 'success');
+        showToast('자동 입찰이 설정되었습니다!', 'success');
         setIsBidModalOpen(false);
-        setTimeout(() => navigate('/mypage?tab=bidding'), 800);
+        await fetchProduct();
         return;
       }
 
@@ -803,7 +801,7 @@ export const ProductDetail: React.FC = () => {
               onClick={() => setShowMoreMenu(!showMoreMenu)}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <MoreVertical className="w-6 h-6 text-gray-900" />
+              <BsThreeDotsVertical className="w-6 h-6 text-gray-900" />
             </button>
             {showMoreMenu && (
               <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[150] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
@@ -918,7 +916,7 @@ export const ProductDetail: React.FC = () => {
                 )}
                 <span className="mx-1 text-gray-300">•</span>
                 <span className="flex items-center">
-                  <BsClock className="w-3.5 h-3.5 mr-1.5" />
+                  <BsClock className="w-3 h-3 mr-1" />
                   {formatDistanceToNow(new Date(product.startTime || Date.now()), { addSuffix: true, locale: ko })}
                 </span>
               </nav>
@@ -949,7 +947,7 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => setIsShareModalOpen(true)}
                     className="flex items-center hover:text-gray-600 transition-colors font-medium"
                   >
-                    <BiShareAlt className="w-4 h-4 mr-1" /> 공유하기
+                    <BiShareAlt className="w-3 h-3 mr-1" /> 공유하기
                   </button>
                   <Link to={`/report?productId=${product.id}`} className="flex items-center hover:text-red-500 transition-colors font-medium">
                     <BsFlag className="w-3 h-3 mr-1" /> 신고하기
@@ -1076,7 +1074,7 @@ export const ProductDetail: React.FC = () => {
                     <button
                       onClick={() => setShowBidCancelModal(true)}
                       disabled={isFinished}
-                      className="flex-1 py-4 bg-gray-50 border-2 border-gray-100 text-gray-500 font-bold rounded-xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 py-4 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
                     >
                       입찰 취소하기
                     </button>
@@ -1358,11 +1356,11 @@ export const ProductDetail: React.FC = () => {
                 {modalType === 'bid' ? '입찰 참여하기' : '자동 입찰 설정'}
               </h3>
               <button onClick={() => setIsBidModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <BiX className="w-6 h-6" />
+                <BiX className="w-6 h-6 text-gray-400" />
               </button>
             </div>
 
-            <div className="p-8">
+            <div className="p-8 space-y-8">
               {/* My Participation Status */}
               {hasBid && (
                 <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm relative overflow-hidden">
@@ -1387,7 +1385,7 @@ export const ProductDetail: React.FC = () => {
               <div className="bg-gray-900 rounded-2xl p-5 text-white flex justify-between items-center shadow-lg">
                 <div className="flex items-center gap-3">
                   <div className="bg-white/10 p-2 rounded-xl">
-                    <BsCreditCard className="w-5 h-5 text-white" />
+                    <BsWallet className="w-5 h-5 text-white" />
                   </div>
                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-widest">보유 포인트</span>
                 </div>
@@ -1460,8 +1458,6 @@ export const ProductDetail: React.FC = () => {
                   </div>
                 )}
               </div>
-
-              {/* Action Button */}
               {modalType === 'bid' ? (
                 isHighestBidder ? (
                   <button
@@ -1475,12 +1471,6 @@ export const ProductDetail: React.FC = () => {
                   </button>
                 ) : (
                   <div className="flex gap-3">
-                    <button
-                      onClick={handleBidSubmit}
-                      className="flex-1 py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
-                    >
-                      입찰하기
-                    </button>
                     {product.instantPrice && (
                       <button
                         onClick={handleBuyout}
@@ -1489,6 +1479,12 @@ export const ProductDetail: React.FC = () => {
                         즉시 구매하기
                       </button>
                     )}
+                    <button
+                      onClick={handleBidSubmit}
+                      className="flex-1 py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                    >
+                      입찰하기
+                    </button>
                   </div>
                 )
               ) : (
@@ -1540,7 +1536,7 @@ export const ProductDetail: React.FC = () => {
             <div className="p-6 border-b border-gray-50 flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900">공유하기</h3>
               <button onClick={() => setIsShareModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <BiX className="w-5 h-5" />
+                <BiX className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             <div className="p-8">
@@ -1628,7 +1624,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="space-y-6">
                       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                         <div className="flex items-center gap-2 mb-4">
-                          <BsInfoCircle className="w-4 h-4 text-red-500" />
+                          <BsExclamationCircle className="w-4 h-4 text-red-500" />
                           <p className="text-sm font-black text-gray-900">주의: 취소 패널티가 발생합니다</p>
                         </div>
                         <ul className="space-y-3">
@@ -1672,7 +1668,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="space-y-6">
                       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                         <div className="flex items-center gap-2 mb-3">
-                          <BsInfoCircle className="w-4 h-4 text-orange-500" />
+                          <BsExclamationCircle className="w-4 h-4 text-orange-500" />
                           <p className="text-sm font-black text-gray-900">마감 임박 (12시간 이내)</p>
                         </div>
                         <p className="text-xs text-gray-600 leading-relaxed font-bold">
@@ -1720,7 +1716,7 @@ export const ProductDetail: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center shadow-sm">
-                    <BsFlag className="w-7 h-7 text-red-500" />
+                    <BsBan className="w-7 h-7 text-red-500" />
                   </div>
                   <div>
                     <h3 className="text-2xl font-black text-gray-900 tracking-tight">입찰 취소</h3>
@@ -1732,7 +1728,7 @@ export const ProductDetail: React.FC = () => {
                   disabled={isBidCancelling}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <BiX className="w-6 h-6" />
+                  <BiX className="w-6 h-6 text-gray-300" />
                 </button>
               </div>
 
@@ -1745,7 +1741,7 @@ export const ProductDetail: React.FC = () => {
                   <div className="space-y-6 mb-8">
                     <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
                       <div className="flex items-center gap-2 mb-4">
-                        <BsInfoCircle className="w-4 h-4 text-red-500" />
+                        <BsExclamationTriangle className="w-4 h-4 text-red-500" />
                         <p className="text-sm font-black text-red-600">취소 시 위약금이 즉시 차감됩니다</p>
                       </div>
                       <div className="space-y-3">
@@ -1773,7 +1769,7 @@ export const ProductDetail: React.FC = () => {
                     {/* 보유 포인트 표시 */}
                     <div className="bg-gray-900 rounded-2xl p-4 flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <BsCreditCard className="w-4 h-4 text-orange-400" />
+                        <BsWallet className="w-4 h-4 text-orange-400" />
                         <span className="text-xs font-bold text-gray-400">현재 보유 포인트</span>
                       </div>
                       <span className={`text-base font-bold ${canAfford ? 'text-orange-400' : 'text-red-400'}`}>
@@ -1784,7 +1780,7 @@ export const ProductDetail: React.FC = () => {
                     {/* 포인트 부족 경고 */}
                     {!canAfford && (
                       <div className="flex items-start gap-2 bg-orange-50 border border-orange-200 rounded-xl p-4">
-                        <BsInfoCircle className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                        <BsExclamationCircle className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
                         <p className="text-xs font-bold text-orange-700 leading-relaxed">
                           위약금 납부를 위한 포인트가 부족합니다. 포인트를 충전하셔야 취소가 가능합니다.
                         </p>
@@ -1897,7 +1893,6 @@ export const ProductDetail: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                      <BsInfoCircle className="w-4 h-4 text-gray-400 group-hover:text-red-500 transition-colors" />
                     <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">
                       오늘 하루 더 이상 보지 않기
                     </span>

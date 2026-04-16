@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Toaster } from 'sonner';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
 
 // [ Context & Components ]
 import { AppProvider } from '@/context/AppContext';
@@ -61,8 +67,44 @@ import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
 // ㅎㅇ요
 
 const App: React.FC = () => {
+  useEffect(() => {
+    let rafId = 0;
+    const applyCenter = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const toaster = document.querySelector<HTMLElement>('[data-sonner-toaster]');
+        if (!toaster) return;
+        // 컨테이너 전체 너비
+        toaster.style.setProperty('width', '100vw', 'important');
+        toaster.style.setProperty('left', '0', 'important');
+        toaster.style.setProperty('right', '0', 'important');
+        toaster.style.setProperty('transform', 'none', 'important');
+        toaster.style.setProperty('pointer-events', 'none', 'important');
+        // 각 toast: margin auto 중앙 (transform 안 건드림)
+        toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((el) => {
+          el.style.setProperty('left', '0', 'important');
+          el.style.setProperty('right', '0', 'important');
+          el.style.setProperty('margin-left', 'auto', 'important');
+          el.style.setProperty('margin-right', 'auto', 'important');
+          el.style.setProperty('width', 'fit-content', 'important');
+          el.style.setProperty('pointer-events', 'auto', 'important');
+        });
+      });
+    };
+    const observer = new MutationObserver(applyCenter);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style'],
+    });
+    applyCenter();
+    return () => { observer.disconnect(); cancelAnimationFrame(rafId); };
+  }, []);
+
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppProvider>
         <Toaster
           position="top-center"

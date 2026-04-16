@@ -123,7 +123,6 @@ export const AuctionManagement: React.FC = () => {
                       <Link
                         to={`/products/${product.id.replace('prod_', '')}`}
                         target="_blank"
-                        rel="noopener noreferrer"
                         className="text-sm font-bold text-gray-900 truncate hover:text-[#FF5A5A] hover:underline transition-colors"
                         onClick={(e) => e.stopPropagation()}
                       >

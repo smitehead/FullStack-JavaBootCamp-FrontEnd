@@ -348,16 +348,11 @@ export const MyPage: React.FC = () => {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="max-w-[1200px] mx-auto px-10 py-20 text-center">
-        <p className="text-gray-500 text-lg mb-4">로그인이 필요합니다.</p>
-        <button onClick={() => navigate('/login')} className="px-6 py-3 bg-orange-500 text-white rounded-xl font-bold">
-          로그인하기
-        </button>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!user) navigate('/login');
+  }, [user, navigate]);
+
+  if (!user) return null;
 
   return (
     <div className="max-w-[1200px] mx-auto px-10 py-8">
