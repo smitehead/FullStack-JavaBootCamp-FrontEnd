@@ -30,6 +30,7 @@ export const Home: React.FC = () => {
   const [heroBanners, setHeroBanners] = useState<{ id: number; image: string; link: string }[]>([]);
   const [adBanners, setAdBanners] = useState<{ id: number; image: string; link: string }[]>([]);
   const [currentAdBanner, setCurrentAdBanner] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   // 배너 API 로드 (히어로 + 광고)
   useEffect(() => {
@@ -74,6 +75,8 @@ export const Home: React.FC = () => {
         setPopularProducts(activeProducts.slice(0, 8));
       } catch (error) {
         console.error('상품 조회 실패', error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchPopularProducts();
@@ -160,6 +163,12 @@ export const Home: React.FC = () => {
       navigate(`/search?large=${encodeURIComponent(catId)}`);
     }
   };
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
 
   return (
     <div className="pb-20">

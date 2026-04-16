@@ -39,6 +39,12 @@ export const InquiryList: React.FC = () => {
     return matchesSearch && matchesType;
   });
 
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
+
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-12">
       {/* Header Section */}

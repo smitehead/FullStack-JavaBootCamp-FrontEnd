@@ -252,10 +252,11 @@ export const Points: React.FC = () => {
               )}
             </div>
           ) : (
-            <div className="py-20 text-center">
-              <p className="text-gray-400 font-medium">
-                {isLoading ? '내역을 불러오는 중...' : '포인트 내역이 없습니다.'}
-              </p>
+            <div className="py-20 flex justify-center">
+              {isLoading
+                ? <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+                : <p className="text-gray-400 font-medium">포인트 내역이 없습니다.</p>
+              }
             </div>
           )}
         </div>

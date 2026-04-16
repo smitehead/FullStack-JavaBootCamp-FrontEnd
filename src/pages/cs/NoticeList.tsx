@@ -104,8 +104,8 @@ export const NoticeList: React.FC = () => {
           {/* Notice List */}
           <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
             {loading ? (
-              <div className="py-20 text-center">
-                <p className="text-gray-400">불러오는 중...</p>
+              <div className="py-20 flex justify-center">
+                <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
               </div>
             ) : notices.length > 0 ? (
               <div className="divide-y divide-gray-50">

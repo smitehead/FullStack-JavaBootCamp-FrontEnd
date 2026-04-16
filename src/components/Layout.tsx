@@ -16,7 +16,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onLogout }) => {
-  const { user, notifications, chats, markNotificationAsRead, markAllNotificationsAsRead, unreadNotificationsCount, unreadChatsCount } = useAppContext();
+  const { user, isInitialized, notifications, chats, markNotificationAsRead, markAllNotificationsAsRead, unreadNotificationsCount, unreadChatsCount } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
@@ -212,7 +212,9 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               </div>
             )}
 
-            {user ? (
+            {!isInitialized ? (
+              <div className="w-40 h-9 bg-gray-100 rounded-xl animate-pulse" />
+            ) : user ? (
               <>
                 <Link
                   to="/register"
