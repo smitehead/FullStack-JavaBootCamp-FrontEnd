@@ -84,7 +84,7 @@ export const ProductDetail: React.FC = () => {
 
   const handleQnaSubmit = async () => {
     if (!qnaInput.trim()) return;
-    if (!user) { showToast('로그인이 필요합니다.', 'error'); return; }
+    if (!user) { showToast("'로그인이 필요한 서비스입니다.' 로그인 페이지로 이동합니다.", 'error'); navigate('/login'); return; }
     try {
       await api.post(`/products/${id}/qna`, { content: qnaInput.trim() });
       setQnaInput('');
@@ -551,7 +551,7 @@ export const ProductDetail: React.FC = () => {
 
   const handleBuyout = async () => {
     if (!user) {
-      showToast("로그인이 필요한 서비스입니다.", 'error');
+      showToast("'로그인이 필요한 서비스입니다.' 로그인 페이지로 이동합니다.", 'error');
       navigate('/login');
       return;
     }

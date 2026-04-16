@@ -202,7 +202,7 @@ export const WonProductDetail: React.FC = () => {
   const handleChatWithSeller = async () => {
     const buyerNo = getMemberNo(user);
     if (!buyerNo) {
-      showToast('로그인이 필요합니다.', 'error');
+      showToast("'로그인이 필요한 서비스입니다.' 로그인 페이지로 이동합니다.", 'error');
       navigate('/login');
       return;
     }
