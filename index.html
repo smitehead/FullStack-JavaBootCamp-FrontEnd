@@ -30,30 +30,6 @@
       background: #555;
     }
 
-    /* sonner: 컨테이너 100% 너비로 확장 */
-    [data-sonner-toaster] {
-      width: 100% !important;
-      max-width: 100% !important;
-      left: 0 !important;
-      right: auto !important;
-      transform: none !important;
-      pointer-events: none !important;
-    }
-
-    /* sonner: 모든 스택 상태 포함 viewport 기준 수평 중앙 정렬 */
-    [data-sonner-toast],
-    [data-sonner-toast][data-mounted],
-    [data-sonner-toast][data-visible],
-    [data-sonner-toast][data-front="true"],
-    [data-sonner-toast][data-front="false"],
-    [data-sonner-toast][data-expanded="true"],
-    [data-sonner-toast][data-expanded="false"] {
-      pointer-events: auto !important;
-      left: 50% !important;
-      right: auto !important;
-      transform: var(--y) translateX(-50%) !important;
-      transition: transform 0.2s ease, opacity 0.2s ease, height 0.2s ease !important;
-    }
   </style>
   <script type="importmap">
 {
