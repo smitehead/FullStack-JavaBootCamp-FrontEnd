@@ -6,7 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { BsXCircle, BsStars, BsList, BsCartCheck } from 'react-icons/bs';
 
-import { BsCheckCircle, BsBox2, BsExclamationCircle, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGeoAlt } from 'react-icons/bs';
+import { BsCheckCircle, BsBox2, BsExclamationCircle, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGeoAltFill } from 'react-icons/bs';
 import { BiChevronLeft, BiChevronRight, BiArrowBack } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
 
@@ -331,7 +331,7 @@ export const WonProductDetail: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-start gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 flex-shrink-0">
-                          <BsGeoAlt className="w-5 h-5 text-indigo-600" />
+                          <BsGeoAltFill className="w-5 h-5 text-indigo-600" />
                         </div>
                         <div>
                           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">희망 거래 장소</p>

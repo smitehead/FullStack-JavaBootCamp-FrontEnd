@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
 import { BsCheckLg, BsLock, BsTelephone, BsSend, BsStars } from 'react-icons/bs';
 
-import { BsShieldCheck, BsEnvelope, BsInfoCircle, BsGeoAlt, BsCalendarCheck, BsPerson, BsExclamationCircle, BsCheckCircle } from 'react-icons/bs';
+import { BsShieldCheck, BsEnvelope, BsInfoCircle, BsGeoAltFill, BsCalendarCheck, BsPerson, BsExclamationCircle, BsCheckCircle } from 'react-icons/bs';
 import { BiChevronRight, BiChevronDown, BiX } from 'react-icons/bi';
 import { showToast } from '@/components/toastService';
 

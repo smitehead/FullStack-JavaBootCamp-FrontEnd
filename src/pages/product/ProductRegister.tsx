@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Category, CategoryItem, TransactionMethod, Product } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { useAppContext } from '@/context/AppContext';
-import { BsCurrencyDollar, BsTruck, BsInfoCircle, BsCamera, BsCalendarCheck, BsGeoAlt, BsJustifyLeft, BsCrosshair } from 'react-icons/bs';
+import { BsCurrencyDollar, BsTruck, BsInfoCircle, BsCamera, BsCalendarCheck, BsGeoAltFill, BsJustifyLeft, BsCrosshair } from 'react-icons/bs';
 import api from '@/services/api';
 import { ProductRequestDto } from '@/types';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -524,7 +524,7 @@ export const ProductRegister: React.FC = () => {
               className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${methods.face ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.face ? 'bg-brand text-white' : 'bg-gray-100 text-gray-400'}`}>
-                <BsGeoAlt className="w-5 h-5" />
+                <BsGeoAltFill className="w-5 h-5" />
               </div>
               <p className={`font-bold ${methods.face ? 'text-brand-dark' : 'text-gray-900'}`}>대면 거래</p>
               <p className="text-xs text-gray-400 font-medium mt-1">직접 만나서 거래</p>

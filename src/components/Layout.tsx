@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BsStars } from 'react-icons/bs';
 
-import { BsArrowUpRight, BsChatLeft, BsPerson, BsGear, BsBell, BsGeoAlt, BsClock, BsInstagram, BsYoutube, BsList } from 'react-icons/bs';
+import { BsArrowUpRight, BsChatLeft, BsPerson, BsGear, BsBell, BsClock, BsInstagram, BsYoutube, BsList } from 'react-icons/bs';
 import { BiListOl, BiSearch, BiX, BiShareAlt, BiListUl } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
@@ -489,7 +489,7 @@ const Footer: React.FC = () => {
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
           {/* Company Info */}
-          <div className="md:col-span-6">
+          <div className="md:col-span-5">
             <div className="flex items-center space-x-2 mb-6">
               <div className="bg-gray-400 p-1.5 rounded-lg">
                 <BsStars className="w-5 h-5 text-white" />
@@ -516,7 +516,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          <div className="md:col-span-3">
+          <div className="md:col-span-4">
             <h4 className="text-sm font-bold text-gray-800 mb-6 uppercase tracking-wider">고객지원</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
               <li className="flex items-center gap-2"><Link to="/notice" className="hover:text-[#FF5A5A] transition-colors">공지사항</Link></li>

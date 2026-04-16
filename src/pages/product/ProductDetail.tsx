@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, CategoryItem, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsGeoAlt, BsPeople, BsPerson, BsWallet, BsThreeDotsVertical } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsFlag, BsChatLeft, BsInfoCircle, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsGeoAltFill, BsPeople, BsPerson, BsWallet, BsThreeDotsVertical } from 'react-icons/bs';
 import { BiArrowBack, BiChevronRight, BiX, BiShareAlt, BiRefresh, BiTrash } from 'react-icons/bi';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
@@ -938,7 +938,7 @@ export const ProductDetail: React.FC = () => {
                 <div className="flex items-center">
                   {(product.transactionMethod !== 'delivery' && product.location) && (
                     <>
-                      <BsGeoAlt className="w-3 h-3 mr-1" /> {product.location}
+                      <BsGeoAltFill className="w-3 h-3 mr-1" /> {product.location}
                     </>
                   )}
                 </div>
@@ -1329,7 +1329,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
                 <div className="flex gap-3">
                   <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BsGeoAlt className="w-5 h-5 text-orange-500" />
+                    <BsGeoAltFill className="w-5 h-5 text-orange-500" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 mb-1">대면 거래는 공공장소에서</p>

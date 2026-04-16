@@ -37,7 +37,7 @@ export const AboutUs: React.FC = () => {
     {
       title: '실시간 입찰',
       description: '박진감 넘치는 실시간 경매 시스템으로 원하는 상품을 쟁취하세요.',
-      icon: Gavel,
+      icon: BsBag,
       color: 'bg-red-50',
       iconColor: 'text-red-500',
       borderColor: 'border-red-100'
@@ -53,7 +53,7 @@ export const AboutUs: React.FC = () => {
     {
       title: '투명한 경매',
       description: '모든 입찰 내역이 투명하게 공개되어 공정한 경쟁이 가능합니다.',
-      icon: Eye,
+      icon: BsEye,
       color: 'bg-gray-50',
       iconColor: 'text-gray-500',
       borderColor: 'border-gray-100'
