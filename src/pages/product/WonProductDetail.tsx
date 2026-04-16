@@ -405,7 +405,7 @@ export const WonProductDetail: React.FC = () => {
                   {result.buyerCashback > 0 && (
                     <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 space-y-2">
                       <div className="flex items-center gap-2 mb-1">
-                        <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
+                        <BsStars className="w-4 h-4 text-emerald-500 shrink-0" />
                         <span className="text-xs font-bold text-emerald-700">입찰 취소 위약금 보상</span>
                       </div>
                       <p className="text-[11px] text-emerald-600 leading-relaxed font-medium">
