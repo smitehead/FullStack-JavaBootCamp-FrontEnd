@@ -149,6 +149,18 @@ export interface ChatMessage {
   isRead: number;          // 0=미읽음, 1=읽음
   clientUuid?: string;     // 중복 방지용 UUID
   status?: MessageStatus;  // 낙관적 UI 상태
+
+  // 메시지 타입 (TEXT / IMAGE / LOCATION)
+  msgType?: string;
+
+  // 이미지 메시지 (msgType = IMAGE)
+  imageUrls?: string[];
+
+  // 위치 메시지 (msgType = LOCATION)
+  addrRoad?: string;
+  addrDetail?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface ChatRoom {

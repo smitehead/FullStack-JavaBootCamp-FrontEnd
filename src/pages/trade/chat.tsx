@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft } from 'react-icons/bs';
+import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsGeoAlt } from 'react-icons/bs';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
@@ -49,6 +49,20 @@ export const Chat: React.FC = () => {
   const receivedUuids = useRef(new Set<string>());
   // 전송 타임아웃 관리
   const sendTimeouts = useRef(new Map<string, NodeJS.Timeout>());
+  // 이미지 input ref
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  // ──── UUID 생성 (HTTPS 환경 여부 무관) ────
+  const getUuid = () => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
 
   // ──── JWT 토큰 가져오기 ────
   const getToken = () => localStorage.getItem('java_token') || '';
@@ -116,6 +130,12 @@ export const Chat: React.FC = () => {
         createdAt: m.sentAt,
         isRead: m.isRead,
         status: 'SENT' as MessageStatus,
+        msgType: m.msgType || 'TEXT',
+        imageUrls: m.imageUrls || [],
+        addrRoad: m.addrRoad,
+        addrDetail: m.addrDetail,
+        latitude: m.latitude,
+        longitude: m.longitude,
       }));
       return msgs;
     } catch (err) {
@@ -261,6 +281,12 @@ export const Chat: React.FC = () => {
             createdAt: data.sentAt,
             isRead: data.isRead,
             status: 'SENT',
+            msgType: data.msgType || 'TEXT',
+            imageUrls: data.imageUrls || [],
+            addrRoad: data.addrRoad,
+            addrDetail: data.addrDetail,
+            latitude: data.latitude,
+            longitude: data.longitude,
           };
           return [...prev, newMsg];
         });
@@ -317,6 +343,12 @@ export const Chat: React.FC = () => {
         createdAt: m.sentAt,
         isRead: m.isRead,
         status: 'SENT' as MessageStatus,
+        msgType: m.msgType || 'TEXT',
+        imageUrls: m.imageUrls || [],
+        addrRoad: m.addrRoad,
+        addrDetail: m.addrDetail,
+        latitude: m.latitude,
+        longitude: m.longitude,
       }));
       if (missed.length > 0) {
         setMessages(prev => {
@@ -330,24 +362,96 @@ export const Chat: React.FC = () => {
   }, [isConnected]);
 
   // ══════════════════════════════════════════════════
-  // 4. 메시지 전송 (낙관적 UI)
+  // 4. 이미지 업로드
+  // ══════════════════════════════════════════════════
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !selectedRoom) return;
+
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+    if (files.length > 10) {
+      alert('최대 10장까지 선택할 수 있습니다.');
+      return;
+    }
+
+    try {
+      // 1. REST로 여러 파일 일괄 업로드
+      const formData = new FormData();
+      files.forEach(f => formData.append('files', f));
+      const res = await api.post(
+        `/chat/rooms/${selectedRoom.roomNo}/images`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      const imageUrls: string[] = res.data.urls;
+
+      const clientUuid = getUuid();
+
+      // 낙관적 UI — 이미지 메시지 즉시 표시
+      const optimisticMsg: ChatMessage = {
+        id: `temp_${clientUuid}`,
+        senderId: `user_${memberNo}`,
+        senderNo: memberNo!,
+        content: '',
+        createdAt: new Date().toISOString(),
+        isRead: 0,
+        clientUuid,
+        status: 'SENDING',
+        msgType: 'IMAGE',
+        imageUrls,
+      };
+      setMessages(prev => [...prev, optimisticMsg]);
+      scrollToBottom();
+
+      // 2. STOMP로 묶어서 전송 (메시지 1건)
+      stompClientRef.current?.publish({
+        destination: '/pub/chat/message',
+        body: JSON.stringify({
+          roomId: selectedRoom.roomNo,
+          senderId: memberNo,
+          content: '',
+          msgType: 'IMAGE',
+          imageUrls,
+          clientUuid,
+        }),
+      });
+
+      // 타임아웃
+      const timeout = setTimeout(() => {
+        setMessages(prev =>
+          prev.map(m =>
+            m.clientUuid === clientUuid && m.status === 'SENDING'
+              ? { ...m, status: 'FAILED' }
+              : m
+          )
+        );
+        sendTimeouts.current.delete(clientUuid);
+      }, SEND_TIMEOUT);
+      sendTimeouts.current.set(clientUuid, timeout);
+
+      setChatRooms(prev =>
+        prev.map(r =>
+          r.roomNo === selectedRoom.roomNo
+            ? { ...r, lastMessage: '📷 사진', lastMessageAt: new Date().toISOString() }
+            : r
+        )
+      );
+    } catch (err) {
+      console.error('이미지 전송 실패', err);
+      alert('이미지 업로드에 실패했습니다.');
+    }
+
+    // input 초기화 (같은 파일 재선택 허용)
+    if (imageInputRef.current) imageInputRef.current.value = '';
+  };
+
+  // ══════════════════════════════════════════════════
+  // 5. 메시지 전송 (낙관적 UI)
   // ══════════════════════════════════════════════════
   const handleBsSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedRoom || !memberNo) return;
     if (newMessage.length > MAX_CONTENT_LENGTH) return;
-
-    // crypto.randomUUID()는 HTTPS 환경에서만 작동하므로 호환성을 위해 직접 생성
-    const getUuid = () => {
-      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-        return crypto.randomUUID();
-      }
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0;
-        const v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
-    };
 
     const clientUuid = getUuid();
     const content = newMessage.trim();
@@ -637,14 +741,76 @@ export const Chat: React.FC = () => {
                             alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0 bg-gray-100" />
                         )}
                         <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                          <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${isMe
-                              ? msg.status === 'FAILED'
-                                ? 'bg-red-100 text-red-800 rounded-tr-none'
-                                : 'bg-orange-500 text-white rounded-tr-none'
-                              : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
-                            } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
-                            {msg.content}
-                          </div>
+                          {/* ──── 메시지 콘텐츠 (msgType 분기) ──── */}
+                          {msg.msgType === 'IMAGE' && msg.imageUrls && msg.imageUrls.length > 0 ? (
+                            <div
+                              className={`grid gap-1 rounded-2xl overflow-hidden max-w-[240px] ${
+                                msg.status === 'SENDING' ? 'opacity-70' : ''
+                              } ${
+                                msg.imageUrls.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
+                              }`}
+                            >
+                              {msg.imageUrls.slice(0, 4).map((url, i) => (
+                                <div key={i} className="relative aspect-square">
+                                  <img
+                                    src={url}
+                                    alt=""
+                                    className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition-all"
+                                    onClick={() => window.open(url, '_blank')}
+                                  />
+                                  {/* 4장 초과 시 마지막 칸에 +N 오버레이 */}
+                                  {i === 3 && msg.imageUrls!.length > 4 && (
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold text-lg">
+                                      +{msg.imageUrls!.length - 4}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : msg.msgType === 'LOCATION' ? (
+                            <div
+                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[220px] ${
+                                isMe ? 'border-orange-200 rounded-tr-none' : 'border-gray-100 rounded-tl-none'
+                              } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
+                            >
+                              {/* 위치 지도 미리보기 (Static Map 또는 플레이스홀더) */}
+                              {msg.latitude && msg.longitude && (
+                                <a
+                                  href={`https://map.kakao.com/link/map/${msg.addrRoad || '위치'},${msg.latitude},${msg.longitude}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <img
+                                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${msg.latitude},${msg.longitude}&zoom=15&size=220x120&markers=color:red%7C${msg.latitude},${msg.longitude}&key=YOUR_KEY`}
+                                    alt="지도"
+                                    className="w-full h-24 object-cover bg-gray-100"
+                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                  />
+                                </a>
+                              )}
+                              <div className={`p-3 ${ isMe ? 'bg-orange-500' : 'bg-white' }`}>
+                                <div className={`flex items-start gap-1.5 ${ isMe ? 'text-white' : 'text-gray-800' }`}>
+                                  <BsGeoAlt className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                                  <div>
+                                    <p className="text-xs font-bold leading-snug">{msg.addrRoad || '위치 정보'}</p>
+                                    {msg.addrDetail && (
+                                      <p className={`text-[10px] mt-0.5 ${ isMe ? 'text-orange-200' : 'text-gray-500' }`}>{msg.addrDetail}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${
+                              isMe
+                                ? msg.status === 'FAILED'
+                                  ? 'bg-red-100 text-red-800 rounded-tr-none'
+                                  : 'bg-orange-500 text-white rounded-tr-none'
+                                : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
+                              } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
+                              {msg.content}
+                            </div>
+                          )}
                           <div className="flex items-center gap-1 mt-1">
                             {/* 전송 상태 표시 */}
                             {isMe && msg.status === 'SENDING' && (
@@ -680,6 +846,26 @@ export const Chat: React.FC = () => {
             {/* 입력 영역 */}
             <div className="p-4 bg-white border-t border-gray-100">
               <form onSubmit={handleBsSendMessage} className="flex items-center gap-3">
+                {/* 이미지 업로드 버튼 */}
+                <label
+                  className={`p-3 rounded-2xl cursor-pointer transition-all ${
+                    isConnected
+                      ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50'
+                      : 'text-gray-200 cursor-not-allowed'
+                  }`}
+                  title="사진 보내기 (최대 10장)"
+                >
+                  <BsImage className="w-5 h-5" />
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="hidden"
+                    disabled={!isConnected}
+                    onChange={handleImageUpload}
+                  />
+                </label>
                 <div className="flex-1 relative">
                   <input type="text" value={newMessage}
                     onChange={(e) => {
