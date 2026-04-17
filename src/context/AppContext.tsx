@@ -265,7 +265,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             if (!prev) return prev;
             if (prev.points === data.points) return prev;
             const updated = { ...prev, points: data.points };
-            localStorage.setItem('java_user', JSON.stringify(updated));
+            sessionStorage.setItem('java_user', JSON.stringify(updated));
             return updated;
           });
           // ProductDetail 등 다른 컴포넌트에서 포인트 변동을 감지할 수 있도록 window event 발행
@@ -325,8 +325,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // 다른 기기에서 로그인 시 즉시 강제 로그아웃 처리
     eventSource.addEventListener('forceLogout', () => {
       eventSource.close();
-      localStorage.removeItem('java_token');
-      localStorage.removeItem('java_user');
+      sessionStorage.removeItem('java_token');
+      sessionStorage.removeItem('java_user');
       setUser(null);
       setForceLogoutModalOpen(true);
     });
@@ -343,7 +343,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // 앱 시작 시 localStorage에 저장된 로그인 정보 복원
   useEffect(() => {
-    const savedUser = localStorage.getItem('java_user');
+    const savedUser = sessionStorage.getItem('java_user');
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
       setUser(parsedUser);
@@ -360,7 +360,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                 mannerTemp: res.data.mannerTemp || 36.5,
                 profileImage: resolveImageUrl(res.data.profileImgUrl) || prev.profileImage,
               };
-              localStorage.setItem('java_user', JSON.stringify(updated));
+              sessionStorage.setItem('java_user', JSON.stringify(updated));
               return updated;
             });
           }
@@ -377,7 +377,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const response = await api.post('/auth/login', { userId, password });
       const { token, memberNo, nickname, addrShort } = response.data;
 
-      localStorage.setItem('java_token', token);
+      sessionStorage.setItem('java_token', token);
 
       let dbPoints = 0;
       let dbMannerTemp = 36.5;
@@ -409,7 +409,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       };
 
       setUser(loggedInUser);
-      localStorage.setItem('java_user', JSON.stringify(loggedInUser));
+      sessionStorage.setItem('java_user', JSON.stringify(loggedInUser));
       return true;
     } catch (error) {
       console.error('로그인 실패', error);
@@ -420,8 +420,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const logout = () => {
     api.post('/auth/logout').catch(console.error);
     setUser(null);
-    localStorage.removeItem('java_user');
-    localStorage.removeItem('java_token');
+    sessionStorage.removeItem('java_user');
+    sessionStorage.removeItem('java_token');
   };
 
   const closeForceLogoutModal = () => setForceLogoutModalOpen(false);
@@ -429,8 +429,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // api.ts의 401 인터셉터에서 발생시키는 커스텀 이벤트 처리 (SSE 미연결 상태 백업)
   useEffect(() => {
     const handleForceLogout = () => {
-      localStorage.removeItem('java_token');
-      localStorage.removeItem('java_user');
+      sessionStorage.removeItem('java_token');
+      sessionStorage.removeItem('java_user');
       setUser(null);
       setForceLogoutModalOpen(true);
     };
@@ -622,7 +622,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       const updated = { ...user, points };
       setUser(updated);
-      localStorage.setItem('java_user', JSON.stringify(updated));
+      sessionStorage.setItem('java_user', JSON.stringify(updated));
     }
   };
 
@@ -630,7 +630,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       const updated = { ...user, profileImage: profileImageUrl };
       setUser(updated);
-      localStorage.setItem('java_user', JSON.stringify(updated));
+      sessionStorage.setItem('java_user', JSON.stringify(updated));
     }
   };
 
@@ -638,7 +638,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       const updated = { ...user, address };
       setUser(updated);
-      localStorage.setItem('java_user', JSON.stringify(updated));
+      sessionStorage.setItem('java_user', JSON.stringify(updated));
     }
   };
 
@@ -649,7 +649,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setUser(prev => {
         if (!prev) return prev;
         const updated = { ...prev, account };
-        localStorage.setItem('java_user', JSON.stringify(updated));
+        sessionStorage.setItem('java_user', JSON.stringify(updated));
         return updated;
       });
       showToast('계좌가 성공적으로 등록되었습니다.', 'success');

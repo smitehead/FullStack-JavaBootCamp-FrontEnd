@@ -7,7 +7,9 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('java_token');
+    // sessionStorage 사용: 탭 간 격리 (localStorage는 같은 출처 모든 탭 공유)
+    // 다계정 QA 시 A탭의 토큰이 B탭 로그인으로 덮어씌워지는 크로스토크 방지
+    const token = sessionStorage.getItem('java_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
