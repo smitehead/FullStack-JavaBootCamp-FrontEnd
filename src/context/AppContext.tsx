@@ -261,6 +261,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       try {
         const data = JSON.parse(event.data);
         if (data && typeof data.points === 'number') {
+          // [방어] 백엔드가 payload에 memberNo를 포함하는 경우 2차 검증
+          // SSE 연결 자체가 memberNo 기반 1:1이므로 정상 케이스에서는 항상 일치하지만,
+          // localStorage 공유 등 예외 상황의 크로스토크를 최종 차단한다.
+          if (data.memberNo !== undefined && data.memberNo !== memberNo) {
+            console.warn('[SSE] pointUpdate memberNo 불일치 — 무시함', { expected: memberNo, received: data.memberNo });
+            return;
+          }
           setUser(prev => {
             if (!prev) return prev;
             if (prev.points === data.points) return prev;
