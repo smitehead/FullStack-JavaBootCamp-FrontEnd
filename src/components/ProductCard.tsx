@@ -14,6 +14,8 @@ interface ProductCardProps {
   isConfirmed?: boolean;
   /** 판매자 시점: 낙찰 발생 후 구매 확정 대기 중 (초록 오버레이 + "확정 대기중") */
   isSellerPending?: boolean;
+  /** 판매자 시점: 구매자로부터 취소 요청이 들어온 상태 */
+  sellerCancelRequested?: boolean;
   /** Link 목적지 오버라이드 (기본: isWon → /won/:id, 나머지 → /products/:id) */
   customLink?: string;
 }
@@ -24,6 +26,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   isSold = false,
   isConfirmed = false,
   isSellerPending = false,
+  sellerCancelRequested = false,
   customLink,
 }) => {
   const [timeLeft, setTimeLeft] = useState<string>('');
@@ -196,9 +199,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               확정 대기 중
             </div>
-            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-emerald-600 transition-all">
-              결과 확인하기
-            </div>
+            {sellerCancelRequested && (
+              <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-emerald-600 transition-all">
+                취소 요청이 들어왔습니다
+              </div>
+            )}
           </div>
         )}
       </div>

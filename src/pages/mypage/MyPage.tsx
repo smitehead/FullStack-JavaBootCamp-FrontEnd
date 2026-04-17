@@ -532,20 +532,12 @@ export const MyPage: React.FC = () => {
 
                   return (
                     <div key={p.id} className="flex flex-col gap-2">
-                      {/* 취소 요청 수신 배너 */}
-                      {ars === '취소요청' && (
-                        <div className="flex items-center gap-2 px-1 pt-1">
-                          <span className="inline-flex items-center px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-[10px] font-bold">
-                            ⚠ 취소 요청 수신
-                          </span>
-                        </div>
-                      )}
-
                       <ProductCard
                         product={p}
                         isSold={p.status === 'completed'}
                         isConfirmed={isResultConfirmed}
                         isSellerPending={hasPendingResult}
+                        sellerCancelRequested={ars === '취소요청'}
                         customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
                       />
 
