@@ -455,7 +455,25 @@ export const WonProductDetail: React.FC = () => {
                 {/* Local Action Buttons */}
                 <div className="mt-8 space-y-3">
                   {isPending && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    isForcePromoted ? (
+                      /* 강제 승계: [낙찰 취소하기] [입찰 구매 확정] — 취소 먼저, 확정 오른쪽 */
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button
+                          onClick={() => setShowCancelConfirm(true)}
+                          className="w-full py-5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl transition-all border border-gray-200 shadow-sm"
+                        >
+                          낙찰 취소하기
+                        </button>
+                        <button
+                          onClick={handlePayment}
+                          disabled={isProcessing}
+                          className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50"
+                        >
+                          {isProcessing ? '처리 중...' : '입찰 구매 확정 (결제)'}
+                        </button>
+                      </div>
+                    ) : (
+                      /* 일반 낙찰: 결제 버튼만 full-width */
                       <button
                         onClick={handlePayment}
                         disabled={isProcessing}
@@ -463,15 +481,7 @@ export const WonProductDetail: React.FC = () => {
                       >
                         {isProcessing ? '처리 중...' : '입찰 구매 확정 (결제)'}
                       </button>
-                      {isForcePromoted && (
-                        <button
-                          onClick={() => setShowCancelConfirm(true)}
-                          className="w-full py-5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl transition-all border border-gray-200 shadow-sm"
-                        >
-                          낙찰 취소하기
-                        </button>
-                      )}
-                    </div>
+                    )
                   )}
 
                   {isPaid && (
