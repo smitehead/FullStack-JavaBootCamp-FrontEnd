@@ -4,7 +4,8 @@ import api from '@/services/api';
 import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
-import { BsXCircle, BsStars } from 'react-icons/bs';
+import { BsXCircle } from 'react-icons/bs';
+import { Sparkles } from 'lucide-react';
 
 import { BsCheckCircle, BsBox2, BsExclamationCircle, BsInfoCircle, BsCreditCard, BsGeoAltFill, BsChat, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
@@ -29,6 +30,7 @@ interface AuctionResultDetail {
   deliveryEmdNo: number | null;
   deliveryAddrDetail: string | null;
   buyerCashback: number;
+  isForcePromoted: number; // 1 = 강제 승계 낙찰자
 }
 
 const REVIEW_TAGS = [
@@ -100,6 +102,7 @@ export const WonProductDetail: React.FC = () => {
   const isPaid = result.status === '결제완료';
   const isCompleted = result.status === '구매확정';
   const isCanceled = result.status === '거래취소';
+  const isForcePromoted = result.isForcePromoted === 1;
 
   const statusLabel = isPending ? '결제 대기'
     : isPaid ? (result.tradeType === '직거래' ? '결제 완료 (거래 대기)' : '결제 완료 (배송 대기)')
@@ -404,7 +407,7 @@ export const WonProductDetail: React.FC = () => {
                   {result.buyerCashback > 0 && (
                     <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 space-y-2">
                       <div className="flex items-center gap-2 mb-1">
-                        <BsStars className="w-4 h-4 text-emerald-500 shrink-0" />
+                        <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
                         <span className="text-xs font-bold text-emerald-700">입찰 취소 위약금 보상</span>
                       </div>
                       <p className="text-[11px] text-emerald-600 leading-relaxed font-medium">
@@ -435,6 +438,20 @@ export const WonProductDetail: React.FC = () => {
                   </div>
                 </div>
 
+                {/* 강제 승계 안내 배너 */}
+                {isForcePromoted && !isCanceled && !isCompleted && (
+                  <div className="mb-6 rounded-2xl bg-amber-50 border border-amber-100 p-4 flex items-start gap-3">
+                    <Sparkles className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-bold text-amber-700 mb-1">자동 승계 낙찰 안내</p>
+                      <p className="text-[11px] text-amber-600 leading-relaxed font-medium">
+                        상위 입찰자의 취소로 자동 승계된 낙찰입니다.<br />
+                        원하지 않을 경우 <span className="font-black">패널티 없이</span> 낙찰 취소가 가능합니다.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Local Action Buttons */}
                 <div className="mt-8 space-y-3">
                   {isPending && (
@@ -446,12 +463,14 @@ export const WonProductDetail: React.FC = () => {
                       >
                         {isProcessing ? '처리 중...' : '입찰 구매 확정 (결제)'}
                       </button>
-                      <button
-                        onClick={() => setShowCancelConfirm(true)}
-                        className="w-full py-5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl transition-all border border-gray-200 shadow-sm"
-                      >
-                        낙찰 취소하기
-                      </button>
+                      {isForcePromoted && (
+                        <button
+                          onClick={() => setShowCancelConfirm(true)}
+                          className="w-full py-5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl transition-all border border-gray-200 shadow-sm"
+                        >
+                          낙찰 취소하기
+                        </button>
+                      )}
                     </div>
                   )}
 
@@ -606,10 +625,10 @@ export const WonProductDetail: React.FC = () => {
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">낙찰을 취소하시겠습니까?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
-              정말 취소하시겠습니까?
+              상위 입찰자 취소로 자동 승계된 낙찰입니다.
             </p>
-            <p className="text-xs text-red-500 font-bold mb-8 flex items-center gap-1">
-              <BsExclamationCircle className="w-3.5 h-3.5" /> 취소 시 서비스 이용 패널티가 부과될 수 있습니다.
+            <p className="text-xs text-emerald-600 font-bold mb-8 flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5" /> 패널티 없이 취소됩니다. 입찰가는 전액 환불됩니다.
             </p>
             <div className="flex gap-3">
               <button
