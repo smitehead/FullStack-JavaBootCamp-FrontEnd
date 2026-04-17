@@ -138,6 +138,17 @@ export const ProductRegister: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 필수 항목 검증
+    if (images.length === 0 || !title.trim() || !description.trim() || !largeCat || (!methods.face && !methods.delivery)) {
+      showToast('필수 항목(*표시)을 모두 입력해주세요.', 'warning');
+      return;
+    }
+
+    if (methods.face && !address) {
+      showToast('거래 희망 장소를 검색해 주세요.', 'warning');
+      return;
+    }
+
     if (user?.isSuspended) {
       showToast('계정이 정지된 상태에서는 상품을 등록할 수 없습니다.', 'error');
       return;
@@ -335,7 +346,7 @@ export const ProductRegister: React.FC = () => {
 
           <div>
             <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 flex items-center">
-              <BsJustifyLeft className="w-4 h-4 mr-1.5 text-gray-400" /> 상품 설명 <span className="text-red-500 ml-1">*</span>
+              상품 설명 <span className="text-red-500 ml-1">*</span>
             </label>
             <textarea
               rows={8}

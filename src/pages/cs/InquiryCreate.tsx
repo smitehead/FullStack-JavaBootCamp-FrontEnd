@@ -51,7 +51,10 @@ export const InquiryCreate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!type || !title || !content) return;
+    if (!type || !title || !content) {
+      showToast('문의 유형, 제목, 내용을 모두 입력해주세요.', 'warning');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -92,15 +95,15 @@ export const InquiryCreate: React.FC = () => {
         {/* type Selection */}
         <div className="space-y-4">
           <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">문의 유형</label>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="flex flex-wrap gap-2.5">
             {categories.map(cat => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => setType(cat)}
-                className={`px-4 py-3 rounded-2xl text-sm font-bold transition-all border ${type === cat
-                  ? 'bg-red-50 border-red-200 text-red-500 shadow-sm'
-                  : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200 hover:text-gray-600'
+                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${type === cat
+                    ? 'bg-red-500 border-red-500 text-white shadow-md shadow-red-100 active:scale-95'
+                    : 'bg-white border-gray-100 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900'
                   }`}
               >
                 {cat}
@@ -113,15 +116,15 @@ export const InquiryCreate: React.FC = () => {
         {type === '버그 신고' && (
           <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
             <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">버그 유형</label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="flex flex-wrap gap-2.5">
               {bugTypes.map(type => (
                 <button
                   key={type}
                   type="button"
                   onClick={() => setBugType(type)}
-                  className={`px-4 py-3 rounded-2xl text-sm font-bold transition-all border ${bugType === type
-                    ? 'bg-blue-50 border-blue-200 text-blue-500 shadow-sm'
-                    : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200 hover:text-gray-600'
+                  className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${bugType === type
+                      ? 'bg-gray-900 border-gray-900 text-white shadow-md shadow-gray-200 active:scale-95'
+                      : 'bg-white border-gray-100 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900'
                     }`}
                 >
                   {type}
@@ -199,11 +202,7 @@ export const InquiryCreate: React.FC = () => {
         <div className="pt-6">
           <button
             type="submit"
-            disabled={isSubmitting || !type || !title || !content}
-            className={`w-full py-4 rounded-2xl font-bold text-base shadow-xl transition-all flex items-center justify-center gap-3 ${isSubmitting || !type || !title || !content
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/10 active:scale-[0.98]'
-              }`}
+            className="w-full py-4 rounded-2xl font-bold text-base shadow-lg shadow-red-500/10 transition-all flex items-center justify-center gap-3 bg-red-500 text-white hover:bg-red-600 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <>

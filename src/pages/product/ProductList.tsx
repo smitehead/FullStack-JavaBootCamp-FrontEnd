@@ -620,12 +620,12 @@ export const ProductList: React.FC = () => {
               </div>
             )}
             {searchParams.get('q') && (
-              <div className="flex items-center bg-white border border-blue-200 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
+              <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <BsSearch className="w-3 h-3 mr-1" />
                 <span>"{searchParams.get('q')}"</span>
                 <button
                   onClick={() => removeFilter('q')}
-                  className="ml-2 hover:text-blue-800"
+                  className="ml-2 hover:text-brand-dark"
                 >
                   <BsX className="w-3 h-3" />
                 </button>
