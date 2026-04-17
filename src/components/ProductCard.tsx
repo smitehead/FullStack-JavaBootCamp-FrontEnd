@@ -12,13 +12,19 @@ interface ProductCardProps {
   isWon?: boolean;
   isSold?: boolean;
   isConfirmed?: boolean;
+  /** 판매자 시점: 낙찰 발생 후 구매 확정 대기 중 (초록 오버레이 + "확정 대기중") */
+  isSellerPending?: boolean;
+  /** Link 목적지 오버라이드 (기본: isWon → /won/:id, 나머지 → /products/:id) */
+  customLink?: string;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   isWon = false,
   isSold = false,
-  isConfirmed = false
+  isConfirmed = false,
+  isSellerPending = false,
+  customLink,
 }) => {
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [isFinished, setIsFinished] = useState<boolean>(false);
@@ -88,8 +94,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const showBadge = isWon || isSold;
-  const linkTo = isWon ? `/won/${product.id}` : `/products/${product.id}`;
+  const showBadge = isWon || isSold || isSellerPending;
+  const linkTo = customLink || (isWon ? `/won/${product.id}` : `/products/${product.id}`);
 
   return (
     <Link
@@ -169,8 +175,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
         )}
 
-        {/* Sold Badge */}
-        {isSold && (
+        {/* Sold Badge (판매자 시점) */}
+        {isSold && !isSellerPending && (
           <div className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 transition-colors cursor-pointer rounded-[inherit] ${isConfirmed ? 'bg-indigo-600/80 group-hover:bg-indigo-500/90' : 'bg-gray-800/80 group-hover:bg-gray-700/90'
             }`}>
             <div className={`px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl ${isConfirmed ? 'bg-white text-indigo-600' : 'bg-white text-gray-800'
@@ -180,6 +186,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className={`text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white transition-all ${isConfirmed ? 'group-hover:text-indigo-600' : 'group-hover:text-gray-800'
               }`}>
               {isConfirmed ? '구매자와 대화하기' : '구매자 구매 확정 대기'}
+            </div>
+          </div>
+        )}
+
+        {/* Seller Pending Badge — 낙찰 발생 후 구매 확정 대기 중 (초록 강조) */}
+        {isSellerPending && (
+          <div className="absolute inset-0 bg-emerald-600/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-emerald-500/90 transition-colors cursor-pointer rounded-[inherit]">
+            <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
+              확정 대기 중
+            </div>
+            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-emerald-600 transition-all">
+              결과 확인하기
             </div>
           </div>
         )}

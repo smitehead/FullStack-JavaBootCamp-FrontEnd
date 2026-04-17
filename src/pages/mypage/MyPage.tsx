@@ -524,28 +524,31 @@ export const MyPage: React.FC = () => {
                 {/* 판매 내역 */}
                 {activeTab === 'selling' && filteredSellingProducts.map(p => {
                   const ars = p.auctionResultStatus;
-                  // 낙찰 결과 대기 중: 배송대기, 결제완료, 취소요청
+                  // 낙찰 후 구매 확정 대기 중: 배송대기 | 결제완료 | 취소요청
                   const hasPendingResult = p.status === 'completed'
                     && ars != null
-                    && !['유찰', '구매확정', '거래취소'].includes(ars);
+                    && !['유찰', '구매확정', '거래취소'].includes(String(ars));
+                  const isResultConfirmed = ars === '구매확정';
+
                   return (
-                    <div
-                      key={p.id}
-                      className={`flex flex-col gap-2 ${hasPendingResult ? 'rounded-2xl ring-2 ring-emerald-400 ring-offset-2 shadow-lg shadow-emerald-100' : ''}`}
-                    >
-                      {hasPendingResult && (
-                        <div className="flex items-center justify-between px-1 pt-1">
-                          <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-500 text-white rounded-full text-[10px] font-bold uppercase tracking-wider">
-                            🎉 낙찰 완료
+                    <div key={p.id} className="flex flex-col gap-2">
+                      {/* 취소 요청 수신 배너 */}
+                      {ars === '취소요청' && (
+                        <div className="flex items-center gap-2 px-1 pt-1">
+                          <span className="inline-flex items-center px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-[10px] font-bold">
+                            ⚠ 취소 요청 수신
                           </span>
-                          {ars === '취소요청' && (
-                            <span className="inline-flex items-center px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-[10px] font-bold">
-                              취소 요청 수신
-                            </span>
-                          )}
                         </div>
                       )}
-                      <ProductCard product={p} isSold={p.status === 'completed'} />
+
+                      <ProductCard
+                        product={p}
+                        isSold={p.status === 'completed'}
+                        isConfirmed={isResultConfirmed}
+                        isSellerPending={hasPendingResult}
+                        customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
+                      />
+
                       <div className="flex gap-2">
                         <button onClick={() => handleDeleteClick(p)}
                           className="flex-1 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center gap-1.5">
@@ -554,7 +557,7 @@ export const MyPage: React.FC = () => {
                         {hasPendingResult && (
                           <button
                             onClick={() => navigate(`/seller-result/${p.id}`)}
-                            className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm shadow-emerald-200"
+                            className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
                           >
                             결과 확인
                           </button>
