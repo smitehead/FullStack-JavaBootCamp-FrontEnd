@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsBag, BsFunnel } from 'react-icons/bs';
 
-import { BsClock, BsPeople, BsExclamationCircle, BsBan, BsSearch } from 'react-icons/bs';
+import { BsClock, BsStopwatch, BsPeople, BsExclamationCircle, BsBan, BsSearch } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { Product } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -152,7 +152,7 @@ export const AuctionManagement: React.FC = () => {
                       </span>
                       <span className="text-gray-300">|</span>
                       <span className="inline-flex items-center gap-1 text-gray-500 font-medium">
-                        <BsClock className="w-3.5 h-3.5" /> {getRemainingTime(product)}
+                        <BsStopwatch className="w-3.5 h-3.5" /> {getRemainingTime(product)}
                       </span>
                     </div>
                   </div>

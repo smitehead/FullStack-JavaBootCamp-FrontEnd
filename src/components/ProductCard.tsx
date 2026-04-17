@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { BsPerson, BsHeart, BsHeartFill, BsClock, BsBox2 } from 'react-icons/bs';
+import { BsPerson, BsHeart, BsHeartFill, BsStopwatch, BsBox2 } from 'react-icons/bs';
 import { Product } from '@/types';
 import { useAppContext } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
@@ -211,7 +211,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             ) : (
               <div className="flex items-center gap-1">
-                <BsClock className="w-3.5 h-3.5" />
+                <BsStopwatch className="w-3.5 h-3.5" />
                 <span>{timeLeft}</span>
               </div>
             )}

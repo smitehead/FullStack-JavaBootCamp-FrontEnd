@@ -124,6 +124,7 @@ interface AppContextType {
   unreadNotificationsCount: number;
   unreadChatsCount: number;
   refreshActivityLogs: () => Promise<void>;
+  fetchChats: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -706,7 +707,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       toggleMaintenanceMode,
       unreadNotificationsCount,
       unreadChatsCount,
-      refreshActivityLogs
+      refreshActivityLogs,
+      fetchChats
     }}>
       {children}
     </AppContext.Provider>

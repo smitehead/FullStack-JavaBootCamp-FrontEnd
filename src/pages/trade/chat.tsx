@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsGeoAlt } from 'react-icons/bs';
+import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsGeoAlt, BsPersonSquare, BsDoorOpen } from 'react-icons/bs';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
@@ -20,7 +20,7 @@ const SEND_TIMEOUT = 5000;
 export const Chat: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAppContext();
+  const { user, fetchChats } = useAppContext();
   const memberNo = user ? getMemberNo(user) : null;
 
   // 채팅방 목록
@@ -672,36 +672,56 @@ export const Chat: React.FC = () => {
               <button onClick={() => setSelectedRoom(null)} className="md:hidden p-1 text-gray-600">
                 <BsArrowLeft className="w-5 h-5" />
               </button>
-              <img src={selectedRoom.otherUser.profileImage || '/default-profile.png'}
+              <img src={selectedRoom.otherUser.profileImage || '/images/default-profile.png'}
                 alt="" className="w-10 h-10 rounded-full object-cover bg-gray-100" />
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-sm text-gray-900 truncate">{selectedRoom.otherUser.nickname}</h3>
+                <button
+                  onClick={() => navigate(`/seller/${selectedRoom.otherUser.no}`)}
+                  className="font-bold text-sm text-gray-900 truncate hover:text-[#FF5A5A] transition-colors block text-left"
+                >
+                  {selectedRoom.otherUser.nickname}
+                </button>
                 <p className="text-[11px] text-gray-400 truncate">{selectedRoom.productTitle}</p>
               </div>
-              <div className="relative" ref={menuRef}>
-                <button onClick={() => setShowMoreMenu(!showMoreMenu)}
-                  className="p-2 text-gray-400 hover:text-gray-600">
+              <div className="relative group" ref={menuRef}>
+                <button
+                  onClick={() => setShowMoreMenu(!showMoreMenu)}
+                  className="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all"
+                >
                   <BsThreeDotsVertical className="w-5 h-5" />
                 </button>
                 {showMoreMenu && (
-                  <div className="absolute right-0 top-10 w-40 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-10">
-                    <button onClick={() => navigate(`/products/${selectedRoom.productId}`)}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                      <BsCartCheck className="w-4 h-4" /> 상품 보기
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 opacity-100 visible transition-all duration-200 transform origin-top-right">
+                    <button
+                      onClick={() => { navigate(`/seller/${selectedRoom.otherUser.no}`); setShowMoreMenu(false); }}
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
+                    >
+                      <BsPersonSquare className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </button>
-                    <button onClick={async () => {
-                      if (window.confirm('이 채팅방을 나가시겠습니까?')) {
-                        try {
-                          await api.delete(`/chat/rooms/${selectedRoom.roomNo}`);
-                          setSelectedRoom(null);
-                          loadChatRooms();
-                        } catch { alert('삭제에 실패했습니다.'); }
-                      }
-                      setShowMoreMenu(false);
-                    }}
-                      className="w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-gray-50">
-                      채팅방 나가기
+                    <button
+                      onClick={() => { navigate(`/products/${selectedRoom.productId}`); setShowMoreMenu(false); }}
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
+                    >
+                      <BsCartCheck className="w-4 h-4 mr-2.5" /> 상품 보기
                     </button>
+                    <div className="border-t border-gray-50 mt-1 pt-1">
+                      <button
+                        onClick={async () => {
+                          if (window.confirm('이 채팅방을 나가시겠습니까?\n나가면 목록에서 삭제되지만 상대방은 계속 대화를 볼 수 있습니다.')) {
+                            try {
+                              await api.delete(`/chat/rooms/${selectedRoom.roomNo}`);
+                              setSelectedRoom(null);
+                              loadChatRooms();
+                              fetchChats(); // 전역 목록(헤더 알림 등) 동기화
+                            } catch { alert('삭제에 실패했습니다.'); }
+                          }
+                          setShowMoreMenu(false);
+                        }}
+                        className="flex items-center px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors w-full text-left"
+                      >
+                        <BsDoorOpen className="w-4 h-4 mr-2.5" /> 채팅방 나가기
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
