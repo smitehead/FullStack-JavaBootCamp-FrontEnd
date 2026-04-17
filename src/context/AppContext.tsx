@@ -341,7 +341,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
   }, [user?.id]); // 사용자 ID가 바뀔 때(로그인/로그아웃) 재연결
 
-  // 앱 시작 시 localStorage에 저장된 로그인 정보 복원
+  // 앱 시작 시 sessionStorage에 저장된 로그인 정보 복원 (탭별 격리)
   useEffect(() => {
     const savedUser = sessionStorage.getItem('java_user');
     if (savedUser) {
