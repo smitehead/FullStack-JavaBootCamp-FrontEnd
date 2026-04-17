@@ -26,6 +26,7 @@ import { ProductList } from '@/pages/product/ProductList';
 import { ProductDetail } from '@/pages/product/ProductDetail';
 import { ProductRegister } from '@/pages/product/ProductRegister';
 import { WonProductDetail } from '@/pages/product/WonProductDetail';
+import { SellerAuctionResult } from '@/pages/product/SellerAuctionResult';
 
 // [ MyPage Pages (마이페이지/재화) ]
 import { MyPage } from '@/pages/mypage/MyPage';
@@ -141,6 +142,7 @@ const App: React.FC = () => {
                 <Route path="/search" element={<ProductList />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/won/:id" element={<WonProductDetail />} />
+                <Route path="/seller-result/:id" element={<SellerAuctionResult />} />
                 <Route path="/inbox" element={<Inbox />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/review/:orderId" element={<ReviewCreate />} />

@@ -5,7 +5,7 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { BsXCircle } from 'react-icons/bs';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, AlertCircle } from 'lucide-react';
 
 import { BsCheckCircle, BsBox2, BsExclamationCircle, BsInfoCircle, BsCreditCard, BsGeoAltFill, BsChat, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
@@ -101,17 +101,20 @@ export const WonProductDetail: React.FC = () => {
   const isPaid = result.status === '결제완료';
   const isCompleted = result.status === '구매확정';
   const isCanceled = result.status === '거래취소';
+  const isCancelRequested = result.status === '취소요청';
   const isForcePromoted = result.isForcePromoted === 1;
 
   const statusLabel = isPending ? '결제 대기'
     : isPaid ? (result.tradeType === '직거래' ? '결제 완료 (거래 대기)' : '결제 완료 (배송 대기)')
       : isCompleted ? '거래 완료'
-        : '거래 취소';
+        : isCancelRequested ? '취소 요청 중'
+          : '거래 취소';
 
   const statusClass = isPending ? 'bg-amber-100 text-amber-600'
     : isPaid ? 'bg-emerald-100 text-emerald-600'
       : isCompleted ? 'bg-indigo-100 text-indigo-600'
-        : 'bg-gray-100 text-gray-500';
+        : isCancelRequested ? 'bg-orange-100 text-orange-600'
+          : 'bg-gray-100 text-gray-500';
 
   const images = result.images.map(img => resolveImageUrl(img) || img);
 
@@ -141,14 +144,27 @@ export const WonProductDetail: React.FC = () => {
     }
   };
 
+  // 강제 승계 낙찰자 단독 취소 (패널티 없음)
   const executeCancel = async () => {
     setShowCancelConfirm(false);
     try {
       await api.post(`/auction-results/${result.resultNo}/cancel`);
       setResult(prev => prev ? { ...prev, status: '거래취소' } : null);
-      showToast('결제가 취소되었습니다.', 'success');
+      showToast('낙찰이 취소되었습니다. 포인트가 환불됩니다.', 'success');
     } catch {
       showToast('취소 처리 중 오류가 발생했습니다.', 'error');
+    }
+  };
+
+  // 일반 낙찰자 취소 요청 (판매자 동의 필요)
+  const executeRequestCancel = async () => {
+    setShowCancelConfirm(false);
+    try {
+      await api.post(`/auction-results/${result.resultNo}/request-cancel`);
+      setResult(prev => prev ? { ...prev, status: '취소요청' } : null);
+      showToast('취소 요청을 보냈습니다. 판매자 승인 후 환불됩니다.', 'success');
+    } catch (err: any) {
+      showToast(err.response?.data?.message || '취소 요청 중 오류가 발생했습니다.', 'error');
     }
   };
 
@@ -441,13 +457,20 @@ export const WonProductDetail: React.FC = () => {
 
                 {/* Local Action Buttons */}
                 <div className="mt-8 space-y-3">
-                  {isPending && (
-                    isForcePromoted ? (
-                      /* 강제 승계: [낙찰 취소하기] [입찰 구매 확정] — 취소 먼저, 확정 오른쪽 */
+                  {(isPending || isCancelRequested) && (
+                    isCancelRequested ? (
+                      /* 취소요청 상태: 판매자 승인 대기 중 안내 */
+                      <div className="bg-orange-50 border border-orange-100 p-5 rounded-2xl text-center space-y-2">
+                        <AlertCircle className="w-8 h-8 text-orange-400 mx-auto" />
+                        <p className="text-sm font-bold text-orange-700">취소 요청 대기 중</p>
+                        <p className="text-xs text-orange-600 font-medium">판매자가 취소 요청을 검토 중입니다.<br />승인 완료 시 포인트가 자동 환불됩니다.</p>
+                      </div>
+                    ) : (
+                      /* 배송대기: [낙찰 취소하기] 왼쪽 + [상품 수령 확인] 오른쪽 — 모든 낙찰자 공통 */
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <button
                           onClick={() => setShowCancelConfirm(true)}
-                          className="w-full py-5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl transition-all border border-gray-200 shadow-sm"
+                          className="w-full py-5 bg-red-50 hover:bg-red-100 text-red-500 font-bold rounded-2xl transition-all border border-red-100 shadow-sm"
                         >
                           낙찰 취소하기
                         </button>
@@ -459,15 +482,6 @@ export const WonProductDetail: React.FC = () => {
                           {isProcessing ? '처리 중...' : '상품 수령 확인 (구매 확정)'}
                         </button>
                       </div>
-                    ) : (
-                      /* 일반 낙찰: 구매 확정 버튼 full-width */
-                      <button
-                        onClick={handleConfirmClick}
-                        disabled={isProcessing}
-                        className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50"
-                      >
-                        {isProcessing ? '처리 중...' : '상품 수령 확인 (구매 확정)'}
-                      </button>
                     )
                   )}
 
@@ -592,13 +606,27 @@ export const WonProductDetail: React.FC = () => {
             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
               <BsXCircle className="w-8 h-8 text-red-600" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">낙찰을 취소하시겠습니까?</h3>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
-              상위 입찰자 취소로 자동 승계된 낙찰입니다.
-            </p>
-            <p className="text-xs text-emerald-600 font-bold mb-8 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5" /> 패널티 없이 취소됩니다. 입찰가는 전액 환불됩니다.
-            </p>
+            {isForcePromoted ? (
+              <>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">낙찰을 취소하시겠습니까?</h3>
+                <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
+                  상위 입찰자 취소로 자동 승계된 낙찰입니다.
+                </p>
+                <p className="text-xs text-emerald-600 font-bold mb-8 flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5" /> 패널티 없이 취소됩니다. 입찰가는 전액 환불됩니다.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">낙찰 취소를 요청하시겠습니까?</h3>
+                <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
+                  일반 낙찰 건의 취소는 <span className="font-black text-gray-700">판매자의 동의(상호 합의)</span>가 필요합니다.
+                </p>
+                <p className="text-xs text-orange-600 font-bold mb-8 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" /> 취소 요청 후 판매자가 승인해야 환불됩니다.
+                </p>
+              </>
+            )}
             <div className="flex gap-3">
               <button
                 onClick={() => setShowCancelConfirm(false)}
@@ -607,10 +635,10 @@ export const WonProductDetail: React.FC = () => {
                 아니오
               </button>
               <button
-                onClick={executeCancel}
+                onClick={isForcePromoted ? executeCancel : executeRequestCancel}
                 className="flex-1 py-4 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-400 transition-all shadow-lg shadow-red-500/10 active:scale-95"
               >
-                취소하기
+                {isForcePromoted ? '즉시 취소하기' : '취소 요청하기'}
               </button>
             </div>
           </div>
