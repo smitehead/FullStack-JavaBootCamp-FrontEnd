@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { BsBox2, BsExclamationCircle, BsExclamationTriangle, BsReply, BsBan, BsShieldCheck, BsShieldFillCheck, BsFlag, BsInfoCircle, BsInfoCircleFill, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsStopwatch, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShare, BsArrowRepeat, BsTrash3 } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsReply, BsShieldFillCheck, BsFlagFill, BsInfoCircle, BsInfoCircleFill, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsStopwatch, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShareFill, BsArrowRepeat, BsTrash3 } from 'react-icons/bs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -959,10 +959,10 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => setIsShareModalOpen(true)}
                     className="flex items-center hover:text-gray-600 transition-colors font-medium"
                   >
-                    <BsShare className="w-3 h-3 mr-1" /> 공유하기
+                    <BsShareFill className="w-3 h-3 mr-1" /> 공유하기
                   </button>
                   <Link to={`/report?productId=${product.id}`} className="flex items-center hover:text-red-500 transition-colors font-medium">
-                    <BsFlag className="w-3 h-3 mr-1" /> 신고하기
+                    <BsFlagFill className="w-3 h-3 mr-1" /> 신고하기
                   </Link>
                 </div>
               </div>
@@ -2009,8 +2009,8 @@ export const ProductDetail: React.FC = () => {
                 <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm">
                   취소
                 </button>
-                <button 
-                  onClick={handleDeleteProduct} 
+                <button
+                  onClick={handleDeleteProduct}
                   disabled={isDeleting}
                   className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-2"
                 >
@@ -2034,17 +2034,17 @@ export const ProductDetail: React.FC = () => {
               </p>
 
               <div className="flex gap-3 w-full">
-                <button 
-                  onClick={() => setShowRepostModal(false)} 
+                <button
+                  onClick={() => setShowRepostModal(false)}
                   className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
                 >
                   닫기
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     setShowRepostModal(false);
                     navigate('/register', { state: { product: product } });
-                  }} 
+                  }}
                   className="flex-1 py-3.5 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 text-sm"
                 >
                   재게시하기

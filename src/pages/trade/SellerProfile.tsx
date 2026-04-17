@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsFlag, BsChevronRight, BsArrowLeft } from 'react-icons/bs';
+import { BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsFlagFill, BsArrowLeft } from 'react-icons/bs';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -163,7 +163,7 @@ export const SellerProfile: React.FC = () => {
                       onClick={() => navigate(`/report?sellerId=${seller.sellerNo}&sellerNickname=${encodeURIComponent(seller.nickname)}`)}
                       className="text-xs font-medium text-red-500 hover:text-red-600 transition-colors flex items-center gap-1"
                     >
-                      <BsFlag className="w-3 h-3" /> 신고하기
+                      <BsFlagFill className="w-3 h-3" /> 신고하기
                     </button>
                   </div>
                 </div>
