@@ -328,7 +328,7 @@ export const ProductRegister: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="상품 제목을 입력해주세요"
-              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 border text-sm font-medium transition-all outline-none"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border text-sm font-medium transition-all outline-none"
               required
             />
           </div>
@@ -342,7 +342,7 @@ export const ProductRegister: React.FC = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="상품의 상태, 구매 시기, 하자 여부 등을 자세히 적어주세요. 상세한 설명은 빠른 판매와 분쟁 예방에 도움이 됩니다."
-              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-5 border text-sm leading-relaxed font-medium transition-all outline-none"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-5 border text-sm leading-relaxed font-medium transition-all outline-none"
               required
             ></textarea>
           </div>
@@ -355,7 +355,7 @@ export const ProductRegister: React.FC = () => {
             <select
               value={largeCat}
               onChange={(e) => { setLargeCat(e.target.value); setMediumCat(''); setSmallCat(''); }}
-              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-3 text-sm border bg-white transition-all outline-none"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-3 text-sm border bg-white transition-all outline-none"
             >
               <option value="">대분류</option>
               {CATEGORY_DATA.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -364,7 +364,7 @@ export const ProductRegister: React.FC = () => {
               value={mediumCat}
               onChange={(e) => { setMediumCat(e.target.value); setSmallCat(''); }}
               disabled={!largeCat}
-              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-3 text-sm border bg-white transition-all outline-none disabled:bg-gray-50 disabled:text-gray-400"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-3 text-sm border bg-white transition-all outline-none disabled:bg-gray-50 disabled:text-gray-400"
             >
               <option value="">중분류</option>
               {selectedLarge?.subCategories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -373,7 +373,7 @@ export const ProductRegister: React.FC = () => {
               value={smallCat}
               onChange={(e) => setSmallCat(e.target.value)}
               disabled={!mediumCat}
-              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-3 text-sm border bg-white transition-all outline-none disabled:bg-gray-50 disabled:text-gray-400"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-3 text-sm border bg-white transition-all outline-none disabled:bg-gray-50 disabled:text-gray-400"
             >
               <option value="">소분류</option>
               {selectedMedium?.subCategories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -398,7 +398,7 @@ export const ProductRegister: React.FC = () => {
                   placeholder="0"
                   step="100"
                   min="0"
-                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 pr-10 border bg-white font-medium transition-all outline-none"
+                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border bg-white font-medium transition-all outline-none"
                   required
                 />
                 <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
@@ -426,7 +426,7 @@ export const ProductRegister: React.FC = () => {
                   placeholder={isInstantPriceEnabled ? "0" : "비활성화됨"}
                   step="100"
                   min="0"
-                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 pr-10 border font-medium transition-all outline-none ${!isInstantPriceEnabled ? 'bg-gray-100 text-gray-400' : 'text-brand-dark bg-white'}`}
+                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border font-medium transition-all outline-none ${!isInstantPriceEnabled ? 'bg-gray-100 text-gray-400' : 'text-brand-dark bg-white'}`}
                 />
                 <span className={`absolute right-4 top-0 h-full flex items-center font-bold transition-colors ${!isInstantPriceEnabled ? 'text-gray-300' : 'text-gray-400'}`}>원</span>
               </div>
@@ -444,7 +444,7 @@ export const ProductRegister: React.FC = () => {
                   placeholder="예: 100"
                   step="100"
                   min="0"
-                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 pr-10 border bg-white font-medium transition-all outline-none"
+                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border bg-white font-medium transition-all outline-none"
                   required
                 />
                 <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
@@ -468,7 +468,7 @@ export const ProductRegister: React.FC = () => {
                   key={d}
                   type="button"
                   onClick={() => { setDuration(d); setIsManualTime(false); }}
-                  className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${duration === d && !isManualTime ? 'bg-brand border-brand text-black shadow-md shadow-red-500/10' : 'bg-white border-gray-200 text-gray-500 hover:border-brand hover:text-brand'}`}
+                  className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${duration === d && !isManualTime ? 'bg-brand border-brand text-white shadow-md shadow-red-500/10' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
                 >
                   {d === '14' ? '2주' : `${d}일`}
                 </button>
@@ -476,7 +476,7 @@ export const ProductRegister: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsManualTime(true)}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${isManualTime ? 'bg-brand border-brand text-black shadow-md shadow-red-500/10' : 'bg-white border-gray-200 text-gray-500 hover:border-brand hover:text-brand'}`}
+                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${isManualTime ? 'bg-brand border-brand text-white shadow-md shadow-red-500/10' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
               >
                 직접 입력
               </button>
@@ -490,13 +490,13 @@ export const ProductRegister: React.FC = () => {
                   onChange={(e) => setManualDate(e.target.value)}
                   max={maxDateString}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 border bg-white transition-all outline-none"
+                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border bg-white transition-all outline-none"
                 />
                 <input
                   type="time"
                   value={manualTime}
                   onChange={(e) => setManualTime(e.target.value)}
-                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 border bg-white transition-all outline-none"
+                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border bg-white transition-all outline-none"
                 />
               </div>
             )}
@@ -504,11 +504,11 @@ export const ProductRegister: React.FC = () => {
             <div className="bg-gray-900 text-white p-5 rounded-2xl flex items-center justify-between shadow-lg">
               <div className="flex items-center gap-3">
                 <div className="bg-white/10 p-2.5 rounded-xl">
-                  <BsCalendarCheck className="w-5 h-5 text-brand" />
+                  <BsCalendarCheck className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">경매 마감 예정</span>
               </div>
-              <span className="text-lg font-bold text-brand">{endTime || '일시를 선택해주세요'}</span>
+              <span className="text-lg font-bold text-white">{endTime || '일시를 선택해주세요'}</span>
             </div>
           </div>
         </section>
@@ -567,7 +567,7 @@ export const ProductRegister: React.FC = () => {
                   disabled={isFreeShipping}
                   min="0"
                   placeholder={isFreeShipping ? "무료배송" : "배송비를 입력해주세요"}
-                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 pr-10 border text-sm transition-all outline-none ${isFreeShipping ? 'bg-gray-50 text-gray-400' : 'bg-white'}`}
+                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border text-sm transition-all outline-none ${isFreeShipping ? 'bg-gray-50 text-gray-400' : 'bg-white'}`}
                 />
                 <span className={`absolute right-4 top-0 h-full flex items-center font-bold transition-colors ${isFreeShipping ? 'text-gray-300' : 'text-gray-400'}`}>원</span>
               </div>
@@ -611,7 +611,7 @@ export const ProductRegister: React.FC = () => {
                 value={detailedAddress}
                 onChange={(e) => setDetailedAddress(e.target.value)}
                 placeholder="상세 주소 (예: 건물명, 동/호수)"
-                className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 border text-sm bg-white transition-all outline-none"
+                className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border text-sm bg-white transition-all outline-none"
               />
             </div>
           )}

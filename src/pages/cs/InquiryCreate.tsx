@@ -138,7 +138,7 @@ export const InquiryCreate: React.FC = () => {
             <input
               type="text"
               placeholder="문의 제목을 입력해주세요"
-              className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none font-medium"
+              className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-medium"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -149,7 +149,7 @@ export const InquiryCreate: React.FC = () => {
             <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">내용</label>
             <textarea
               placeholder="문의 내용을 상세히 입력해주세요. (예: 발생 일시, 발생 경로, 오류 메시지 등)"
-              className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none font-medium min-h-[200px] resize-none"
+              className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-medium min-h-[200px] resize-none"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
