@@ -284,22 +284,21 @@ export const ProductRegister: React.FC = () => {
       </button>
 
       <div className="mb-10">
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">경매 상품 등록</h1>
-        <p className="text-sm text-gray-500 font-medium mt-1">새로운 경매를 시작해보세요!</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">경매 상품 등록</h1>
+        <p className="text-gray-500 font-medium">새로운 경매를 시작해보세요!</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-12">
 
         {/* Image Upload */}
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <label className="text-sm font-bold text-gray-700">상품 이미지 <span className="text-red-500">*</span></label>
-            <span className="text-xs text-gray-400">{images.length} / 5</span>
-          </div>
+          <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
+            상품 이미지 <span className="text-red-500">*</span> ({images.length}/5)
+          </label>
           <div className="flex flex-wrap gap-4">
-            <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 hover:border-brand transition-all text-gray-400 hover:text-brand group">
+            <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 hover:border-gray-500 transition-all text-gray-400 hover:text-gray-900 group">
               <BsCamera className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Add Photo</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">사진 추가</span>
               <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
             </label>
             {images.map((img, idx) => (
@@ -315,7 +314,7 @@ export const ProductRegister: React.FC = () => {
               </div>
             ))}
           </div>
-          <p className="text-[11px] text-gray-400 mt-3 flex items-center">
+          <p className="text-xs text-gray-400 mt-3 flex items-center font-medium">
             <BsInfoCircle className="w-3 h-3 mr-1" /> 상품 이미지는 최대 5장까지 등록 가능합니다.
           </p>
         </section>
@@ -323,19 +322,19 @@ export const ProductRegister: React.FC = () => {
         {/* Basic Info & Description */}
         <section className="space-y-6">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">제목 <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">제목 <span className="text-red-500">*</span></label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="상품 제목을 입력해주세요"
-              className="w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-4 border text-sm"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 border text-sm font-medium transition-all outline-none"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 flex items-center">
               <BsJustifyLeft className="w-4 h-4 mr-1.5 text-gray-400" /> 상품 설명 <span className="text-red-500 ml-1">*</span>
             </label>
             <textarea
@@ -343,7 +342,7 @@ export const ProductRegister: React.FC = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="상품의 상태, 구매 시기, 하자 여부 등을 자세히 적어주세요. 상세한 설명은 빠른 판매와 분쟁 예방에 도움이 됩니다."
-              className="w-full border-gray-200 rounded-2xl shadow-sm focus:ring-brand focus:border-brand p-5 border text-sm leading-relaxed"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-5 border text-sm leading-relaxed font-medium transition-all outline-none"
               required
             ></textarea>
           </div>
@@ -351,12 +350,12 @@ export const ProductRegister: React.FC = () => {
 
         {/* Category Selection */}
         <section className="space-y-4">
-          <label className="block text-sm font-bold text-gray-700">카테고리 <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">카테고리 <span className="text-red-500">*</span></label>
           <div className="grid grid-cols-3 gap-3">
             <select
               value={largeCat}
               onChange={(e) => { setLargeCat(e.target.value); setMediumCat(''); setSmallCat(''); }}
-              className="w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-3 text-sm border bg-white"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-3 text-sm border bg-white transition-all outline-none"
             >
               <option value="">대분류</option>
               {CATEGORY_DATA.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -365,7 +364,7 @@ export const ProductRegister: React.FC = () => {
               value={mediumCat}
               onChange={(e) => { setMediumCat(e.target.value); setSmallCat(''); }}
               disabled={!largeCat}
-              className="w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-3 text-sm border bg-white disabled:bg-gray-50 disabled:text-gray-400"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-3 text-sm border bg-white transition-all outline-none disabled:bg-gray-50 disabled:text-gray-400"
             >
               <option value="">중분류</option>
               {selectedLarge?.subCategories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -374,7 +373,7 @@ export const ProductRegister: React.FC = () => {
               value={smallCat}
               onChange={(e) => setSmallCat(e.target.value)}
               disabled={!mediumCat}
-              className="w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-3 text-sm border bg-white disabled:bg-gray-50 disabled:text-gray-400"
+              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-3 text-sm border bg-white transition-all outline-none disabled:bg-gray-50 disabled:text-gray-400"
             >
               <option value="">소분류</option>
               {selectedMedium?.subCategories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -390,7 +389,7 @@ export const ProductRegister: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">경매 시작가 <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">경매 시작가 <span className="text-red-500">*</span></label>
               <div className="relative">
                 <input
                   type="number"
@@ -399,7 +398,7 @@ export const ProductRegister: React.FC = () => {
                   placeholder="0"
                   step="100"
                   min="0"
-                  className="w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-4 pr-10 border bg-white font-medium"
+                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 pr-10 border bg-white font-medium transition-all outline-none"
                   required
                 />
                 <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
@@ -407,7 +406,7 @@ export const ProductRegister: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-bold text-gray-700">즉시 구매가 (선택)</label>
+                <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">즉시 구매가 (선택)</label>
                 <label className="flex items-center gap-2 cursor-pointer group">
                   <input
                     type="checkbox"
@@ -427,7 +426,7 @@ export const ProductRegister: React.FC = () => {
                   placeholder={isInstantPriceEnabled ? "0" : "비활성화됨"}
                   step="100"
                   min="0"
-                  className={`w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-4 pr-10 border font-medium transition-all ${!isInstantPriceEnabled ? 'bg-gray-100 text-gray-400' : 'text-brand-dark bg-white'}`}
+                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 pr-10 border font-medium transition-all outline-none ${!isInstantPriceEnabled ? 'bg-gray-100 text-gray-400' : 'text-brand-dark bg-white'}`}
                 />
                 <span className={`absolute right-4 top-0 h-full flex items-center font-bold transition-colors ${!isInstantPriceEnabled ? 'text-gray-300' : 'text-gray-400'}`}>원</span>
               </div>
@@ -435,7 +434,7 @@ export const ProductRegister: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-3">최소 입찰 단위 <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">최소 입찰 단위 <span className="text-red-500">*</span></label>
             <div className="flex flex-col gap-3">
               <div className="relative">
                 <input
@@ -445,14 +444,14 @@ export const ProductRegister: React.FC = () => {
                   placeholder="예: 100"
                   step="100"
                   min="0"
-                  className="w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-4 pr-10 border bg-white font-medium"
+                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 pr-10 border bg-white font-medium transition-all outline-none"
                   required
                 />
                 <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
               </div>
               <div className="bg-white/50 border border-gray-200 p-3 rounded-xl flex items-start gap-2">
                 <BsInfoCircle className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                <div className="text-[11px] text-gray-500 leading-relaxed">
+                <div className="text-xs text-gray-500 leading-relaxed font-medium">
                   <p className="font-bold text-gray-700 mb-0.5">입찰 단위 안내</p>
                   <p>· 1만원 미만 : 100원 단위 입찰 가능 (예: 300원, 700원)</p>
                   <p>· 1만원 이상 : 1,000원 이상 설정 가능 (100원 단위 포함 가능, 예: 1,100원)</p>
@@ -462,7 +461,7 @@ export const ProductRegister: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-4">경매 종료 일시 <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">경매 종료 일시 <span className="text-red-500">*</span></label>
             <div className="flex flex-wrap gap-2 mb-4">
               {['1', '3', '7', '14'].map(d => (
                 <button
@@ -491,13 +490,13 @@ export const ProductRegister: React.FC = () => {
                   onChange={(e) => setManualDate(e.target.value)}
                   max={maxDateString}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-4 border bg-white"
+                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 border bg-white transition-all outline-none"
                 />
                 <input
                   type="time"
                   value={manualTime}
                   onChange={(e) => setManualTime(e.target.value)}
-                  className="w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-4 border bg-white"
+                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 border bg-white transition-all outline-none"
                 />
               </div>
             )}
@@ -516,7 +515,7 @@ export const ProductRegister: React.FC = () => {
 
         {/* Transaction Method */}
         <section className="space-y-6">
-          <label className="block text-sm font-bold text-gray-700">거래 방식 <span className="text-red-500">*</span> <span className="text-xs font-normal text-gray-400 ml-2">(중복 선택 가능)</span></label>
+          <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">거래 방식 <span className="text-red-500">*</span> <span className="text-xs font-normal text-gray-400 ml-2">(중복 선택 가능)</span></label>
           <div className="grid grid-cols-2 gap-4">
             <button
               type="button"
@@ -568,7 +567,7 @@ export const ProductRegister: React.FC = () => {
                   disabled={isFreeShipping}
                   min="0"
                   placeholder={isFreeShipping ? "무료배송" : "배송비를 입력해주세요"}
-                  className={`w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-4 pr-10 border text-sm transition-all ${isFreeShipping ? 'bg-gray-50 text-gray-400' : 'bg-white'}`}
+                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 pr-10 border text-sm transition-all outline-none ${isFreeShipping ? 'bg-gray-50 text-gray-400' : 'bg-white'}`}
                 />
                 <span className={`absolute right-4 top-0 h-full flex items-center font-bold transition-colors ${isFreeShipping ? 'text-gray-300' : 'text-gray-400'}`}>원</span>
               </div>
@@ -612,7 +611,7 @@ export const ProductRegister: React.FC = () => {
                 value={detailedAddress}
                 onChange={(e) => setDetailedAddress(e.target.value)}
                 placeholder="상세 주소 (예: 건물명, 동/호수)"
-                className="w-full border-gray-200 rounded-xl shadow-sm focus:ring-brand focus:border-brand p-4 border text-sm bg-white"
+                className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 p-4 border text-sm bg-white transition-all outline-none"
               />
             </div>
           )}
@@ -630,7 +629,7 @@ export const ProductRegister: React.FC = () => {
           </button>
           <button
             type="submit"
-            className="px-12 py-4 rounded-2xl bg-brand text-white font-bold hover:bg-brand-dark transition-all shadow-lg shadow-red-500/10 active:scale-95"
+            className="px-12 py-4 rounded-2xl bg-brand text-white font-bold text-base hover:bg-brand-dark transition-all shadow-lg shadow-red-500/10 active:scale-95"
           >
             등록하기
           </button>

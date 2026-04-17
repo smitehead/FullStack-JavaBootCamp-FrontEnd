@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import { BsExclamationCircle, BsInfoCircle, BsCamera, BsX, BsChevronLeft } from 'react-icons/bs';
+import { BsExclamationCircle, BsInfoCircle, BsCamera, BsX } from 'react-icons/bs';
 import { InquiryType, BugType } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -29,7 +29,7 @@ export const InquiryCreate: React.FC = () => {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   const categories: InquiryType[] = ['버그 신고', '계정 문의', '기타'];
   const bugTypes: BugType[] = ['기능 작동 오류', '화면/UI 오류', '데이터/정보 오류', '로그인/계정 문제', '속도/접속 저하', '기타'];
@@ -73,10 +73,15 @@ export const InquiryCreate: React.FC = () => {
   return (
     <div className="max-w-[800px] mx-auto px-6 py-12">
       {/* Back Button */}
-      <Link to="/inquiry" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
-        <BsChevronLeft className="w-4 h-4" />
-        문의 목록으로
-      </Link>
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8 group"
+      >
+        <svg className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        뒤로가기
+      </button>
 
       <div className="mb-10">
         <h1 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">새 문의 작성</h1>
@@ -157,37 +162,33 @@ export const InquiryCreate: React.FC = () => {
           <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">사진 첨부 ({imageFiles.length}/5)</label>
           <div className="flex flex-wrap gap-4">
             {imagePreviews.map((preview, index) => (
-              <div key={index} className="relative w-24 h-24 rounded-2xl overflow-hidden border border-gray-100 group">
+              <div key={index} className="relative w-24 h-24 rounded-2xl overflow-hidden border border-gray-100 shadow-sm group">
                 <img src={preview} alt={`upload-${index}`} className="w-full h-full object-cover" />
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="absolute top-1 right-1 w-6 h-6 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
+                  className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500"
                 >
-                  <BsX className="w-4 h-4" />
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
               </div>
             ))}
 
             {imageFiles.length < 5 && (
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-24 h-24 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 text-gray-400 hover:border-red-200 hover:text-red-500 hover:bg-red-50/30 transition-all"
-              >
-                <BsCamera className="w-6 h-6" />
-                <span className="text-[10px] font-bold">사진 추가</span>
-              </button>
+              <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-50 hover:border-gray-500 transition-all text-gray-400 hover:text-gray-900 group">
+                <BsCamera className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">사진 추가</span>
+                <input
+                  type="file"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  accept="image/*"
+                  multiple
+                />
+              </label>
             )}
           </div>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImageUpload}
-            className="hidden"
-            accept="image/*"
-            multiple
-          />
+
           <p className="text-xs text-gray-400 font-medium flex items-center gap-1.5">
             <BsInfoCircle className="w-3.5 h-3.5" />
             JPG, PNG 형식의 이미지만 업로드 가능합니다.
