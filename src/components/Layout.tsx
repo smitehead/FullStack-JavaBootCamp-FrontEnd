@@ -9,6 +9,7 @@ import { Category } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { getProfileImageUrl } from '@/utils/imageUtils';
 import { SORRY_IMAGE_BASE64 } from '@/assets/images/sorry_base64';
+import mainLogo from '@/assets/images/main_logo.png';
 
 interface HeaderProps {
   onLogout: () => void;
@@ -98,8 +99,13 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-1 shrink-0 group">
-            <div className="bg-[#FF5A5A] p-2 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
-              <BsStars className="w-6 h-6 text-white" />
+            <div className="group-hover:scale-110 transition-transform">
+              {/* 기존 아이콘 주석 처리
+              <div className="bg-[#FF5A5A] p-2 rounded-xl shadow-sm">
+                <BsStars className="w-6 h-6 text-white" />
+              </div>
+              */}
+              <img src={mainLogo} alt="JAVAJAVA Logo" className="w-12 h-12 object-contain" />
             </div>
             <span className="text-2xl font-bold text-gray-800 tracking-tighter italic">JAVAJAVA</span>
           </Link>
