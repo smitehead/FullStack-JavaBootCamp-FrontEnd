@@ -49,7 +49,6 @@ export const WonProductDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const [showPaymentConfirm, setShowPaymentConfirm] = useState(false);
   const [showPurchaseConfirm, setShowPurchaseConfirm] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -116,41 +115,29 @@ export const WonProductDetail: React.FC = () => {
 
   const images = result.images.map(img => resolveImageUrl(img) || img);
 
-  const handlePayment = () => {
+  const handleConfirmClick = () => {
     if (activeTransactionTab === 'delivery' && !address.trim() && result.tradeType !== '직거래') {
       showToast('배송지를 입력해주세요.', 'error');
       return;
     }
-    setShowPaymentConfirm(true);
-  };
-
-  const executePayment = async () => {
-    setShowPaymentConfirm(false);
-    setIsProcessing(true);
-    try {
-      await api.post(`/auction-results/${result.resultNo}/pay`, {
-        address,
-        addressDetail: detailAddress,
-        tradeType: activeTransactionTab === 'delivery' ? '택배' : '직거래'
-      });
-      setResult(prev => prev ? { ...prev, status: '결제완료' } : null);
-      setIsEditingAddress(false);
-      showToast('확정이 되었습니다.', 'success');
-    } catch {
-      showToast('결제 처리 중 오류가 발생했습니다.', 'error');
-    } finally {
-      setIsProcessing(false);
-    }
+    setShowPurchaseConfirm(true);
   };
 
   const executeConfirmPurchase = async () => {
     setShowPurchaseConfirm(false);
+    setIsProcessing(true);
     try {
-      await api.post(`/auction-results/${result.resultNo}/confirm`);
+      await api.post(`/auction-results/${result.resultNo}/confirm`, {
+        address,
+        addressDetail: detailAddress,
+      });
       setResult(prev => prev ? { ...prev, status: '구매확정' } : null);
+      setIsEditingAddress(false);
       setShowReviewModal(true);
     } catch {
       showToast('구매 확정 중 오류가 발생했습니다.', 'error');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -465,21 +452,21 @@ export const WonProductDetail: React.FC = () => {
                           낙찰 취소하기
                         </button>
                         <button
-                          onClick={handlePayment}
+                          onClick={handleConfirmClick}
                           disabled={isProcessing}
                           className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50"
                         >
-                          {isProcessing ? '처리 중...' : '입찰 구매 확정 (결제)'}
+                          {isProcessing ? '처리 중...' : '상품 수령 확인 (구매 확정)'}
                         </button>
                       </div>
                     ) : (
-                      /* 일반 낙찰: 결제 버튼만 full-width */
+                      /* 일반 낙찰: 구매 확정 버튼 full-width */
                       <button
-                        onClick={handlePayment}
+                        onClick={handleConfirmClick}
                         disabled={isProcessing}
                         className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50"
                       >
-                        {isProcessing ? '처리 중...' : '입찰 구매 확정 (결제)'}
+                        {isProcessing ? '처리 중...' : '상품 수령 확인 (구매 확정)'}
                       </button>
                     )
                   )}
@@ -487,10 +474,11 @@ export const WonProductDetail: React.FC = () => {
                   {isPaid && (
                     <div className="grid grid-cols-1 gap-3">
                       <button
-                        onClick={() => setShowPurchaseConfirm(true)}
-                        className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
+                        onClick={handleConfirmClick}
+                        disabled={isProcessing}
+                        className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-500/10 active:scale-95 disabled:opacity-50"
                       >
-                        구매 확정하기
+                        {isProcessing ? '처리 중...' : '상품 수령 확인 (구매 확정)'}
                       </button>
                     </div>
                   )}
@@ -567,47 +555,18 @@ export const WonProductDetail: React.FC = () => {
       </div>
 
       {/* Confirmation Modals */}
-      {showPaymentConfirm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
-              <BsCreditCard className="w-8 h-8 text-indigo-600" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">결제를 진행할까요?</h3>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-8">
-              낙찰된 금액만큼 포인트가 차감됩니다.<br />
-              결제 후에는 취소가 어려울 수 있습니다.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowPaymentConfirm(false)}
-                className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
-              >
-                취소
-              </button>
-              <button
-                onClick={executePayment}
-                className="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/10 active:scale-95"
-              >
-                결제하기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {showPurchaseConfirm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
               <BsCheckCircle className="w-8 h-8 text-emerald-600" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">구매를 확정하시겠습니까?</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">상품을 수령하셨나요?</h3>
             <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
-              물건을 정상적으로 수령하셨나요?
+              확인하면 판매자에게 포인트가 즉시 정산됩니다.
             </p>
             <p className="text-xs text-red-500 font-bold mb-8 flex items-center gap-1">
-              <BsExclamationCircle className="w-3.5 h-3.5" /> 구매 확정 시 다시 되돌릴 수 없습니다.
+              <BsExclamationCircle className="w-3.5 h-3.5" /> 구매 확정 후에는 취소할 수 없습니다.
             </p>
             <div className="flex gap-3">
               <button
