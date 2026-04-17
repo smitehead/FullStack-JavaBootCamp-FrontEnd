@@ -9,9 +9,9 @@ import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { resolveImageUrls, getProfileImageUrl } from '../../utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
+import { resolveImageUrls, getProfileImageUrl } from '../../utils/imageUtils';
 
 // 카테고리 ID로 전체 경로를 찾는 헬퍼 함수
 const findCategoryPath = (id: string | number): string[] => {
@@ -174,6 +174,17 @@ export const ProductDetail: React.FC = () => {
   const [isConfirming, setIsConfirming] = useState(false);
   const [dontAskToday, setDontAskToday] = useState(false);
   const confirmTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 입찰 취소 동의 상태
+  const [agreedNoRebid, setAgreedNoRebid] = useState(false);
+  const [agreedPenalty, setAgreedPenalty] = useState(false);
+
+  useEffect(() => {
+    if (!showBidCancelModal) {
+      setAgreedNoRebid(false);
+      setAgreedPenalty(false);
+    }
+  }, [showBidCancelModal]);
 
   // 입찰 참여 여부 및 최고입찰자 여부 (SSE 실시간 반영)
   const [hasBid, setHasBid] = useState(false);
@@ -1713,94 +1724,116 @@ export const ProductDetail: React.FC = () => {
       {showBidCancelModal && product && (
         <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 relative">
-            {/* 위험 강조 상단 라인 */}
-            <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500" />
-
             <div className="p-8">
               {/* 헤더 */}
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center shadow-sm">
-                    <BsBan className="w-7 h-7 text-red-500" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-black text-gray-900 tracking-tight">입찰 취소</h3>
-                    <p className="text-sm text-gray-400 font-bold mt-0.5">Bid Cancellation</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowBidCancelModal(false)}
-                  disabled={isBidCancelling}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <BsX className="w-6 h-6 text-gray-300" />
-                </button>
+              <div className="flex flex-col mb-8 text-left">
+                <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-none">입찰 취소</h3>
               </div>
 
-              {/* 위약금 경고 카드 */}
+              {/* 위약금 및 정보 섹션 */}
               {(() => {
                 const penalty = Math.floor((product.currentPrice || 0) * 0.05);
                 const userPoints = user?.points || 0;
                 const canAfford = userPoints >= penalty;
+                const refundAmount = (product.currentPrice || 0) - penalty;
+
                 return (
-                  <div className="space-y-6 mb-8">
-                    <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+                  <div className="space-y-6 mb-8 text-left">
+                    {/* 보유 포인트 카드 (페이지의 포인트 카드 스타일과 동일하게 적용) */}
+                    <div className="bg-gray-900 rounded-2xl p-5 text-white flex justify-between items-center shadow-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-white/10 p-2 rounded-xl">
+                          <BsWallet className="w-5 h-5 text-white" />
+                        </div>
+                        <span className="text-xs font-bold text-indigo-300 uppercase tracking-widest">보유 포인트</span>
+                      </div>
+                      <div className={`text-xl font-bold ${canAfford ? 'text-white' : 'text-red-400'}`}>
+                        {userPoints.toLocaleString()}
+                        <span className="text-sm ml-1 text-indigo-400">P</span>
+                      </div>
+                    </div>
+
+                    {/* 패널티 안내 상세 */}
+                    <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                       <div className="flex items-center gap-2 mb-4">
-                        <BsExclamationTriangle className="w-4 h-4 text-red-500" />
-                        <p className="text-sm font-black text-red-600">취소 시 위약금이 즉시 차감됩니다</p>
+                        <BsExclamationCircle className="w-4 h-4 text-red-500" />
+                        <p className="text-sm font-black text-gray-900">취소 패널티 안내</p>
                       </div>
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs font-bold text-gray-500">현재 입찰가</span>
-                          <span className="text-sm font-bold text-gray-900">
-                            {(product.currentPrice || 0).toLocaleString()} P
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs font-bold text-red-500">위약금 (5%)</span>
-                          <span className="text-base font-black text-red-600">
-                            -{penalty.toLocaleString()} P
-                          </span>
-                        </div>
-                        <div className="border-t border-red-100 pt-3 flex justify-between items-center">
-                          <span className="text-xs font-bold text-gray-500">취소 후 예상 잔액</span>
-                          <span className={`text-sm font-bold ${canAfford ? 'text-gray-900' : 'text-red-500'}`}>
-                            {(userPoints - penalty + (product.currentPrice || 0)).toLocaleString()} P
-                          </span>
-                        </div>
-                      </div>
+                      <ul className="space-y-3">
+                        <li className="flex items-center justify-between text-xs font-bold text-gray-600">
+                          <span>현재 입찰가</span>
+                          <span className="text-gray-900 font-black">{(product.currentPrice || 0).toLocaleString()} P</span>
+                        </li>
+                        <li className="flex items-center justify-between text-xs font-bold text-gray-600">
+                          <span>취소 위약금 (5%)</span>
+                          <span className="text-red-500 font-black">-{penalty.toLocaleString()} P</span>
+                        </li>
+                        <div className="h-px bg-gray-200 my-1" />
+                        <li className="flex items-center justify-between text-base font-black">
+                          <span className="text-gray-900 font-bold text-xs">최종 반환 금액</span>
+                          <span className="text-gray-900 tracking-tight">{refundAmount.toLocaleString()} P</span>
+                        </li>
+                      </ul>
                     </div>
 
-                    {/* 보유 포인트 표시 */}
-                    <div className="bg-gray-900 rounded-2xl p-4 flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <BsWallet className="w-4 h-4 text-orange-400" />
-                        <span className="text-xs font-bold text-gray-400">현재 보유 포인트</span>
-                      </div>
-                      <span className={`text-base font-bold ${canAfford ? 'text-orange-400' : 'text-red-400'}`}>
-                        {userPoints.toLocaleString()} P
-                      </span>
-                    </div>
-
-                    {/* 포인트 부족 경고 */}
+                    {/* 포인트 부족 알림 */}
                     {!canAfford && (
-                      <div className="flex items-start gap-2 bg-orange-50 border border-orange-200 rounded-xl p-4">
-                        <BsExclamationCircle className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
-                        <p className="text-xs font-bold text-orange-700 leading-relaxed">
-                          위약금 납부를 위한 포인트가 부족합니다. 포인트를 충전하셔야 취소가 가능합니다.
+                      <div className="flex items-start gap-3 bg-orange-50 border border-orange-100 rounded-2xl p-4">
+                        <BsExclamationCircle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                        <p className="text-xs font-bold text-orange-800 leading-relaxed">
+                          위약금 납부를 위한 포인트가 부족합니다. <br />포인트 충전을 완료하셔야 취소가 가능합니다.
                         </p>
                       </div>
                     )}
 
-                    <p className="text-xs text-gray-400 leading-relaxed text-center">
-                      경매 마감 시간은 변동 없이 유지됩니다.
-                      위약금은 위약금 풀에 적립되어 최종 정산 시 분배됩니다.
+                    {/* 정책 안내 텍스트 */}
+                    <p className="text-[10px] text-gray-400 leading-relaxed text-center font-medium">
+                      경매 마감 시간은 변동 없이 유지됩니다.<br />
+                      차감된 위약금은 경매 보호 정책에 따라 위약금 풀에 적립됩니다.
                     </p>
+
+                    {/* 필수 동의 체크박스 */}
+                    <div className="space-y-3 mt-6">
+                      <label className="flex items-center gap-3 cursor-pointer group">
+                        <div className="relative flex items-center justify-center w-5 h-5 shrink-0">
+                          <input
+                            type="checkbox"
+                            checked={agreedNoRebid}
+                            onChange={(e) => setAgreedNoRebid(e.target.checked)}
+                            className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-md checked:bg-red-500 checked:border-red-500 transition-all cursor-pointer"
+                          />
+                          <svg
+                            className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">재입찰이 불가능함을 확인했습니다.</span>
+                      </label>
+                      <label className="flex items-center gap-3 cursor-pointer group">
+                        <div className="relative flex items-center justify-center w-5 h-5 shrink-0">
+                          <input
+                            type="checkbox"
+                            checked={agreedPenalty}
+                            onChange={(e) => setAgreedPenalty(e.target.checked)}
+                            className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-md checked:bg-red-500 checked:border-red-500 transition-all cursor-pointer"
+                          />
+                          <svg
+                            className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">위약금 내용을 인지했습니다.</span>
+                      </label>
+                    </div>
                   </div>
                 );
               })()}
 
-              {/* 액션 버튼 */}
+              {/* 액션 버튼 그룹 */}
               {(() => {
                 const penalty = Math.floor((product.currentPrice || 0) * 0.05);
                 const canAfford = (user?.points || 0) >= penalty;
@@ -1809,30 +1842,24 @@ export const ProductDetail: React.FC = () => {
                     <button
                       onClick={() => setShowBidCancelModal(false)}
                       disabled={isBidCancelling}
-                      className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
+                      className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all disabled:opacity-50"
                     >
                       돌아가기
                     </button>
-                    {canAfford ? (
-                      <button
-                        onClick={handleBidCancelConfirm}
-                        disabled={isBidCancelling}
-                        className="flex-1 py-4 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
-                      >
-                        {isBidCancelling ? (
-                          <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />처리 중...</>
-                        ) : (
-                          `위약금 ${Math.floor((product.currentPrice || 0) * 0.05).toLocaleString()}P 차감 후 취소`
-                        )}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => { setShowBidCancelModal(false); navigate('/points/charge'); }}
-                        className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-95"
-                      >
-                        포인트 충전하기
-                      </button>
-                    )}
+                    <button
+                      onClick={handleBidCancelConfirm}
+                      disabled={!agreedNoRebid || !agreedPenalty || isBidCancelling || !canAfford}
+                      className="flex-1 py-4 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {isBidCancelling ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          취소 처리 중...
+                        </>
+                      ) : (
+                        '위약금 승인 및 취소'
+                      )}
+                    </button>
                   </div>
                 );
               })()}
