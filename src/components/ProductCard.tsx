@@ -106,15 +106,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <Link
       to={linkTo}
-      className={`group block bg-white rounded-[24px] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border ${showBadge ? 'border-indigo-200 ring-2 ring-indigo-50' : 'border-gray-50'
-        }`}
+      className="group block bg-white rounded-[24px] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-50"
     >
       <div className="relative aspect-square m-0.5 rounded-[22px] overflow-hidden bg-gray-100 isolate [transform:translateZ(0)]">
         {product.images && product.images.length > 0 ? (
           <img
             src={product.images[0]}
             alt={product.title}
- className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${(product.status === 'completed' || isConfirmed) ? 'grayscale-[0.3]' : ''}`}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
@@ -204,8 +203,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
 
           {/* Timer pill */}
-          <div className={`flex items-center h-6 px-2.5 rounded-lg text-[11px] font-bold leading-none ${isFinished ? 'bg-gray-100 text-gray-500' : 'bg-red-50 text-red-500'}`}>
-            {isFinished ? (
+          <div className={`flex items-center h-6 px-2.5 rounded-lg text-[11px] font-bold leading-none ${isConfirmed
+              ? 'bg-gray-900 text-white'
+              : isFinished
+                ? 'bg-gray-100 text-gray-500'
+                : 'bg-red-50 text-red-500'
+            }`}>
+            {isConfirmed ? (
+              <span>판매완료</span>
+            ) : isFinished ? (
               <span>종료</span>
             ) : (
               <div className="flex items-center gap-1">

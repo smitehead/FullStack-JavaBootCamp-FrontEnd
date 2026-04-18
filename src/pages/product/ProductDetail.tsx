@@ -64,7 +64,7 @@ export const ProductDetail: React.FC = () => {
     try {
       await api.delete(`/products/${product.id}`);
       showToast('상품이 삭제되었습니다.', 'success');
-      navigate('/products');
+      navigate(-1);
     } catch {
       showToast('상품 삭제에 실패했습니다.', 'error');
     } finally {
