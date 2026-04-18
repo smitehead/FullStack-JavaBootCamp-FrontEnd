@@ -4,12 +4,13 @@ import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
 import { BsBag, BsBagFill, BsPencilSquare } from 'react-icons/bs';
 
-import { BsHeart, BsHeartFill, BsGear, BsWallet, BsBox2, BsShop, BsTrophy, BsChat } from 'react-icons/bs';
+import { BsHeart, BsHeartFill, BsGear, BsWallet, BsBox2, BsShop, BsTrophy, BsChat, BsCheckCircle } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
+import { ReviewModal } from '@/components/ReviewModal';
 
 /** 백엔드 ProductListResponseDto → 프론트 Product 타입 변환 */
 function mapToProduct(item: any): Product & { bidStatus?: string } {
@@ -96,6 +97,8 @@ export const MyPage: React.FC = () => {
   const [profileImage, setProfileImage] = useState(user?.profileImage || '');
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [selectedProductForReview, setSelectedProductForReview] = useState<Product | null>(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   // user.profileImage가 외부에서 바뀌면(세션 복원 등) 동기화
   React.useEffect(() => {
@@ -543,7 +546,11 @@ export const MyPage: React.FC = () => {
                     <div className="flex items-center justify-end px-1">
                       {p.hasReview === false && p.resultNo && (
                         <button
-                          onClick={(e) => { e.preventDefault(); navigate(`/review/${p.id}?resultNo=${p.resultNo}`); }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setSelectedProductForReview(p);
+                            setShowReviewModal(true);
+                          }}
                           className="inline-flex items-center px-3 py-1 bg-white border border-gray-200 text-gray-700 rounded-full text-xs font-bold hover:bg-gray-50 transition-all font-sans"
                         >
                           후기 작성하기
@@ -632,6 +639,22 @@ export const MyPage: React.FC = () => {
         </div>
       </div>
 
+      {showReviewModal && selectedProductForReview && (
+        <ReviewModal
+          isOpen={showReviewModal}
+          onClose={() => {
+            setShowReviewModal(false);
+            setSelectedProductForReview(null);
+          }}
+          resultNo={selectedProductForReview.resultNo!}
+          sellerNickname={selectedProductForReview.seller.nickname}
+          productTitle={selectedProductForReview.title}
+          productImage={selectedProductForReview.images[0]}
+          onSuccess={() => {
+            fetchPurchasedProducts();
+          }}
+        />
+      )}
     </div>
   );
 };
