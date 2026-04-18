@@ -144,7 +144,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </button>
         )}
 
-
         {/* Won Success Badge */}
         {isWon && !hideOverlay && (
           <div className="absolute inset-0 bg-emerald-600/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-emerald-500/90 transition-colors cursor-pointer rounded-[inherit]">
@@ -160,7 +159,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Sold Badge (판매자 시점) - 확정 전까지만 표시 */}
         {isSold && !isSellerPending && !isConfirmed && !hideOverlay && (
           <div className="absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 transition-colors cursor-pointer rounded-[inherit] bg-gray-800/80 group-hover:bg-gray-700/90">
-            <div className="px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl bg-white text-gray-800">
+            <div className="p-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl bg-white text-gray-800">
               낙찰 발생
             </div>
             <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-gray-800 transition-all">
@@ -215,7 +214,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               <span>종료</span>
             ) : (
               <div className="flex items-center gap-1">
-                <BsStopwatch className="w-3 h-3 translate-y-[0.5px]" />
+                <BsStopwatch className="w-3.5 h-3.5" />
                 <span>{timeLeft}</span>
               </div>
             )}
