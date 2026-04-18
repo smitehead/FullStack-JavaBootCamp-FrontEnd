@@ -144,7 +144,6 @@ export const InquiryCreate: React.FC = () => {
               className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-medium"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
             />
           </div>
 
@@ -155,7 +154,6 @@ export const InquiryCreate: React.FC = () => {
               className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-medium min-h-[200px] resize-none"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              required
             />
           </div>
         </div>

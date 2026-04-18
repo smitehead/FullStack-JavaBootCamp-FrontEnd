@@ -139,7 +139,7 @@ export const ProductRegister: React.FC = () => {
     e.preventDefault();
 
     // 필수 항목 검증
-    if (images.length === 0 || !title.trim() || !description.trim() || !largeCat || (!methods.face && !methods.delivery)) {
+    if (images.length === 0 || !title.trim() || !description.trim() || !largeCat || (!methods.face && !methods.delivery) || startPrice === 0 || minBidIncrement === 0) {
       showToast('필수 항목(*표시)을 모두 입력해주세요.', 'warning');
       return;
     }
@@ -340,7 +340,6 @@ export const ProductRegister: React.FC = () => {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="상품 제목을 입력해주세요"
               className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border text-sm font-medium transition-all outline-none"
-              required
             />
           </div>
 
@@ -354,7 +353,6 @@ export const ProductRegister: React.FC = () => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="상품의 상태, 구매 시기, 하자 여부 등을 자세히 적어주세요. 상세한 설명은 빠른 판매와 분쟁 예방에 도움이 됩니다."
               className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-5 border text-sm leading-relaxed font-medium transition-all outline-none"
-              required
             ></textarea>
           </div>
         </section>
@@ -410,7 +408,6 @@ export const ProductRegister: React.FC = () => {
                   step="100"
                   min="0"
                   className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border bg-white font-medium transition-all outline-none"
-                  required
                 />
                 <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
               </div>
@@ -456,7 +453,6 @@ export const ProductRegister: React.FC = () => {
                   step="100"
                   min="0"
                   className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border bg-white font-medium transition-all outline-none"
-                  required
                 />
                 <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
               </div>

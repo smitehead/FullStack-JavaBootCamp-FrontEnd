@@ -126,10 +126,10 @@ export const SellerProfile: React.FC = () => {
   if (!seller) return null;
 
   return (
-    <div className="max-w-[1200px] mx-auto px-10 py-8">
+    <div className="max-w-[1200px] mx-auto px-10 py-4">
       <button
         onClick={() => navigate(-1)}
-        className="p-2 hover:bg-gray-100 rounded-full transition-colors mb-6"
+        className="p-2 hover:bg-gray-100 rounded-full transition-colors mb-4"
       >
         <BsArrowLeft className="w-6 h-6 text-gray-900" />
       </button>

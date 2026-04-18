@@ -65,18 +65,6 @@ export const SellerAuctionResult: React.FC = () => {
   const isCompleted = result.status === '구매확정';
   const isCanceled = result.status === '거래취소';
 
-  const statusLabel = isPending ? '결제 대기 중'
-    : isCancelRequested ? '취소 요청됨'
-      : isCompleted ? '거래 완료'
-        : isCanceled ? '거래 취소'
-          : '결제 완료 (대기)';
-
-  const statusClass = isPending ? 'bg-amber-100 text-amber-600'
-    : isCancelRequested ? 'bg-orange-100 text-orange-600'
-      : isCompleted ? 'bg-indigo-100 text-indigo-600'
-        : isCanceled ? 'bg-gray-100 text-gray-500'
-          : 'bg-emerald-100 text-emerald-600';
-
   const images = result.images.map(img => resolveImageUrl(img) || img);
 
   const handleChatWithBuyer = async () => {
@@ -117,7 +105,7 @@ export const SellerAuctionResult: React.FC = () => {
     : '판매자가 낙찰을 취소합니다. 구매자에게 포인트가 전액 환불됩니다.';
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen bg-gray-50 py-12 px-6">
       <div className="max-w-4xl mx-auto font-sans">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -125,17 +113,12 @@ export const SellerAuctionResult: React.FC = () => {
             onClick={() => navigate(-1)}
             className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors group"
           >
-            <BsChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
+            <svg className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
             뒤로가기
           </button>
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-full uppercase tracking-wider">
-              판매자 전용
-            </span>
-            <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${statusClass}`}>
-              {statusLabel}
-            </span>
-          </div>
+          <div />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -145,7 +128,7 @@ export const SellerAuctionResult: React.FC = () => {
               {/* Product Summary */}
               <section className="p-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  <BsBox2 className="w-5 h-5 text-emerald-500" /> 낙찰 상품 정보
+                  낙찰 상품 정보
                 </h3>
                 <div className="flex gap-6">
                   {images.length > 0 && (
@@ -171,7 +154,7 @@ export const SellerAuctionResult: React.FC = () => {
                   )}
                   <div className="flex-1">
                     <Link to={`/products/${result.productNo}`} className="block group">
-                      <h4 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-emerald-500 transition-colors">{result.title}</h4>
+                      <h4 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-600 transition-colors">{result.title}</h4>
                     </Link>
                     <p className="text-sm text-gray-500 mb-4 line-clamp-1">{result.description}</p>
                     <div className="flex items-center justify-between">
@@ -206,7 +189,7 @@ export const SellerAuctionResult: React.FC = () => {
               {/* 정산 정보 */}
               <section className="p-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  <BsCreditCard className="w-5 h-5 text-indigo-500" /> 정산 정보
+                  정산 정보
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
