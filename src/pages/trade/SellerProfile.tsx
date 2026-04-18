@@ -38,6 +38,8 @@ function mapToProduct(item: any): Product {
     transactionMethod: 'both',
     isWishlisted: item.isWishlisted || false,
     bidStatus: item.bidStatus || null,
+    auctionResultStatus: item.auctionResultStatus || null,
+    resultNo: item.resultNo || null,
   };
 }
 
@@ -111,9 +113,13 @@ export const SellerProfile: React.FC = () => {
   };
 
 
-  const filteredProducts = sellerProducts.filter(p => {
+  const visibleProducts = sellerProducts.filter(p => p.status === 'active' || p.auctionResultStatus === '구매확정');
+
+  const filteredProducts = visibleProducts.filter(p => {
     if (sellingFilter === 'all') return true;
-    return p.status === sellingFilter;
+    if (sellingFilter === 'active') return p.status === 'active';
+    if (sellingFilter === 'completed') return p.auctionResultStatus === '구매확정';
+    return true;
   });
 
   if (loading) {
@@ -152,20 +158,20 @@ export const SellerProfile: React.FC = () => {
                 <div className="flex items-center justify-center md:justify-start gap-3 text-sm text-gray-400 font-medium">
                   <span>가입일: {seller.joinedAt}</span>
                   <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
-                  <span>판매상품 {sellerProducts.length}개</span>
+                  <span>판매상품 {visibleProducts.length}개</span>
                   <div className="flex items-center gap-2 ml-2">
                     <button
                       onClick={handleBlockToggle}
-                      className={`text-xs font-medium transition-colors flex items-center gap-1 ${isBlocked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                      className={`text-xs font-medium transition-colors flex items-center ${isBlocked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
                     >
-                      <BsShieldFill className={`w-3 h-3 ${isBlocked ? 'text-blue-500' : ''}`} /> {isBlocked ? '차단풀기' : '차단하기'}
+                      <BsShieldFill className={`w-3 h-3 mr-1 ${isBlocked ? 'text-blue-500' : ''}`} /> {isBlocked ? '차단풀기' : '차단하기'}
                     </button>
-                    <button
-                      onClick={() => navigate(`/report?sellerId=${seller.sellerNo}&sellerNickname=${encodeURIComponent(seller.nickname)}`)}
-                      className="text-xs font-medium text-red-500 hover:text-red-600 transition-colors flex items-center gap-1"
+                    <Link
+                      to={`/report?sellerId=${seller.sellerNo}&sellerNickname=${encodeURIComponent(seller.nickname)}`}
+                      className="text-xs font-medium hover:text-red-500 transition-colors flex items-center"
                     >
-                      <BsFlagFill className="w-3 h-3" /> 신고하기
-                    </button>
+                      <BsFlagFill className="w-3 h-3 mr-1" /> 신고하기
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -192,7 +198,7 @@ export const SellerProfile: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">전체 판매</p>
-                  <p className="text-xl font-bold text-gray-900">{sellerProducts.length}<span className="text-sm font-medium ml-1">건</span></p>
+                  <p className="text-xl font-bold text-gray-900">{visibleProducts.length}<span className="text-sm font-medium ml-1">건</span></p>
                 </div>
               </div>
               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
@@ -241,7 +247,7 @@ export const SellerProfile: React.FC = () => {
                 {(['all', 'active', 'completed'] as const).map(f => (
                   <button key={f} onClick={() => setSellingFilter(f)}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === f ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {f === 'all' ? '전체' : f === 'active' ? '판매중' : '판매완료'}
+                    {f === 'all' ? '전체' : f === 'active' ? '경매중' : '판매완료'}
                   </button>
                 ))}
               </div>

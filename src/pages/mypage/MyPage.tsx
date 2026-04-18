@@ -55,7 +55,7 @@ export const MyPage: React.FC = () => {
   useEffect(() => {
     setSearchParams({ tab: activeTab }, { replace: true });
   }, [activeTab, setSearchParams]);
-  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'ended' | 'completed'>('all');
   const [biddingFilter, setBiddingFilter] = useState<'all' | 'leader' | 'outbid' | 'lost'>('all');
 
   interface ReviewItem {
@@ -276,7 +276,10 @@ export const MyPage: React.FC = () => {
   // 판매 필터링
   const filteredSellingProducts = sellingProducts.filter(p => {
     if (sellingFilter === 'all') return true;
-    return p.status === sellingFilter;
+    if (sellingFilter === 'active') return p.status === 'active';
+    if (sellingFilter === 'ended') return p.status !== 'active' && p.auctionResultStatus !== '구매확정';
+    if (sellingFilter === 'completed') return p.auctionResultStatus === '구매확정';
+    return true;
   });
 
   const filteredBiddingProducts = biddingProducts.filter(p => {
@@ -467,10 +470,10 @@ export const MyPage: React.FC = () => {
 
             {activeTab === 'selling' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
-                {(['all', 'active', 'completed'] as const).map(filter => (
+                {(['all', 'active', 'ended', 'completed'] as const).map(filter => (
                   <button key={filter} onClick={() => setSellingFilter(filter)}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === filter ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {filter === 'all' ? '전체' : filter === 'active' ? '경매중' : '판매완료'}
+                    {filter === 'all' ? '전체' : filter === 'active' ? '경매중' : filter === 'ended' ? '경매종료' : '판매완료'}
                   </button>
                 ))}
               </div>

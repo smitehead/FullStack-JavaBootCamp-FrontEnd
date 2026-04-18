@@ -124,11 +124,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
         )}
 
-        {/* Participant Count */}
-        <div className="absolute top-3 left-3 bg-black/40 text-white text-[10px] px-2 py-1 rounded-full flex items-center backdrop-blur-sm">
-          <BsPerson className="w-3 h-3 mr-1" />
-          {product.participantCount}명 참여
-        </div>
+        {/* Participant Count - Hide for completed auctions */}
+        {product.status !== 'completed' && (
+          <div className="absolute top-3 left-3 bg-black/40 text-white text-[10px] px-2 py-1 rounded-full flex items-center backdrop-blur-sm">
+            <BsPerson className="w-3 h-3 mr-1" />
+            {product.participantCount}명 참여
+          </div>
+        )}
 
         {/* 찜 버튼 - 찜한 상태이거나 호버 시 표시, 낙찰/판매 완료 상품 제외 */}
         {!showBadge && (
@@ -157,7 +159,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               {/* 입찰자가 있을 때 (2번 디자인) */}
               {product.participantCount > 0 ? (
                 <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30">
-                  관심 {product.participantCount + 2} · 입찰 {product.participantCount}명
+                  관심 {product.participantCount + 2}
                 </div>
               ) : (
                 /* 입찰자가 없을 때 (6번 디자인) */

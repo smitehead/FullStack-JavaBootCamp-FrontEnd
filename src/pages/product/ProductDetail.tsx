@@ -1014,7 +1014,7 @@ export const ProductDetail: React.FC = () => {
               <div className="text-right">
                 <p className="text-xs font-bold text-gray-400 mb-2 flex items-center justify-end">
                   <BsPeople className="w-3 h-3 mr-1" />
-                  {product.participantCount}명 참여 중
+                  {product.participantCount}명 {isFinished ? '참여' : '참여 중'}
                 </p>
               </div>
             </div>
