@@ -456,7 +456,7 @@ export const WonProductDetail: React.FC = () => {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <button
                           onClick={() => setShowCancelConfirm(true)}
-                          className="w-full py-5 bg-red-50 hover:bg-red-100 text-red-500 font-bold rounded-2xl transition-all border border-red-100 shadow-sm"
+                          className="w-full py-5 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95"
                         >
                           낙찰 취소하기
                         </button>

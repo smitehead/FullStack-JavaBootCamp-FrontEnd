@@ -6,7 +6,7 @@ import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
 import { resolveImageUrl, resolveImageUrls, getProfileImageUrl } from '@/utils/imageUtils';
-
+import { getMemberNo } from '@/utils/memberUtils';
 import { useAppContext } from '@/context/AppContext';
 
 interface SellerInfo {
@@ -36,7 +36,8 @@ function mapToProduct(item: any): Product {
     status: item.status || 'active',
     location: item.location || '',
     transactionMethod: 'both',
-    isWishlisted: false,
+    isWishlisted: item.isWishlisted || false,
+    bidStatus: item.bidStatus || null,
   };
 }
 
@@ -250,7 +251,19 @@ export const SellerProfile: React.FC = () => {
           {activeTab === 'selling' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProducts.length > 0 ? (
-                filteredProducts.map(p => <ProductCard key={p.id} product={p} isSold={p.status === 'completed'} />)
+                filteredProducts.map(p => {
+                  // 참여여부 확인 (본인 판매 상품이거나, 입찰/낙찰 내역이 있는 경우 관여됨)
+                  const isInvolved = (user && getMemberNo(user) === seller.sellerNo) || !!p.bidStatus;
+                  
+                  return (
+                    <ProductCard 
+                      key={p.id} 
+                      product={p} 
+                      isSold={p.status === 'completed' && isInvolved} 
+                      hideOverlay={p.status === 'completed' && !isInvolved}
+                    />
+                  );
+                })
               ) : (
                 <div className="col-span-full py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
                   <BsBox2 className="w-12 h-12 mx-auto mb-4 text-gray-300" />
@@ -267,7 +280,27 @@ export const SellerProfile: React.FC = () => {
                 <p className="text-gray-500 font-medium">받은 후기가 없습니다.</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/* Tag Review Summary Section */}
+                <div className="bg-white rounded-2xl border border-gray-100 p-6">
+                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">받은 태그</h4>
+                  <div className="flex flex-wrap gap-3">
+                    {(() => {
+                      const tagCounts: Record<string, number> = {};
+                      reviews.forEach(r => r.tags?.forEach((t: string) => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+                      const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+                      
+                      return sortedTags.map(([tag, count]) => (
+                        <div key={tag} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
+                          <span className="text-sm font-medium text-gray-700">{tag}</span>
+                          <span className="bg-indigo-100 text-indigo-600 text-xs font-bold px-2 py-0.5 rounded-full">{count}</span>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
                 {reviews.map((review: any) => (
                   <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 p-6">
                     <div className="flex items-center justify-between mb-3">
@@ -298,10 +331,11 @@ export const SellerProfile: React.FC = () => {
                   </div>
                 ))}
               </div>
-            )
-          )}
-        </div>
+            </div>
+          )
+        )}
       </div>
     </div>
-  );
+  </div>
+);
 };

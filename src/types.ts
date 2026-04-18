@@ -124,6 +124,8 @@ export interface Product {
   categoryPath?: CategoryPathItem[];
   bidStatus?: string;
   auctionResultStatus?: string;
+  resultNo?: number;
+  hasReview?: boolean;
 }
 
 export type NotificationType = "bid" | "activity" | "제재" | "제재해제" | "QNA" | "QNA_ANSWER";

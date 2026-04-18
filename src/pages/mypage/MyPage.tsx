@@ -34,6 +34,8 @@ function mapToProduct(item: any): Product & { bidStatus?: string } {
     isWishlisted: item.isWishlisted || false,
     bidStatus: item.bidStatus || null,
     auctionResultStatus: item.auctionResultStatus || null,
+    resultNo: item.resultNo || null,
+    hasReview: item.hasReview ?? null,
   };
 }
 
@@ -90,11 +92,6 @@ export const MyPage: React.FC = () => {
   const [bidStatusOverrides, setBidStatusOverrides] = useState<Record<string, string>>({});
   const biddingProductsRef = useRef(biddingProducts);
   useEffect(() => { biddingProductsRef.current = biddingProducts; }, [biddingProducts]);
-
-  const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [repostProduct, setRepostProduct] = useState<Product | null>(null);
-  const [showRepostModal, setShowRepostModal] = useState(false);
 
   const [profileImage, setProfileImage] = useState(user?.profileImage || '');
   const [uploadingProfile, setUploadingProfile] = useState(false);
@@ -275,29 +272,6 @@ export const MyPage: React.FC = () => {
     };
   }, [activeTab, user, fetchBiddingProducts]);
 
-  // 상품 삭제
-  const handleDeleteClick = (product: Product) => {
-    setDeleteProduct(product);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteProduct) return;
-    try {
-      await api.delete(`/products/${deleteProduct.id}`);
-      setSellingProducts(prev => prev.filter(p => p.id !== deleteProduct.id));
-      setShowDeleteModal(false);
-      setDeleteProduct(null);
-    } catch (err) {
-      console.error('삭제 실패', err);
-      showToast('상품 삭제에 실패했습니다.', 'error');
-    }
-  };
-
-  const handleRepost = (product: Product) => {
-    setRepostProduct(product);
-    setShowRepostModal(true);
-  };
 
   // 판매 필터링
   const filteredSellingProducts = sellingProducts.filter(p => {
@@ -531,41 +505,18 @@ export const MyPage: React.FC = () => {
                   const isResultConfirmed = ars === '구매확정';
 
                   return (
-                    <div key={p.id} className="flex flex-col gap-2">
-                      <ProductCard
-                        product={p}
-                        isSold={p.status === 'completed'}
-                        isConfirmed={isResultConfirmed}
-                        isSellerPending={hasPendingResult}
-                        sellerCancelRequested={ars === '취소요청'}
-                        customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
-                      />
-
-                      <div className="flex gap-2">
-                        <button onClick={() => handleDeleteClick(p)}
-                          className="flex-1 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center gap-1.5">
-                          삭제하기
-                        </button>
-                        {hasPendingResult && (
-                          <button
-                            onClick={() => navigate(`/seller-result/${p.id}`)}
-                            className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
-                          >
-                            결과 확인
-                          </button>
-                        )}
-                        {p.status === 'completed' && (p.participantCount === 0 || ars === '유찰') && (
-                          <button onClick={() => handleRepost(p)}
-                            className="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-all flex items-center justify-center gap-1.5">
-                            재게시
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                    <ProductCard
+                      key={p.id}
+                      product={p}
+                      isSold={p.status === 'completed'}
+                      isConfirmed={isResultConfirmed}
+                      isSellerPending={hasPendingResult}
+                      sellerCancelRequested={ars === '취소요청'}
+                      customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
+                    />
                   );
                 })}
 
-                {/* 입찰 내역 */}
                 {activeTab === 'bidding' && filteredBiddingProducts.map(p => {
                   const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
                   return (
@@ -573,21 +524,10 @@ export const MyPage: React.FC = () => {
                       <ProductCard
                         product={p}
                         isWon={effectiveStatus === 'won'}
-                        isSold={effectiveStatus === 'lost'}
+                        hideOverlay={effectiveStatus === 'lost'}
                       />
-                      <div className="flex items-center justify-between px-1">
+                      <div className="flex items-center px-1">
                         {getBidStatusBadge(effectiveStatus)}
-                        {effectiveStatus === 'won' && (
-                          <button
-                            onClick={() => navigate(`/won/${p.id}`)}
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold transition-all font-sans ${p.auctionResultStatus === '결제완료'
-                                ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200'
-                                : 'bg-amber-100 text-amber-600 hover:bg-amber-200'
-                              }`}
-                          >
-                            {p.auctionResultStatus === '결제완료' ? '거래대기' : '결제대기'}
-                          </button>
-                        )}
                       </div>
                     </div>
                   );
@@ -596,11 +536,16 @@ export const MyPage: React.FC = () => {
                 {/* 구매 내역 */}
                 {activeTab === 'purchased' && purchasedProducts.map(p => (
                   <div key={p.id} className="flex flex-col gap-2">
-                    <ProductCard product={p} isSold />
-                    <div className="flex items-center px-1">
-                      <span className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold">
-                        구매완료
-                      </span>
+                    <ProductCard product={p} hideOverlay />
+                    <div className="flex items-center justify-end px-1">
+                      {p.hasReview === false && p.resultNo && (
+                        <button
+                          onClick={(e) => { e.preventDefault(); navigate(`/review/${p.id}?resultNo=${p.resultNo}`); }}
+                          className="inline-flex items-center px-3 py-1 bg-white border border-gray-200 text-gray-700 rounded-full text-xs font-bold hover:bg-gray-50 transition-all font-sans"
+                        >
+                          후기 작성하기
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -684,69 +629,6 @@ export const MyPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && deleteProduct && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">게시글을 삭제하시겠습니까?</h3>
-
-              {deleteProduct.participantCount > 0 && deleteProduct.status !== 'completed' ? (
-                <div className="bg-red-50 p-4 rounded-2xl mb-6">
-                  <p className="text-sm text-red-600 font-bold leading-relaxed">
-                    현재 입찰자가 {deleteProduct.participantCount}명 있습니다. <br />
-                    경매 도중 삭제 시 매너온도가 차감될 수 있습니다.
-                  </p>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                  삭제된 게시글은 복구할 수 없습니다.
-                </p>
-              )}
-
-              <div className="flex gap-3 w-full">
-                <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
-                  취소
-                </button>
-                <button onClick={confirmDelete} className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10">
-                  삭제하기
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Repost Confirmation Modal */}
-      {showRepostModal && repostProduct && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowRepostModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">재게시하시겠습니까?</h3>
-              <p className="text-gray-500 text-sm font-medium mb-8 leading-relaxed">
-                기존 정보를 유지한 채 경매를 다시 시작합니다.
-              </p>
-
-              <div className="flex gap-3 w-full">
-                <button onClick={() => setShowRepostModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all">
-                  닫기
-                </button>
-                <button
-                  onClick={() => {
-                    setShowRepostModal(false);
-                    navigate('/register', { state: { product: repostProduct } });
-                  }}
-                  className="flex-1 py-3.5 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
-                >
-                  재게시하기
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

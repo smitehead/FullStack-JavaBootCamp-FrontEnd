@@ -18,6 +18,8 @@ interface ProductCardProps {
   sellerCancelRequested?: boolean;
   /** Link 목적지 오버라이드 (기본: isWon → /won/:id, 나머지 → /products/:id) */
   customLink?: string;
+  /** 이미지 위 오버레이(낙찰성공, 판매완료, 경매종료 등)를 모두 숨김 */
+  hideOverlay?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -28,6 +30,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   isSellerPending = false,
   sellerCancelRequested = false,
   customLink,
+  hideOverlay = false,
 }) => {
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [isFinished, setIsFinished] = useState<boolean>(false);
@@ -142,7 +145,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* 경매 종료 오버레이 디자인 (일반 사용자 시점 & 입찰자 없음 공통) */}
-        {product.status === 'completed' && !showBadge && (
+        {product.status === 'completed' && !showBadge && !hideOverlay && (
           <div className="absolute inset-0 bg-gray-900/70 flex flex-col items-center justify-center backdrop-blur-[2px] p-4 text-center">
 
             {/* 상단 메인 칩: 낙찰 성공/판매 완료와 동일한 스타일 */}
@@ -167,7 +170,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Won Success Badge */}
-        {isWon && (
+        {isWon && !hideOverlay && (
           <div className="absolute inset-0 bg-emerald-600/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-emerald-500/90 transition-colors cursor-pointer rounded-[inherit]">
             <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               낙찰 성공!
@@ -179,7 +182,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Sold Badge (판매자 시점) */}
-        {isSold && !isSellerPending && (
+        {isSold && !isSellerPending && !hideOverlay && (
           <div className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 transition-colors cursor-pointer rounded-[inherit] ${isConfirmed ? 'bg-indigo-600/80 group-hover:bg-indigo-500/90' : 'bg-gray-800/80 group-hover:bg-gray-700/90'
             }`}>
             <div className={`px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl ${isConfirmed ? 'bg-white text-indigo-600' : 'bg-white text-gray-800'
@@ -194,7 +197,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Seller Pending Badge — 낙찰 발생 후 구매 확정 대기 중 (초록 강조) */}
-        {isSellerPending && (
+        {isSellerPending && !hideOverlay && (
           <div className="absolute inset-0 bg-emerald-600/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-emerald-500/90 transition-colors cursor-pointer rounded-[inherit]">
             <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               확정 대기 중
