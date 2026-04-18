@@ -20,7 +20,14 @@ function mapToProduct(item: any): Product & { bidStatus?: string } {
     title: item.title || '',
     description: item.description || '',
     category: item.category || '기타',
-    seller: item.seller || { id: 'unknown', nickname: '판매자', profileImage: '', points: 0, mannerTemp: 36.5, joinedAt: '' },
+    seller: item.seller || {
+      id: String(item.sellerId || 'unknown'),
+      nickname: item.sellerNickname || '판매자',
+      profileImage: item.sellerProfileImage || item.sellerProfileImg || '',
+      points: 0,
+      mannerTemp: item.mannerTemp || 36.5,
+      joinedAt: ''
+    },
     startPrice: item.startPrice || item.currentPrice || 0,
     currentPrice: item.currentPrice || 0,
     minBidIncrement: item.minBidUnit || 1000,
