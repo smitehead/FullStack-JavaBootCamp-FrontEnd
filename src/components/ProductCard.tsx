@@ -146,8 +146,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </button>
         )}
 
-        {/* 경매 종료 오버레이 디자인 (일반 사용자 시점 & 입찰자 없음 공통) */}
-        {product.status === 'completed' && !showBadge && !hideOverlay && (
+        {/* 경매 종료 오버레이 디자인 (일반 사용자 시점 & 입찰자 없음 공통) - 판매완료 상태가 아닐 때만 표시 */}
+        {isFinished && product.status !== 'completed' && !showBadge && !hideOverlay && (
           <div className="absolute inset-0 bg-gray-900/70 flex flex-col items-center justify-center backdrop-blur-[2px] p-4 text-center">
 
             {/* 상단 메인 칩: 낙찰 성공/판매 완료와 동일한 스타일 */}
@@ -172,7 +172,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Won Success Badge */}
-        {isWon && !hideOverlay && (
+        {isWon && product.status !== 'completed' && !hideOverlay && (
           <div className="absolute inset-0 bg-emerald-600/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-emerald-500/90 transition-colors cursor-pointer rounded-[inherit]">
             <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               낙찰 성공!
@@ -184,7 +184,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Sold Badge (판매자 시점) */}
-        {isSold && !isSellerPending && !hideOverlay && (
+        {isSold && product.status !== 'completed' && !isSellerPending && !hideOverlay && (
           <div className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 transition-colors cursor-pointer rounded-[inherit] ${isConfirmed ? 'bg-indigo-600/80 group-hover:bg-indigo-500/90' : 'bg-gray-800/80 group-hover:bg-gray-700/90'
             }`}>
             <div className={`px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl ${isConfirmed ? 'bg-white text-indigo-600' : 'bg-white text-gray-800'
@@ -231,9 +231,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </p>
           </div>
 
-          {/* Timer pill */}
-          <div className={`flex items-center px-2 py-1 rounded-lg text-[11px] font-bold ${isFinished ? 'bg-gray-100 text-gray-500' : 'bg-red-50 text-red-500'}`}>
-            {isFinished ? (
+          {/* Status Chip (Timer pill) */}
+          <div className={`flex items-center px-2 py-1 rounded-lg text-[11px] font-bold ${product.status === 'completed'
+              ? 'bg-gray-900 text-white shadow-sm'
+              : (isFinished ? 'bg-gray-100 text-gray-500' : 'bg-red-50 text-red-500')
+            }`}>
+            {product.status === 'completed' ? (
+              <span>판매완료</span>
+            ) : isFinished ? (
               <div className="flex items-center gap-1">
                 <span>종료</span>
               </div>
