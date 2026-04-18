@@ -146,9 +146,33 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </button>
         )}
 
+        {/* 경매 종료 오버레이 디자인 (일반 사용자 시점 & 입찰자 없음 공통) */}
+        {product.status === 'completed' && !showBadge && !hideOverlay && (
+          <div className="absolute inset-0 bg-gray-900/70 flex flex-col items-center justify-center backdrop-blur-[2px] p-4 text-center">
 
-        {/* Won Success Badge - Hide if already completed */}
-        {isWon && !hideOverlay && product.status !== 'completed' && (
+            {/* 상단 메인 칩: 낙찰 성공/판매 완료와 동일한 스타일 */}
+            <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
+              경매 종료
+            </div>
+
+            <div className="flex flex-col items-center gap-1.5">
+              {/* 입찰자가 있을 때 (2번 디자인) */}
+              {product.participantCount > 0 ? (
+                <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30">
+                  관심 {product.participantCount + 2}
+                </div>
+              ) : (
+                /* 입찰자가 없을 때 (6번 디자인) */
+                <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30">
+                  입찰자 없음
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Won Success Badge */}
+        {isWon && !hideOverlay && (
           <div className="absolute inset-0 bg-emerald-600/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-emerald-500/90 transition-colors cursor-pointer rounded-[inherit]">
             <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               낙찰 성공!
@@ -159,8 +183,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
         )}
 
-        {/* Sold Badge (판매자 시점) - Hide if already confirmed or completed */}
-        {isSold && !isSellerPending && !hideOverlay && !isConfirmed && product.status !== 'completed' && (
+        {/* Sold Badge (판매자 시점) */}
+        {isSold && !isSellerPending && !hideOverlay && (
           <div className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 transition-colors cursor-pointer rounded-[inherit] ${isConfirmed ? 'bg-indigo-600/80 group-hover:bg-indigo-500/90' : 'bg-gray-800/80 group-hover:bg-gray-700/90'
             }`}>
             <div className={`px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl ${isConfirmed ? 'bg-white text-indigo-600' : 'bg-white text-gray-800'
@@ -208,11 +232,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
 
           {/* Timer pill */}
-          <div className={`flex items-center px-2 py-1 rounded-lg text-[11px] font-bold ${product.status === 'completed' ? 'bg-black text-white' : (isFinished ? 'bg-gray-100 text-gray-500' : 'bg-red-50 text-red-500')}`}>
-            {product.status === 'completed' ? (
-              <span>판매완료</span>
-            ) : isFinished ? (
-              <span>종료</span>
+          <div className={`flex items-center px-2 py-1 rounded-lg text-[11px] font-bold ${isFinished ? 'bg-gray-100 text-gray-500' : 'bg-red-50 text-red-500'}`}>
+            {isFinished ? (
+              <div className="flex items-center gap-1">
+                <span>종료</span>
+              </div>
             ) : (
               <div className="flex items-center gap-1">
                 <BsStopwatch className="w-3.5 h-3.5" />
