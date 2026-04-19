@@ -362,8 +362,13 @@ export const ProductDetail: React.FC = () => {
         const title = product?.title || '이 상품';
         const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
 
-        // 현재가를 차순위 가격으로 즉시 갱신 (전체 리로드 없음)
-        setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
+        // 현재가 + 참여자 수 즉시 갱신
+        setProduct(prev => prev ? ({
+          ...prev,
+          currentPrice: detail.currentPrice,
+          participantCount: Math.max(0, (prev.participantCount || 0) - 1),
+        }) : prev);
+        fetchProduct();
         setBidAmount(detail.currentPrice + (product?.minBidIncrement || 0));
 
         if (isMyBid) {
@@ -802,20 +807,15 @@ export const ProductDetail: React.FC = () => {
     setShowBidTermsModal(false);
   };
 
-  const chartData = [...product.bids]
-    .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
-    .map(bid => ({
-      time: new Date(bid.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      amount: bid.amount
-    }));
-
-  // 입찰 내역이 없을 경우 시작가를 차트 기준점으로 추가
-  if (chartData.length === 0) {
-    chartData.push({
-      time: new Date(product.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      amount: product.startPrice
-    });
-  }
+  const chartData = [
+    { label: '시작가', amount: product.startPrice },
+    ...[...product.bids]
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+      .map((bid, idx) => ({
+        label: `${idx + 1}번째 입찰`,
+        amount: bid.amount,
+      })),
+  ];
 
   const toggleWishlist = async () => {
     if (!user) {
@@ -1252,7 +1252,7 @@ export const ProductDetail: React.FC = () => {
                   <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                     <LineChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                      <XAxis dataKey="time" tick={{ fontSize: 10 }} stroke="#9ca3af" />
+                      <XAxis dataKey="label" tick={{ fontSize: 10 }} stroke="#9ca3af" />
                       <YAxis domain={['auto', 'auto']} tickFormatter={(value) => `${((value || 0) / 10000).toLocaleString()}만`} stroke="#9ca3af" tick={{ fontSize: 10 }} />
                       <Tooltip formatter={(value: number) => `${(value || 0).toLocaleString()}원`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
                       <Line type="monotone" dataKey="amount" stroke="#f97316" strokeWidth={3} dot={{ r: 4, fill: '#f97316' }} activeDot={{ r: 6 }} />
