@@ -6,6 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 import { getMemberNo } from '@/utils/memberUtils';
+import { showToast } from '@/components/toastService';
 
 interface ProductCardProps {
   product: Product;
@@ -100,6 +101,52 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
+  const handleChatInteraction = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!user) {
+      showToast('로그인이 필요한 서비스입니다.', 'error');
+      navigate('/login');
+      return;
+    }
+
+    const currentMemberNo = getMemberNo(user);
+    if (!currentMemberNo) return;
+
+    try {
+      let buyerNo, sellerNo;
+
+      if (isWon) {
+        // 낙찰자(구매자) 시점: 판매자와 대화하기
+        buyerNo = currentMemberNo;
+        sellerNo = getMemberNo(product.seller);
+      } else if (isSellerPending) {
+        // 판매자 시점: 낙찰자(구매자)와 대화하기
+        sellerNo = currentMemberNo;
+        buyerNo = (product as any).winnerNo || (product as any).buyerNo || getMemberNo({ id: product.winnerId } as any);
+      }
+
+      if (!buyerNo || !sellerNo) {
+        showToast('채팅 상대 정보를 찾을 수 없습니다.', 'error');
+        return;
+      }
+
+      const res = await api.post('/chat/rooms', {
+        buyerNo: Number(buyerNo),
+        sellerNo: Number(sellerNo),
+        productNo: Number(product.id),
+      });
+
+      if (res.data?.roomNo) {
+        navigate(`/chat?roomNo=${res.data.roomNo}`);
+      }
+    } catch (error) {
+      console.error('[Chat] 채팅방 연결 실패', error);
+      showToast('채팅방으로 이동 중 오류가 발생했습니다.', 'error');
+    }
+  };
+
   const showBadge = isWon || isSold || isSellerPending;
   const linkTo = customLink || (isWon ? `/won/${product.id}` : `/products/${product.id}`);
 
@@ -150,7 +197,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               낙찰 성공!
             </div>
-            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-gray-800 transition-all">
+            <div 
+              onClick={handleChatInteraction}
+              className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 hover:bg-white hover:text-gray-800 transition-all active:scale-95"
+            >
               판매자와 대화하기
             </div>
           </div>
@@ -162,7 +212,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               확정 대기 중
             </div>
-            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-gray-800 transition-all">
+            <div 
+              onClick={handleChatInteraction}
+              className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 hover:bg-white hover:text-gray-800 transition-all active:scale-95"
+            >
               {sellerCancelRequested ? '취소 요청이 들어왔습니다' : '구매자와 대화하기'}
             </div>
           </div>
