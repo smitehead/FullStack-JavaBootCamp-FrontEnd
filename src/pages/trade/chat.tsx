@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsGeoAlt, BsPersonSquare, BsDoorOpen, BsPlusLg } from 'react-icons/bs';
+import { BsSend, BsImage, BsGeoAltFill, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonSquare, BsPlusLg } from 'react-icons/bs';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
@@ -47,6 +47,13 @@ export const Chat: React.FC = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isAttachmentMenuOpen, setIsAttachmentMenuOpen] = useState(false);
   const attachmentMenuRef = useRef<HTMLDivElement>(null);
+
+  // 위치 공유 모달 상태
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [locationAddress, setLocationAddress] = useState('');
+  const [isAddressLoading, setIsAddressLoading] = useState(false);
+  const [locationAddrRoad, setLocationAddrRoad] = useState('');
+  const [locationAddrDetail, setLocationAddrDetail] = useState('');
 
   // 메뉴 외부 클릭 시 닫기
   useEffect(() => {
@@ -644,6 +651,85 @@ export const Chat: React.FC = () => {
     );
   };
 
+  // 위치 공유 버튼 클릭 핸들러 (낙찰 페이지 주소 조회)
+  const handleLocationClick = async () => {
+    if (!selectedRoom) return;
+    setIsAttachmentMenuOpen(false);
+    setShowLocationModal(true);
+    setIsAddressLoading(true);
+
+    try {
+      // 낙찰 결과(배송지 정보) 조회
+      const res = await api.get(`/auction-results/product/${selectedRoom.productId}`);
+      const data = res.data;
+      if (data && data.deliveryAddrRoad) {
+        setLocationAddrRoad(data.deliveryAddrRoad);
+        setLocationAddrDetail(data.deliveryAddrDetail || '');
+        setLocationAddress(`${data.deliveryAddrRoad} ${data.deliveryAddrDetail || ''}`.trim());
+      } else {
+        // 낙찰 정보 없으면 회원 기본 주소 사용
+        setLocationAddrRoad(user?.address || '');
+        setLocationAddrDetail('');
+        setLocationAddress(user?.address || '등록된 주소가 없습니다.');
+      }
+    } catch (err) {
+      console.error('[Chat] Failed to fetch winning address:', err);
+      setLocationAddrRoad(user?.address || '');
+      setLocationAddrDetail('');
+      setLocationAddress(user?.address || '등록된 주소가 없습니다.');
+    } finally {
+      setIsAddressLoading(false);
+    }
+  };
+
+  // 위치 전송 실행
+  const handleSendLocation = () => {
+    if (!selectedRoom || !memberNo || !locationAddrRoad) {
+      showToast('전송할 주소 정보가 없습니다.', 'error');
+      return;
+    }
+
+    const clientUuid = getUuid();
+    const content = `${locationAddrRoad} ${locationAddrDetail}`.trim();
+
+    // 1. 낙관적 UI
+    const optimisticMsg: ChatMessage = {
+      id: `temp_${clientUuid}`,
+      senderId: `user_${memberNo}`,
+      senderNo: memberNo!,
+      content,
+      createdAt: new Date().toISOString(),
+      isRead: 0,
+      clientUuid,
+      status: 'SENDING',
+      msgType: 'LOCATION',
+      addrRoad: locationAddrRoad,
+      addrDetail: locationAddrDetail,
+      latitude: 37.5665, // 서울 기본값 (필요 시 Geocoder 연동)
+      longitude: 126.9780,
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
+    scrollToBottom();
+
+    // 2. STOMP 전송
+    stompClientRef.current?.publish({
+      destination: '/pub/chat/message',
+      body: JSON.stringify({
+        roomId: selectedRoom.roomNo,
+        senderId: memberNo,
+        content,
+        msgType: 'LOCATION',
+        addrRoad: locationAddrRoad,
+        addrDetail: locationAddrDetail,
+        latitude: 37.5665,
+        longitude: 126.9780,
+        clientUuid,
+      }),
+    });
+
+    setShowLocationModal(false);
+  };
+
   // 재전송
   const handleRetry = (msg: ChatMessage) => {
     if (!msg.clientUuid || !selectedRoom || !memberNo) return;
@@ -832,7 +918,7 @@ export const Chat: React.FC = () => {
                     >
                       <BsCartCheck className="w-4 h-4 mr-2.5" /> 상품 보기
                     </button>
-                    <div className="border-t border-gray-50 mt-1 pt-1">
+                    <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
                       <button
                         onClick={async () => {
                           if (window.confirm('이 채팅방을 나가시겠습니까?\n나가면 목록에서 삭제되지만 상대방은 계속 대화를 볼 수 있습니다.')) {
@@ -845,9 +931,9 @@ export const Chat: React.FC = () => {
                           }
                           setShowMoreMenu(false);
                         }}
-                        className="flex items-center px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors w-full text-left"
+                        className="text-[11px] font-medium text-gray-400 hover:text-gray-600 transition-colors"
                       >
-                        <BsDoorOpen className="w-4 h-4 mr-2.5" /> 채팅방 나가기
+                        채팅방 나가기
                       </button>
                     </div>
                   </div>
@@ -890,13 +976,12 @@ export const Chat: React.FC = () => {
                           {/* ──── 메시지 콘텐츠 (msgType 분기) ──── */}
                           {msg.msgType === 'ADDRESS' ? (
                             <div
-                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[260px] ${
-                                isMe ? 'border-emerald-200 rounded-tr-none' : 'border-gray-200 rounded-tl-none'
-                              } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
+                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[260px] ${isMe ? 'border-emerald-200 rounded-tr-none' : 'border-gray-200 rounded-tl-none'
+                                } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
                             >
                               <div className={`p-4 ${isMe ? 'bg-emerald-500' : 'bg-white'}`}>
                                 <div className={`flex items-start gap-2 ${isMe ? 'text-white' : 'text-gray-800'}`}>
-                                  <BsGeoAlt className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                  <BsGeoAltFill className="w-4 h-4 flex-shrink-0 mt-0.5" />
                                   <div className="flex-1 min-w-0">
                                     <p className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">배송지</p>
                                     <p className="text-xs font-bold leading-snug break-words">
@@ -925,11 +1010,9 @@ export const Chat: React.FC = () => {
                             </div>
                           ) : msg.msgType === 'IMAGE' && msg.imageUrls && msg.imageUrls.length > 0 ? (
                             <div
-                              className={`grid gap-1 rounded-2xl overflow-hidden max-w-[240px] ${
-                                msg.status === 'SENDING' ? 'opacity-70' : ''
-                              } ${
-                                msg.imageUrls.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
-                              }`}
+                              className={`grid gap-1 rounded-2xl overflow-hidden max-w-[240px] ${msg.status === 'SENDING' ? 'opacity-70' : ''
+                                } ${msg.imageUrls.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
+                                }`}
                             >
                               {msg.imageUrls.slice(0, 4).map((url, i) => (
                                 <div key={i} className="relative aspect-square">
@@ -950,9 +1033,8 @@ export const Chat: React.FC = () => {
                             </div>
                           ) : msg.msgType === 'LOCATION' ? (
                             <div
-                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[220px] ${
-                                isMe ? 'border-orange-200 rounded-tr-none' : 'border-gray-100 rounded-tl-none'
-                              } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
+                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[220px] ${isMe ? 'border-orange-200 rounded-tr-none' : 'border-gray-100 rounded-tl-none'
+                                } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
                             >
                               {/* 위치 지도 미리보기 (Static Map 또는 플레이스홀더) */}
                               {msg.latitude && msg.longitude && (
@@ -969,25 +1051,24 @@ export const Chat: React.FC = () => {
                                   />
                                 </a>
                               )}
-                              <div className={`p-3 ${ isMe ? 'bg-orange-500' : 'bg-white' }`}>
-                                <div className={`flex items-start gap-1.5 ${ isMe ? 'text-white' : 'text-gray-800' }`}>
-                                  <BsGeoAlt className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                              <div className={`p-3 ${isMe ? 'bg-orange-500' : 'bg-white'}`}>
+                                <div className={`flex items-start gap-1.5 ${isMe ? 'text-white' : 'text-gray-800'}`}>
+                                  <BsGeoAltFill className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                                   <div>
                                     <p className="text-xs font-bold leading-snug">{msg.addrRoad || '위치 정보'}</p>
                                     {msg.addrDetail && (
-                                      <p className={`text-[10px] mt-0.5 ${ isMe ? 'text-orange-200' : 'text-gray-500' }`}>{msg.addrDetail}</p>
+                                      <p className={`text-[10px] mt-0.5 ${isMe ? 'text-orange-200' : 'text-gray-500'}`}>{msg.addrDetail}</p>
                                     )}
                                   </div>
                                 </div>
                               </div>
                             </div>
                           ) : (
-                            <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${
-                              isMe
-                                ? msg.status === 'FAILED'
-                                  ? 'bg-red-100 text-red-800 rounded-tr-none'
-                                  : 'bg-orange-500 text-white rounded-tr-none'
-                                : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
+                            <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${isMe
+                              ? msg.status === 'FAILED'
+                                ? 'bg-red-100 text-red-800 rounded-tr-none'
+                                : 'bg-orange-500 text-white rounded-tr-none'
+                              : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
                               } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
                               {msg.content}
                             </div>
@@ -1032,11 +1113,10 @@ export const Chat: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
-                    className={`p-3 rounded-2xl transition-all ${
-                      isConnected
-                        ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50'
-                        : 'text-gray-200 cursor-not-allowed'
-                    }`}
+                    className={`p-3 rounded-2xl transition-all ${isConnected
+                      ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50'
+                      : 'text-gray-200 cursor-not-allowed'
+                      }`}
                   >
                     <BsPlusLg className={`w-5 h-5 transition-transform duration-200 ${isAttachmentMenuOpen ? 'rotate-45 text-orange-500' : ''}`} />
                   </button>
@@ -1061,11 +1141,11 @@ export const Chat: React.FC = () => {
                         {selectedRoom.otherUser.role === 'seller' && (
                           <button
                             type="button"
-                            onClick={handleSendAddress}
+                            onClick={handleLocationClick}
                             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
                           >
                             <div className="p-2 bg-gray-100 rounded-xl text-gray-500 group-hover:bg-gray-200 transition-colors">
-                              <BsGeoAlt className="w-4 h-4" />
+                              <BsGeoAltFill className="w-4 h-4" />
                             </div>
                             <span className="text-sm font-bold">위치 보내기</span>
                           </button>
@@ -1116,6 +1196,50 @@ export const Chat: React.FC = () => {
             왼쪽 목록에서 대화 상대를 선택하거나<br />
             상품 상세 페이지에서 문의하기를 눌러보세요.
           </p>
+        </div>
+      )}
+
+      {/* 위치 공유 확인 모달 */}
+      {showLocationModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 transform scale-100">
+            <div className="p-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 text-center tracking-tight">이 주소가 확실하십니까?</h3>
+              <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100 min-h-[100px] flex flex-col justify-center items-center text-center">
+                {isAddressLoading ? (
+                  <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <BsGeoAltFill className="w-5 h-5 text-indigo-500 mb-3" />
+                    <p className="text-sm font-bold text-gray-900 leading-relaxed max-w-[200px]">
+                      {locationAddress}
+                    </p>
+                  </>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => navigate(`/won/${selectedRoom?.productId}`)}
+                  className="flex-1 py-4 bg-gray-100 text-gray-700 rounded-2xl text-sm font-bold hover:bg-gray-200 transition-all active:scale-95 whitespace-nowrap"
+                >
+                  변경하기
+                </button>
+                <button
+                  onClick={handleSendLocation}
+                  disabled={isAddressLoading || !locationAddrRoad}
+                  className="flex-1 py-4 bg-orange-500 text-white rounded-2xl text-sm font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-100 active:scale-95 disabled:opacity-50 whitespace-nowrap"
+                >
+                  보내기
+                </button>
+              </div>
+              <button
+                onClick={() => setShowLocationModal(false)}
+                className="w-full mt-4 text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                취소
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
