@@ -865,10 +865,7 @@ export const Settings: React.FC = () => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsProfileSaveModalOpen(false)}></div>
           <div className="relative bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <BsCheckCircle className="w-8 h-8 text-emerald-500" />
-              </div>
+            <div className="p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-2">수정 완료</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium">프로필 정보가 성공적으로 수정되었습니다.</p>
 

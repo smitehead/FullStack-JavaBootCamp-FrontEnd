@@ -1202,21 +1202,28 @@ export const Chat: React.FC = () => {
       {/* 위치 공유 확인 모달 */}
       {showLocationModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 transform scale-100">
+          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 transform scale-100">
             <div className="p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-6 text-center tracking-tight">이 주소가 확실하십니까?</h3>
-              <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100 min-h-[100px] flex flex-col justify-center items-center text-center">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 text-left tracking-tight">이 주소가 확실하십니까?</h3>
+              <div className="bg-gray-50 rounded-2xl p-6 mb-6 border border-gray-100 min-h-[100px] flex flex-col justify-center items-center text-center">
                 {isAddressLoading ? (
                   <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
                     <BsGeoAltFill className="w-5 h-5 text-indigo-500 mb-3" />
-                    <p className="text-sm font-bold text-gray-900 leading-relaxed max-w-[200px]">
+                    <p className="text-sm font-bold text-gray-900 leading-relaxed">
                       {locationAddress}
                     </p>
                   </>
                 )}
               </div>
+
+              <div className="px-1 mb-4">
+                <p className="text-[11px] font-bold text-gray-400">
+                  입력된 배송지 정보가 정확한지 한번더 확인해주세요
+                </p>
+              </div>
+
               <div className="flex gap-3">
                 <button
                   onClick={() => navigate(`/won/${selectedRoom?.productId}`)}
