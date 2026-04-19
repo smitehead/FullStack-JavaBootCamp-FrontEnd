@@ -10,6 +10,7 @@ import { getMemberNo } from '@/utils/memberUtils';
 import api from '@/services/api';
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { showToast } from '@/components/toastService';
 
 // ──── 상수 ────
 const PAGE_SIZE = 20;
@@ -499,6 +500,7 @@ export const Chat: React.FC = () => {
 
     } else {
       // WebSocket 미연결 → 즉시 FAILED
+      showToast('채팅 서버와 연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.', 'error');
       setMessages(prev =>
         prev.map(m =>
           m.clientUuid === clientUuid ? { ...m, status: 'FAILED' } : m

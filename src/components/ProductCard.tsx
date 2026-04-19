@@ -144,37 +144,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </button>
         )}
 
-        {/* Won Success Badge */}
+        {/* Won Badge (구매자 시점) - 낙찰 성공 시 표시 */}
         {isWon && !hideOverlay && (
-          <div className="absolute inset-0 bg-emerald-600/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-emerald-500/90 transition-colors cursor-pointer rounded-[inherit]">
-            <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
+          <div className="absolute inset-0 bg-gray-800/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-gray-700/90 transition-colors cursor-pointer rounded-[inherit]">
+            <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               낙찰 성공!
             </div>
-            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-emerald-600 transition-all">
+            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-gray-800 transition-all">
               판매자와 대화하기
             </div>
           </div>
         )}
 
-        {/* Sold Badge (판매자 시점) - 확정 전까지만 표시 */}
-        {isSold && !isSellerPending && !isConfirmed && !hideOverlay && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 transition-colors cursor-pointer rounded-[inherit] bg-gray-800/80 group-hover:bg-gray-700/90">
-            <div className="p-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl bg-white text-gray-800">
-              낙찰 발생
-            </div>
-            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-gray-800 transition-all">
-              구매자 구매 확정 대기
-            </div>
-          </div>
-        )}
-
-        {/* Seller Pending Badge — 낙찰 발생 후 구매 확정 대기 중 (초록 강조) */}
+        {/* Seller Pending Badge — 낙찰 발생 후 구매 확정 대기 중 (회색 강조) */}
         {isSellerPending && !hideOverlay && (
-          <div className="absolute inset-0 bg-emerald-600/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-emerald-500/90 transition-colors cursor-pointer rounded-[inherit]">
-            <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
+          <div className="absolute inset-0 bg-gray-800/80 flex flex-col items-center justify-center backdrop-blur-sm animate-in fade-in duration-500 group-hover:bg-gray-700/90 transition-colors cursor-pointer rounded-[inherit]">
+            <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               확정 대기 중
             </div>
-            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-emerald-600 transition-all">
+            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-gray-800 transition-all">
               {sellerCancelRequested ? '취소 요청이 들어왔습니다' : '구매자와 대화하기'}
             </div>
           </div>

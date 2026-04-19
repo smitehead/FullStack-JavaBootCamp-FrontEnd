@@ -71,7 +71,7 @@ export const SellerAuctionResult: React.FC = () => {
     try {
       const res = await api.post('/chat/rooms', {
         buyerNo: result.buyer.buyerNo,
-        sellerNo: null, // 서버에서 현재 로그인 사용자를 판매자로 처리
+        sellerNo: result.seller.sellerNo, // 판매자 ID 명시적 전달
         productNo: result.productNo,
       });
       if (res.data?.roomNo) {
