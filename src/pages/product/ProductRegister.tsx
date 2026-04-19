@@ -46,8 +46,6 @@ export const ProductRegister: React.FC = () => {
   const [address, setAddress] = useState('');
   const [addrShort, setAddrShort] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
-  const [shippingFee, setShippingFee] = useState<number>(0);
-  const [isFreeShipping, setIsFreeShipping] = useState(false);
 
   useEffect(() => {
     if (editProduct) {
@@ -75,11 +73,6 @@ export const ProductRegister: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    if (isFreeShipping) {
-      setShippingFee(0);
-    }
-  }, [isFreeShipping]);
 
   useEffect(() => {
     if (isManualTime) {
@@ -218,8 +211,7 @@ export const ProductRegister: React.FC = () => {
         startPrice,
         buyoutPrice: isInstantPriceEnabled ? instantPrice : null,
         minBidUnit: minBidIncrement,
-        endTime: computedEndTime,
-        shippingFee: isFreeShipping ? 0 : shippingFee
+        endTime: computedEndTime
       };
 
       const formData = new FormData();
@@ -405,7 +397,7 @@ export const ProductRegister: React.FC = () => {
                   value={startPrice || ''}
                   onChange={(e) => setStartPrice(Math.max(0, Number(e.target.value)))}
                   placeholder="0"
-                  step="100"
+                  step="1000"
                   min="0"
                   className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border bg-white font-medium transition-all outline-none"
                 />
@@ -432,7 +424,7 @@ export const ProductRegister: React.FC = () => {
                   onChange={(e) => setInstantPrice(Math.max(0, Number(e.target.value)))}
                   disabled={!isInstantPriceEnabled}
                   placeholder={isInstantPriceEnabled ? "0" : "비활성화됨"}
-                  step="100"
+                  step="1000"
                   min="0"
                   className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border font-medium transition-all outline-none ${!isInstantPriceEnabled ? 'bg-gray-100 text-gray-400' : 'text-brand-dark bg-white'}`}
                 />
@@ -449,8 +441,8 @@ export const ProductRegister: React.FC = () => {
                   type="number"
                   value={minBidIncrement || ''}
                   onChange={(e) => setMinBidIncrement(Math.max(0, Number(e.target.value)))}
-                  placeholder="예: 100"
-                  step="100"
+                  placeholder="예: 1000"
+                  step="1000"
                   min="0"
                   className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border bg-white font-medium transition-all outline-none"
                 />
@@ -548,38 +540,6 @@ export const ProductRegister: React.FC = () => {
             </button>
           </div>
 
-          {methods.delivery && (
-            <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-gray-500">배송비 설정</label>
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={isFreeShipping}
-                    onChange={(e) => setIsFreeShipping(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300 text-brand focus:ring-brand"
-                  />
-                  <span className={`text-xs font-bold transition-colors ${isFreeShipping ? 'text-brand' : 'text-gray-400 group-hover:text-gray-600'}`}>택배비 무료</span>
-                </label>
-              </div>
-              <div className="relative">
-                <input
-                  type="number"
-                  value={shippingFee || ''}
-                  onChange={(e) => {
-                    const val = Math.max(0, Number(e.target.value));
-                    setShippingFee(val);
-                    if (val > 0) setIsFreeShipping(false);
-                  }}
-                  disabled={isFreeShipping}
-                  min="0"
-                  placeholder={isFreeShipping ? "무료배송" : "배송비를 입력해주세요"}
-                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border text-sm transition-all outline-none ${isFreeShipping ? 'bg-gray-50 text-gray-400' : 'bg-white'}`}
-                />
-                <span className={`absolute right-4 top-0 h-full flex items-center font-bold transition-colors ${isFreeShipping ? 'text-gray-300' : 'text-gray-400'}`}>원</span>
-              </div>
-            </div>
-          )}
 
           {methods.face && (
             <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">

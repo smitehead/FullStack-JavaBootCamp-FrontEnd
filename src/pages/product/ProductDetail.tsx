@@ -165,7 +165,9 @@ export const ProductDetail: React.FC = () => {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showRepostModal, setShowRepostModal] = useState(false);
+  const [showBuyoutModal, setShowBuyoutModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isBuyoutProcessing, setIsBuyoutProcessing] = useState(false);
   // 최고 입찰자 입찰 취소 모달 (Phase 1)
   const [showBidCancelModal, setShowBidCancelModal] = useState(false);
   const [isBidCancelling, setIsBidCancelling] = useState(false);
@@ -243,7 +245,6 @@ export const ProductDetail: React.FC = () => {
         status: mappedStatus,
         location: data.location || '',
         transactionMethod: data.tradeType === '혼합' ? 'both' : (data.tradeType === '직거래' ? 'face-to-face' : 'delivery'),
-        shippingFee: data.shippingFee ?? 0,
         isWishlisted: data.isWishlisted || false,
         wishlistCount: data.wishlistCount || 0,
         categoryPath: data.categoryPath || []
@@ -492,7 +493,7 @@ export const ProductDetail: React.FC = () => {
 
   if (product === null) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="spinner-border w-12 h-12" />
     </div>
   );
 
@@ -580,10 +581,12 @@ export const ProductDetail: React.FC = () => {
       setShowRechargePrompt(true);
       return;
     }
-    if (!window.confirm(`${Number(product.instantPrice).toLocaleString()}원에 즉시 구매하시겠습니까?\n구매 후 취소가 불가능합니다.`)) {
-      return;
-    }
+    setShowBuyoutModal(true);
+  };
 
+  const executeBuyout = async () => {
+    if (!product?.instantPrice) return;
+    setIsBuyoutProcessing(true);
     try {
       const memberNo = getMemberNo(user);
       if (!memberNo) return;
@@ -593,12 +596,16 @@ export const ProductDetail: React.FC = () => {
       await api.post('/bids/buyout', { productNo: Number(product.id) });
 
       showToast('즉시 구매가 완료되었습니다! 입찰 내역으로 이동합니다.', 'success');
+      setShowBuyoutModal(false);
       setIsBidModalOpen(false);
       setTimeout(() => navigate('/mypage?tab=bidding'), 800);
     } catch (error: any) {
       const errorMsg = error.response?.data?.message
         || (typeof error.response?.data === 'string' ? error.response.data : '즉시 구매에 실패했습니다.');
       showToast(errorMsg, 'error');
+      setShowBuyoutModal(false);
+    } finally {
+      setIsBuyoutProcessing(false);
     }
   };
 
@@ -1244,12 +1251,13 @@ export const ProductDetail: React.FC = () => {
                       product.transactionMethod === 'delivery' ? '택배거래' : '직거래'}
                   </span>
                 </div>
-                {(product.transactionMethod === 'delivery' || product.transactionMethod === 'both') && (
-                  <div className="flex border-b border-gray-50 pb-4">
-                    <span className="w-32 text-gray-500 font-medium">배송비</span>
-                    <span className="text-gray-900">{product.shippingFee === 0 ? '무료배송' : `${product.shippingFee?.toLocaleString()}원`}</span>
+                <div className="flex border-b border-gray-50 pb-4">
+                  <span className="w-32 text-gray-500 font-medium">배송 정보</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-900">배송비 별도</span>
+                    <span className="text-xs text-gray-400 font-medium">(판매자와 협의)</span>
                   </div>
-                )}
+                </div>
                 <div className="flex">
                   <span className="w-32 text-gray-500 font-medium">거래 지역</span>
                   <span className="text-gray-900">{product.location}</span>
@@ -2028,7 +2036,7 @@ export const ProductDetail: React.FC = () => {
                   disabled={isDeleting}
                   className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-2"
                 >
-                  {isDeleting ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : '삭제하기'}
+                  {isDeleting ? <div className="spinner-border w-4 h-4" style={{ borderTopColor: '#fff', borderLeftColor: 'rgba(255,255,255,0.2)', borderBottomColor: 'rgba(255,255,255,0.2)', borderRightColor: 'rgba(255,255,255,0.2)' }} /> : '삭제하기'}
                 </button>
               </div>
             </div>
@@ -2062,6 +2070,37 @@ export const ProductDetail: React.FC = () => {
                   className="flex-1 py-3.5 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 text-sm"
                 >
                   재게시하기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Buyout Confirmation Modal */}
+      {showBuyoutModal && product && (
+        <div className="fixed inset-0 z-[130] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowBuyoutModal(false)}></div>
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">즉시 구매하시겠습니까?</h3>
+              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                {Number(product.instantPrice).toLocaleString()}원에 즉시 구매합니다.<br />
+                구매 후에는 취소가 불가능합니다.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setShowBuyoutModal(false)}
+                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={executeBuyout}
+                  disabled={isBuyoutProcessing}
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-2"
+                >
+                  {isBuyoutProcessing ? <div className="spinner-border w-4 h-4" style={{ borderTopColor: '#fff', borderLeftColor: 'rgba(255,255,255,0.2)', borderBottomColor: 'rgba(255,255,255,0.2)', borderRightColor: 'rgba(255,255,255,0.2)' }} /> : '구매하기'}
                 </button>
               </div>
             </div>

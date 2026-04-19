@@ -66,7 +66,7 @@ export const Chat: React.FC = () => {
   };
 
   // ──── JWT 토큰 가져오기 ────
-  const getToken = () => localStorage.getItem('java_token') || '';
+  const getToken = () => sessionStorage.getItem('java_token') || '';
 
   // ══════════════════════════════════════════════════
   // 1. 채팅방 목록 로드
@@ -735,9 +735,7 @@ export const Chat: React.FC = () => {
               {/* 더 불러오기 로딩 */}
               {isLoadingMore && (
                 <div className="flex justify-center py-2">
-                  <div className="spinner-border w-5 h-5 text-gray-400" role="status">
-                    <span className="sr-only">Loading...</span>
-                  </div>
+                  <div className="spinner-border w-5 h-5" />
                 </div>
               )}
               {!hasMore && messages.length > 0 && (
