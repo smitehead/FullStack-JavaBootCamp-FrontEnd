@@ -1116,24 +1116,24 @@ export const Chat: React.FC = () => {
                             try { appt = JSON.parse(msg.content); } catch { appt = { dateLabel: msg.content }; }
                             return (
                               <div className={`rounded-3xl overflow-hidden border border-gray-200 shadow-sm w-[260px] bg-white ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
-                                <div className="bg-orange-500 px-5 py-3.5 flex items-center gap-2">
-                                  <span className="text-white text-xs font-bold tracking-wide">약속 잡기</span>
+                                <div className="bg-[#FF5A5A] px-5 py-3.5 flex items-center justify-center gap-2">
+                                  <span className="text-white text-xs font-semibold tracking-wide">약속 잡기</span>
                                 </div>
                                 <div className="p-5 space-y-4">
                                   <div className="space-y-1.5">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">날짜</p>
+                                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">날짜</p>
                                     <p className="text-sm font-bold text-gray-900">{appt.dateLabel || '-'}</p>
                                   </div>
                                   <div className="space-y-1.5">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">시간</p>
+                                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">시간</p>
                                     <p className="text-sm font-bold text-gray-900">{appt.timeLabel || '-'}</p>
                                   </div>
                                   {appt.addrRoad && (
                                     <div className="pt-3 border-t border-gray-50 space-y-1.5">
-                                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">장소</p>
+                                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">장소</p>
                                       <div>
                                         <p className="text-sm font-bold text-gray-900 leading-snug">{appt.addrRoad}</p>
-                                        {appt.addrDetail && <p className="text-[11px] text-gray-400 mt-1 font-medium">{appt.addrDetail}</p>}
+                                        {appt.addrDetail && <p className="text-sm text-gray-400 mt-1 font-medium">{appt.addrDetail}</p>}
                                       </div>
                                     </div>
                                   )}
@@ -1146,14 +1146,13 @@ export const Chat: React.FC = () => {
                             >
                               <div className={`p-5 bg-white`}>
                                 <div className={`flex items-start gap-3 text-gray-800`}>
-                                  <BsGeoAltFill className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-2">배송지</p>
+                                    <p className="text-[10px] font-semibold text-[#FF5A5A] uppercase tracking-widest mb-2">배송지</p>
                                     <p className="text-sm font-bold leading-snug text-gray-900 break-words">
                                       {msg.addrRoad || msg.content || '주소 정보'}
                                     </p>
                                     {msg.addrDetail && (
-                                      <p className={`text-[11px] mt-1.5 break-words text-gray-500 font-medium`}>
+                                      <p className={`text-sm mt-1.5 break-words text-gray-500 font-medium`}>
                                         {msg.addrDetail}
                                       </p>
                                     )}
@@ -1166,7 +1165,7 @@ export const Chat: React.FC = () => {
                                   <button
                                     type="button"
                                     onClick={() => handleConfirmAddress(msg)}
-                                    className="w-full py-3.5 text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors"
+                                    className="w-full py-3.5 text-xs font-semibold text-gray-700 hover:text-gray-900 transition-colors"
                                   >
                                     배송지 저장
                                   </button>
