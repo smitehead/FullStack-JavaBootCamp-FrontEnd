@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar } from 'react-icons/bs';
+import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -566,13 +566,28 @@ export const Chat: React.FC = () => {
   // 4-2. 판매자가 ADDRESS 카드의 [확인] 버튼 클릭 — 배송지 저장
   // ══════════════════════════════════════════════════
   const handleConfirmAddress = async (msg: ChatMessage) => {
-    if (!selectedRoom) return;
+    if (!selectedRoom || !memberNo) return;
     try {
       await api.patch(`/auction-results/seller/product/${selectedRoom.productId}/delivery-address`, {
         addrRoad: msg.addrRoad ?? null,
         addrDetail: msg.addrDetail ?? null,
       });
       showToast('배송지가 낙찰 관리 페이지에 저장되었습니다.', 'success');
+
+      // 시스템 메시지 발송 (모든 참여자에게 안내)
+      const client = stompClientRef.current;
+      if (client && client.connected) {
+        client.publish({
+          destination: '/pub/chat/message',
+          body: JSON.stringify({
+            roomId: selectedRoom.roomNo,
+            senderId: memberNo,
+            content: '구매자의 주소가 거래 정보에 추가되었습니다.',
+            msgType: 'SYSTEM',
+            clientUuid: getUuid(),
+          }),
+        });
+      }
     } catch {
       showToast('배송지 저장에 실패했습니다.', 'error');
     }
@@ -958,8 +973,8 @@ export const Chat: React.FC = () => {
                     <button
                       onClick={() => {
                         const targetUrl = selectedRoom.otherUser.role === 'seller'
-                          ? `/won-product-detail/${selectedRoom.productId}`
-                          : `/seller/won-product-detail/${selectedRoom.productId}`;
+                          ? `/won/${selectedRoom.productId}`
+                          : `/seller-result/${selectedRoom.productId}`;
                         navigate(targetUrl);
                         setShowMoreMenu(false);
                       }}
@@ -1002,7 +1017,6 @@ export const Chat: React.FC = () => {
               {!hasMore && messages.length > 0 && (
                 <div className="text-center text-xs text-gray-400 py-2">이전 메시지가 없습니다</div>
               )}
-
               {messages.map((msg, idx) => {
                 const isMe = msg.senderNo === memberNo;
                 return (
@@ -1015,9 +1029,20 @@ export const Chat: React.FC = () => {
                         </span>
                       </div>
                     )}
+
+                    {/* 시스템 메시지 (중앙 정렬) */}
+                    {msg.msgType === 'SYSTEM' && (
+                      <div className="flex justify-center w-full my-6 animate-in fade-in zoom-in duration-300">
+                        <span className="bg-white/80 backdrop-blur-sm text-gray-500 text-[11px] font-bold px-5 py-2 rounded-full border border-gray-100 shadow-sm flex items-center gap-2">
+                          <BsExclamationCircle className="w-3.5 h-3.5 text-blue-500" />
+                          {msg.content}
+                        </span>
+                      </div>
+                    )}
+
                     <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-2`}>
                       <div className={`flex items-end gap-2 max-w-[70%] ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                        {!isMe && (
+                        {!isMe && msg.msgType !== 'SYSTEM' && (
                           <img src={selectedRoom.otherUser.profileImage || '/default-profile.png'}
                             alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0 bg-gray-100" />
                         )}
@@ -1025,19 +1050,19 @@ export const Chat: React.FC = () => {
                           {/* ──── 메시지 콘텐츠 (msgType 분기) ──── */}
                           {msg.msgType === 'ADDRESS' ? (
                             <div
-                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[260px] ${isMe ? 'border-emerald-200 rounded-tr-none' : 'border-gray-200 rounded-tl-none'
+                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[260px] ${isMe ? 'border-gray-100 rounded-tr-none' : 'border-gray-200 rounded-tl-none'
                                 } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
                             >
-                              <div className={`p-4 ${isMe ? 'bg-emerald-500' : 'bg-white'}`}>
-                                <div className={`flex items-start gap-2 ${isMe ? 'text-white' : 'text-gray-800'}`}>
-                                  <BsGeoAltFill className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                              <div className={`p-4 bg-white`}>
+                                <div className={`flex items-start gap-2 text-gray-800`}>
+                                  <BsGeoAltFill className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">배송지</p>
+                                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">배송지</p>
                                     <p className="text-xs font-bold leading-snug break-words">
                                       {msg.addrRoad || msg.content || '주소 정보'}
                                     </p>
                                     {msg.addrDetail && (
-                                      <p className={`text-[10px] mt-0.5 break-words ${isMe ? 'text-emerald-100' : 'text-gray-500'}`}>
+                                      <p className={`text-[10px] mt-0.5 break-words text-gray-500 font-medium`}>
                                         {msg.addrDetail}
                                       </p>
                                     )}
@@ -1046,11 +1071,11 @@ export const Chat: React.FC = () => {
                               </div>
                               {/* 판매자(상대방이 구매자)에게만 확인 버튼 표시 */}
                               {!isMe && selectedRoom.otherUser.role === 'buyer' && (
-                                <div className="border-t border-gray-100 p-2 bg-gray-50">
+                                <div className="border-t border-gray-100 bg-gray-50 hover:bg-gray-100 transition-colors">
                                   <button
                                     type="button"
                                     onClick={() => handleConfirmAddress(msg)}
-                                    className="w-full py-2 text-xs font-bold text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors"
+                                    className="w-full py-3.5 text-xs font-bold text-gray-700 hover:text-emerald-600 transition-colors"
                                   >
                                     확인 (배송지 저장)
                                   </button>
@@ -1199,6 +1224,19 @@ export const Chat: React.FC = () => {
                             <span className="text-sm font-bold">위치 보내기</span>
                           </button>
                         )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            // TODO: 약속 잡기 기능 구현 예정
+                            setIsAttachmentMenuOpen(false);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
+                        >
+                          <div className="p-2 bg-gray-100 rounded-xl text-gray-500 group-hover:bg-gray-200 transition-colors">
+                            <BsCalendarPlus className="w-4 h-4" />
+                          </div>
+                          <span className="text-sm font-bold">약속 잡기</span>
+                        </button>
                       </div>
                     </div>
                   )}
