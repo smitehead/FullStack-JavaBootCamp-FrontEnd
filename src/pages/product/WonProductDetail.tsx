@@ -349,7 +349,9 @@ export const WonProductDetail: React.FC = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500 font-medium">배송비</span>
-                    <span className="text-gray-900 font-bold">배송비 별도 (판매자 협의)</span>
+                    <span className={`font-bold ${result.tradeType === '직거래' ? 'text-gray-900' : 'text-gray-400'}`}>
+                      {result.tradeType === '직거래' ? '-' : '(배송비 별도)'}
+                    </span>
                   </div>
 
                   <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
