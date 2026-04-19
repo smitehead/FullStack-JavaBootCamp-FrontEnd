@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
 import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
-import { Sparkles, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { BsXCircle, BsCheckCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
@@ -14,8 +14,6 @@ interface SellerResultDetail {
   title: string;
   description: string;
   finalPrice: number;
-  penaltyPool: number;
-  sellerBonus: number;
   tradeType: string;
   location: string | null;
   images: string[];
@@ -197,37 +195,9 @@ export const SellerAuctionResult: React.FC = () => {
                     <span className="text-gray-900 font-bold">{result.finalPrice.toLocaleString()}원</span>
                   </div>
 
-                  {result.sellerBonus > 0 && (
-                    <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 space-y-2">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
-                        <span className="text-xs font-bold text-emerald-700">입찰 취소 위약금 보상</span>
-                      </div>
-                      <p className="text-[11px] text-emerald-600 leading-relaxed font-medium">
-                        경쟁 입찰자의 취소로 쌓인 위약금 풀이 구매 확정 시 판매자/구매자에게 분배됩니다.
-                      </p>
-                      <div className="flex justify-between items-center pt-1 border-t border-emerald-100">
-                        <span className="text-xs font-bold text-emerald-700">판매자 추가 보상 (풀의 50%)</span>
-                        <span className="text-base font-bold text-emerald-600">+{result.sellerBonus.toLocaleString()}P</span>
-                      </div>
-                    </div>
-                  )}
-
                   <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
                     <span className="text-base font-bold text-gray-900">총 수령 예정액</span>
-                    <div className="text-right">
-                      {result.sellerBonus > 0 ? (
-                        <>
-                          <p className="text-xs text-gray-400 line-through font-medium">{result.finalPrice.toLocaleString()}원</p>
-                          <p className="text-2xl font-bold text-emerald-600">
-                            {(result.finalPrice + result.sellerBonus).toLocaleString()}원
-                          </p>
-                          <p className="text-[11px] text-emerald-600 font-bold">{result.sellerBonus.toLocaleString()}P 보상 포함</p>
-                        </>
-                      ) : (
-                        <span className="text-2xl font-bold text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
-                      )}
-                    </div>
+                    <span className="text-2xl font-bold text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
                   </div>
                 </div>
 

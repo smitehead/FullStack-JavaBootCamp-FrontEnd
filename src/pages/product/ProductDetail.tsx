@@ -1803,7 +1803,7 @@ export const ProductDetail: React.FC = () => {
                     {/* 정책 안내 텍스트 */}
                     <p className="text-[10px] text-gray-400 leading-relaxed text-center font-medium">
                       경매 마감 시간은 변동 없이 유지됩니다.<br />
-                      차감된 위약금은 경매 보호 정책에 따라 위약금 풀에 적립됩니다.
+                      차감된 위약금은 플랫폼 수익으로 귀속됩니다.
                     </p>
 
                     {/* 필수 동의 체크박스 */}

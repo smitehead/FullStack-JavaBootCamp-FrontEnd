@@ -30,7 +30,6 @@ interface AuctionResultDetail {
   };
   deliveryEmdNo: number | null;
   deliveryAddrDetail: string | null;
-  buyerCashback: number;
   isForcePromoted: number; // 1 = 강제 승계 낙찰자
 }
 
@@ -353,37 +352,9 @@ export const WonProductDetail: React.FC = () => {
                     <span className="text-gray-900 font-bold">0원 (무료배송)</span>
                   </div>
 
-                  {result.buyerCashback > 0 && (
-                    <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 space-y-2">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
-                        <span className="text-xs font-bold text-emerald-700">입찰 취소 위약금 보상</span>
-                      </div>
-                      <p className="text-[11px] text-emerald-600 leading-relaxed font-medium">
-                        경쟁 입찰자의 취소로 쌓인 위약금 풀이 결제 완료 시 자동 지급됩니다.
-                      </p>
-                      <div className="flex justify-between items-center pt-1 border-t border-emerald-100">
-                        <span className="text-xs font-bold text-emerald-700">내 캐시백 (풀의 50%)</span>
-                        <span className="text-base font-bold text-emerald-600">+{result.buyerCashback.toLocaleString()}P</span>
-                      </div>
-                    </div>
-                  )}
-
                   <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
                     <span className="text-base font-bold text-gray-900">총 결제 금액</span>
-                    <div className="text-right">
-                      {result.buyerCashback > 0 ? (
-                        <>
-                          <p className="text-xs text-gray-400 line-through font-medium">{result.finalPrice.toLocaleString()}원</p>
-                          <p className="text-2xl font-bold text-[#FF5A5A]">
-                            {(result.finalPrice - result.buyerCashback).toLocaleString()}원
-                          </p>
-                          <p className="text-[11px] text-emerald-600 font-bold">{result.buyerCashback.toLocaleString()}P 캐시백 적용</p>
-                        </>
-                      ) : (
-                        <span className="text-2xl font-bold text-[#FF5A5A]">{result.finalPrice.toLocaleString()}원</span>
-                      )}
-                    </div>
+                    <span className="text-2xl font-bold text-[#FF5A5A]">{result.finalPrice.toLocaleString()}원</span>
                   </div>
                 </div>
 
