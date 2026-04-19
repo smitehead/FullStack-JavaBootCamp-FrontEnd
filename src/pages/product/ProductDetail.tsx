@@ -166,8 +166,11 @@ export const ProductDetail: React.FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showRepostModal, setShowRepostModal] = useState(false);
   const [showBuyoutModal, setShowBuyoutModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [isBuyoutProcessing, setIsBuyoutProcessing] = useState(false);
+  const [showBidConfirmModal, setShowBidConfirmModal] = useState(false);
+  const [showAutoBidConfirmModal, setShowAutoBidConfirmModal] = useState(false);
+  const [isBidProcessing, setIsBidProcessing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   // 최고 입찰자 입찰 취소 모달 (Phase 1)
   const [showBidCancelModal, setShowBidCancelModal] = useState(false);
   const [isBidCancelling, setIsBidCancelling] = useState(false);
@@ -622,12 +625,12 @@ export const ProductDetail: React.FC = () => {
     }
     const amountToValidate = modalType === 'bid' ? bidAmount : autoBidMaxAmount;
 
-    if (modalType === 'bid' && bidAmount < product.currentPrice + product.minBidIncrement) {
+    if (modalType === 'bid' && bidAmount < (product.currentPrice || 0) + (product.minBidIncrement || 0)) {
       showToast("'최소 입찰 금액'을 확인해주세요.", 'error');
       return;
     }
 
-    if (modalType === 'auto' && autoBidMaxAmount <= product.currentPrice) {
+    if (modalType === 'auto' && autoBidMaxAmount <= (product.currentPrice || 0)) {
       showToast("'자동 입찰 한도'는 현재가보다 높아야 합니다.", 'error');
       return;
     }
@@ -637,38 +640,34 @@ export const ProductDetail: React.FC = () => {
       return;
     }
 
+    if (modalType === 'auto') {
+      setShowAutoBidConfirmModal(true);
+    } else {
+      setShowBidConfirmModal(true);
+    }
+  };
+
+  const executeStandardBid = async () => {
+    if (!product) return;
+    setIsBidProcessing(true);
     try {
       const memberNo = getMemberNo(user);
       if (!memberNo) return;
       justBidRef.current = true;
       setTimeout(() => { justBidRef.current = false; }, 3000);
 
-      if (modalType === 'auto') {
-        await api.post('/auto-bid', {
-          productNo: Number(product.id),
-          maxPrice: autoBidMaxAmount
-        });
-        setHasBid(true);
-        setIsHighestBidder(true);
-        showToast('자동 입찰이 설정되었습니다!', 'success');
-        setIsBidModalOpen(false);
-        await fetchProduct();
-        return;
-      }
-
-      // 일반 입찰: 응답에 autoBidFired / finalBidderNo 포함
       const response = await api.post('/bids', {
         productNo: product.id,
         memberNo: memberNo,
-        bidPrice: amountToValidate
+        bidPrice: bidAmount
       });
       const bidResult = response.data as { autoBidFired: boolean; finalBidderNo: number; finalPrice: number };
 
       setHasBid(true);
       setIsBidModalOpen(false);
+      setShowBidConfirmModal(false);
 
       if (bidResult.autoBidFired && bidResult.finalBidderNo !== memberNo) {
-        // 자동입찰에 의해 즉시 밀려남 → 최고 입찰자 아님
         setIsHighestBidder(false);
         showToast('입찰은 완료되었으나, 다른 유저의 자동 입찰에 의해 상위 입찰자가 갱신되었습니다.', 'warning');
       } else {
@@ -677,12 +676,42 @@ export const ProductDetail: React.FC = () => {
       }
 
       await fetchProduct();
-
     } catch (error: any) {
       const errorMsg = typeof error.response?.data === 'string'
         ? error.response.data
         : (error.response?.data?.message || '입찰에 실패했습니다.');
       showToast(errorMsg, 'error');
+      setShowBidConfirmModal(false);
+    } finally {
+      setIsBidProcessing(false);
+    }
+  };
+
+  const executeAutoBid = async () => {
+    if (!product) return;
+    setIsBidProcessing(true);
+    try {
+      justBidRef.current = true;
+      setTimeout(() => { justBidRef.current = false; }, 3000);
+
+      await api.post('/auto-bid', {
+        productNo: Number(product.id),
+        maxPrice: autoBidMaxAmount
+      });
+      setHasBid(true);
+      setIsHighestBidder(true);
+      showToast('자동 입찰이 설정되었습니다!', 'success');
+      setIsBidModalOpen(false);
+      setShowAutoBidConfirmModal(false);
+      await fetchProduct();
+    } catch (error: any) {
+      const errorMsg = typeof error.response?.data === 'string'
+        ? error.response.data
+        : (error.response?.data?.message || '자동 입찰 설정에 실패했습니다.');
+      showToast(errorMsg, 'error');
+      setShowAutoBidConfirmModal(false);
+    } finally {
+      setIsBidProcessing(false);
     }
   };
 
@@ -2085,7 +2114,7 @@ export const ProductDetail: React.FC = () => {
             <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">즉시 구매하시겠습니까?</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                {Number(product.instantPrice).toLocaleString()}원에 즉시 구매합니다.<br />
+                <span className="font-semibold text-gray-900">{Number(product.instantPrice).toLocaleString()}원</span>에 즉시 구매합니다.<br />
                 구매 후에는 취소가 불가능합니다.
               </p>
               <div className="flex gap-3 w-full">
@@ -2101,6 +2130,67 @@ export const ProductDetail: React.FC = () => {
                   className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-2"
                 >
                   {isBuyoutProcessing ? <div className="spinner-border w-4 h-4" style={{ borderTopColor: '#fff', borderLeftColor: 'rgba(255,255,255,0.2)', borderBottomColor: 'rgba(255,255,255,0.2)', borderRightColor: 'rgba(255,255,255,0.2)' }} /> : '구매하기'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Standard Bid Confirmation Modal */}
+      {showBidConfirmModal && product && (
+        <div className="fixed inset-0 z-[140] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowBidConfirmModal(false)}></div>
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">입찰하시겠습니까?</h3>
+              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                <span className="font-semibold text-gray-900">{bidAmount.toLocaleString()}원</span>으로 입찰에 참여합니다.<br />
+                입찰 후 취소 시 위약금이 발생할 수 있습니다.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setShowBidConfirmModal(false)}
+                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={executeStandardBid}
+                  disabled={isBidProcessing}
+                  className="flex-1 py-3.5 bg-orange-500 text-white rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-100 text-sm flex items-center justify-center gap-2"
+                >
+                  {isBidProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '입찰하기'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Auto-Bid Confirmation Modal */}
+      {showAutoBidConfirmModal && product && (
+        <div className="fixed inset-0 z-[140] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAutoBidConfirmModal(false)}></div>
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">자동 입찰을 설정하시겠습니까?</h3>
+              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                최대 <span className="font-semibold text-gray-900">{autoBidMaxAmount.toLocaleString()}원</span>까지 자동으로 상위 입찰을 진행하도록 설정합니다.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setShowAutoBidConfirmModal(false)}
+                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={executeAutoBid}
+                  disabled={isBidProcessing}
+                  className="flex-1 py-3.5 bg-orange-500 text-white rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-100 text-sm flex items-center justify-center gap-2"
+                >
+                  {isBidProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '설정하기'}
                 </button>
               </div>
             </div>

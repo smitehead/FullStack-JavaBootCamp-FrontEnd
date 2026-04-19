@@ -42,10 +42,13 @@
   /* 공통 브랜드 스피너 */
   .spinner-border {
     display: inline-block;
-    border: 3px solid #FF5A5A20; /* 배경 원은 연하게 */
-    border-top-color: #FF5A5A;    /* 돌아가는 부분만 진하게 */
+    border: 3px solid #FF5A5A20; 
+    border-top-color: #FF5A5A;    
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
+    box-sizing: border-box; 
+    padding: 0;             
+    color: transparent;     
   }
 
   @keyframes spin {
