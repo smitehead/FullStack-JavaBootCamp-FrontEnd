@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsGeoAltFill, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonSquare, BsPlusLg } from 'react-icons/bs';
-import { BsExclamationCircle } from 'react-icons/bs';
+import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -662,21 +661,34 @@ export const Chat: React.FC = () => {
       // 낙찰 결과(배송지 정보) 조회
       const res = await api.get(`/auction-results/product/${selectedRoom.productId}`);
       const data = res.data;
-      if (data && data.deliveryAddrRoad) {
+      if (data?.deliveryAddrRoad) {
+        // 신규 분리 저장 포맷
         setLocationAddrRoad(data.deliveryAddrRoad);
         setLocationAddrDetail(data.deliveryAddrDetail || '');
-        setLocationAddress(`${data.deliveryAddrRoad} ${data.deliveryAddrDetail || ''}`.trim());
-      } else {
-        // 낙찰 정보 없으면 회원 기본 주소 사용
-        setLocationAddrRoad(user?.address || '');
+        setLocationAddress(data.deliveryAddrRoad);
+      } else if (data?.deliveryAddrDetail) {
+        // 레거시: 통합 저장 포맷
+        setLocationAddrRoad(data.deliveryAddrDetail);
         setLocationAddrDetail('');
-        setLocationAddress(user?.address || '등록된 주소가 없습니다.');
+        setLocationAddress(data.deliveryAddrDetail);
+      } else {
+        // 배송지 미등록 → 회원 기본 주소 사용
+        try {
+          const memberRes = await api.get('/members/me');
+          setLocationAddrRoad(memberRes.data?.addrRoad || '');
+          setLocationAddrDetail(memberRes.data?.addrDetail || '');
+          setLocationAddress(memberRes.data?.addrRoad || '');
+        } catch {
+          setLocationAddrRoad('');
+          setLocationAddrDetail('');
+          setLocationAddress('');
+        }
       }
     } catch (err) {
       console.error('[Chat] Failed to fetch winning address:', err);
-      setLocationAddrRoad(user?.address || '');
+      setLocationAddrRoad('');
       setLocationAddrDetail('');
-      setLocationAddress(user?.address || '등록된 주소가 없습니다.');
+      setLocationAddress('');
     } finally {
       setIsAddressLoading(false);
     }
@@ -910,13 +922,13 @@ export const Chat: React.FC = () => {
                       onClick={() => { navigate(`/seller/${selectedRoom.otherUser.no}`); setShowMoreMenu(false); }}
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
                     >
-                      <BsPersonSquare className="w-4 h-4 mr-2.5" /> 프로필 보기
+                      <BsPersonCircle className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </button>
                     <button
                       onClick={() => { navigate(`/products/${selectedRoom.productId}`); setShowMoreMenu(false); }}
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
                     >
-                      <BsCartCheck className="w-4 h-4 mr-2.5" /> 상품 보기
+                      <BsBoxSeam className="w-4 h-4 mr-2.5" /> 상품 보기
                     </button>
                     <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
                       <button
@@ -1205,16 +1217,24 @@ export const Chat: React.FC = () => {
           <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 transform scale-100">
             <div className="p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-6 text-left tracking-tight">이 주소가 확실하십니까?</h3>
-              <div className="bg-gray-50 rounded-2xl p-6 mb-6 border border-gray-100 min-h-[100px] flex flex-col justify-center items-center text-center">
+              <div className="bg-gray-50 rounded-2xl p-6 mb-6 border border-gray-100 min-h-[100px] flex flex-col justify-center">
                 {isAddressLoading ? (
-                  <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="flex justify-center">
+                    <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                  </div>
                 ) : (
-                  <>
-                    <BsGeoAltFill className="w-5 h-5 text-indigo-500 mb-3" />
-                    <p className="text-sm font-bold text-gray-900 leading-relaxed">
-                      {locationAddress}
-                    </p>
-                  </>
+                  <div className="flex items-start gap-3">
+                    <BsGeoAltFill className="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">배송지 주소</p>
+                      <p className="text-sm font-bold text-gray-900 leading-snug break-words">
+                        {locationAddrRoad || locationAddress || '등록된 주소가 없습니다.'}
+                      </p>
+                      {locationAddrDetail && (
+                        <p className="text-xs text-gray-500 mt-1 break-words">{locationAddrDetail}</p>
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
 

@@ -252,10 +252,20 @@ export const SellerAuctionResult: React.FC = () => {
                   )}
 
                   {isCompleted && (
-                    <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl text-center">
-                      <BsCheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
-                      <p className="text-sm font-bold text-emerald-600">구매자가 수령을 확인하여 거래가 완료되었습니다.</p>
-                    </div>
+                    <>
+                      <div className="grid grid-cols-1 gap-3 mb-6">
+                        <button
+                          disabled
+                          className="w-full py-5 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
+                        >
+                          거래 완료
+                        </button>
+                      </div>
+                      <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl text-center">
+                        <BsCheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
+                        <p className="text-sm font-bold text-emerald-600">구매자가 수령을 확인하여 거래가 완료되었습니다.</p>
+                      </div>
+                    </>
                   )}
 
                   {isCanceled && (

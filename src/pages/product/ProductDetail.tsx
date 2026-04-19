@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { BsBox2, BsExclamationCircle, BsReply, BsShieldFillCheck, BsFlagFill, BsInfoCircle, BsInfoCircleFill, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsStopwatch, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShareFill, BsArrowRepeat, BsTrash3 } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsReply, BsShieldFillCheck, BsFlagFill, BsInfoCircle, BsInfoCircleFill, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsStopwatch, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShareFill, BsArrowRepeat, BsTrash3, BsHouseX } from 'react-icons/bs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -250,7 +250,8 @@ export const ProductDetail: React.FC = () => {
         transactionMethod: data.tradeType === '혼합' ? 'both' : (data.tradeType === '직거래' ? 'face-to-face' : 'delivery'),
         isWishlisted: data.isWishlisted || false,
         wishlistCount: data.wishlistCount || 0,
-        categoryPath: data.categoryPath || []
+        categoryPath: data.categoryPath || [],
+        bidStatus: data.bidStatus || null
       };
 
       // SSE가 이미 더 높은 가격을 수신했다면 되돌리지 않음 (fetchProduct 경쟁 조건 방지)
@@ -540,6 +541,11 @@ export const ProductDetail: React.FC = () => {
 
     if (product?.seller.id === user?.id) {
       showToast('본인이 등록한 상품에는 입찰할 수 없습니다.', 'error');
+      return;
+    }
+
+    if (product?.bidStatus === 'CANCELLED') {
+      showToast('취소한 상품에는 재입찰 할 수 없습니다.', 'error');
       return;
     }
 
@@ -871,6 +877,14 @@ export const ProductDetail: React.FC = () => {
                 >
                   <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
                 </button>
+                {!isFinished && (
+                  <button
+                    onClick={() => { setShowMoreMenu(false); setShowCancelModal(true); }}
+                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors border-b border-gray-50"
+                  >
+                    <BsHouseX className="w-4 h-4 mr-2.5" /> 경매 취소하기
+                  </button>
+                )}
                 {isFinished && (product.participantCount === 0 || product.status === 'closed_failed') && (
                   <button
                     onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
@@ -1107,54 +1121,60 @@ export const ProductDetail: React.FC = () => {
               </button>
 
               {/* 2. 판매자 버튼 / 입찰자 버튼 분기 */}
-              {isSeller ? (
-                /* 판매자 전용: 경매 취소 or 경매 종료 표시 */
-                isFinished ? (
+              {/* 입찰 버튼 영역: 판매자도 활성화된 버튼을 보되 클릭 시 차단 */}
+              <div className="flex flex-1 items-center gap-3">
+                {isFinished ? (
                   <button
                     disabled
-                    className="flex-1 py-4 bg-gray-100 text-gray-400 font-black rounded-2xl cursor-not-allowed opacity-70 flex items-center justify-center"
+                    className="w-full py-4 bg-gray-100 text-gray-400 font-black rounded-2xl cursor-not-allowed opacity-70 flex items-center justify-center"
                   >
                     <span>경매 종료</span>
                   </button>
                 ) : (
-                  <button
-                    onClick={() => setShowCancelModal(true)}
-                    className="flex-1 py-4 bg-gray-50 border-2 border-gray-100 text-gray-400 font-black rounded-2xl hover:bg-[#FF5A5A] hover:text-white hover:border-[#FF5A5A] transition-all duration-300 flex items-center justify-center shadow-sm active:scale-95"
-                  >
-                    <span>경매 취소</span>
-                  </button>
-                )
-              ) : (
-                <>
-                  {/* 자동 입찰 버튼 */}
-                  <button
-                    onClick={() => openBidModal('auto')}
-                    disabled={isFinished}
-                    className="flex-1 py-4 border border-orange-500 text-orange-500 font-bold rounded-xl hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
-                  </button>
+                  <>
+                    {/* 자동 입찰 버튼 */}
+                    <button
+                      onClick={() => openBidModal('auto')}
+                      className="flex-1 py-4 border border-orange-500 text-orange-500 font-bold rounded-xl hover:bg-orange-50 transition-colors"
+                    >
+                      {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
+                    </button>
 
-                  {/* 최고 입찰자: 입찰 취소하기 / 일반: 입찰 참여하기 → 약관 모달 */}
-                  {isHighestBidder ? (
-                    <button
-                      onClick={() => setShowBidCancelModal(true)}
-                      disabled={isFinished}
-                      className="flex-1 py-4 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-                    >
-                      입찰 취소하기
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setShowBidTermsModal(true)}
-                      disabled={isFinished}
-                      className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-                    >
-                      입찰 참여하기
-                    </button>
-                  )}
-                </>
-              )}
+                    {/* 최고 입찰자: 입찰 취소하기 / 일반: 입찰 참여하기 → 약관 모달 기점 */}
+                    {isHighestBidder ? (
+                      <button
+                        onClick={() => {
+                          if (isSeller) {
+                            showToast('본인이 등록한 상품에는 입찰할 수 없습니다.', 'error');
+                            return;
+                          }
+                          setShowBidCancelModal(true);
+                        }}
+                        className="flex-1 py-4 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/10"
+                      >
+                        입찰 취소하기
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          if (isSeller) {
+                            showToast('본인이 등록한 상품에는 입찰할 수 없습니다.', 'error');
+                            return;
+                          }
+                          if (product?.bidStatus === 'CANCELLED') {
+                            showToast('취소한 상품에는 재입찰 할 수 없습니다.', 'error');
+                            return;
+                          }
+                          setShowBidTermsModal(true);
+                        }}
+                        className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10"
+                      >
+                        입찰 참여하기
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>

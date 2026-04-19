@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BsStars } from 'react-icons/bs';
 
-import { BsArrowUpRight, BsPersonSquare, BsGear, BsBell, BsClock, BsList, BsChat, BsSearch, BsX } from 'react-icons/bs';
+import { BsArrowUpRight, BsPersonCircle, BsGear, BsBell, BsClock, BsList, BsChat, BsSearch, BsX } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
@@ -340,7 +340,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                       to="/mypage"
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
                     >
-                      <BsPersonSquare className="w-4 h-4 mr-2.5" /> 프로필 보기
+                      <BsPersonCircle className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </Link>
                     <Link
                       to="/chat"

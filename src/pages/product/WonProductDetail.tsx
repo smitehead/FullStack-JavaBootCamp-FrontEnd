@@ -14,7 +14,6 @@ declare global {
 import { BsCheckCircle, BsBox2, BsExclamationCircle, BsInfoCircle, BsCreditCard, BsGeoAltFill, BsChat, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import { ReviewModal } from '@/components/ReviewModal';
-
 interface AuctionResultDetail {
   resultNo: number;
   status: string; // 배송대기 | 결제완료 | 구매확정 | 거래취소
@@ -36,6 +35,7 @@ interface AuctionResultDetail {
   deliveryAddrRoad: string | null;
   deliveryAddrDetail: string | null;
   isForcePromoted: number; // 1 = 강제 승계 낙찰자
+  hasReview: boolean;
 }
 
 
@@ -451,9 +451,22 @@ export const WonProductDetail: React.FC = () => {
                   )}
 
                   {isCompleted && (
-                    <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl text-center">
-                      <BsCheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
-                      <p className="text-sm font-bold text-emerald-600">거래가 성공적으로 완료되었습니다.</p>
+                    <div className="mt-8 space-y-3">
+                      {!result.hasReview ? (
+                        <button
+                          onClick={() => setShowReviewModal(true)}
+                          className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95"
+                        >
+                          후기 남기기
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="w-full py-5 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed"
+                        >
+                          거래 완료
+                        </button>
+                      )}
                     </div>
                   )}
 
@@ -595,11 +608,15 @@ export const WonProductDetail: React.FC = () => {
       <ReviewModal
         isOpen={showReviewModal}
         onClose={() => setShowReviewModal(false)}
+        onSuccess={() => {
+          setShowReviewModal(false);
+          setResult(prev => prev ? { ...prev, hasReview: true } : null);
+          showToast('후기가 등록되었습니다.', 'success');
+        }}
         resultNo={result.resultNo}
         sellerNickname={result.seller.nickname}
         productTitle={result.title}
         productImage={images[0]}
-        onSuccess={handleReviewSuccess}
       />
     </div>
   );
