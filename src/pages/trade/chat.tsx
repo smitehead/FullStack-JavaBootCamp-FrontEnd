@@ -899,7 +899,11 @@ export const Chat: React.FC = () => {
             </div>
           ) : (
             filteredRooms.map(room => (
-              <button key={room.id} onClick={() => setSelectedRoom(room)}
+              <button key={room.id} 
+                onClick={() => {
+                  setSelectedRoom(room);
+                  navigate(`/chat?roomNo=${room.roomNo}`, { replace: true });
+                }}
                 className={`w-full p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 ${selectedRoom?.roomNo === room.roomNo ? 'bg-orange-50' : ''
                   }`}>
                 <img src={room.otherUser.profileImage || '/default-profile.png'}
@@ -1075,9 +1079,9 @@ export const Chat: React.FC = () => {
                                   <button
                                     type="button"
                                     onClick={() => handleConfirmAddress(msg)}
-                                    className="w-full py-3.5 text-xs font-bold text-gray-700 hover:text-emerald-600 transition-colors"
+                                    className="w-full py-3.5 text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors"
                                   >
-                                    확인 (배송지 저장)
+                                    배송지 저장
                                   </button>
                                 </div>
                               )}

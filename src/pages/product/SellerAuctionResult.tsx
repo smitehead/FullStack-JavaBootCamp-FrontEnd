@@ -5,7 +5,7 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { AlertCircle } from 'lucide-react';
-import { BsXCircle, BsCheckCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
+import { BsXCircle, BsCheckCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
 interface SellerResultDetail {
@@ -40,11 +40,20 @@ export const SellerAuctionResult: React.FC = () => {
 
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
+  const [activeTransactionTab, setActiveTransactionTab] = useState<'delivery' | 'face-to-face'>('delivery');
 
   useEffect(() => {
     if (!id) return;
     api.get(`/auction-results/seller/product/${id}`)
-      .then(res => setResult(res.data))
+      .then(res => {
+        const data = res.data;
+        setResult(data);
+        if (data.tradeType === '직거래') {
+          setActiveTransactionTab('face-to-face');
+        } else {
+          setActiveTransactionTab('delivery');
+        }
+      })
       .catch(() => {
         showToast('낙찰 정보를 불러올 수 없습니다.', 'error');
         navigate(-1);
@@ -173,32 +182,69 @@ export const SellerAuctionResult: React.FC = () => {
               </section>
 
               <hr className="border-gray-100 mx-8" />
+              
+              {/* 거래 정보 (배송지 또는 거래 장소) */}
+              <section className="p-8">
+                {result.tradeType === '혼합' && (
+                  <div className="flex bg-gray-100 p-1 rounded-xl w-fit mb-4">
+                    <button
+                      onClick={() => setActiveTransactionTab('delivery')}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTransactionTab === 'delivery' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                      택배 거래
+                    </button>
+                    <button
+                      onClick={() => setActiveTransactionTab('face-to-face')}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTransactionTab === 'face-to-face' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                      직거래
+                    </button>
+                  </div>
+                )}
 
-              {/* 배송지 정보 (택배 거래 시) */}
-              {result.tradeType !== '직거래' && (
-                <>
-                  <section className="p-8">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      배송지 정보
+                <div className="bg-gray-50/50 rounded-2xl border border-gray-100 p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <h3 className="text-lg font-bold text-gray-900">
+                      {activeTransactionTab === 'face-to-face' ? '거래 방식 및 장소' : '배송지 정보'}
                     </h3>
-                    <div className="bg-gray-50 rounded-2xl border border-gray-100 p-5">
-                      {result.deliveryAddrRoad || result.deliveryAddrDetail ? (
-                        <>
-                          <p className="font-bold text-gray-900">
-                            {result.deliveryAddrRoad || result.deliveryAddrDetail}
-                          </p>
-                          {result.deliveryAddrRoad && result.deliveryAddrDetail && (
-                            <p className="text-sm text-gray-500 mt-1">{result.deliveryAddrDetail}</p>
-                          )}
-                        </>
-                      ) : (
-                        <p className="text-sm text-gray-400 italic">구매자가 아직 배송지를 입력하지 않았습니다.</p>
-                      )}
+                    <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">
+                      {activeTransactionTab === 'face-to-face' ? '직거래' : '택배거래'}
+                    </span>
+                  </div>
+
+                  {activeTransactionTab === 'face-to-face' ? (
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                        <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 flex-shrink-0">
+                          <BsGeoAltFill className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">희망 거래 장소</p>
+                          <p className="font-bold text-gray-900">{result.location || '구매자와 협의 후 장소를 결정해주세요.'}</p>
+                          <p className="text-xs text-gray-400 mt-1">상세 장소는 구매자와 채팅으로 협의해주세요.</p>
+                        </div>
+                      </div>
                     </div>
-                  </section>
-                  <hr className="border-gray-100 mx-8" />
-                </>
-              )}
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm min-h-[100px] flex flex-col justify-center">
+                        {result.deliveryAddrRoad || result.deliveryAddrDetail ? (
+                          <>
+                            <p className="font-bold text-gray-900">
+                              {result.deliveryAddrRoad || result.deliveryAddrDetail}
+                            </p>
+                            {result.deliveryAddrRoad && result.deliveryAddrDetail && (
+                              <p className="text-sm text-gray-500 mt-1">{result.deliveryAddrDetail}</p>
+                            )}
+                          </>
+                        ) : (
+                          <p className="text-sm text-gray-400 font-medium italic">구매자가 아직 배송지를 입력하지 않았습니다.</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
 
               {/* 정산 정보 */}
               <section className="p-8">
