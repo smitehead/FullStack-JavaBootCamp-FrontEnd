@@ -1300,12 +1300,13 @@ export const Chat: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* 약속 상태 메시지 */}
+                    {/* 약속 상태 메시지 (시스템 메시지 스타일) */}
                     {msg.msgType === 'APPOINTMENT' && msg.status !== 'FAILED' && (
-                      <div className="flex items-center justify-center py-2 gap-2">
-                        <div className="h-px flex-1 bg-indigo-100" />
-                        <span className="text-[10px] font-bold text-indigo-400 px-2 whitespace-nowrap">📅 약속이 잡혔습니다</span>
-                        <div className="h-px flex-1 bg-indigo-100" />
+                      <div className="flex justify-center w-full my-6 animate-in fade-in zoom-in duration-300">
+                        <span className="bg-white/80 backdrop-blur-sm text-gray-500 text-[11px] font-bold px-5 py-2 rounded-full border border-gray-100 shadow-sm flex items-center gap-2">
+                          <BsCalendarPlus className="w-3.5 h-3.5 text-orange-500" />
+                          약속이 잡혔습니다
+                        </span>
                       </div>
                     )}
                   </React.Fragment>
@@ -1363,19 +1364,6 @@ export const Chat: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => { setIsAttachmentMenuOpen(false); setShowAppointmentModal(true); }}
-                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
-                        >
-                          <div className="p-2 bg-indigo-50 rounded-xl text-indigo-400 group-hover:bg-indigo-100 transition-colors">
-                            <BsCalendarPlus className="w-4 h-4" />
-                          </div>
-                          <span className="text-sm font-bold">약속 잡기</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            // TODO: 약속 잡기 기능 구현 예정
-                            setIsAttachmentMenuOpen(false);
-                          }}
                           className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
                         >
                           <div className="p-2 bg-gray-100 rounded-xl text-gray-500 group-hover:bg-gray-200 transition-colors">
@@ -1504,7 +1492,7 @@ export const Chat: React.FC = () => {
               {/* 헤더 */}
               <div className="px-6 pt-6 pb-4 border-b border-gray-100">
                 <div className="flex items-center gap-2">
-                  <BsCalendarPlus className="w-5 h-5 text-indigo-500" />
+                  <BsCalendarPlus className="w-5 h-5 text-[#FF5A5A]" />
                   <h3 className="text-lg font-black text-gray-900 tracking-tight">약속 잡기</h3>
                 </div>
               </div>
@@ -1553,8 +1541,8 @@ export const Chat: React.FC = () => {
                           onClick={() => setApptSelectedDate(thisDate)}
                           className={`aspect-square flex items-center justify-center rounded-xl text-xs font-bold transition-all
                             ${isPast ? 'text-gray-200 cursor-not-allowed' : ''}
-                            ${isSelected ? 'bg-indigo-500 text-white shadow-md' : ''}
-                            ${!isSelected && isToday ? 'bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200' : ''}
+                            ${isSelected ? 'bg-[#FF5A5A] text-white shadow-md' : ''}
+                            ${!isSelected && isToday ? 'bg-[#FF5A5A]/10 text-[#FF5A5A] ring-1 ring-[#FF5A5A]/20' : ''}
                             ${!isSelected && !isPast && !isToday ? (col === 0 ? 'text-red-400 hover:bg-red-50' : col === 6 ? 'text-blue-400 hover:bg-blue-50' : 'text-gray-700 hover:bg-gray-100') : ''}
                           `}
                         >
@@ -1564,56 +1552,65 @@ export const Chat: React.FC = () => {
                     })}
                   </div>
                   {apptSelectedDate && (
-                    <p className="text-center text-xs font-bold text-indigo-500 mt-2">
+                    <p className="text-center text-xs font-bold text-[#FF5A5A] mt-3 animate-in fade-in slide-in-from-top-1">
                       {apptSelectedDate.getMonth() + 1}월 {apptSelectedDate.getDate()}일 {WEEKDAYS_KO[apptSelectedDate.getDay()]}요일 선택됨
                     </p>
                   )}
                 </div>
 
                 {/* ── 시간 ── */}
-                <div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">시간</p>
-                  {/* 오전/오후 */}
-                  <div className="flex gap-2 mb-3">
-                    {(['AM', 'PM'] as const).map(p => (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => setApptPeriod(p)}
-                        className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${apptPeriod === p ? 'bg-indigo-500 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
-                      >
-                        {p === 'AM' ? '오전' : '오후'}
-                      </button>
-                    ))}
+                <div className="space-y-3">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">시간</p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <input
+                          type="number"
+                          min="1"
+                          max="12"
+                          value={apptHour}
+                          onChange={e => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val) && val >= 1 && val <= 12) setApptHour(val);
+                            else if (e.target.value === '') setApptHour(0);
+                          }}
+                          className="w-full h-[52px] bg-gray-50 border border-gray-100 rounded-2xl text-center text-sm font-bold text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#FF5A5A]/20 transition-all outline-none"
+                        />
+                        <span className="absolute -top-2 left-3 px-1 bg-white text-[9px] font-bold text-gray-400">시</span>
+                      </div>
+                      <span className="font-bold text-gray-300">:</span>
+                      <div className="relative flex-1">
+                        <input
+                          type="number"
+                          min="0"
+                          max="59"
+                          step="10"
+                          value={apptMinute}
+                          onChange={e => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val) && val >= 0 && val <= 59) setApptMinute(val);
+                            else if (e.target.value === '') setApptMinute(0);
+                          }}
+                          className="w-full h-[52px] bg-gray-50 border border-gray-100 rounded-2xl text-center text-sm font-bold text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#FF5A5A]/20 transition-all outline-none"
+                        />
+                        <span className="absolute -top-2 left-3 px-1 bg-white text-[9px] font-bold text-gray-400">분</span>
+                      </div>
+                    </div>
+                    <div className="flex bg-gray-100 p-1 rounded-2xl shrink-0">
+                      {(['AM', 'PM'] as const).map(p => (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => setApptPeriod(p)}
+                          className={`px-4 h-[44px] rounded-xl text-xs font-black transition-all ${apptPeriod === p ? 'bg-white text-[#FF5A5A] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                          {p === 'AM' ? '오전' : '오후'}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  {/* 시간 */}
-                  <div className="grid grid-cols-6 gap-1 mb-2">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(h => (
-                      <button
-                        key={h}
-                        type="button"
-                        onClick={() => setApptHour(h)}
-                        className={`py-2 rounded-xl text-xs font-bold transition-all ${apptHour === h ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                      >
-                        {h}
-                      </button>
-                    ))}
-                  </div>
-                  {/* 분 */}
-                  <div className="grid grid-cols-6 gap-1">
-                    {[0, 10, 20, 30, 40, 50].map(m => (
-                      <button
-                        key={m}
-                        type="button"
-                        onClick={() => setApptMinute(m)}
-                        className={`py-2 rounded-xl text-xs font-bold transition-all ${apptMinute === m ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                      >
-                        {String(m).padStart(2, '0')}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-center text-xs font-bold text-indigo-500 mt-2">
-                    {apptPeriod === 'AM' ? '오전' : '오후'} {apptHour}:{String(apptMinute).padStart(2, '0')}
+                  <p className="text-center text-xs font-bold text-[#FF5A5A] pt-1">
+                    {apptPeriod === 'AM' ? '오전' : '오후'} {apptHour}시 {String(apptMinute).padStart(2, '0')}분
                   </p>
                 </div>
 
@@ -1623,9 +1620,9 @@ export const Chat: React.FC = () => {
                   <button
                     type="button"
                     onClick={openApptPostcode}
-                    className="w-full flex items-center gap-2 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold text-gray-500 hover:bg-gray-100 hover:border-indigo-300 transition-all mb-2"
+                    className="w-full flex items-center gap-2 px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-600 hover:bg-white hover:ring-2 hover:ring-[#FF5A5A]/20 transition-all mb-3 text-left"
                   >
-                    <BsGeoAltFill className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                    <BsGeoAltFill className="w-4 h-4 text-[#FF5A5A] flex-shrink-0" />
                     <span className="truncate">{apptAddrRoad || '주소 검색'}</span>
                   </button>
                   <input
@@ -1633,7 +1630,7 @@ export const Chat: React.FC = () => {
                     value={apptAddrDetail}
                     onChange={e => setApptAddrDetail(e.target.value)}
                     placeholder="상세 주소 (동/호수 등)"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all"
+                    className="w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
                   />
                 </div>
               </div>
@@ -1651,7 +1648,7 @@ export const Chat: React.FC = () => {
                   type="button"
                   onClick={handleSendAppointment}
                   disabled={!apptSelectedDate || !apptAddrRoad}
-                  className="flex-1 py-4 bg-indigo-500 text-white rounded-2xl text-sm font-bold hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex-1 py-4 bg-[#FF5A5A] text-white rounded-2xl text-sm font-bold hover:bg-[#E54D4D] transition-all shadow-lg shadow-[#FF5A5A]/10 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   완료
                 </button>
