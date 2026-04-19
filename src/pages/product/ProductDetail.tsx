@@ -761,12 +761,8 @@ export const ProductDetail: React.FC = () => {
     setIsBidCancelling(true);
     try {
       await api.post(`/bids/${product.id}/cancel`);
-      setShowBidCancelModal(false);
-      setIsBidModalOpen(false);
-      setIsHighestBidder(false);
       showToast('입찰이 취소되었습니다. 위약금이 차감되었습니다.', 'success');
-      // SSE가 currentPrice를 갱신하므로 fetchProduct는 선택적으로 호출
-      setTimeout(() => fetchProduct(), 800);
+      navigate('/');
     } catch (error: any) {
       const msg = error.response?.data?.error
         || (typeof error.response?.data === 'string' ? error.response.data : '입찰 취소에 실패했습니다.');
