@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
+import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus, BsChevronLeft, BsChevronRight, BsCrosshair } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format, subMonths, addMonths, startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -115,6 +115,7 @@ export const Chat: React.FC = () => {
         productId: String(r.productNo),
         productTitle: r.productTitle || '',
         productImage: r.productImage || '',
+        tradeType: r.tradeType || '',
         otherUser: {
           id: `user_${r.otherUserNo}`,
           no: r.otherUserNo,
@@ -590,6 +591,20 @@ export const Chat: React.FC = () => {
     }
   };
 
+  const handleApptPasteMyAddress = async () => {
+    try {
+      const res = await api.get('/members/me');
+      if (res.data?.addrRoad) {
+        setApptAddrRoad(res.data.addrRoad);
+        showToast('내 주소를 불러왔습니다.', 'success');
+      } else {
+        showToast('등록된 주소가 없습니다. 프로필을 확인해주세요.', 'warning');
+      }
+    } catch {
+      showToast('주소 정보를 불러오지 못했습니다.', 'error');
+    }
+  };
+
   // ══════════════════════════════════════════════════
   // 5. 메시지 전송 (낙관적 UI)
   // ══════════════════════════════════════════════════
@@ -970,7 +985,7 @@ export const Chat: React.FC = () => {
                 className={`w-full p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 ${selectedRoom?.roomNo === room.roomNo ? 'bg-orange-50' : ''
                   }`}>
                 <img src={room.otherUser.profileImage || '/images/default-profile.png'}
-                  alt="" className={`w-12 h-12 rounded-full flex-shrink-0 bg-gray-50 ${room.otherUser.profileImage ? 'object-cover' : 'object-contain p-2'}`} />
+                  alt="" className="w-12 h-12 rounded-full flex-shrink-0 bg-gray-50 object-cover" />
                 <div className="flex-1 min-w-0 text-left">
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-bold text-sm text-gray-900 truncate">
@@ -1006,7 +1021,7 @@ export const Chat: React.FC = () => {
                 <BsArrowLeft className="w-5 h-5" />
               </button>
               <img src={selectedRoom.otherUser.profileImage || '/images/default-profile.png'}
-                alt="" className={`w-10 h-10 rounded-full bg-gray-50 ${selectedRoom.otherUser.profileImage ? 'object-cover' : 'object-contain p-1.5'}`} />
+                alt="" className="w-10 h-10 rounded-full bg-gray-50 object-cover" />
               <div className="flex-1 min-w-0">
                 <button
                   onClick={() => navigate(`/seller/${selectedRoom.otherUser.no}`)}
@@ -1084,6 +1099,13 @@ export const Chat: React.FC = () => {
               {!hasMore && messages.length > 0 && (
                 <div className="text-center text-xs text-gray-400 py-2">이전 메시지가 없습니다</div>
               )}
+              {messages.length === 0 && !isLoadingMore && (
+                <div className="flex flex-col items-center justify-center py-20 animate-in fade-in duration-700">
+                  <div className="text-center text-xs text-gray-400 leading-relaxed">
+                    안전한 거래를 위해 직거래 장소 또는 배송지에 대해 협의해 주세요.
+                  </div>
+                </div>
+              )}
               {messages.map((msg, idx) => {
                 const isMe = msg.senderNo === memberNo;
                 return (
@@ -1147,7 +1169,10 @@ export const Chat: React.FC = () => {
                               <div className={`p-5 bg-white`}>
                                 <div className={`flex items-start gap-3 text-gray-800`}>
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-[10px] font-semibold text-[#FF5A5A] uppercase tracking-widest mb-2">배송지</p>
+                                    <div className="flex items-center gap-1 mb-2">
+                                      <BsGeoAltFill className="w-3 h-3 text-[#FF5A5A]" />
+                                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">배송지</p>
+                                    </div>
                                     <p className="text-sm font-bold leading-snug text-gray-900 break-words">
                                       {msg.addrRoad || msg.content || '주소 정보'}
                                     </p>
@@ -1310,8 +1335,8 @@ export const Chat: React.FC = () => {
                           </div>
                           <span className="text-sm font-bold">사진 보내기</span>
                         </button>
-                        {/* 위치 보내기 — 구매자(내 상대방이 seller)일 때만 표시 */}
-                        {selectedRoom.otherUser.role === 'seller' && (
+                        {/* 위치 보내기 — 구매자이고 직거래 전용 상품이 아닐 때만 표시 */}
+                        {selectedRoom.otherUser.role === 'seller' && selectedRoom.tradeType !== '직거래' && (
                           <button
                             type="button"
                             onClick={handleLocationClick}
@@ -1398,7 +1423,7 @@ export const Chat: React.FC = () => {
                   <div className="flex items-start gap-3">
                     <BsGeoAltFill className="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">배송지 주소</p>
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">배송지 주소</p>
                       <p className="text-sm font-bold text-gray-900 leading-snug break-words">
                         {locationAddrRoad || locationAddress || '등록된 주소가 없습니다.'}
                       </p>
@@ -1411,7 +1436,7 @@ export const Chat: React.FC = () => {
               </div>
 
               <div className="px-1 mb-4">
-                <p className="text-[11px] font-bold text-gray-400">
+                <p className="text-[11px] font-medium text-gray-400">
                   입력된 배송지 정보가 정확한지 한번더 확인해주세요
                 </p>
               </div>
@@ -1433,7 +1458,7 @@ export const Chat: React.FC = () => {
               </div>
               <button
                 onClick={() => setShowLocationModal(false)}
-                className="w-full mt-4 text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors"
+                className="w-full mt-4 text-xs font-semibold text-gray-400 hover:text-gray-600 transition-colors"
               >
                 취소
               </button>
@@ -1591,7 +1616,18 @@ export const Chat: React.FC = () => {
 
                 {/* ── 장소 ── */}
                 <div>
-                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2 block">장소</label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest block">장소</label>
+                    <button
+                      type="button"
+                      onClick={handleApptPasteMyAddress}
+                      className="p-1 px-2 text-gray-400 hover:text-[#FF5A5A] transition-colors flex items-center gap-1 group relative"
+                      title="내 주소 불러오기"
+                    >
+                      <BsCrosshair className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-bold">내 주소</span>
+                    </button>
+                  </div>
                   <button
                     type="button"
                     onClick={openApptPostcode}
