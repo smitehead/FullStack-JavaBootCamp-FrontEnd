@@ -182,8 +182,15 @@ export const SellerAuctionResult: React.FC = () => {
                       배송지 정보
                     </h3>
                     <div className="bg-gray-50 rounded-2xl border border-gray-100 p-5">
-                      {result.deliveryAddrDetail ? (
-                        <p className="font-bold text-gray-900">{result.deliveryAddrDetail}</p>
+                      {result.deliveryAddrRoad || result.deliveryAddrDetail ? (
+                        <>
+                          <p className="font-bold text-gray-900">
+                            {result.deliveryAddrRoad || result.deliveryAddrDetail}
+                          </p>
+                          {result.deliveryAddrRoad && result.deliveryAddrDetail && (
+                            <p className="text-sm text-gray-500 mt-1">{result.deliveryAddrDetail}</p>
+                          )}
+                        </>
                       ) : (
                         <p className="text-sm text-gray-400 italic">구매자가 아직 배송지를 입력하지 않았습니다.</p>
                       )}

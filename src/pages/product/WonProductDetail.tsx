@@ -7,6 +7,10 @@ import { getMemberNo } from '@/utils/memberUtils';
 import { BsXCircle } from 'react-icons/bs';
 import { Sparkles, AlertCircle } from 'lucide-react';
 
+declare global {
+  interface Window { daum: any; }
+}
+
 import { BsCheckCircle, BsBox2, BsExclamationCircle, BsInfoCircle, BsCreditCard, BsGeoAltFill, BsChat, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import { ReviewModal } from '@/components/ReviewModal';
@@ -29,6 +33,7 @@ interface AuctionResultDetail {
     profileImage?: string;
   };
   deliveryEmdNo: number | null;
+  deliveryAddrRoad: string | null;
   deliveryAddrDetail: string | null;
   isForcePromoted: number; // 1 = 강제 승계 낙찰자
 }
@@ -58,13 +63,26 @@ export const WonProductDetail: React.FC = () => {
   useEffect(() => {
     if (!id) return;
     api.get(`/auction-results/product/${id}`)
-      .then(res => {
+      .then(async res => {
         const data: AuctionResultDetail = res.data;
         setResult(data);
-        if (data.deliveryAddrDetail) {
+
+        if (data.deliveryAddrRoad) {
+          // 저장된 배송지(도로명/상세 분리) 불러오기
+          setAddress(data.deliveryAddrRoad);
+          setDetailAddress(data.deliveryAddrDetail || '');
+        } else if (data.deliveryAddrDetail) {
+          // 레거시: 구버전 통합 저장 포맷
           setAddress(data.deliveryAddrDetail);
+        } else {
+          // 배송지 미입력 → 회원 기본 주소 자동 채우기
+          try {
+            const memberRes = await api.get('/members/me');
+            if (memberRes.data.addrRoad) setAddress(memberRes.data.addrRoad);
+            if (memberRes.data.addrDetail) setDetailAddress(memberRes.data.addrDetail);
+          } catch { /* 무시 */ }
         }
-        // 초기 거래 방식 지정
+
         if (data.tradeType === '직거래') {
           setActiveTransactionTab('face-to-face');
         } else {
@@ -77,6 +95,15 @@ export const WonProductDetail: React.FC = () => {
       })
       .finally(() => setLoading(false));
   }, [id, navigate]);
+
+  const openPostcode = () => {
+    new window.daum.Postcode({
+      oncomplete: (data: any) => {
+        setAddress(data.roadAddress || data.jibunAddress);
+        setDetailAddress('');
+      },
+    }).open();
+  };
 
   if (loading) {
     return (
@@ -300,27 +327,34 @@ export const WonProductDetail: React.FC = () => {
                                 <input
                                   type="text"
                                   value={address}
-                                  onChange={(e) => setAddress(e.target.value)}
-                                  placeholder="주소를 입력해주세요"
-                                  className="flex-1 p-3 bg-white border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none font-bold"
+                                  readOnly
+                                  placeholder="주소 검색 버튼을 눌러주세요"
+                                  onClick={openPostcode}
+                                  className="flex-1 p-3 bg-white border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none font-bold cursor-pointer"
                                 />
-                                <button className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl active:scale-95 transition-transform">검색</button>
+                                <button
+                                  type="button"
+                                  onClick={openPostcode}
+                                  className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl active:scale-95 transition-transform whitespace-nowrap"
+                                >
+                                  주소 검색
+                                </button>
                               </div>
                               <input
                                 type="text"
                                 value={detailAddress}
                                 onChange={(e) => setDetailAddress(e.target.value)}
-                                placeholder="상세 주소를 입력해주세요"
+                                placeholder="상세 주소를 입력해주세요 (동·호수 등)"
                                 className="w-full p-3 bg-white border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none font-bold"
                               />
                             </div>
                           ) : (
                             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                              {address || result.deliveryAddrDetail ? (
+                              {address ? (
                                 <>
-                                  <p className="font-bold text-gray-900">{address || result.deliveryAddrDetail || '주소를 등록해주세요'}</p>
-                                  {(detailAddress || result.deliveryAddrDetail) && (
-                                    <p className="text-sm text-gray-500 mt-1">{detailAddress || ''}</p>
+                                  <p className="font-bold text-gray-900">{address}</p>
+                                  {detailAddress && (
+                                    <p className="text-sm text-gray-500 mt-1">{detailAddress}</p>
                                   )}
                                 </>
                               ) : (
