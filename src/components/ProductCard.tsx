@@ -174,11 +174,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="bg-white text-emerald-600 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               확정 대기 중
             </div>
-            {sellerCancelRequested && (
-              <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-emerald-600 transition-all">
-                취소 요청이 들어왔습니다
-              </div>
-            )}
+            <div className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 group-hover:bg-white group-hover:text-emerald-600 transition-all">
+              {sellerCancelRequested ? '취소 요청이 들어왔습니다' : '구매자와 대화하기'}
+            </div>
           </div>
         )}
       </div>

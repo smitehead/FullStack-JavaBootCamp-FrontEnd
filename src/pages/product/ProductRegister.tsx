@@ -366,25 +366,25 @@ export const ProductRegister: React.FC = () => {
               onChange={(e) => { setLargeCat(e.target.value); setMediumCat(''); setSmallCat(''); }}
               className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-3 text-sm border bg-white transition-all outline-none"
             >
-              <option value="">대분류</option>
+              <option value="" disabled>대분류</option>
               {CATEGORY_DATA.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
             <select
               value={mediumCat}
               onChange={(e) => { setMediumCat(e.target.value); setSmallCat(''); }}
-              disabled={!largeCat}
+              disabled={!largeCat || !selectedLarge?.subCategories?.length}
               className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-3 text-sm border bg-white transition-all outline-none disabled:bg-gray-50 disabled:text-gray-400"
             >
-              <option value="">중분류</option>
+              <option value="" disabled>중분류</option>
               {selectedLarge?.subCategories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
             <select
               value={smallCat}
               onChange={(e) => setSmallCat(e.target.value)}
-              disabled={!mediumCat}
+              disabled={!mediumCat || !selectedMedium?.subCategories?.length}
               className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-3 text-sm border bg-white transition-all outline-none disabled:bg-gray-50 disabled:text-gray-400"
             >
-              <option value="">소분류</option>
+              <option value="" disabled>소분류</option>
               {selectedMedium?.subCategories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
