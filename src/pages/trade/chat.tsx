@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus } from 'react-icons/bs';
+import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
-import { format } from 'date-fns';
+import { format, subMonths, addMonths, startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -477,7 +477,7 @@ export const Chat: React.FC = () => {
       setChatRooms(prev =>
         prev.map(r =>
           r.roomNo === selectedRoom.roomNo
-            ? { ...r, lastMessage: '📷 사진', lastMessageAt: new Date().toISOString() }
+            ? { ...r, lastMessage: '사진', lastMessageAt: new Date().toISOString() }
             : r
         )
       );
@@ -557,7 +557,7 @@ export const Chat: React.FC = () => {
         setChatRooms(prev =>
           prev.map(r =>
             r.roomNo === selectedRoom.roomNo
-              ? { ...r, lastMessage: '📍 배송지 공유', lastMessageAt: new Date().toISOString() }
+              ? { ...r, lastMessage: '배송지 공유', lastMessageAt: new Date().toISOString() }
               : r
           )
         );
@@ -799,20 +799,6 @@ export const Chat: React.FC = () => {
   // ══════════════════════════════════════════════════
   const WEEKDAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
 
-  const getCalendarDays = (year: number, month: number): (number | null)[] => {
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const days: (number | null)[] = [];
-    for (let i = 0; i < firstDay; i++) days.push(null);
-    for (let d = 1; d <= daysInMonth; d++) days.push(d);
-    return days;
-  };
-
-  const isBeforeToday = (year: number, month: number, day: number): boolean => {
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    return new Date(year, month, day) < today;
-  };
-
   const openApptPostcode = () => {
     const daum = (window as any).daum;
     if (!daum?.Postcode) { showToast('주소 검색 서비스를 불러오는 중입니다.', 'error'); return; }
@@ -991,7 +977,7 @@ export const Chat: React.FC = () => {
             </div>
           ) : (
             filteredRooms.map(room => (
-              <button key={room.id} 
+              <button key={room.id}
                 onClick={() => {
                   setSelectedRoom(room);
                   navigate(`/chat?roomNo=${room.roomNo}`, { replace: true });
@@ -1150,21 +1136,20 @@ export const Chat: React.FC = () => {
                             return (
                               <div className={`rounded-2xl overflow-hidden border shadow-sm w-[260px] bg-white ${isMe ? 'border-indigo-200 rounded-tr-none' : 'border-gray-200 rounded-tl-none'} ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
                                 <div className="bg-indigo-500 px-4 py-3 flex items-center gap-2">
-                                  <BsCalendarPlus className="w-4 h-4 text-white flex-shrink-0" />
                                   <span className="text-white text-xs font-bold tracking-wide">약속 잡기</span>
                                 </div>
                                 <div className="p-4 space-y-3">
                                   <div className="flex items-center gap-2.5">
-                                    <span className="text-base">📅</span>
+                                    <span className="text-base">날짜</span>
                                     <span className="text-sm font-bold text-gray-900">{appt.dateLabel || '-'}</span>
                                   </div>
                                   <div className="flex items-center gap-2.5">
-                                    <span className="text-base">🕐</span>
+                                    <span className="text-base">시간</span>
                                     <span className="text-sm text-gray-700">{appt.timeLabel || '-'}</span>
                                   </div>
                                   {appt.addrRoad && (
                                     <div className="flex items-start gap-2.5 pt-1 border-t border-gray-100">
-                                      <BsGeoAltFill className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
+                                      <span className="text-base">장소</span>
                                       <div className="min-w-0">
                                         <p className="text-xs font-bold text-gray-900 break-words">{appt.addrRoad}</p>
                                         {appt.addrDetail && <p className="text-[10px] text-gray-500 mt-0.5 break-words">{appt.addrDetail}</p>}
@@ -1481,75 +1466,89 @@ export const Chat: React.FC = () => {
 
       {/* 약속 잡기 모달 */}
       {showAppointmentModal && (() => {
-        const calYear = apptCalMonth.getFullYear();
-        const calMonthIdx = apptCalMonth.getMonth();
-        const calDays = getCalendarDays(calYear, calMonthIdx);
-        const todayMidnight = new Date(); todayMidnight.setHours(0, 0, 0, 0);
-
         return (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
             <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden flex flex-col max-h-[92vh]">
               {/* 헤더 */}
               <div className="px-6 pt-6 pb-4 border-b border-gray-100">
                 <div className="flex items-center gap-2">
-                  <BsCalendarPlus className="w-5 h-5 text-[#FF5A5A]" />
-                  <h3 className="text-lg font-black text-gray-900 tracking-tight">약속 잡기</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 text-left tracking-tight">약속 잡기</h3>
                 </div>
               </div>
 
               <div className="overflow-y-auto flex-1 px-6 py-4 space-y-6">
                 {/* ── 날짜 ── */}
                 <div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">날짜</p>
-                  {/* 월 네비게이션 */}
-                  <div className="flex items-center justify-between mb-3">
-                    <button
-                      type="button"
-                      onClick={() => setApptCalMonth(prev => { const d = new Date(prev); d.setMonth(d.getMonth() - 1); return d; })}
-                      disabled={calYear === todayMidnight.getFullYear() && calMonthIdx <= todayMidnight.getMonth()}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all disabled:opacity-30 disabled:cursor-not-allowed text-sm font-bold"
-                    >‹</button>
-                    <span className="text-sm font-black text-gray-900">{calYear}년 {calMonthIdx + 1}월</span>
-                    <button
-                      type="button"
-                      onClick={() => setApptCalMonth(prev => { const d = new Date(prev); d.setMonth(d.getMonth() + 1); return d; })}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all text-sm font-bold"
-                    >›</button>
-                  </div>
-                  {/* 요일 헤더 */}
-                  <div className="grid grid-cols-7 mb-1">
-                    {['일', '월', '화', '수', '목', '금', '토'].map((d, i) => (
-                      <div key={d} className={`text-center text-[10px] font-bold py-1 ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'}`}>{d}</div>
-                    ))}
-                  </div>
-                  {/* 날짜 그리드 */}
-                  <div className="grid grid-cols-7 gap-y-1">
-                    {calDays.map((day, i) => {
-                      if (day === null) return <div key={`blank-${i}`} />;
-                      const isPast = isBeforeToday(calYear, calMonthIdx, day);
-                      const thisDate = new Date(calYear, calMonthIdx, day);
-                      const isSelected = apptSelectedDate
-                        ? apptSelectedDate.getFullYear() === calYear && apptSelectedDate.getMonth() === calMonthIdx && apptSelectedDate.getDate() === day
-                        : false;
-                      const isToday = thisDate.getTime() === todayMidnight.getTime();
-                      const col = i % 7;
-                      return (
+                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2 block">날짜 선택</label>
+                  <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4">
+
+                    {/* 달력 헤더 (연/월 및 이동 버튼) */}
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-sm font-black text-gray-900">
+                        {format(apptCalMonth, 'yyyy년 M월', { locale: ko })}
+                      </h4>
+                      <div className="flex gap-1">
                         <button
-                          key={day}
                           type="button"
-                          disabled={isPast}
-                          onClick={() => setApptSelectedDate(thisDate)}
-                          className={`aspect-square flex items-center justify-center rounded-xl text-xs font-bold transition-all
-                            ${isPast ? 'text-gray-200 cursor-not-allowed' : ''}
-                            ${isSelected ? 'bg-[#FF5A5A] text-white shadow-md' : ''}
-                            ${!isSelected && isToday ? 'bg-[#FF5A5A]/10 text-[#FF5A5A] ring-1 ring-[#FF5A5A]/20' : ''}
-                            ${!isSelected && !isPast && !isToday ? (col === 0 ? 'text-red-400 hover:bg-red-50' : col === 6 ? 'text-blue-400 hover:bg-blue-50' : 'text-gray-700 hover:bg-gray-100') : ''}
-                          `}
+                          onClick={() => setApptCalMonth(subMonths(apptCalMonth, 1))}
+                          disabled={isSameMonth(apptCalMonth, new Date())}
+                          className="p-1.5 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-gray-100 disabled:opacity-20 disabled:cursor-not-allowed"
                         >
-                          {day}
+                          <BsChevronLeft className="w-4 h-4 text-gray-500" />
                         </button>
-                      );
-                    })}
+                        <button
+                          type="button"
+                          onClick={() => setApptCalMonth(addMonths(apptCalMonth, 1))}
+                          className="p-1.5 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-gray-100"
+                        >
+                          <BsChevronRight className="w-4 h-4 text-gray-500" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 요일 헤더 (일~토) */}
+                    <div className="grid grid-cols-7 gap-1 mb-2">
+                      {['일', '월', '화', '수', '목', '금', '토'].map((day, i) => (
+                        <div key={day} className={`text-[10px] font-black text-center py-1 ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'}`}>
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* 달력 날짜 그리드 */}
+                    <div className="grid grid-cols-7 gap-1">
+                      {(() => {
+                        const start = startOfWeek(startOfMonth(apptCalMonth));
+                        const end = endOfWeek(endOfMonth(apptCalMonth));
+                        const days = eachDayOfInterval({ start, end });
+
+                        return days.map((day) => {
+                          const isCurrentMonth = isSameMonth(day, apptCalMonth);
+                          const isSelected = apptSelectedDate && isSameDay(day, apptSelectedDate);
+                          const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
+
+                          return (
+                            <button
+                              key={day.toString()}
+                              type="button"
+                              onClick={() => !isPast && setApptSelectedDate(day)}
+                              disabled={isPast}
+                              className={`
+                                relative aspect-square flex items-center justify-center text-[11px] font-bold rounded-xl transition-all
+                                ${!isCurrentMonth ? 'text-gray-200' : (isSelected ? 'text-white' : 'text-gray-700')}
+                                ${isSelected ? 'bg-[#FF5A5A] shadow-lg shadow-red-100' : isCurrentMonth && !isPast ? 'hover:bg-white hover:shadow-sm' : ''}
+                                ${isPast ? 'opacity-30 cursor-not-allowed' : ''}
+                              `}
+                            >
+                              {format(day, 'd')}
+                              {isToday(day) && !isSelected && (
+                                <div className="absolute bottom-1 w-1 h-1 bg-[#FF5A5A] rounded-full" />
+                              )}
+                            </button>
+                          );
+                        });
+                      })()}
+                    </div>
                   </div>
                   {apptSelectedDate && (
                     <p className="text-center text-xs font-bold text-[#FF5A5A] mt-3 animate-in fade-in slide-in-from-top-1">
@@ -1560,7 +1559,7 @@ export const Chat: React.FC = () => {
 
                 {/* ── 시간 ── */}
                 <div className="space-y-3">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">시간</p>
+                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2 block">시간</label>
                   <div className="flex items-center gap-3">
                     <div className="flex-1 flex items-center gap-2">
                       <div className="relative flex-1">
@@ -1616,7 +1615,7 @@ export const Chat: React.FC = () => {
 
                 {/* ── 장소 ── */}
                 <div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">장소</p>
+                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2 block">장소</label>
                   <button
                     type="button"
                     onClick={openApptPostcode}

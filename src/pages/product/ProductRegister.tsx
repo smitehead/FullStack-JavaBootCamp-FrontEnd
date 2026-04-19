@@ -45,7 +45,6 @@ export const ProductRegister: React.FC = () => {
   const [methods, setMethods] = useState<{ face: boolean; delivery: boolean }>({ face: true, delivery: false });
   const [address, setAddress] = useState('');
   const [addrShort, setAddrShort] = useState('');
-  const [detailedAddress, setDetailedAddress] = useState('');
 
   useEffect(() => {
     if (editProduct) {
@@ -78,14 +77,20 @@ export const ProductRegister: React.FC = () => {
     if (isManualTime) {
       if (manualDate && manualTime) {
         const date = new Date(`${manualDate}T${manualTime}`);
-        setEndTime(date.toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          weekday: 'short'
-        }));
+        const now = new Date();
+        
+        if (date <= now) {
+          setEndTime('마감 시간이 현재보다 이전입니다');
+        } else {
+          setEndTime(date.toLocaleString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            weekday: 'short'
+          }));
+        }
       } else {
         setEndTime('');
       }
@@ -132,28 +137,35 @@ export const ProductRegister: React.FC = () => {
     e.preventDefault();
 
     // 필수 항목 검증
-    if (images.length === 0 || !title.trim() || !description.trim() || !largeCat || (!methods.face && !methods.delivery) || startPrice === 0 || minBidIncrement === 0) {
-      showToast('필수 항목(*표시)을 모두 입력해주세요.', 'warning');
+    if (images.length === 0) { showToast('이미지를 최소 1장 등록해주세요.', 'warning'); return; }
+    if (!title.trim()) { showToast('제목을 입력해주세요.', 'warning'); return; }
+    if (!description.trim()) { showToast('상품 설명을 입력해주세요.', 'warning'); return; }
+    if (!largeCat) { showToast('카테고리를 선택해주세요.', 'warning'); return; }
+    
+    // 하위 카테고리 체크
+    const large = CATEGORY_DATA.find(c => c.id === largeCat);
+    if (large?.subCategories?.length && !mediumCat) {
+      showToast('중분류 카테고리를 선택해주세요.', 'warning');
+      return;
+    }
+    const medium = large?.subCategories?.find(c => c.id === mediumCat);
+    if (medium?.subCategories?.length && !smallCat) {
+      showToast('소분류 카테고리를 선택해주세요.', 'warning');
       return;
     }
 
-    if (methods.face && !address) {
-      showToast('거래 희망 장소를 검색해 주세요.', 'warning');
-      return;
-    }
-
-    if (user?.isSuspended) {
-      showToast('계정이 정지된 상태에서는 상품을 등록할 수 없습니다.', 'error');
-      return;
-    }
-    // 시작가 검증
-    if (startPrice < 0 || minBidIncrement < 0 || (isInstantPriceEnabled && instantPrice < 0)) {
-      showToast('금액은 0원 이상이어야 합니다.', 'error');
-      return;
-    }
+    if (!methods.face && !methods.delivery) { showToast('거래 방식을 최소 하나 선택해주세요.', 'warning'); return; }
+    if (methods.face && !address) { showToast('거래 희망 장소를 검색해 주세요.', 'warning'); return; }
+    
+    if (startPrice <= 0) { showToast('경매 시작가는 0원보다 커야 합니다.', 'warning'); return; }
+    if (minBidIncrement <= 0) { showToast('최소 입찰 단위는 0원보다 커야 합니다.', 'warning'); return; }
 
     // 즉시낙찰가 검증
     if (isInstantPriceEnabled) {
+      if (instantPrice <= 0) {
+        showToast('즉시 구매가를 입력하거나 "선택 안함"을 선택해주세요.', 'warning');
+        return;
+      }
       if (instantPrice <= startPrice) {
         showToast('즉시 구매가는 경매 시작가보다 커야 합니다.', 'error');
         return;
@@ -164,7 +176,30 @@ export const ProductRegister: React.FC = () => {
       }
     }
 
-    // 입찰 단위 검증
+    // 시간 검증
+    const now = new Date();
+    let end: Date;
+    if (isManualTime) {
+      if (!manualDate || !manualTime) {
+        showToast('경매 마감 날짜와 시간을 입력해주세요.', 'warning');
+        return;
+      }
+      end = new Date(`${manualDate}T${manualTime}`);
+    } else {
+      end = new Date(now.getTime() + parseInt(duration) * 24 * 60 * 60 * 1000);
+    }
+
+    if (end <= now) {
+      showToast('경매 마감 시간은 현재 시간 이후여야 합니다.', 'error');
+      return;
+    }
+    
+    if (end.getTime() - now.getTime() < 10 * 60 * 1000) { // 최소 10분은 보장 (60분은 너무 길 수 있으니)
+      showToast('경매 기간은 최소 10분 이상이어야 합니다.', 'warning');
+      return;
+    }
+
+    // 입찰 단위 상세 검증
     if (startPrice < 10000) {
       if (minBidIncrement % 100 !== 0) {
         showToast('1만원 미만 상품은 100원 단위로 입찰 단위를 설정해주세요.', 'error');
@@ -175,6 +210,11 @@ export const ProductRegister: React.FC = () => {
         showToast('1만원 이상 상품은 최소 1,000원 이상이며 100원 단위로 입찰 단위를 설정해주세요.', 'error');
         return;
       }
+    }
+
+    if (user?.isSuspended) {
+      showToast('계정이 정지된 상태에서는 상품을 등록할 수 없습니다.', 'error');
+      return;
     }
 
     if (!user) {
@@ -188,16 +228,12 @@ export const ProductRegister: React.FC = () => {
       if (!sellerNo) { showToast('로그인 정보를 확인할 수 없습니다.', 'error'); return; }
       const categoryNo = parseInt(smallCat || mediumCat || largeCat || '1', 10);
 
-      // toISOString()은 UTC 변환 → 한국 서버(KST)와 9시간 차이 발생
-      // LocalDateTime 형식(타임존 없이 로컬 시간)으로 전송
       const toLocalISO = (d: Date) => {
         const pad = (n: number) => String(n).padStart(2, '0');
         return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
       };
 
-      const computedEndTime = isManualTime && manualDate && manualTime
-        ? `${manualDate}T${manualTime}:00`
-        : toLocalISO(new Date(Date.now() + parseInt(duration) * 24 * 60 * 60 * 1000));
+      const computedEndTime = toLocalISO(end);
 
       const productDto: ProductRequestDto = {
         sellerNo,
@@ -259,7 +295,6 @@ export const ProductRegister: React.FC = () => {
       if (data.addrRoad) {
         setAddress(data.addrRoad);
         setAddrShort(data.addrShort || '');
-        setDetailedAddress(data.addrDetail || '');
         showToast('내 주소를 성공적으로 불러왔습니다.', 'success');
       } else {
         showToast('등록된 내 주소가 없습니다. 프로필을 확인해주세요.', 'warning');
@@ -414,7 +449,7 @@ export const ProductRegister: React.FC = () => {
                     onChange={(e) => setIsInstantPriceEnabled(!e.target.checked)}
                     className="w-4 h-4 rounded border-gray-300 text-brand focus:ring-brand"
                   />
-                  <span className={`text-xs font-bold transition-colors ${!isInstantPriceEnabled ? 'text-brand' : 'text-gray-400 group-hover:text-gray-600'}`}>선택 안함</span>
+                  <span className={`text-xs font-bold transition-colors ${!isInstantPriceEnabled ? 'text-gray-600' : 'text-gray-400 group-hover:text-gray-600'}`}>선택 안함</span>
                 </label>
               </div>
               <div className="relative">
@@ -423,7 +458,7 @@ export const ProductRegister: React.FC = () => {
                   value={isInstantPriceEnabled ? (instantPrice || '') : ''}
                   onChange={(e) => setInstantPrice(Math.max(0, Number(e.target.value)))}
                   disabled={!isInstantPriceEnabled}
-                  placeholder={isInstantPriceEnabled ? "0" : "비활성화됨"}
+                  placeholder={isInstantPriceEnabled ? "0" : "-"}
                   step="1000"
                   min="0"
                   className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border font-medium transition-all outline-none ${!isInstantPriceEnabled ? 'bg-gray-100 text-gray-400' : 'text-brand-dark bg-white'}`}
@@ -573,13 +608,6 @@ export const ProductRegister: React.FC = () => {
                   </div>
                 </button>
               </div>
-              <input
-                type="text"
-                value={detailedAddress}
-                onChange={(e) => setDetailedAddress(e.target.value)}
-                placeholder="상세 주소 (예: 건물명, 동/호수)"
-                className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border text-sm bg-white transition-all outline-none"
-              />
             </div>
           )}
         </section>

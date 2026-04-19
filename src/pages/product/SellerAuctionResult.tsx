@@ -316,7 +316,6 @@ export const SellerAuctionResult: React.FC = () => {
 
                   {isCanceled && (
                     <div className="bg-gray-50 border border-gray-100 p-6 rounded-2xl text-center">
-                      <BsXCircle className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                       <p className="text-sm font-bold text-gray-500">거래가 취소되었습니다.</p>
                     </div>
                   )}
