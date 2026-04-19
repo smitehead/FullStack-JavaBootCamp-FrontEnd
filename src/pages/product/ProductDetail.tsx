@@ -362,12 +362,8 @@ export const ProductDetail: React.FC = () => {
         const title = product?.title || '이 상품';
         const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
 
-        // 현재가 + 참여자 수 즉시 갱신
-        setProduct(prev => prev ? ({
-          ...prev,
-          currentPrice: detail.currentPrice,
-          participantCount: Math.max(0, (prev.participantCount || 0) - 1),
-        }) : prev);
+        // 현재가 즉시 갱신 후 서버에서 정확한 participantCount 재조회
+        setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
         fetchProduct();
         setBidAmount(detail.currentPrice + (product?.minBidIncrement || 0));
 
