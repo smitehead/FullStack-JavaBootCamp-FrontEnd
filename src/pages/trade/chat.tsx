@@ -704,7 +704,7 @@ export const Chat: React.FC = () => {
     const clientUuid = getUuid();
     const content = `${locationAddrRoad} ${locationAddrDetail}`.trim();
 
-    // 1. 낙관적 UI
+    // 1. 낙관적 UI — ADDRESS 타입으로 카드 형태 표시
     const optimisticMsg: ChatMessage = {
       id: `temp_${clientUuid}`,
       senderId: `user_${memberNo}`,
@@ -714,30 +714,55 @@ export const Chat: React.FC = () => {
       isRead: 0,
       clientUuid,
       status: 'SENDING',
-      msgType: 'LOCATION',
+      msgType: 'ADDRESS',
       addrRoad: locationAddrRoad,
-      addrDetail: locationAddrDetail,
-      latitude: 37.5665, // 서울 기본값 (필요 시 Geocoder 연동)
-      longitude: 126.9780,
+      addrDetail: locationAddrDetail || undefined,
     };
     setMessages(prev => [...prev, optimisticMsg]);
     scrollToBottom();
 
     // 2. STOMP 전송
-    stompClientRef.current?.publish({
-      destination: '/pub/chat/message',
-      body: JSON.stringify({
-        roomId: selectedRoom.roomNo,
-        senderId: memberNo,
-        content,
-        msgType: 'LOCATION',
-        addrRoad: locationAddrRoad,
-        addrDetail: locationAddrDetail,
-        latitude: 37.5665,
-        longitude: 126.9780,
-        clientUuid,
-      }),
-    });
+    const client = stompClientRef.current;
+    if (client && client.connected) {
+      client.publish({
+        destination: '/pub/chat/message',
+        body: JSON.stringify({
+          roomId: selectedRoom.roomNo,
+          senderId: memberNo,
+          content,
+          msgType: 'ADDRESS',
+          addrRoad: locationAddrRoad,
+          addrDetail: locationAddrDetail || null,
+          clientUuid,
+        }),
+      });
+
+      const timeout = setTimeout(() => {
+        setMessages(prev =>
+          prev.map(m =>
+            m.clientUuid === clientUuid && m.status === 'SENDING'
+              ? { ...m, status: 'FAILED' } : m
+          )
+        );
+        sendTimeouts.current.delete(clientUuid);
+      }, SEND_TIMEOUT);
+      sendTimeouts.current.set(clientUuid, timeout);
+
+      setChatRooms(prev =>
+        prev.map(r =>
+          r.roomNo === selectedRoom.roomNo
+            ? { ...r, lastMessage: '📍 배송지 공유', lastMessageAt: new Date().toISOString() }
+            : r
+        )
+      );
+    } else {
+      showToast('채팅 서버와 연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.', 'error');
+      setMessages(prev =>
+        prev.map(m =>
+          m.clientUuid === clientUuid ? { ...m, status: 'FAILED' } : m
+        )
+      );
+    }
 
     setShowLocationModal(false);
   };
@@ -929,6 +954,18 @@ export const Chat: React.FC = () => {
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
                     >
                       <BsBoxSeam className="w-4 h-4 mr-2.5" /> 상품 보기
+                    </button>
+                    <button
+                      onClick={() => {
+                        const targetUrl = selectedRoom.otherUser.role === 'seller'
+                          ? `/won-product-detail/${selectedRoom.productId}`
+                          : `/seller/won-product-detail/${selectedRoom.productId}`;
+                        navigate(targetUrl);
+                        setShowMoreMenu(false);
+                      }}
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
+                    >
+                      <BsLayoutTextSidebar className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                     </button>
                     <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
                       <button
