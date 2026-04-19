@@ -788,6 +788,9 @@ export const ProductDetail: React.FC = () => {
       if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
       setIsConfirming(false);
       setShowBidTermsModal(false);
+      if (dontAskToday) {
+        localStorage.setItem('hideBidTermsDate', new Date().toDateString());
+      }
       openBidModal('bid');
     }
   };
@@ -1165,7 +1168,12 @@ export const ProductDetail: React.FC = () => {
                             showToast('취소한 상품에는 재입찰 할 수 없습니다.', 'error');
                             return;
                           }
-                          setShowBidTermsModal(true);
+                          const savedDate = localStorage.getItem('hideBidTermsDate');
+                          if (savedDate === new Date().toDateString()) {
+                            openBidModal('bid');
+                          } else {
+                            setShowBidTermsModal(true);
+                          }
                         }}
                         className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10"
                       >
