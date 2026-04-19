@@ -120,14 +120,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       if (isWon) {
         // 낙찰자(구매자) 시점: 판매자와 대화하기
         buyerNo = currentMemberNo;
-        sellerNo = getMemberNo(product.seller);
+        // 직접적인 번호 필드가 있는지 우선 확인
+        sellerNo = (product.seller as any).memberNo || (product.seller as any).sellerNo || getMemberNo(product.seller);
       } else if (isSellerPending) {
         // 판매자 시점: 낙찰자(구매자)와 대화하기
         sellerNo = currentMemberNo;
-        buyerNo = (product as any).winnerNo || (product as any).buyerNo || getMemberNo({ id: product.winnerId } as any);
+        // MyPage에서 매핑해준 winnerMemberNo 등을 우선 확인
+        buyerNo = (product as any).winnerMemberNo || (product as any).winnerNo || (product as any).buyerNo || getMemberNo({ id: product.winnerId } as any);
       }
 
-      if (!buyerNo || !sellerNo) {
+      if (!buyerNo || !sellerNo || buyerNo === 'unknown' || sellerNo === 'unknown') {
         showToast('채팅 상대 정보를 찾을 수 없습니다.', 'error');
         return;
       }

@@ -26,8 +26,12 @@ function mapToProduct(item: any): Product & { bidStatus?: string } {
       profileImage: item.sellerProfileImage || item.sellerProfileImg || '',
       points: 0,
       mannerTemp: item.mannerTemp || 36.5,
-      joinedAt: ''
+      joinedAt: '',
+      // 백엔드 원본 번호 보존
+      memberNo: item.sellerNo || item.sellerMemberNo || item.sellerId
     },
+    // 낙찰자 정보 보존
+    winnerMemberNo: item.winnerNo || item.winnerMemberNo || item.buyerNo || item.buyerMemberNo,
     startPrice: item.startPrice || item.currentPrice || 0,
     currentPrice: item.currentPrice || 0,
     minBidIncrement: item.minBidUnit || 1000,
@@ -318,15 +322,9 @@ export const MyPage: React.FC = () => {
             추월변동
           </span>
         );
-      case 'won':
-        return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold">
-            낙찰성공
-          </span>
-        );
       case 'lost':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-50 text-gray-500 rounded-full text-xs font-bold">
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-900/10 text-gray-600 rounded-full text-xs font-bold">
             낙찰실패
           </span>
         );

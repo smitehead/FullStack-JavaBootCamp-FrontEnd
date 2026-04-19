@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsGeoAlt, BsPersonSquare, BsDoorOpen } from 'react-icons/bs';
+import { BsSend, BsImage, BsCartCheck, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsGeoAlt, BsPersonSquare, BsDoorOpen, BsPlusLg } from 'react-icons/bs';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format } from 'date-fns';
@@ -45,6 +45,22 @@ export const Chat: React.FC = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [isAttachmentMenuOpen, setIsAttachmentMenuOpen] = useState(false);
+  const attachmentMenuRef = useRef<HTMLDivElement>(null);
+
+  // 메뉴 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMoreMenu(false);
+      }
+      if (attachmentMenuRef.current && !attachmentMenuRef.current.contains(e.target as Node)) {
+        setIsAttachmentMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // 중복 방지용 Set
   const receivedUuids = useRef(new Set<string>());
@@ -866,16 +882,53 @@ export const Chat: React.FC = () => {
             {/* 입력 영역 */}
             <div className="p-4 bg-white border-t border-gray-100">
               <form onSubmit={handleBsSendMessage} className="flex items-center gap-3">
-                {/* 이미지 업로드 버튼 */}
-                <label
-                  className={`p-3 rounded-2xl cursor-pointer transition-all ${
-                    isConnected
-                      ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50'
-                      : 'text-gray-200 cursor-not-allowed'
-                  }`}
-                  title="사진 보내기 (최대 10장)"
-                >
-                  <BsImage className="w-5 h-5" />
+                {/* 첨부 메뉴 버튼 */}
+                <div className="relative" ref={attachmentMenuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
+                    className={`p-3 rounded-2xl transition-all ${
+                      isConnected
+                        ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50'
+                        : 'text-gray-200 cursor-not-allowed'
+                    }`}
+                  >
+                    <BsPlusLg className={`w-5 h-5 transition-transform duration-200 ${isAttachmentMenuOpen ? 'rotate-45 text-orange-500' : ''}`} />
+                  </button>
+
+                  {isAttachmentMenuOpen && (
+                    <div className="absolute bottom-full left-0 mb-4 w-48 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-50">
+                      <div className="p-2 space-y-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            imageInputRef.current?.click();
+                            setIsAttachmentMenuOpen(false);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-orange-50 text-gray-700 hover:text-orange-600 rounded-2xl transition-all"
+                        >
+                          <div className="p-2 bg-orange-100 rounded-xl text-orange-600">
+                            <BsImage className="w-4 h-4" />
+                          </div>
+                          <span className="text-sm font-bold">사진 보내기</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            showToast('준비 중인 기능입니다.', 'info');
+                            setIsAttachmentMenuOpen(false);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-indigo-50 text-gray-700 hover:text-indigo-600 rounded-2xl transition-all"
+                        >
+                          <div className="p-2 bg-indigo-100 rounded-xl text-indigo-600">
+                            <BsGeoAlt className="w-4 h-4" />
+                          </div>
+                          <span className="text-sm font-bold">위치 보내기</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   <input
                     ref={imageInputRef}
                     type="file"
@@ -885,7 +938,7 @@ export const Chat: React.FC = () => {
                     disabled={!isConnected}
                     onChange={handleImageUpload}
                   />
-                </label>
+                </div>
                 <div className="flex-1 relative">
                   <input type="text" value={newMessage}
                     onChange={(e) => {
