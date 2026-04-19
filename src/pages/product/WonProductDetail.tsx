@@ -81,7 +81,7 @@ export const WonProductDetail: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+        <div className="spinner-border w-8 h-8" />
       </div>
     );
   }
@@ -349,7 +349,7 @@ export const WonProductDetail: React.FC = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500 font-medium">배송비</span>
-                    <span className="text-gray-900 font-bold">0원 (무료배송)</span>
+                    <span className="text-gray-900 font-bold">배송비 별도 (판매자 협의)</span>
                   </div>
 
                   <div className="pt-4 border-t border-gray-50 flex justify-between items-center">

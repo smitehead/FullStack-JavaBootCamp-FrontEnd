@@ -39,13 +39,13 @@
 }
 
 @layer components {
+  /* 공통 브랜드 스피너 */
   .spinner-border {
     display: inline-block;
-    border: 2px solid currentColor;
-    border-right-color: transparent;
+    border: 3px solid #FF5A5A20; /* 배경 원은 연하게 */
+    border-top-color: #FF5A5A;    /* 돌아가는 부분만 진하게 */
     border-radius: 50%;
-    vertical-align: text-bottom;
-    animation: spin 0.75s linear infinite;
+    animation: spin 0.8s linear infinite;
   }
 
   @keyframes spin {

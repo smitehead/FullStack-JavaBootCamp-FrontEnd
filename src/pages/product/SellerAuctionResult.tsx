@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
 import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
+import { useAppContext } from '@/context/AppContext';
+import { getMemberNo } from '@/utils/memberUtils';
 import { AlertCircle } from 'lucide-react';
 import { BsXCircle, BsCheckCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
@@ -30,6 +32,7 @@ interface SellerResultDetail {
 export const SellerAuctionResult: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAppContext();
 
   const [result, setResult] = useState<SellerResultDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,7 +55,7 @@ export const SellerAuctionResult: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+        <div className="spinner-border w-8 h-8" />
       </div>
     );
   }
@@ -66,10 +69,16 @@ export const SellerAuctionResult: React.FC = () => {
   const images = result.images.map(img => resolveImageUrl(img) || img);
 
   const handleChatWithBuyer = async () => {
+    const sellerNo = getMemberNo(user);
+    if (!sellerNo) {
+      showToast('로그인이 필요한 서비스입니다.', 'error');
+      navigate('/login');
+      return;
+    }
     try {
       const res = await api.post('/chat/rooms', {
         buyerNo: result.buyer.buyerNo,
-        sellerNo: result.seller.sellerNo, // 판매자 ID 명시적 전달
+        sellerNo,
         productNo: result.productNo,
       });
       if (res.data?.roomNo) {
@@ -222,11 +231,7 @@ export const SellerAuctionResult: React.FC = () => {
                       <button
                         onClick={() => setShowCancelConfirm(true)}
                         disabled={isProcessing}
-                        className={`w-full py-5 font-bold rounded-2xl transition-all border shadow-sm disabled:opacity-50 ${
-                          isCancelRequested
-                            ? 'bg-orange-50 hover:bg-orange-100 text-orange-600 border-orange-200'
-                            : 'bg-red-50 hover:bg-red-100 text-red-500 border-red-100'
-                        }`}
+                        className="w-full py-5 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
                       >
                         {cancelButtonLabel}
                       </button>
@@ -306,15 +311,9 @@ export const SellerAuctionResult: React.FC = () => {
       {/* Cancel Confirm Modal */}
       {showCancelConfirm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-[32px] max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
-              <BsXCircle className="w-8 h-8 text-red-600" />
-            </div>
+          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
             <h3 className="text-xl font-bold text-gray-900 mb-2">{cancelModalTitle}</h3>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">{cancelModalDesc}</p>
-            <p className="text-xs text-red-500 font-bold mb-8 flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" /> 이 작업은 되돌릴 수 없습니다.
-            </p>
+            <p className="text-sm text-gray-400 font-medium leading-relaxed mb-6">{cancelModalDesc}</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowCancelConfirm(false)}

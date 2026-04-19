@@ -680,9 +680,7 @@ export const ProductList: React.FC = () => {
       {/* Loading & No Results */}
       {loading && (
         <div className="flex justify-center py-10">
-          <div className="spinner-border w-8 h-8 text-brand" role="status">
-            <span className="sr-only">Loading...</span>
-          </div>
+          <div className="spinner-border w-8 h-8" />
         </div>
       )}
 
