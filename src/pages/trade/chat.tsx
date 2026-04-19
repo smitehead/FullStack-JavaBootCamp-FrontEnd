@@ -54,6 +54,18 @@ export const Chat: React.FC = () => {
   const [locationAddrRoad, setLocationAddrRoad] = useState('');
   const [locationAddrDetail, setLocationAddrDetail] = useState('');
 
+  // 약속 잡기 모달 상태
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [apptSelectedDate, setApptSelectedDate] = useState<Date | null>(null);
+  const [apptCalMonth, setApptCalMonth] = useState<Date>(() => {
+    const d = new Date(); d.setDate(1); d.setHours(0, 0, 0, 0); return d;
+  });
+  const [apptPeriod, setApptPeriod] = useState<'AM' | 'PM'>('PM');
+  const [apptHour, setApptHour] = useState<number>(2);
+  const [apptMinute, setApptMinute] = useState<number>(0);
+  const [apptAddrRoad, setApptAddrRoad] = useState('');
+  const [apptAddrDetail, setApptAddrDetail] = useState('');
+
   // 메뉴 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -782,6 +794,86 @@ export const Chat: React.FC = () => {
     setShowLocationModal(false);
   };
 
+  // ══════════════════════════════════════════════════
+  // 4-3. 약속 잡기
+  // ══════════════════════════════════════════════════
+  const WEEKDAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
+
+  const getCalendarDays = (year: number, month: number): (number | null)[] => {
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const days: (number | null)[] = [];
+    for (let i = 0; i < firstDay; i++) days.push(null);
+    for (let d = 1; d <= daysInMonth; d++) days.push(d);
+    return days;
+  };
+
+  const isBeforeToday = (year: number, month: number, day: number): boolean => {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    return new Date(year, month, day) < today;
+  };
+
+  const openApptPostcode = () => {
+    const daum = (window as any).daum;
+    if (!daum?.Postcode) { showToast('주소 검색 서비스를 불러오는 중입니다.', 'error'); return; }
+    new daum.Postcode({
+      oncomplete: (data: any) => {
+        setApptAddrRoad(data.roadAddress || data.jibunAddress || '');
+      },
+    }).open();
+  };
+
+  const handleSendAppointment = () => {
+    if (!apptSelectedDate) { showToast('날짜를 선택해주세요.', 'error'); return; }
+    if (!apptAddrRoad) { showToast('장소를 입력해주세요.', 'error'); return; }
+    if (!selectedRoom || !memberNo) return;
+
+    const dateLabel = `${apptSelectedDate.getMonth() + 1}월 ${apptSelectedDate.getDate()}일 ${WEEKDAYS_KO[apptSelectedDate.getDay()]}요일`;
+    const timeLabel = `${apptPeriod === 'AM' ? '오전' : '오후'} ${apptHour}:${String(apptMinute).padStart(2, '0')}`;
+    const payload = { dateLabel, timeLabel, addrRoad: apptAddrRoad, addrDetail: apptAddrDetail };
+    const content = JSON.stringify(payload);
+    const clientUuid = getUuid();
+
+    const optimisticMsg: ChatMessage = {
+      id: `temp_${clientUuid}`,
+      senderId: `user_${memberNo}`,
+      senderNo: memberNo,
+      content,
+      createdAt: new Date().toISOString(),
+      isRead: 0,
+      clientUuid,
+      status: 'SENDING',
+      msgType: 'APPOINTMENT',
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
+    scrollToBottom();
+
+    const client = stompClientRef.current;
+    if (client && client.connected) {
+      client.publish({
+        destination: '/pub/chat/message',
+        body: JSON.stringify({ roomId: selectedRoom.roomNo, senderId: memberNo, content, msgType: 'APPOINTMENT', clientUuid }),
+      });
+      const timeout = setTimeout(() => {
+        setMessages(prev => prev.map(m => m.clientUuid === clientUuid && m.status === 'SENDING' ? { ...m, status: 'FAILED' } : m));
+        sendTimeouts.current.delete(clientUuid);
+      }, SEND_TIMEOUT);
+      sendTimeouts.current.set(clientUuid, timeout);
+      setChatRooms(prev =>
+        prev.map(r => r.roomNo === selectedRoom.roomNo ? { ...r, lastMessage: `📅 ${dateLabel} ${timeLabel}`, lastMessageAt: new Date().toISOString() } : r)
+      );
+    } else {
+      showToast('채팅 서버와 연결이 끊어졌습니다.', 'error');
+      setMessages(prev => prev.map(m => m.clientUuid === clientUuid ? { ...m, status: 'FAILED' } : m));
+    }
+
+    setShowAppointmentModal(false);
+    // 모달 닫을 때 상태 초기화
+    setApptSelectedDate(null);
+    setApptAddrRoad('');
+    setApptAddrDetail('');
+  };
+
   // 재전송
   const handleRetry = (msg: ChatMessage) => {
     if (!msg.clientUuid || !selectedRoom || !memberNo) return;
@@ -1052,7 +1144,37 @@ export const Chat: React.FC = () => {
                         )}
                         <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                           {/* ──── 메시지 콘텐츠 (msgType 분기) ──── */}
-                          {msg.msgType === 'ADDRESS' ? (
+                          {msg.msgType === 'APPOINTMENT' ? (() => {
+                            let appt: any = {};
+                            try { appt = JSON.parse(msg.content); } catch { appt = { dateLabel: msg.content }; }
+                            return (
+                              <div className={`rounded-2xl overflow-hidden border shadow-sm w-[260px] bg-white ${isMe ? 'border-indigo-200 rounded-tr-none' : 'border-gray-200 rounded-tl-none'} ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
+                                <div className="bg-indigo-500 px-4 py-3 flex items-center gap-2">
+                                  <BsCalendarPlus className="w-4 h-4 text-white flex-shrink-0" />
+                                  <span className="text-white text-xs font-bold tracking-wide">약속 잡기</span>
+                                </div>
+                                <div className="p-4 space-y-3">
+                                  <div className="flex items-center gap-2.5">
+                                    <span className="text-base">📅</span>
+                                    <span className="text-sm font-bold text-gray-900">{appt.dateLabel || '-'}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2.5">
+                                    <span className="text-base">🕐</span>
+                                    <span className="text-sm text-gray-700">{appt.timeLabel || '-'}</span>
+                                  </div>
+                                  {appt.addrRoad && (
+                                    <div className="flex items-start gap-2.5 pt-1 border-t border-gray-100">
+                                      <BsGeoAltFill className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
+                                      <div className="min-w-0">
+                                        <p className="text-xs font-bold text-gray-900 break-words">{appt.addrRoad}</p>
+                                        {appt.addrDetail && <p className="text-[10px] text-gray-500 mt-0.5 break-words">{appt.addrDetail}</p>}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })() : msg.msgType === 'ADDRESS' ? (
                             <div
                               className={`rounded-2xl overflow-hidden border shadow-sm max-w-[260px] ${isMe ? 'border-gray-100 rounded-tr-none' : 'border-gray-200 rounded-tl-none'
                                 } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
@@ -1177,6 +1299,15 @@ export const Chat: React.FC = () => {
                         </div>
                       </div>
                     </div>
+
+                    {/* 약속 상태 메시지 */}
+                    {msg.msgType === 'APPOINTMENT' && msg.status !== 'FAILED' && (
+                      <div className="flex items-center justify-center py-2 gap-2">
+                        <div className="h-px flex-1 bg-indigo-100" />
+                        <span className="text-[10px] font-bold text-indigo-400 px-2 whitespace-nowrap">📅 약속이 잡혔습니다</span>
+                        <div className="h-px flex-1 bg-indigo-100" />
+                      </div>
+                    )}
                   </React.Fragment>
                 );
               })}
@@ -1228,6 +1359,17 @@ export const Chat: React.FC = () => {
                             <span className="text-sm font-bold">위치 보내기</span>
                           </button>
                         )}
+                        {/* 약속 잡기 */}
+                        <button
+                          type="button"
+                          onClick={() => { setIsAttachmentMenuOpen(false); setShowAppointmentModal(true); }}
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
+                        >
+                          <div className="p-2 bg-indigo-50 rounded-xl text-indigo-400 group-hover:bg-indigo-100 transition-colors">
+                            <BsCalendarPlus className="w-4 h-4" />
+                          </div>
+                          <span className="text-sm font-bold">약속 잡기</span>
+                        </button>
                         <button
                           type="button"
                           onClick={() => {
@@ -1348,6 +1490,176 @@ export const Chat: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 약속 잡기 모달 */}
+      {showAppointmentModal && (() => {
+        const calYear = apptCalMonth.getFullYear();
+        const calMonthIdx = apptCalMonth.getMonth();
+        const calDays = getCalendarDays(calYear, calMonthIdx);
+        const todayMidnight = new Date(); todayMidnight.setHours(0, 0, 0, 0);
+
+        return (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden flex flex-col max-h-[92vh]">
+              {/* 헤더 */}
+              <div className="px-6 pt-6 pb-4 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <BsCalendarPlus className="w-5 h-5 text-indigo-500" />
+                  <h3 className="text-lg font-black text-gray-900 tracking-tight">약속 잡기</h3>
+                </div>
+              </div>
+
+              <div className="overflow-y-auto flex-1 px-6 py-4 space-y-6">
+                {/* ── 날짜 ── */}
+                <div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">날짜</p>
+                  {/* 월 네비게이션 */}
+                  <div className="flex items-center justify-between mb-3">
+                    <button
+                      type="button"
+                      onClick={() => setApptCalMonth(prev => { const d = new Date(prev); d.setMonth(d.getMonth() - 1); return d; })}
+                      disabled={calYear === todayMidnight.getFullYear() && calMonthIdx <= todayMidnight.getMonth()}
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all disabled:opacity-30 disabled:cursor-not-allowed text-sm font-bold"
+                    >‹</button>
+                    <span className="text-sm font-black text-gray-900">{calYear}년 {calMonthIdx + 1}월</span>
+                    <button
+                      type="button"
+                      onClick={() => setApptCalMonth(prev => { const d = new Date(prev); d.setMonth(d.getMonth() + 1); return d; })}
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all text-sm font-bold"
+                    >›</button>
+                  </div>
+                  {/* 요일 헤더 */}
+                  <div className="grid grid-cols-7 mb-1">
+                    {['일', '월', '화', '수', '목', '금', '토'].map((d, i) => (
+                      <div key={d} className={`text-center text-[10px] font-bold py-1 ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'}`}>{d}</div>
+                    ))}
+                  </div>
+                  {/* 날짜 그리드 */}
+                  <div className="grid grid-cols-7 gap-y-1">
+                    {calDays.map((day, i) => {
+                      if (day === null) return <div key={`blank-${i}`} />;
+                      const isPast = isBeforeToday(calYear, calMonthIdx, day);
+                      const thisDate = new Date(calYear, calMonthIdx, day);
+                      const isSelected = apptSelectedDate
+                        ? apptSelectedDate.getFullYear() === calYear && apptSelectedDate.getMonth() === calMonthIdx && apptSelectedDate.getDate() === day
+                        : false;
+                      const isToday = thisDate.getTime() === todayMidnight.getTime();
+                      const col = i % 7;
+                      return (
+                        <button
+                          key={day}
+                          type="button"
+                          disabled={isPast}
+                          onClick={() => setApptSelectedDate(thisDate)}
+                          className={`aspect-square flex items-center justify-center rounded-xl text-xs font-bold transition-all
+                            ${isPast ? 'text-gray-200 cursor-not-allowed' : ''}
+                            ${isSelected ? 'bg-indigo-500 text-white shadow-md' : ''}
+                            ${!isSelected && isToday ? 'bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200' : ''}
+                            ${!isSelected && !isPast && !isToday ? (col === 0 ? 'text-red-400 hover:bg-red-50' : col === 6 ? 'text-blue-400 hover:bg-blue-50' : 'text-gray-700 hover:bg-gray-100') : ''}
+                          `}
+                        >
+                          {day}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {apptSelectedDate && (
+                    <p className="text-center text-xs font-bold text-indigo-500 mt-2">
+                      {apptSelectedDate.getMonth() + 1}월 {apptSelectedDate.getDate()}일 {WEEKDAYS_KO[apptSelectedDate.getDay()]}요일 선택됨
+                    </p>
+                  )}
+                </div>
+
+                {/* ── 시간 ── */}
+                <div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">시간</p>
+                  {/* 오전/오후 */}
+                  <div className="flex gap-2 mb-3">
+                    {(['AM', 'PM'] as const).map(p => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setApptPeriod(p)}
+                        className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${apptPeriod === p ? 'bg-indigo-500 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                      >
+                        {p === 'AM' ? '오전' : '오후'}
+                      </button>
+                    ))}
+                  </div>
+                  {/* 시간 */}
+                  <div className="grid grid-cols-6 gap-1 mb-2">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(h => (
+                      <button
+                        key={h}
+                        type="button"
+                        onClick={() => setApptHour(h)}
+                        className={`py-2 rounded-xl text-xs font-bold transition-all ${apptHour === h ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                      >
+                        {h}
+                      </button>
+                    ))}
+                  </div>
+                  {/* 분 */}
+                  <div className="grid grid-cols-6 gap-1">
+                    {[0, 10, 20, 30, 40, 50].map(m => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => setApptMinute(m)}
+                        className={`py-2 rounded-xl text-xs font-bold transition-all ${apptMinute === m ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                      >
+                        {String(m).padStart(2, '0')}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-center text-xs font-bold text-indigo-500 mt-2">
+                    {apptPeriod === 'AM' ? '오전' : '오후'} {apptHour}:{String(apptMinute).padStart(2, '0')}
+                  </p>
+                </div>
+
+                {/* ── 장소 ── */}
+                <div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">장소</p>
+                  <button
+                    type="button"
+                    onClick={openApptPostcode}
+                    className="w-full flex items-center gap-2 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold text-gray-500 hover:bg-gray-100 hover:border-indigo-300 transition-all mb-2"
+                  >
+                    <BsGeoAltFill className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                    <span className="truncate">{apptAddrRoad || '주소 검색'}</span>
+                  </button>
+                  <input
+                    type="text"
+                    value={apptAddrDetail}
+                    onChange={e => setApptAddrDetail(e.target.value)}
+                    placeholder="상세 주소 (동/호수 등)"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* 하단 버튼 */}
+              <div className="px-6 py-5 border-t border-gray-100 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setShowAppointmentModal(false); setApptSelectedDate(null); setApptAddrRoad(''); setApptAddrDetail(''); }}
+                  className="flex-1 py-4 bg-gray-100 text-gray-700 rounded-2xl text-sm font-bold hover:bg-gray-200 transition-all active:scale-95"
+                >
+                  취소
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSendAppointment}
+                  disabled={!apptSelectedDate || !apptAddrRoad}
+                  className="flex-1 py-4 bg-indigo-500 text-white rounded-2xl text-sm font-bold hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  완료
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
