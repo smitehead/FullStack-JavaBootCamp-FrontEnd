@@ -115,21 +115,36 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     if (!currentMemberNo) return;
 
     try {
-      let buyerNo, sellerNo;
+      let buyerNo: number | undefined;
+      let sellerNo: number | undefined;
 
       if (isWon) {
         // 낙찰자(구매자) 시점: 판매자와 대화하기
         buyerNo = currentMemberNo;
-        // 직접적인 번호 필드가 있는지 우선 확인
-        sellerNo = (product.seller as any).memberNo || (product.seller as any).sellerNo || getMemberNo(product.seller);
+        sellerNo = (product.seller as any).memberNo
+          || (product.seller as any).sellerNo
+          || getMemberNo(product.seller)
+          || undefined;
+        // 판매자 번호를 product에서 찾지 못하면 낙찰 결과 API로 조회
+        if (!sellerNo) {
+          const res = await api.get(`/auction-results/product/${product.id}`);
+          sellerNo = res.data?.seller?.sellerNo;
+        }
       } else if (isSellerPending) {
         // 판매자 시점: 낙찰자(구매자)와 대화하기
         sellerNo = currentMemberNo;
-        // MyPage에서 매핑해준 winnerMemberNo 등을 우선 확인
-        buyerNo = (product as any).winnerMemberNo || (product as any).winnerNo || (product as any).buyerNo || getMemberNo({ id: product.winnerId } as any);
+        buyerNo = (product as any).winnerMemberNo
+          || (product as any).winnerNo
+          || (product as any).buyerNo
+          || undefined;
+        // 구매자 번호를 product에서 찾지 못하면 판매자용 낙찰 결과 API로 조회
+        if (!buyerNo) {
+          const res = await api.get(`/auction-results/seller/product/${product.id}`);
+          buyerNo = res.data?.buyer?.buyerNo;
+        }
       }
 
-      if (!buyerNo || !sellerNo || buyerNo === 'unknown' || sellerNo === 'unknown') {
+      if (!buyerNo || !sellerNo) {
         showToast('채팅 상대 정보를 찾을 수 없습니다.', 'error');
         return;
       }

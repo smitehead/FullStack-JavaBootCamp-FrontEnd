@@ -387,9 +387,12 @@ export const Chat: React.FC = () => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
     if (files.length > 10) {
-      alert('최대 10장까지 선택할 수 있습니다.');
+      showToast('최대 10장까지 선택할 수 있습니다.', 'error');
       return;
     }
+
+    let imageUrls: string[] = [];
+    let clientUuid = '';
 
     try {
       // 1. REST로 여러 파일 일괄 업로드
@@ -400,28 +403,36 @@ export const Chat: React.FC = () => {
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
-      const imageUrls: string[] = res.data.urls;
+      imageUrls = res.data.urls;
+    } catch (err) {
+      console.error('이미지 업로드 실패', err);
+      showToast('이미지 업로드에 실패했습니다.', 'error');
+      if (imageInputRef.current) imageInputRef.current.value = '';
+      return;
+    }
 
-      const clientUuid = getUuid();
+    clientUuid = getUuid();
 
-      // 낙관적 UI — 이미지 메시지 즉시 표시
-      const optimisticMsg: ChatMessage = {
-        id: `temp_${clientUuid}`,
-        senderId: `user_${memberNo}`,
-        senderNo: memberNo!,
-        content: '',
-        createdAt: new Date().toISOString(),
-        isRead: 0,
-        clientUuid,
-        status: 'SENDING',
-        msgType: 'IMAGE',
-        imageUrls,
-      };
-      setMessages(prev => [...prev, optimisticMsg]);
-      scrollToBottom();
+    // 낙관적 UI — 이미지 메시지 즉시 표시
+    const optimisticMsg: ChatMessage = {
+      id: `temp_${clientUuid}`,
+      senderId: `user_${memberNo}`,
+      senderNo: memberNo!,
+      content: '',
+      createdAt: new Date().toISOString(),
+      isRead: 0,
+      clientUuid,
+      status: 'SENDING',
+      msgType: 'IMAGE',
+      imageUrls,
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
+    scrollToBottom();
 
-      // 2. STOMP로 묶어서 전송 (메시지 1건)
-      stompClientRef.current?.publish({
+    // 2. STOMP 연결 확인 후 전송
+    const client = stompClientRef.current;
+    if (client && client.connected) {
+      client.publish({
         destination: '/pub/chat/message',
         body: JSON.stringify({
           roomId: selectedRoom.roomNo,
@@ -433,7 +444,6 @@ export const Chat: React.FC = () => {
         }),
       });
 
-      // 타임아웃
       const timeout = setTimeout(() => {
         setMessages(prev =>
           prev.map(m =>
@@ -453,13 +463,113 @@ export const Chat: React.FC = () => {
             : r
         )
       );
-    } catch (err) {
-      console.error('이미지 전송 실패', err);
-      alert('이미지 업로드에 실패했습니다.');
+    } else {
+      showToast('채팅 서버와 연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.', 'error');
+      setMessages(prev =>
+        prev.map(m =>
+          m.clientUuid === clientUuid ? { ...m, status: 'FAILED' } : m
+        )
+      );
     }
 
     // input 초기화 (같은 파일 재선택 허용)
     if (imageInputRef.current) imageInputRef.current.value = '';
+  };
+
+  // ══════════════════════════════════════════════════
+  // 4-1. 위치(배송지) 보내기 — 낙찰 결과에서 주소 불러와 ADDRESS 타입으로 전송
+  // ══════════════════════════════════════════════════
+  const handleSendAddress = async () => {
+    setIsAttachmentMenuOpen(false);
+    if (!selectedRoom || !memberNo) return;
+
+    try {
+      const res = await api.get(`/auction-results/product/${selectedRoom.productId}`);
+      const addrRoad: string | null = res.data?.deliveryAddrRoad ?? null;
+      const addrDetail: string | null = res.data?.deliveryAddrDetail ?? null;
+
+      if (!addrRoad && !addrDetail) {
+        showToast('낙찰 상세 페이지에서 배송지를 먼저 입력해주세요.', 'error');
+        return;
+      }
+
+      const clientUuid = getUuid();
+      const optimisticMsg: ChatMessage = {
+        id: `temp_${clientUuid}`,
+        senderId: `user_${memberNo}`,
+        senderNo: memberNo,
+        content: addrRoad || addrDetail || '',
+        createdAt: new Date().toISOString(),
+        isRead: 0,
+        clientUuid,
+        status: 'SENDING',
+        msgType: 'ADDRESS',
+        addrRoad: addrRoad ?? undefined,
+        addrDetail: addrDetail ?? undefined,
+      };
+      setMessages(prev => [...prev, optimisticMsg]);
+      scrollToBottom();
+
+      const client = stompClientRef.current;
+      if (client && client.connected) {
+        client.publish({
+          destination: '/pub/chat/message',
+          body: JSON.stringify({
+            roomId: selectedRoom.roomNo,
+            senderId: memberNo,
+            content: addrRoad || '',
+            msgType: 'ADDRESS',
+            addrRoad,
+            addrDetail,
+            clientUuid,
+          }),
+        });
+
+        const timeout = setTimeout(() => {
+          setMessages(prev =>
+            prev.map(m =>
+              m.clientUuid === clientUuid && m.status === 'SENDING'
+                ? { ...m, status: 'FAILED' } : m
+            )
+          );
+          sendTimeouts.current.delete(clientUuid);
+        }, SEND_TIMEOUT);
+        sendTimeouts.current.set(clientUuid, timeout);
+
+        setChatRooms(prev =>
+          prev.map(r =>
+            r.roomNo === selectedRoom.roomNo
+              ? { ...r, lastMessage: '📍 배송지 공유', lastMessageAt: new Date().toISOString() }
+              : r
+          )
+        );
+      } else {
+        showToast('채팅 서버와 연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.', 'error');
+        setMessages(prev =>
+          prev.map(m =>
+            m.clientUuid === clientUuid ? { ...m, status: 'FAILED' } : m
+          )
+        );
+      }
+    } catch {
+      showToast('배송지 정보를 불러올 수 없습니다.', 'error');
+    }
+  };
+
+  // ══════════════════════════════════════════════════
+  // 4-2. 판매자가 ADDRESS 카드의 [확인] 버튼 클릭 — 배송지 저장
+  // ══════════════════════════════════════════════════
+  const handleConfirmAddress = async (msg: ChatMessage) => {
+    if (!selectedRoom) return;
+    try {
+      await api.patch(`/auction-results/seller/product/${selectedRoom.productId}/delivery-address`, {
+        addrRoad: msg.addrRoad ?? null,
+        addrDetail: msg.addrDetail ?? null,
+      });
+      showToast('배송지가 낙찰 관리 페이지에 저장되었습니다.', 'success');
+    } catch {
+      showToast('배송지 저장에 실패했습니다.', 'error');
+    }
   };
 
   // ══════════════════════════════════════════════════
@@ -778,7 +888,42 @@ export const Chat: React.FC = () => {
                         )}
                         <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                           {/* ──── 메시지 콘텐츠 (msgType 분기) ──── */}
-                          {msg.msgType === 'IMAGE' && msg.imageUrls && msg.imageUrls.length > 0 ? (
+                          {msg.msgType === 'ADDRESS' ? (
+                            <div
+                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[260px] ${
+                                isMe ? 'border-emerald-200 rounded-tr-none' : 'border-gray-200 rounded-tl-none'
+                              } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
+                            >
+                              <div className={`p-4 ${isMe ? 'bg-emerald-500' : 'bg-white'}`}>
+                                <div className={`flex items-start gap-2 ${isMe ? 'text-white' : 'text-gray-800'}`}>
+                                  <BsGeoAlt className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">배송지</p>
+                                    <p className="text-xs font-bold leading-snug break-words">
+                                      {msg.addrRoad || msg.content || '주소 정보'}
+                                    </p>
+                                    {msg.addrDetail && (
+                                      <p className={`text-[10px] mt-0.5 break-words ${isMe ? 'text-emerald-100' : 'text-gray-500'}`}>
+                                        {msg.addrDetail}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              {/* 판매자(상대방이 구매자)에게만 확인 버튼 표시 */}
+                              {!isMe && selectedRoom.otherUser.role === 'buyer' && (
+                                <div className="border-t border-gray-100 p-2 bg-gray-50">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleConfirmAddress(msg)}
+                                    className="w-full py-2 text-xs font-bold text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors"
+                                  >
+                                    확인 (배송지 저장)
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          ) : msg.msgType === 'IMAGE' && msg.imageUrls && msg.imageUrls.length > 0 ? (
                             <div
                               className={`grid gap-1 rounded-2xl overflow-hidden max-w-[240px] ${
                                 msg.status === 'SENDING' ? 'opacity-70' : ''
@@ -905,26 +1050,26 @@ export const Chat: React.FC = () => {
                             imageInputRef.current?.click();
                             setIsAttachmentMenuOpen(false);
                           }}
-                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-orange-50 text-gray-700 hover:text-orange-600 rounded-2xl transition-all"
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
                         >
-                          <div className="p-2 bg-orange-100 rounded-xl text-orange-600">
+                          <div className="p-2 bg-gray-100 rounded-xl text-gray-500 group-hover:bg-gray-200 transition-colors">
                             <BsImage className="w-4 h-4" />
                           </div>
                           <span className="text-sm font-bold">사진 보내기</span>
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            showToast('준비 중인 기능입니다.', 'info');
-                            setIsAttachmentMenuOpen(false);
-                          }}
-                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-indigo-50 text-gray-700 hover:text-indigo-600 rounded-2xl transition-all"
-                        >
-                          <div className="p-2 bg-indigo-100 rounded-xl text-indigo-600">
-                            <BsGeoAlt className="w-4 h-4" />
-                          </div>
-                          <span className="text-sm font-bold">위치 보내기</span>
-                        </button>
+                        {/* 위치 보내기 — 구매자(내 상대방이 seller)일 때만 표시 */}
+                        {selectedRoom.otherUser.role === 'seller' && (
+                          <button
+                            type="button"
+                            onClick={handleSendAddress}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
+                          >
+                            <div className="p-2 bg-gray-100 rounded-xl text-gray-500 group-hover:bg-gray-200 transition-colors">
+                              <BsGeoAlt className="w-4 h-4" />
+                            </div>
+                            <span className="text-sm font-bold">위치 보내기</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   )}
@@ -935,7 +1080,6 @@ export const Chat: React.FC = () => {
                     multiple
                     accept="image/*"
                     className="hidden"
-                    disabled={!isConnected}
                     onChange={handleImageUpload}
                   />
                 </div>
