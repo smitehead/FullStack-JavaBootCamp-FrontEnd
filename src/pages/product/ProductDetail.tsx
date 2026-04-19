@@ -230,12 +230,16 @@ export const ProductDetail: React.FC = () => {
         endTime: data.endTime,
         images: resolveImageUrls(data.images || []),
         participantCount: data.participantCount || 0,
-        bids: (data.bidHistory || []).map((b: any, idx: number) => ({
-          id: `bid_${idx}`,
-          bidderName: b.bidderNickname,
-          amount: b.bidPrice,
-          timestamp: b.bidTime
-        })),
+        bids: (() => {
+          const seen = new Set<number>();
+          return (data.bidHistory || []).reduce((acc: any[], b: any, idx: number) => {
+            const key = b.bidNo ?? idx;
+            if (seen.has(key)) return acc;
+            seen.add(key);
+            acc.push({ id: `bid_${key}`, bidderName: b.bidderNickname, amount: b.bidPrice, timestamp: b.bidTime });
+            return acc;
+          }, []);
+        })(),
         status: mappedStatus,
         location: data.location || '',
         transactionMethod: data.tradeType === '혼합' ? 'both' : (data.tradeType === '직거래' ? 'face-to-face' : 'delivery'),
@@ -637,30 +641,40 @@ export const ProductDetail: React.FC = () => {
           productNo: Number(product.id),
           maxPrice: autoBidMaxAmount
         });
-      } else {
-        await api.post('/bids', {
-          productNo: product.id,
-          memberNo: memberNo,
-          bidPrice: amountToValidate
-        });
-      }
-
-      // 내가 방금 입찰 → 즉시 최고입찰자로 표시 (fetchProduct 완료 전 선반영)
-      setHasBid(true);
-      setIsHighestBidder(true);
-
-      if (modalType === 'auto') {
+        setHasBid(true);
+        setIsHighestBidder(true);
         showToast('자동 입찰이 설정되었습니다!', 'success');
         setIsBidModalOpen(false);
         await fetchProduct();
         return;
       }
 
-      showToast('입찰이 완료되었습니다!', 'success');
+      // 일반 입찰: 응답에 autoBidFired / finalBidderNo 포함
+      const response = await api.post('/bids', {
+        productNo: product.id,
+        memberNo: memberNo,
+        bidPrice: amountToValidate
+      });
+      const bidResult = response.data as { autoBidFired: boolean; finalBidderNo: number; finalPrice: number };
+
+      setHasBid(true);
+      setIsBidModalOpen(false);
+
+      if (bidResult.autoBidFired && bidResult.finalBidderNo !== memberNo) {
+        // 자동입찰에 의해 즉시 밀려남 → 최고 입찰자 아님
+        setIsHighestBidder(false);
+        showToast('입찰은 완료되었으나, 다른 유저의 자동 입찰에 의해 상위 입찰자가 갱신되었습니다.', 'warning');
+      } else {
+        setIsHighestBidder(true);
+        showToast('입찰이 완료되었습니다!', 'success');
+      }
+
       await fetchProduct();
 
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response.data : '입찰에 실패했습니다.');
+      const errorMsg = typeof error.response?.data === 'string'
+        ? error.response.data
+        : (error.response?.data?.message || '입찰에 실패했습니다.');
       showToast(errorMsg, 'error');
     }
   };
