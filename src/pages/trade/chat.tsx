@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus, BsChevronLeft, BsChevronRight, BsCrosshair } from 'react-icons/bs';
+import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus, BsChevronLeft, BsChevronRight, BsCrosshair, BsBoxArrowRight, BsExclamationTriangle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format, subMonths, addMonths, startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -285,6 +285,17 @@ export const Chat: React.FC = () => {
         }
 
         if (clientUuid) receivedUuids.current.add(clientUuid);
+
+        // 서버에서 ERROR 응답이 오면 즉시 FAILED 처리
+        if (data.msgType === 'ERROR') {
+          const timeout = sendTimeouts.current.get(clientUuid!);
+          if (timeout) { clearTimeout(timeout); sendTimeouts.current.delete(clientUuid!); }
+          setMessages(prev => prev.map(m =>
+            m.clientUuid === clientUuid ? { ...m, status: 'FAILED' } : m
+          ));
+          showToast('메시지 전송에 실패했습니다. 잠시 후 재시도해주세요.', 'error');
+          return;
+        }
 
         setMessages(prev => {
           // clientUuid로 낙관적 메시지 찾기

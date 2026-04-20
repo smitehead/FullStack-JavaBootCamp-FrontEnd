@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { BsList } from 'react-icons/bs';
 
-import { BsExclamationTriangle, BsInfoCircle, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
+import { BsInfoCircle, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { BsCalendarCheck } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
@@ -117,14 +117,11 @@ export const NoticeDetail: React.FC = () => {
                   </span>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Warning Box */}
-          {notice.category === '점검' && (
-            <div className="mt-6 p-6 bg-amber-50 rounded-2xl border border-amber-100 flex items-start gap-4">
-              <BsExclamationTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-700 leading-relaxed">
+              {/* Separator Line */}
+              <div className="h-px bg-gray-200 my-6" />
+
+              <p className="text-sm text-gray-500 leading-relaxed">
                 경매 종료 시간이 점검 시간과 겹치는 물품의 경우, 점검 시간만큼 경매 종료 시간이 자동으로 연장될 예정입니다. 입찰 참여 시 이 점 유의하시기 바랍니다.
               </p>
             </div>
