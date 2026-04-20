@@ -146,7 +146,7 @@ export const NoticeList: React.FC = () => {
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-30"
+                className="p-2 border border-gray-100 rounded-2xl hover:bg-gray-50 transition-colors disabled:opacity-30"
               >
                 <BsChevronLeft className="w-4 h-4 text-gray-400" />
               </button>
@@ -154,7 +154,7 @@ export const NoticeList: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${page === currentPage
+                  className={`w-10 h-10 rounded-2xl text-sm font-semibold transition-all ${page === currentPage
                     ? 'bg-brand text-white border border-transparent shadow-lg shadow-brand/10'
                     : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
                     }`}
@@ -165,7 +165,7 @@ export const NoticeList: React.FC = () => {
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-30"
+                className="p-2 border border-gray-100 rounded-2xl hover:bg-gray-50 transition-colors disabled:opacity-30"
               >
                 <BsChevronRight className="w-4 h-4 text-gray-400" />
               </button>

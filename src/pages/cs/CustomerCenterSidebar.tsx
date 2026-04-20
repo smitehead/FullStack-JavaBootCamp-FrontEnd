@@ -24,11 +24,11 @@ export const CustomerCenterSidebar: React.FC = () => {
               to={item.path}
               className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${
                 isActive
-                  ? 'bg-red-50 text-red-900 border-r-2 border-red-500'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-red-50 text-red-600'
+                  : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-red-500' : ''}`} /> {item.label}
+              <Icon className="w-5 h-5 mr-3" /> {item.label}
             </Link>
           );
         })}

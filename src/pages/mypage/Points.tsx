@@ -135,7 +135,7 @@ export const Points: React.FC = () => {
         </div>
         <Link
           to="/settings?tab=card"
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-2xl hover:bg-gray-50 transition-all"
         >
           <BsCreditCard className="w-3.5 h-3.5" /> 카드 관리
         </Link>
@@ -152,10 +152,10 @@ export const Points: React.FC = () => {
             </h3>
           </div>
           <div className="flex gap-2">
-            <Link to="/points/charge" className="px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/10">
+            <Link to="/points/charge" className="px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/10">
               충전
             </Link>
-            <Link to="/points/withdraw" className="px-6 py-2.5 bg-white/10 border border-white/10 text-white text-sm font-bold rounded-xl hover:bg-white/20 transition-all">
+            <Link to="/points/withdraw" className="px-6 py-2.5 bg-white/10 border border-white/10 text-white text-sm font-bold rounded-2xl hover:bg-white/20 transition-all">
               출금
             </Link>
           </div>

@@ -441,20 +441,20 @@ export const MyPage: React.FC = () => {
         {/* Sidebar */}
         <div className="w-full md:w-64 flex-shrink-0">
           <nav className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <button onClick={() => setActiveTab('selling')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}>
-              <BsShop className={`w-5 h-5 mr-3 ${activeTab === 'selling' ? 'text-red-500' : ''}`} /> 판매 내역
+            <button onClick={() => setActiveTab('selling')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+              <BsShop className="w-5 h-5 mr-3" /> 판매 내역
             </button>
-            <button onClick={() => setActiveTab('bidding')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'bidding' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}>
-              <BsBag className={`w-5 h-5 mr-3 ${activeTab === 'bidding' ? 'text-red-500' : ''}`} /> 입찰 내역
+            <button onClick={() => setActiveTab('bidding')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'bidding' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+              <BsBag className="w-5 h-5 mr-3" /> 입찰 내역
             </button>
-            <button onClick={() => setActiveTab('purchased')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'purchased' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}>
-              <BsTrophy className={`w-5 h-5 mr-3 ${activeTab === 'purchased' ? 'text-red-500' : ''}`} /> 구매 내역
+            <button onClick={() => setActiveTab('purchased')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'purchased' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+              <BsTrophy className="w-5 h-5 mr-3" /> 구매 내역
             </button>
-            <button onClick={() => setActiveTab('wishlist')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'wishlist' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}>
-              <BsHeart className={`w-5 h-5 mr-3 ${activeTab === 'wishlist' ? 'text-red-500' : ''}`} /> 찜 목록
+            <button onClick={() => setActiveTab('wishlist')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'wishlist' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+              <BsHeart className="w-5 h-5 mr-3" /> 찜 목록
             </button>
-            <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}>
-              <BsPencilSquare className={`w-5 h-5 mr-3 ${activeTab === 'reviews' ? 'text-red-500' : ''}`} /> 리뷰 관리
+            <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+              <BsPencilSquare className="w-5 h-5 mr-3" /> 리뷰 관리
             </button>
             <Link
               to="/chat"
@@ -480,7 +480,7 @@ export const MyPage: React.FC = () => {
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 {(['all', 'active', 'ended', 'completed'] as const).map(filter => (
                   <button key={filter} onClick={() => setSellingFilter(filter)}
-                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${sellingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {filter === 'all' ? '전체' : filter === 'active' ? '경매중' : filter === 'ended' ? '경매종료' : '판매완료'}
                   </button>
                 ))}
@@ -491,7 +491,7 @@ export const MyPage: React.FC = () => {
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 {(['all', 'leader', 'outbid', 'lost'] as const).map(filter => (
                   <button key={filter} onClick={() => setBiddingFilter(filter)}
-                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${biddingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${biddingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {filter === 'all' ? '전체' : filter === 'leader' ? '상위입찰' : filter === 'outbid' ? '추월변동' : '낙찰실패'}
                   </button>
                 ))}

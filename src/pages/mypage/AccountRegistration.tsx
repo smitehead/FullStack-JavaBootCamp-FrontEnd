@@ -119,7 +119,7 @@ export const AccountRegistration: React.FC = () => {
                       key={bank.name}
                       type="button"
                       onClick={() => setSelectedBank(bank.name)}
-                      className="aspect-square flex flex-col items-center justify-center p-2 rounded-xl border border-gray-100 bg-gray-50 hover:border-gray-200 transition-all hover:bg-gray-100 active:scale-95"
+                      className="aspect-square flex flex-col items-center justify-center p-2 rounded-2xl border border-gray-100 bg-gray-50 hover:border-gray-200 transition-all hover:bg-gray-100 active:scale-95"
                     >
                       <div className={`w-8 h-8 rounded-full mb-2 flex items-center justify-center overflow-hidden ${bank.logo ? 'bg-white border border-gray-100' : 'bg-gray-200'}`}>
                         {bank.logo ? (
@@ -164,7 +164,7 @@ export const AccountRegistration: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedBank(null)}
-                    className="px-4 py-2 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
+                    className="px-4 py-2 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-2xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
                   >
                     변경
                   </button>
@@ -197,7 +197,7 @@ export const AccountRegistration: React.FC = () => {
                 </div>
 
                 <div className="pt-4">
-                  <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2">
+                  <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2">
                     {isSubmitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

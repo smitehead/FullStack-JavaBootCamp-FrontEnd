@@ -179,7 +179,7 @@ export const PointCharge: React.FC = () => {
               </div>
               <button
                 onClick={handleDeleteCard}
-                className="px-4 py-2 bg-brand/10 text-brand text-xs font-bold rounded-xl hover:bg-brand/20 transition-all"
+                className="px-4 py-2 bg-brand/10 text-brand text-xs font-bold rounded-2xl hover:bg-brand/20 transition-all"
               >
                 삭제
               </button>
@@ -199,7 +199,7 @@ export const PointCharge: React.FC = () => {
                 </div>
                 <button
                   onClick={() => navigate('/points/card-register')}
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all"
+                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-2xl hover:bg-indigo-700 transition-all"
                 >
                   카드 등록
                 </button>
@@ -239,7 +239,7 @@ export const PointCharge: React.FC = () => {
               <button
                 key={val}
                 onClick={() => setAmount((prev) => (Number(prev) + Number(val)).toString())}
-                className="py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold rounded-xl transition-all"
+                className="py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold rounded-2xl transition-all"
               >
                 +{Number(val).toLocaleString()}
               </button>
