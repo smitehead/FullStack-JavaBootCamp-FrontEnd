@@ -471,9 +471,8 @@ export const WonProductDetail: React.FC = () => {
                   )}
 
                   {isCanceled && (
-                    <div className="bg-red-50 border border-red-100 p-6 rounded-2xl text-center">
-                      <BsXCircle className="w-10 h-10 text-red-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
-                      <p className="text-sm font-bold text-red-500">거래가 취소되었습니다.</p>
+                    <div className="bg-gray-50 border border-gray-100 p-6 rounded-2xl text-center">
+                      <p className="text-sm font-bold text-gray-500">거래가 취소되었습니다.</p>
                     </div>
                   )}
                 </div>

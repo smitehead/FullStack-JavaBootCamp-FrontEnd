@@ -5,7 +5,7 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { AlertCircle } from 'lucide-react';
-import { BsXCircle, BsCheckCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill } from 'react-icons/bs';
+import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
 interface SellerResultDetail {
@@ -182,7 +182,7 @@ export const SellerAuctionResult: React.FC = () => {
               </section>
 
               <hr className="border-gray-100 mx-8" />
-              
+
               {/* 거래 정보 (배송지 또는 거래 장소) */}
               <section className="p-8">
                 {result.tradeType === '혼합' && (
@@ -292,31 +292,24 @@ export const SellerAuctionResult: React.FC = () => {
                         disabled
                         className="w-full py-5 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
                       >
-                        결제 진행 중 (구매 확정 대기)
+                        구매 확정 대기
                       </button>
                     </div>
                   )}
 
                   {isCompleted && (
-                    <>
-                      <div className="grid grid-cols-1 gap-3 mb-6">
-                        <button
-                          disabled
-                          className="w-full py-5 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
-                        >
-                          거래 완료
-                        </button>
-                      </div>
-                      <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl text-center">
-                        <BsCheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3 animate-in fade-in zoom-in duration-300" />
-                        <p className="text-sm font-bold text-emerald-600">구매자가 수령을 확인하여 거래가 완료되었습니다.</p>
-                      </div>
-                    </>
+                    <div className="grid grid-cols-1 gap-3">
+                      <button
+                        disabled
+                        className="w-full py-5 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
+                      >
+                        거래 완료
+                      </button>
+                    </div>
                   )}
 
                   {isCanceled && (
                     <div className="bg-gray-50 border border-gray-100 p-6 rounded-2xl text-center">
-                      <BsXCircle className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                       <p className="text-sm font-bold text-gray-500">거래가 취소되었습니다.</p>
                     </div>
                   )}

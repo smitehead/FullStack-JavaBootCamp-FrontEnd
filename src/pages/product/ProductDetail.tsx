@@ -308,13 +308,16 @@ export const ProductDetail: React.FC = () => {
   useEffect(() => {
     if (!product) return;
     const updateTime = () => {
-      const end = new Date(product.endTime).getTime();
-      const now = new Date().getTime();
-      const diff = end - now;
+      // 경매가 활성 상태가 아니거나 시간이 다 된 경우 종료 표시
+      const isEnded = product.status !== 'active' || new Date(product.endTime).getTime() <= Date.now();
 
-      if (diff <= 0) {
+      if (isEnded) {
         setTimeLeft('--:--:--');
       } else {
+        const end = new Date(product.endTime).getTime();
+        const now = new Date().getTime();
+        const diff = end - now;
+
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
@@ -451,7 +454,12 @@ export const ProductDetail: React.FC = () => {
         const detail = (e as CustomEvent).detail;
         if (String(detail.productNo) !== String(product.id)) return;
         setProduct((prev: Product | null | undefined) => prev ? { ...prev, status: 'completed' } : prev);
-        showToast('판매자의 사정으로 경매가 취소되었습니다.', 'error');
+
+        // 본인이 취소한 판매자인 경우 토스트 알림 생략
+        const isSeller = user && product && String(getMemberNo(user)) === product.seller.id.replace('user_', '');
+        if (!isSeller) {
+          showToast('판매자의 사정으로 경매가 취소되었습니다.', 'error');
+        }
       };
       window.addEventListener('sse:priceUpdate', onPriceUpdate);
       window.addEventListener('sse:pointUpdate', onPointUpdate);
@@ -637,9 +645,15 @@ export const ProductDetail: React.FC = () => {
       return;
     }
 
-    if (modalType === 'auto' && autoBidMaxAmount <= (product.currentPrice || 0)) {
-      showToast("'자동 입찰 한도'는 현재가보다 높아야 합니다.", 'error');
-      return;
+    if (modalType === 'auto') {
+      if (autoBidMaxAmount < (product.currentPrice || 0) + (product.minBidIncrement || 0)) {
+        showToast(`'자동 입찰 한도'는 최소 입찰 가능 금액(${( (product.currentPrice || 0) + (product.minBidIncrement || 0) ).toLocaleString()}원) 이상이어야 합니다.`, 'error');
+        return;
+      }
+      if (activeAutoBid && autoBidMaxAmount === activeAutoBid.maxPrice) {
+        showToast("현재 설정된 자동 입찰 한도와 동일한 금액입니다.", 'warning');
+        return;
+      }
     }
 
     if (amountToValidate > (user?.points || 0)) {
@@ -1540,7 +1554,7 @@ export const ProductDetail: React.FC = () => {
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
                     </div>
                     <p className="text-xs text-gray-400 mt-2 flex items-center">
-                      <BsInfoCircle className="w-3 h-3 mr-1" /> 설정한 금액까지 자동으로 상위 입찰을 진행합니다.
+                      <BsInfoCircle className="w-3 h-3 mr-1" /> 최소 {((product.currentPrice || 0) + (product.minBidIncrement || 0)).toLocaleString()}원 이상 설정 가능
                     </p>
                   </div>
                 )}
