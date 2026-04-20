@@ -480,7 +480,7 @@ export const MyPage: React.FC = () => {
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 {(['all', 'active', 'ended', 'completed'] as const).map(filter => (
                   <button key={filter} onClick={() => setSellingFilter(filter)}
-                    className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${sellingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {filter === 'all' ? '전체' : filter === 'active' ? '경매중' : filter === 'ended' ? '경매종료' : '판매완료'}
                   </button>
                 ))}
@@ -491,7 +491,7 @@ export const MyPage: React.FC = () => {
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 {(['all', 'leader', 'outbid', 'lost'] as const).map(filter => (
                   <button key={filter} onClick={() => setBiddingFilter(filter)}
-                    className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${biddingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${biddingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {filter === 'all' ? '전체' : filter === 'leader' ? '상위입찰' : filter === 'outbid' ? '추월변동' : '낙찰실패'}
                   </button>
                 ))}

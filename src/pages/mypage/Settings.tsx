@@ -419,8 +419,8 @@ export const Settings: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">
-      <div className="flex items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">계정 설정</h1>
+      <div className="flex items-center gap-4 mb-8">
+        <h1 className="text-xl font-bold text-gray-900 tracking-tight">계정 설정</h1>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
