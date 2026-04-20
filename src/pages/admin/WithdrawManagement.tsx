@@ -263,8 +263,8 @@ export const WithdrawManagement: React.FC = () => {
         </div>
 
         {(hasMore || isLoading) && (
-          <div ref={loaderRef} className="py-6 text-center text-gray-400 text-xs font-bold">
-            불러오는 중...
+          <div ref={loaderRef} className="flex justify-center py-6">
+            <div className="w-8 h-8 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
           </div>
         )}
       </div>

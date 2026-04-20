@@ -18,6 +18,7 @@ export const InquiryManagement: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('전체');
   const [lightboxUrls, setLightboxUrls] = useState<string[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const filteredInquiries = inquiries.filter(i => {
     const matchesSearch = i.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -40,10 +41,15 @@ export const InquiryManagement: React.FC = () => {
 
   const statusParam = activeTab === '전체' ? null : activeTab === '답변 대기중' ? 0 : 1;
   const fetchInquiries = async () => {
-    const res = await api.get('/admin/inquiries', {
-      params: { status: statusParam, page: 1, size: 50 }
-    });
-    setInquiries(res.data.content || []);
+    setIsLoading(true);
+    try {
+      const res = await api.get('/admin/inquiries', {
+        params: { status: statusParam, page: 1, size: 50 }
+      });
+      setInquiries(res.data.content || []);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => { fetchInquiries(); }, [activeTab]);
@@ -76,6 +82,12 @@ export const InquiryManagement: React.FC = () => {
   const getUserNickname = (inquiry: Inquiry) => {
     return inquiry.memberNickname || '알 수 없는 사용자';
   };
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
 
   return (
     <div className="flex h-[calc(100vh-140px)] space-x-6">

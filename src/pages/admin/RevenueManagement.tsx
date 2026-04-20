@@ -252,8 +252,8 @@ export const RevenueManagement: React.FC = () => {
           )}
 
           {isLoading && (
-            <div className="px-8 py-10 text-center text-gray-400 text-xs font-bold">
-              불러오는 중...
+            <div className="flex justify-center py-10">
+              <div className="w-8 h-8 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
             </div>
           )}
         </div>
