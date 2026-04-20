@@ -257,7 +257,7 @@ export const WonProductDetail: React.FC = () => {
                     <p className="text-sm text-gray-500 mb-4 line-clamp-1">{result.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">최종 낙찰가</span>
-                      <span className="text-2xl font-bold text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
+                      <span className="text-2xl font-bold text-gray-900">{result.finalPrice.toLocaleString()}원</span>
                     </div>
                   </div>
                 </div>
@@ -290,9 +290,6 @@ export const WonProductDetail: React.FC = () => {
                       <h3 className="text-lg font-bold text-gray-900">
                         {activeTransactionTab === 'face-to-face' ? '거래 방식 및 장소' : '배송지 정보'}
                       </h3>
-                      <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">
-                        {activeTransactionTab === 'face-to-face' ? '직거래' : '택배거래'}
-                      </span>
                     </div>
                     {isPending && activeTransactionTab === 'delivery' && (
                       <button
@@ -390,7 +387,7 @@ export const WonProductDetail: React.FC = () => {
 
                   <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
                     <span className="text-base font-bold text-gray-900">총 결제 금액</span>
-                    <span className="text-2xl font-bold text-[#FF5A5A]">{result.finalPrice.toLocaleString()}원</span>
+                    <span className="text-2xl font-bold text-gray-900">{result.finalPrice.toLocaleString()}원</span>
                   </div>
                 </div>
 

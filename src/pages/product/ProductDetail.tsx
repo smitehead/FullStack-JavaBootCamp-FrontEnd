@@ -944,7 +944,7 @@ export const ProductDetail: React.FC = () => {
             {!isFinished && hasBid && (
               <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
                 <div className={`flex items-center px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md ${isHighestBidder
-                  ? 'bg-emerald-600 text-white'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-brand text-white'
                   }`}>
                   <span className="text-xs font-semibold tracking-tight">

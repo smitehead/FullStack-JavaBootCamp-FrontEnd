@@ -5,7 +5,7 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { AlertCircle } from 'lucide-react';
-import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill } from 'react-icons/bs';
+import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill, BsPerson } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
 interface SellerResultDetail {
@@ -175,7 +175,7 @@ export const SellerAuctionResult: React.FC = () => {
                     <p className="text-sm text-gray-500 mb-4 line-clamp-1">{result.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">최종 낙찰가</span>
-                      <span className="text-2xl font-bold text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
+                      <span className="text-2xl font-bold text-gray-900">{result.finalPrice.toLocaleString()}원</span>
                     </div>
                   </div>
                 </div>
@@ -186,7 +186,7 @@ export const SellerAuctionResult: React.FC = () => {
               {/* 거래 정보 (배송지 또는 거래 장소) */}
               <section className="p-8">
                 {result.tradeType === '혼합' && (
-                  <div className="flex bg-gray-100 p-1 rounded-xl w-fit mb-4">
+                  <div className="flex bg-gray-100 p-1 rounded-2xl w-fit mb-4">
                     <button
                       onClick={() => setActiveTransactionTab('delivery')}
                       className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${activeTransactionTab === 'delivery' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
@@ -207,9 +207,6 @@ export const SellerAuctionResult: React.FC = () => {
                     <h3 className="text-lg font-bold text-gray-900">
                       {activeTransactionTab === 'face-to-face' ? '거래 방식 및 장소' : '배송지 정보'}
                     </h3>
-                    <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">
-                      {activeTransactionTab === 'face-to-face' ? '직거래' : '택배거래'}
-                    </span>
                   </div>
 
                   {activeTransactionTab === 'face-to-face' ? (
@@ -264,13 +261,13 @@ export const SellerAuctionResult: React.FC = () => {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-500 font-medium">플랫폼 이용료 (안심 결제 수수료 {feePercent})</span>
-                        <span className="text-rose-500 font-bold">- {fee.toLocaleString()} P</span>
+                        <span className="text-brand font-bold">- {fee.toLocaleString()} P</span>
                       </div>
                       <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
                         <span className="text-base font-bold text-gray-900">
                           {isCompleted ? '최종 정산 금액' : '최종 정산 예정 금액'}
                         </span>
-                        <span className="text-2xl font-bold text-emerald-600">{settlementAmount.toLocaleString()} P</span>
+                        <span className="text-2xl font-bold text-blue-500">{settlementAmount.toLocaleString()} P</span>
                       </div>
                     </div>
                   );
@@ -350,7 +347,14 @@ export const SellerAuctionResult: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-8 border-t border-white/10">
+                <div className="pt-8 border-t border-white/10 space-y-3">
+                  <button
+                    onClick={() => navigate(`/seller/${result.buyer.buyerNo}`)}
+                    className="w-full py-5 bg-white/10 text-white font-bold rounded-2xl hover:bg-white/20 transition-all flex items-center justify-center gap-2 active:scale-95 border border-white/10"
+                  >
+                    <BsPerson className="w-5 h-5" />
+                    프로필 보기
+                  </button>
                   <button
                     onClick={handleChatWithBuyer}
                     className="w-full py-5 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"

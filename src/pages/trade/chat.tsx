@@ -1017,7 +1017,7 @@ export const Chat: React.FC = () => {
                 <img src={room.otherUser.profileImage || '/images/default-profile.png'}
                   alt="" className="w-12 h-12 rounded-full flex-shrink-0 bg-gray-50 object-cover" />
                 <div className="flex-1 min-w-0 text-left">
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between mb-0.5">
                     <span className="font-bold text-sm text-gray-900 truncate">
                       {room.otherUser.nickname}
                     </span>
@@ -1025,6 +1025,9 @@ export const Chat: React.FC = () => {
                       {formatTime(room.lastMessageAt)}
                     </span>
                   </div>
+                  <p className="text-[10px] text-gray-400 truncate mb-1">
+                    {room.productTitle}
+                  </p>
                   <div className="flex items-center justify-between">
                     <p className="text-xs text-gray-500 truncate">{formatMessagePreview(room.lastMessage)}</p>
                     {room.unreadCount > 0 && (
@@ -1033,7 +1036,6 @@ export const Chat: React.FC = () => {
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-gray-400 truncate mt-0.5">{room.productTitle}</p>
                 </div>
               </button>
             ))
@@ -1074,13 +1076,13 @@ export const Chat: React.FC = () => {
                       onClick={() => { navigate(`/seller/${selectedRoom.otherUser.no}`); setShowMoreMenu(false); }}
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
-                      <BsPersonCircle className="w-4 h-4 mr-2.5 text-gray-400" /> 프로필 보기
+                      <BsPersonCircle className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </button>
                     <button
                       onClick={() => { navigate(`/products/${selectedRoom.productId}`); setShowMoreMenu(false); }}
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
-                      <BsBoxSeam className="w-4 h-4 mr-2.5 text-gray-400" /> 상품 보기
+                      <BsBoxSeam className="w-4 h-4 mr-2.5" /> 상품 보기
                     </button>
                     <button
                       onClick={() => {
@@ -1092,7 +1094,7 @@ export const Chat: React.FC = () => {
                       }}
                       className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
-                      <BsLayoutTextSidebar className="w-4 h-4 mr-2.5 text-gray-400" /> 거래 정보 보기
+                      <BsLayoutTextSidebar className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                     </button>
                     <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
                       <button
