@@ -524,7 +524,7 @@ export const WonProductDetail: React.FC = () => {
                   <div>
                     <p className="text-xs font-bold text-gray-900 mb-1">안전 거래 안내</p>
                     <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
-                      결제된 포인트는 LiveBid에서 안전하게 보관하며, 구매자가 '구매 확정'을 누른 후에 판매자에게 전달됩니다.
+                      배송 완료 후 7일이 지나면 자동으로 구매가 확정되어 판매자에게 정산됩니다.
                     </p>
                   </div>
                 </div>
