@@ -54,6 +54,9 @@ export const Chat: React.FC = () => {
   const [locationAddrRoad, setLocationAddrRoad] = useState('');
   const [locationAddrDetail, setLocationAddrDetail] = useState('');
 
+  // 채팅방 나가기 모달 상태
+  const [showLeaveRoomModal, setShowLeaveRoomModal] = useState(false);
+
   // 약속 잡기 모달 상태
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [apptSelectedDate, setApptSelectedDate] = useState<Date | null>(null);
@@ -902,6 +905,20 @@ export const Chat: React.FC = () => {
     }
   };
 
+  // 채팅방 나가기
+  const handleLeaveRoom = async () => {
+    if (!selectedRoom) return;
+    try {
+      await api.delete(`/chat/rooms/${selectedRoom.roomNo}`);
+      setSelectedRoom(null);
+      loadChatRooms();
+      fetchChats(); // 전역 목록(헤더 알림 등) 동기화
+      setShowLeaveRoomModal(false);
+    } catch {
+      showToast('채팅방 나가기에 실패했습니다.', 'error');
+    }
+  };
+
   // ──── 유틸 ────
   const scrollToBottom = () => {
     const container = messagesContainerRef.current;
@@ -1066,15 +1083,8 @@ export const Chat: React.FC = () => {
                     </button>
                     <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
                       <button
-                        onClick={async () => {
-                          if (window.confirm('이 채팅방을 나가시겠습니까?\n나가면 목록에서 삭제되지만 상대방은 계속 대화를 볼 수 있습니다.')) {
-                            try {
-                              await api.delete(`/chat/rooms/${selectedRoom.roomNo}`);
-                              setSelectedRoom(null);
-                              loadChatRooms();
-                              fetchChats(); // 전역 목록(헤더 알림 등) 동기화
-                            } catch { alert('삭제에 실패했습니다.'); }
-                          }
+                        onClick={() => {
+                          setShowLeaveRoomModal(true);
                           setShowMoreMenu(false);
                         }}
                         className="text-[11px] font-medium text-gray-400 hover:text-gray-600 transition-colors"
@@ -1403,48 +1413,49 @@ export const Chat: React.FC = () => {
 
       {/* 위치 공유 확인 모달 */}
       {showLocationModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 transform scale-100">
-            <div className="p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-6 text-left tracking-tight">이 주소가 확실하십니까?</h3>
-              <div className="bg-gray-50 rounded-2xl p-6 mb-6 border border-gray-100 min-h-[100px] flex flex-col justify-center">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowLocationModal(false)} />
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">이 주소가 확실하십니까?</h3>
+              <p className="text-sm text-gray-500 mb-6 font-medium leading-relaxed">
+                입력된 배송지 정보가 정확한지 한 번 더 확인해 주세요.
+              </p>
+              
+              <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100 min-h-[100px] flex flex-col justify-center">
                 {isAddressLoading ? (
                   <div className="flex justify-center">
                     <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : (
                   <div className="flex items-start gap-3">
-                    <BsGeoAltFill className="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">배송지 주소</p>
+                      <div className="flex items-center gap-1 mb-2">
+                        <BsGeoAltFill className="w-3 h-3 text-[#FF5A5A]" />
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">배송지</p>
+                      </div>
                       <p className="text-sm font-bold text-gray-900 leading-snug break-words">
                         {locationAddrRoad || locationAddress || '등록된 주소가 없습니다.'}
                       </p>
                       {locationAddrDetail && (
-                        <p className="text-xs text-gray-500 mt-1 break-words">{locationAddrDetail}</p>
+                        <p className="text-xs text-gray-500 mt-1.5 break-words font-medium">{locationAddrDetail}</p>
                       )}
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="px-1 mb-4">
-                <p className="text-[11px] font-medium text-gray-400">
-                  입력된 배송지 정보가 정확한지 한번더 확인해주세요
-                </p>
-              </div>
-
-              <div className="flex gap-3">
+              <div className="flex gap-3 w-full">
                 <button
                   onClick={() => navigate(`/won/${selectedRoom?.productId}`)}
-                  className="flex-1 py-4 bg-gray-100 text-gray-700 rounded-2xl text-sm font-bold hover:bg-gray-200 transition-all active:scale-95 whitespace-nowrap"
+                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
                 >
                   변경하기
                 </button>
                 <button
                   onClick={handleSendLocation}
                   disabled={isAddressLoading || !locationAddrRoad}
-                  className="flex-1 py-4 bg-brand text-white rounded-2xl text-sm font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/20 active:scale-95 disabled:opacity-50 whitespace-nowrap"
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-orange-100 text-sm disabled:opacity-50"
                 >
                   보내기
                 </button>
@@ -1455,6 +1466,35 @@ export const Chat: React.FC = () => {
               >
                 취소
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 채팅방 나가기 확인 모달 */}
+      {showLeaveRoomModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowLeaveRoomModal(false)} />
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">채팅방을 나가시겠습니까?</h3>
+              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                나가면 목록에서 삭제되지만 상대방은 계속 대화를 볼 수 있습니다.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setShowLeaveRoomModal(false)}
+                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleLeaveRoom}
+                  className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-100 text-sm"
+                >
+                  나가기
+                </button>
+              </div>
             </div>
           </div>
         </div>

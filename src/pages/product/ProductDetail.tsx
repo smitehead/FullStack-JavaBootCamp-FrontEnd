@@ -94,11 +94,17 @@ export const ProductDetail: React.FC = () => {
     }
   };
 
-  const handleQnaDelete = async (qnaNo: number) => {
-    if (!confirm('문의를 삭제하시겠습니까?')) return;
+  const handleQnaDelete = (qnaNo: number) => {
+    setTargetQnaNo(qnaNo);
+    setShowQnaDeleteModal(true);
+  };
+
+  const executeQnaDelete = async () => {
+    if (targetQnaNo === null) return;
     try {
-      await api.delete(`/products/${id}/qna/${qnaNo}`);
+      await api.delete(`/products/${id}/qna/${targetQnaNo}`);
       fetchQnaList();
+      setShowQnaDeleteModal(false);
     } catch {
       showToast('삭제에 실패했습니다.', 'error');
     }
@@ -117,11 +123,17 @@ export const ProductDetail: React.FC = () => {
     }
   };
 
-  const handleAnswerDelete = async (qnaNo: number) => {
-    if (!confirm('답변을 삭제하시겠습니까?')) return;
+  const handleAnswerDelete = (qnaNo: number) => {
+    setTargetQnaNo(qnaNo);
+    setShowAnswerDeleteModal(true);
+  };
+
+  const executeAnswerDelete = async () => {
+    if (targetQnaNo === null) return;
     try {
-      await api.delete(`/products/${id}/qna/${qnaNo}/answer`);
+      await api.delete(`/products/${id}/qna/${targetQnaNo}/answer`);
       fetchQnaList();
+      setShowAnswerDeleteModal(false);
     } catch {
       showToast('답변 삭제에 실패했습니다.', 'error');
     }
@@ -183,6 +195,11 @@ export const ProductDetail: React.FC = () => {
   // 입찰 취소 동의 상태
   const [agreedNoRebid, setAgreedNoRebid] = useState(false);
   const [agreedPenalty, setAgreedPenalty] = useState(false);
+
+  // 문의/답변 삭제 모달 상태
+  const [showQnaDeleteModal, setShowQnaDeleteModal] = useState(false);
+  const [showAnswerDeleteModal, setShowAnswerDeleteModal] = useState(false);
+  const [targetQnaNo, setTargetQnaNo] = useState<number | null>(null);
 
   useEffect(() => {
     if (!showBidCancelModal) {
@@ -2225,6 +2242,63 @@ export const ProductDetail: React.FC = () => {
                   className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-orange-100 text-sm flex items-center justify-center gap-2"
                 >
                   {isBidProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '설정하기'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* QnA Delete Confirmation Modal */}
+      {showQnaDeleteModal && (
+        <div className="fixed inset-0 z-[140] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowQnaDeleteModal(false)}></div>
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">문의를 삭제하시겠습니까?</h3>
+              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                삭제된 문의는 복구할 수 없습니다.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setShowQnaDeleteModal(false)}
+                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={executeQnaDelete}
+                  className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-100 text-sm"
+                >
+                  삭제하기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Answer Delete Confirmation Modal */}
+      {showAnswerDeleteModal && (
+        <div className="fixed inset-0 z-[140] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAnswerDeleteModal(false)}></div>
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">답변을 삭제하시겠습니까?</h3>
+              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                삭제된 답변은 복구할 수 없습니다.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setShowAnswerDeleteModal(false)}
+                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={executeAnswerDelete}
+                  className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-100 text-sm"
+                >
+                  삭제하기
                 </button>
               </div>
             </div>
