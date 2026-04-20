@@ -53,7 +53,6 @@ export const WonProductDetail: React.FC = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showReviewSuccess, setShowReviewSuccess] = useState(false);
 
-  const [imgIndex, setImgIndex] = useState(0);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [address, setAddress] = useState('');
   const [detailAddress, setDetailAddress] = useState('');
@@ -231,23 +230,7 @@ export const WonProductDetail: React.FC = () => {
                 <div className="flex gap-6">
                   {images.length > 0 && (
                     <div className="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-100">
-                      <img src={images[imgIndex] || undefined} alt={result.title} className="w-full h-full object-cover" />
-                      {images.length > 1 && (
-                        <>
-                          <button
-                            onClick={() => setImgIndex(i => Math.max(0, i - 1))}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-r"
-                          >
-                            <BsChevronLeft className="w-3 h-3" />
-                          </button>
-                          <button
-                            onClick={() => setImgIndex(i => Math.min(images.length - 1, i + 1))}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-l"
-                          >
-                            <BsChevronRight className="w-3 h-3" />
-                          </button>
-                        </>
-                      )}
+                      <img src={images[0] || undefined} alt={result.title} className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className="flex-1">
@@ -271,13 +254,13 @@ export const WonProductDetail: React.FC = () => {
                   <div className="flex bg-gray-100 p-1 rounded-2xl w-fit mb-4">
                     <button
                       onClick={() => setActiveTransactionTab('delivery')}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${activeTransactionTab === 'delivery' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${activeTransactionTab === 'delivery' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                       택배 거래
                     </button>
                     <button
                       onClick={() => setActiveTransactionTab('face-to-face')}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${activeTransactionTab === 'face-to-face' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${activeTransactionTab === 'face-to-face' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                       직거래
                     </button>
@@ -294,7 +277,7 @@ export const WonProductDetail: React.FC = () => {
                     {isPending && activeTransactionTab === 'delivery' && (
                       <button
                         onClick={() => setIsEditingAddress(!isEditingAddress)}
-                        className="text-xs font-bold text-indigo-600 hover:text-indigo-800"
+                        className="text-xs font-bold text-brand hover:text-brand-dark"
                       >
                         {isEditingAddress ? '저장' : '변경하기'}
                       </button>
@@ -305,7 +288,7 @@ export const WonProductDetail: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-start gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 flex-shrink-0">
-                          <BsGeoAltFill className="w-5 h-5 text-indigo-600" />
+                          <BsGeoAltFill className="w-5 h-5 text-brand" />
                         </div>
                         <div>
                           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">희망 거래 장소</p>
@@ -437,7 +420,7 @@ export const WonProductDetail: React.FC = () => {
                         <button
                           onClick={handleConfirmClick}
                           disabled={isProcessing}
-                          className="w-full h-[56px] bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50 flex items-center justify-center"
+                          className="w-full h-[56px] bg-brand hover:bg-brand-dark text-white font-bold rounded-2xl transition-all shadow-lg shadow-brand/10 active:scale-95 disabled:opacity-50 flex items-center justify-center"
                         >
                           {isProcessing ? '처리 중...' : '상품 수령 확인 (구매 확정)'}
                         </button>

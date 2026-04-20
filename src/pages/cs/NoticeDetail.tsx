@@ -18,24 +18,51 @@ interface NoticeItem {
   maintenanceEnd?: string;
 }
 
+interface NeighborNotice {
+  id: number;
+  title: string;
+}
+
 export const NoticeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [notice, setNotice] = useState<NoticeItem | null>(null);
+  const [prevNotice, setPrevNotice] = useState<NeighborNotice | null>(null);
+  const [nextNotice, setNextNotice] = useState<NeighborNotice | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchNotice = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const res = await api.get(`/notices/${id}`);
-        setNotice(res.data);
-      } catch {
+        const [detailRes, listRes] = await Promise.all([
+          api.get(`/notices/${id}`),
+          api.get('/notices/all')
+        ]);
+        
+        setNotice(detailRes.data);
+        
+        const allNotices = listRes.data || [];
+        const currentIndex = allNotices.findIndex((n: any) => n.id === Number(id));
+        
+        if (currentIndex !== -1) {
+          // 리스트가 보통 최신순(내림차순)으로 온다고 가정: currentIndex - 1이 다음글(더 최신), + 1이 이전글(더 과거)
+          // 하지만 UI 상 '이전글 > 다음글' 순서이므로, 논리적으로 이전(과거) -> 이후(미래) 순서로 배치
+          // Backend id가 큰 것이 최신이라면:
+          const prev = allNotices[currentIndex + 1]; // 이전글 (더 과거)
+          const next = allNotices[currentIndex - 1]; // 다음글 (더 최신)
+          
+          setPrevNotice(prev || null);
+          setNextNotice(next || null);
+        }
+      } catch (err) {
+        console.error("Notice fetch error:", err);
         setNotice(null);
       } finally {
         setLoading(false);
       }
     };
-    fetchNotice();
+    fetchData();
   }, [id]);
 
   if (loading) {
@@ -130,15 +157,41 @@ export const NoticeDetail: React.FC = () => {
 
         {/* Navigation Footer */}
         <div className="border-t border-gray-100">
-          <div className="p-6 flex items-center justify-center bg-gray-50/30">
-            <Link
-              to="/notice"
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all"
-            >
-              <BsList className="w-4 h-4" />
-              <BsChevronRight className="w-4 h-4 ml-2" />
-              목록으로
-            </Link>
+          <div className="p-8 flex items-center justify-center bg-gray-50/30">
+            {prevNotice && nextNotice ? (
+              <div className="flex items-center gap-6 w-full max-w-2xl mx-auto text-sm">
+                <Link
+                  to={`/notice/${prevNotice.id}`}
+                  className="flex-1 flex flex-col items-start group min-w-0"
+                >
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">이전글</span>
+                  <span className="text-gray-600 font-bold group-hover:text-brand transition-colors truncate w-full">
+                    {prevNotice.title}
+                  </span>
+                </Link>
+
+                <div className="shrink-0 w-px h-8 bg-gray-200 mx-2 hidden sm:block" />
+                <div className="shrink-0 text-gray-300 font-light text-xl mx-2">〉</div>
+
+                <Link
+                  to={`/notice/${nextNotice.id}`}
+                  className="flex-1 flex flex-col items-end group min-w-0 text-right"
+                >
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">다음글</span>
+                  <span className="text-gray-600 font-bold group-hover:text-brand transition-colors truncate w-full">
+                    {nextNotice.title}
+                  </span>
+                </Link>
+              </div>
+            ) : (
+              <Link
+                to="/notice"
+                className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all"
+              >
+                <BsList className="w-4 h-4" />
+                목록으로
+              </Link>
+            )}
           </div>
         </div>
       </div>

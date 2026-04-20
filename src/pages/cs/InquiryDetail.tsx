@@ -96,7 +96,7 @@ export const InquiryDetail: React.FC = () => {
                 {inquiry.type}
               </span>
               {inquiry.bugType && (
-                <span className="px-3 py-1 bg-blue-50 text-blue-500 text-xs font-bold rounded-full uppercase tracking-wider shadow-lg shadow-blue-500/10">
+                <span className="px-3 py-1 bg-blue-50 text-blue-500 text-xs font-bold rounded-full uppercase tracking-wider shadow-lg shadow-gray-100/50">
                   {inquiry.bugType}
                 </span>
               )}

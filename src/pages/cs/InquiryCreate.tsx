@@ -100,7 +100,10 @@ export const InquiryCreate: React.FC = () => {
               <button
                 key={cat}
                 type="button"
-                onClick={() => setType(cat)}
+                onClick={() => {
+                  setType(cat);
+                  if (cat !== '버그 신고') setBugType('');
+                }}
                 className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${type === cat
                   ? 'bg-brand border-brand text-white shadow-md shadow-brand/10 active:scale-95'
                   : 'bg-white border-gray-100 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900'

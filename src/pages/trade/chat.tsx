@@ -11,6 +11,7 @@ import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { showToast } from '@/components/toastService';
 import { formatMessagePreview } from '@/utils/chatUtils';
+import { ImageLightbox } from '@/components/ImageLightbox';
 
 // ──── 상수 ────
 const PAGE_SIZE = 20;
@@ -35,6 +36,11 @@ export const Chat: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
+  // 라이트박스 (이미지 뷰어)
+  const [lightboxImages, setLightboxImages] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // STOMP
   const stompClientRef = useRef<Client | null>(null);
@@ -1057,7 +1063,7 @@ export const Chat: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <button
                   onClick={() => navigate(`/seller/${selectedRoom.otherUser.no}`)}
-                  className="font-bold text-sm text-gray-900 truncate hover:text-[#FF5A5A] transition-colors block text-left"
+                  className="font-bold text-sm text-gray-900 truncate hover:text-gray-600 transition-colors block text-left"
                 >
                   {selectedRoom.otherUser.nickname}
                 </button>
@@ -1223,12 +1229,16 @@ export const Chat: React.FC = () => {
                             >
                               {msg.imageUrls.slice(0, 4).map((url, i) => (
                                 <div key={i} className="relative aspect-square">
-                                  <img
-                                    src={url}
-                                    alt=""
-                                    className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition-all"
-                                    onClick={() => window.open(url, '_blank')}
-                                  />
+                                    <img
+                                      src={url}
+                                      alt=""
+                                      className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition-all"
+                                      onClick={() => {
+                                        setLightboxImages(msg.imageUrls!);
+                                        setLightboxIndex(i);
+                                        setIsLightboxOpen(true);
+                                      }}
+                                    />
                                   {/* 4장 초과 시 마지막 칸에 +N 오버레이 */}
                                   {i === 3 && msg.imageUrls!.length > 4 && (
                                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold text-lg">
@@ -1715,6 +1725,15 @@ export const Chat: React.FC = () => {
           </div>
         );
       })()}
+      {/* 라이트박스 */}
+      {isLightboxOpen && (
+        <ImageLightbox
+          urls={lightboxImages}
+          index={lightboxIndex}
+          onClose={() => setIsLightboxOpen(false)}
+          onNav={(idx) => setLightboxIndex(idx)}
+        />
+      )}
     </div>
   );
 };

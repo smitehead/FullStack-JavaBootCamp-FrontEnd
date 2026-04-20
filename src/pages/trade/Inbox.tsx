@@ -207,11 +207,12 @@ export const Inbox: React.FC = () => {
                       {chat.otherUser.role === 'seller' ? '판매자' : '구매자'}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 truncate font-medium">{formatMessagePreview(chat.lastMessage)}</p>
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <BsBox2 className="w-3 h-3 text-gray-400" />
+                    <span className="text-xs text-gray-500 font-bold truncate">{chat.productTitle}</span>
+                  </div>
+                  <p className="text-sm text-gray-900 truncate font-semibold">{formatMessagePreview(chat.lastMessage)}</p>
                   <div className="flex items-center gap-2 mt-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                    <BsBox2 className="w-3 h-3" />
-                    <span className="truncate">{chat.productTitle}</span>
-                    <span className="mx-1">•</span>
                     <span>{new Date(chat.lastMessageAt).toLocaleDateString()}</span>
                   </div>
                 </div>
