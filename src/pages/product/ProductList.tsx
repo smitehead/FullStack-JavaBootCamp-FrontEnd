@@ -559,25 +559,25 @@ export const ProductList: React.FC = () => {
         <div className="bg-gray-50/50 border-t border-gray-100 p-4 flex items-center justify-between">
           <div className="flex flex-wrap gap-2">
             {largeCat && (
-              <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
+              <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>{CATEGORY_DATA.find(c => c.id === largeCat)?.name}</span>
                 <button onClick={() => removeFilter('large')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {mediumCat && (
-              <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
+              <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>{selectedMedium?.name}</span>
                 <button onClick={() => removeFilter('medium')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {smallCat && (
-              <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
+              <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>{selectedSmall?.name}</span>
                 <button onClick={() => removeFilter('small')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {(searchParams.get('minPrice') || searchParams.get('maxPrice')) && (
-              <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
+              <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>
                   {searchParams.get('minPrice') ? `${Number(searchParams.get('minPrice')).toLocaleString()}원` : '0원'} ~
                   {searchParams.get('maxPrice') ? `${Number(searchParams.get('maxPrice')).toLocaleString()}원` : '무제한'}
@@ -586,7 +586,7 @@ export const ProductList: React.FC = () => {
               </div>
             )}
             {(searchParams.get('city') || searchParams.get('district') || searchParams.get('neighborhood')) && (
-              <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
+              <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>
                   {LOCATION_DATA.find(l => l.short === searchParams.get('city') || l.name === searchParams.get('city'))?.short || searchParams.get('city')}
                   {searchParams.get('district') && ` ${searchParams.get('district')}`}
@@ -608,19 +608,19 @@ export const ProductList: React.FC = () => {
               </div>
             )}
             {delivery && (
-              <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
+              <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>택배거래</span>
                 <button onClick={() => removeFilter('delivery')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {faceToFace && (
-              <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
+              <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>대면거래</span>
                 <button onClick={() => removeFilter('face')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {searchParams.get('q') && (
-              <div className="flex items-center bg-white border border-brand/30 text-brand px-3 py-1 rounded-full text-xs font-medium">
+              <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <BsSearch className="w-3 h-3 mr-1" />
                 <span>"{searchParams.get('q')}"</span>
                 <button
