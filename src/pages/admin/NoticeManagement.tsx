@@ -55,12 +55,6 @@ export const NoticeManagement: React.FC = () => {
     fetchNotices();
   }, [fetchNotices]);
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
-    </div>
-  );
-
   const filteredNotices = notices.filter(
     (n) =>
       !n.isDeleted &&
@@ -83,6 +77,12 @@ export const NoticeManagement: React.FC = () => {
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
   }, [handleObserver]);
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
 
   const handleOpenModal = (notice?: NoticeItem) => {
     if (notice) {

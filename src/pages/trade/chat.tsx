@@ -1677,7 +1677,7 @@ export const Chat: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleApptPasteMyAddress}
-                      className="w-[56px] h-[56px] flex items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl text-gray-400 hover:text-[#FF5A5A] hover:bg-white hover:ring-2 hover:ring-[#FF5A5A]/20 transition-all shrink-0"
+                      className="p-2.5 text-gray-400 hover:text-[#FF5A5A] transition-all flex items-center justify-center shrink-0"
                       title="내 주소 불러오기"
                     >
                       <BsCrosshair className="w-5 h-5" />

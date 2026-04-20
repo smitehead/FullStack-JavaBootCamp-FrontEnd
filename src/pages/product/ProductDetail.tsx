@@ -328,8 +328,10 @@ export const ProductDetail: React.FC = () => {
       // 경매가 활성 상태가 아니거나 시간이 다 된 경우 종료 표시
       const isEnded = product.status !== 'active' || new Date(product.endTime).getTime() <= Date.now();
 
-      if (isEnded) {
-        setTimeLeft('--:--:--');
+      if (product.status === 'canceled') {
+        setTimeLeft('취소됨');
+      } else if (isEnded) {
+        setTimeLeft('종료');
       } else {
         const end = new Date(product.endTime).getTime();
         const now = new Date().getTime();
@@ -1555,7 +1557,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-sm font-bold text-gray-700">자동 입찰 한도</label>
                       {product.instantPrice ? (
-                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                        <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
                           즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
                         </span>
                       ) : null}
@@ -1592,7 +1594,7 @@ export const ProductDetail: React.FC = () => {
                     {product.instantPrice && (
                       <button
                         onClick={handleBuyout}
-                        className="flex-1 h-[56px] bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-[0.98] flex items-center justify-center"
+                        className="flex-1 h-[56px] bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-[0.98] flex items-center justify-center"
                       >
                         즉시 구매하기
                       </button>

@@ -114,11 +114,11 @@ export const InquiryList: React.FC = () => {
                         <h3 className="flex-1 text-sm text-gray-900 group-hover:underline underline-offset-4 transition-all line-clamp-1 font-bold">
                           {inquiry.title}
                         </h3>
-                        <div className="w-20 shrink-0 text-center">
+                        <div className="w-24 shrink-0 text-center">
                           {inquiry.status === 1 ? (
-                            <span className="px-2 py-0.5 bg-green-50 text-green-600 text-[10px] font-semibold rounded-md inline-block">답변완료</span>
+                            <span className="text-xs font-bold px-2 py-1 bg-green-50 text-green-600 rounded-md shadow-lg shadow-green-500/10 inline-block">답변완료</span>
                           ) : (
-                            <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-semibold rounded-md inline-block">답변대기</span>
+                            <span className="text-xs font-bold px-2 py-1 bg-amber-50 text-amber-600 rounded-md shadow-lg shadow-amber-500/10 inline-block">답변대기</span>
                           )}
                         </div>
                       </div>

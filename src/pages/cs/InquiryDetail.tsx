@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
-import { BsShieldCheck, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck, BsChevronLeft } from 'react-icons/bs';
+import { BsShieldCheck, BsClock, BsPerson, BsCalendarCheck, BsList } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
 import { Inquiry } from '@/types';
@@ -77,10 +77,15 @@ export const InquiryDetail: React.FC = () => {
   return (
     <div className="max-w-[1000px] mx-auto px-6 py-12">
       {/* Back Button */}
-      <Link to="/inquiry" className="inline-flex items-center gap-2 text-sm font-bold text-brand hover:text-brand-dark transition-colors mb-8">
-        <BsChevronLeft className="w-4 h-4" />
+      <button
+        onClick={() => navigate('/inquiry')}
+        className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8 group"
+      >
+        <svg className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
         문의 목록으로
-      </Link>
+      </button>
 
       <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
         {/* Header Section */}
@@ -96,16 +101,6 @@ export const InquiryDetail: React.FC = () => {
                 </span>
               )}
             </div>
-
-            {inquiry.status === 1 ? (
-              <div className="px-4 py-2 bg-green-50 text-green-600 rounded-full text-xs font-bold shadow-lg shadow-green-500/10">
-                답변 완료
-              </div>
-            ) : (
-              <div className="px-4 py-2 bg-amber-50 text-amber-600 rounded-full text-xs font-bold shadow-lg shadow-amber-500/10">
-                답변 대기중
-              </div>
-            )}
           </div>
 
           <h1 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">{inquiry.title}</h1>
@@ -203,9 +198,9 @@ export const InquiryDetail: React.FC = () => {
           <div className="p-6 flex items-center justify-center bg-gray-50/30">
             <Link
               to="/inquiry"
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all"
             >
-              <BsInfoCircle className="w-4 h-4" />
+              <BsList className="w-4 h-4" />
               목록으로
             </Link>
           </div>
