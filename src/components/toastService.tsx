@@ -58,7 +58,7 @@ export const showRebidToast = ({ productNo, title, price, image, navigate }: Reb
               <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
                 <BellRing className="w-4 h-4 text-blue-500" />
               </div>
-              <h4 className="text-sm font-black text-gray-900">자동 재입찰 알림</h4>
+              <h4 className="text-sm font-bold text-gray-900">자동 재입찰 알림</h4>
             </div>
             <button 
               onClick={(e) => {
@@ -87,7 +87,7 @@ export const showRebidToast = ({ productNo, title, price, image, navigate }: Reb
               <p className="text-xs font-bold text-gray-900 line-clamp-1 mb-1">{title}</p>
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">재입찰 완료 금액</span>
-                <span className="text-sm font-black text-blue-600">{price.toLocaleString()}원</span>
+                <span className="text-sm font-bold text-blue-600">{price.toLocaleString()}원</span>
               </div>
             </div>
           </div>

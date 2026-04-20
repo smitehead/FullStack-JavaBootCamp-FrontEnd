@@ -851,7 +851,7 @@ export const Settings: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <div className="py-12 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                <div className="py-12 text-center bg-gray-50 rounded-2xl border border-gray-200">
                   <p className="text-gray-400 font-medium">차단한 사용자가 없습니다.</p>
                 </div>
               )}

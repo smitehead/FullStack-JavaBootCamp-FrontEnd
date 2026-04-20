@@ -1152,7 +1152,7 @@ export const ProductDetail: React.FC = () => {
                 {isFinished ? (
                   <button
                     disabled
-                    className="w-full py-4 bg-gray-100 text-gray-400 font-black rounded-2xl cursor-not-allowed opacity-70 flex items-center justify-center"
+                    className="w-full py-4 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed opacity-70 flex items-center justify-center"
                   >
                     <span>경매 종료</span>
                   </button>
@@ -1408,7 +1408,7 @@ export const ProductDetail: React.FC = () => {
                               placeholder="답변을 입력하세요."
                               className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none"
                             />
-                            <button onClick={() => handleAnswerSubmit(qna.qnaNo)} className="bg-brand text-white px-4 py-2 rounded-2xl text-sm font-bold hover:bg-brand-dark">등록</button>
+                            <button onClick={() => handleAnswerSubmit(qna.qnaNo)} className="bg-brand text-white px-4 py-2 rounded-2xl text-sm font-semibold hover:bg-brand-dark">등록</button>
                             <button onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: false }))} className="text-sm text-gray-400 hover:text-gray-600 px-2">취소</button>
                           </div>
                         ) : (
@@ -1583,7 +1583,7 @@ export const ProductDetail: React.FC = () => {
                       setIsBidModalOpen(false);
                       setShowBidCancelModal(true);
                     }}
-                    className="w-full py-5 bg-gray-50 border-2 border-gray-100 text-gray-400 font-bold rounded-2xl hover:bg-[#FF5A5A] hover:text-white hover:border-[#FF5A5A] transition-all active:scale-[0.98]"
+                    className="w-full h-[56px] bg-gray-50 border-2 border-gray-100 text-gray-400 font-bold rounded-2xl hover:bg-[#FF5A5A] hover:text-white hover:border-[#FF5A5A] transition-all active:scale-[0.98] flex items-center justify-center"
                   >
                     입찰 취소하기
                   </button>
@@ -1592,14 +1592,14 @@ export const ProductDetail: React.FC = () => {
                     {product.instantPrice && (
                       <button
                         onClick={handleBuyout}
-                        className="flex-1 py-5 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-[0.98]"
+                        className="flex-1 h-[56px] bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-[0.98] flex items-center justify-center"
                       >
                         즉시 구매하기
                       </button>
                     )}
                     <button
                       onClick={handleBidSubmit}
-                      className="flex-1 py-5 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98]"
+                      className="flex-1 h-[56px] bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98] flex items-center justify-center"
                     >
                       입찰하기
                     </button>
@@ -1622,13 +1622,13 @@ export const ProductDetail: React.FC = () => {
                         showToast("자동 입찰이 취소되었습니다.", 'success');
                         setIsBidModalOpen(false);
                       }}
-                      className="flex-1 py-5 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98]"
+                      className="flex-1 h-[56px] bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98] flex items-center justify-center"
                     >
                       취소하기
                     </button>
                     <button
                       onClick={handleBidSubmit}
-                      className="flex-1 py-5 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98]"
+                      className="flex-1 h-[56px] bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98] flex items-center justify-center"
                     >
                       변경하기
                     </button>
@@ -1636,7 +1636,7 @@ export const ProductDetail: React.FC = () => {
                 ) : (
                   <button
                     onClick={handleBidSubmit}
-                    className="w-full py-5 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98]"
+                    className="w-full h-[56px] bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98] flex items-center justify-center"
                   >
                     자동 입찰 설정하기
                   </button>
@@ -1707,7 +1707,7 @@ export const ProductDetail: React.FC = () => {
             >
               <div className="p-8">
                 <div className="mb-8">
-                  <h3 className="text-2xl font-black text-gray-900 tracking-tight">경매 취소</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 tracking-tight">경매 취소</h3>
                 </div>
 
                 <div className="mb-2">
@@ -1743,16 +1743,16 @@ export const ProductDetail: React.FC = () => {
                       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                         <div className="flex items-center gap-2 mb-4">
                           <BsExclamationCircle className="w-4 h-4 text-red-500" />
-                          <p className="text-sm font-black text-gray-900">주의: 취소 패널티가 발생합니다</p>
+                          <p className="text-sm font-bold text-gray-900">주의: 취소 패널티가 발생합니다</p>
                         </div>
                         <ul className="space-y-3">
                           <li className="flex items-center gap-2 text-xs font-bold text-gray-600">
                             <div className="w-1 h-1 bg-gray-400 rounded-full" />
-                            매너온도 <span className="text-red-500 font-black">10점</span> 즉시 차감
+                            매너온도 <span className="text-red-500 font-bold">10점</span> 즉시 차감
                           </li>
                           <li className="flex items-center gap-2 text-xs font-bold text-gray-600">
                             <div className="w-1 h-1 bg-gray-400 rounded-full" />
-                            포인트 벌금: <span className="text-red-500 font-black">{Math.floor(product.currentPrice * 0.03).toLocaleString()}P (현재가의 3%)</span>
+                            포인트 벌금: <span className="text-red-500 font-bold">{Math.floor(product.currentPrice * 0.03).toLocaleString()}P (현재가의 3%)</span>
                           </li>
                         </ul>
                       </div>
@@ -1787,7 +1787,7 @@ export const ProductDetail: React.FC = () => {
                       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                         <div className="flex items-center gap-2 mb-3">
                           <BsExclamationCircle className="w-4 h-4 text-brand" />
-                          <p className="text-sm font-black text-gray-900">마감 임박 (12시간 이내)</p>
+                          <p className="text-sm font-bold text-gray-900">마감 임박 (12시간 이내)</p>
                         </div>
                         <p className="text-xs text-gray-600 leading-relaxed font-bold">
                           경매 종료가 얼마 남지 않아 판매자가 직접 취소할 수 없습니다.
@@ -1829,7 +1829,7 @@ export const ProductDetail: React.FC = () => {
             <div className="p-8">
               {/* 헤더 */}
               <div className="flex flex-col mb-8 text-left">
-                <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-none">입찰 취소</h3>
+                <h3 className="text-2xl font-bold text-gray-900 tracking-tight leading-none">입찰 취소</h3>
               </div>
 
               {/* 위약금 및 정보 섹션 */}
@@ -1859,19 +1859,19 @@ export const ProductDetail: React.FC = () => {
                     <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                       <div className="flex items-center gap-2 mb-4">
                         <BsExclamationCircle className="w-4 h-4 text-red-500" />
-                        <p className="text-sm font-black text-gray-900">취소 패널티 안내</p>
+                        <p className="text-sm font-bold text-gray-900">취소 패널티 안내</p>
                       </div>
                       <ul className="space-y-3">
                         <li className="flex items-center justify-between text-xs font-bold text-gray-600">
                           <span>현재 입찰가</span>
-                          <span className="text-gray-900 font-black">{(product.currentPrice || 0).toLocaleString()} P</span>
+                          <span className="text-gray-900 font-bold">{(product.currentPrice || 0).toLocaleString()} P</span>
                         </li>
                         <li className="flex items-center justify-between text-xs font-bold text-gray-600">
                           <span>취소 위약금 (5%)</span>
-                          <span className="text-red-500 font-black">-{penalty.toLocaleString()} P</span>
+                          <span className="text-red-500 font-bold">-{penalty.toLocaleString()} P</span>
                         </li>
                         <div className="h-px bg-gray-200 my-1" />
-                        <li className="flex items-center justify-between text-base font-black">
+                        <li className="flex items-center justify-between text-base font-bold">
                           <span className="text-gray-900 font-bold text-xs">최종 반환 금액</span>
                           <span className="text-gray-900 tracking-tight">{refundAmount.toLocaleString()} P</span>
                         </li>
@@ -1981,7 +1981,7 @@ export const ProductDetail: React.FC = () => {
             >
               <div className="p-8">
                 <div className="mb-8">
-                  <h3 className="text-2xl font-black text-gray-900 tracking-tight">입찰 참여 전 확인사항</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 tracking-tight">입찰 참여 전 확인사항</h3>
                 </div>
 
                 {/* 약관 내용 박스 */}
@@ -1990,15 +1990,15 @@ export const ProductDetail: React.FC = () => {
                   <ul className="space-y-3">
                     <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
                       <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
-                      <span>입찰가는 현재 최고가보다 <span className="text-gray-900 font-black">높아야</span> 하며, 한 번 제출된 입찰은 취소 시 <span className="text-red-500 font-black">위약금(5%)</span>이 발생합니다.</span>
+                      <span>입찰가는 현재 최고가보다 <span className="text-gray-900 font-bold">높아야</span> 하며, 한 번 제출된 입찰은 취소 시 <span className="text-red-500 font-bold">위약금(5%)</span>이 발생합니다.</span>
                     </li>
                     <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
                       <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
-                      <span>경매 마감 <span className="text-gray-900 font-black">12시간 이내</span>에는 입찰 취소가 불가합니다.</span>
+                      <span>경매 마감 <span className="text-gray-900 font-bold">12시간 이내</span>에는 입찰 취소가 불가합니다.</span>
                     </li>
                     <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
                       <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
-                      <span>낙찰 후 <span className="text-gray-900 font-black">12시간 이내</span>에 결제를 완료하지 않으면 낙찰이 취소되고 차순위 입찰자에게 권한이 이전됩니다.</span>
+                      <span>낙찰 후 <span className="text-gray-900 font-bold">12시간 이내</span>에 결제를 완료하지 않으면 낙찰이 취소되고 차순위 입찰자에게 권한이 이전됩니다.</span>
                     </li>
                     <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
                       <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
@@ -2037,13 +2037,13 @@ export const ProductDetail: React.FC = () => {
                 <div className="flex gap-3">
                   <button
                     onClick={handleBidTermsClose}
-                    className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95"
+                    className="flex-1 h-[56px] border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 flex items-center justify-center"
                   >
                     뒤로가기
                   </button>
                   <button
                     onClick={handleBidTermsConfirm}
-                    className={`flex-1 py-4 font-bold rounded-2xl transition-all active:scale-95 bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100 ${isConfirming ? 'animate-pulse' : ''
+                    className={`flex-1 h-[56px] font-bold rounded-2xl transition-all active:scale-95 bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100 flex items-center justify-center ${isConfirming ? 'animate-pulse' : ''
                       }`}
                   >
                     {isConfirming ? '한 번 더 탭하여 확인' : '확인 및 입찰하기'}
