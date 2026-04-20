@@ -288,6 +288,7 @@ export const Chat: React.FC = () => {
 
         // 서버에서 ERROR 응답이 오면 즉시 FAILED 처리
         if (data.msgType === 'ERROR') {
+          console.error('[Chat] 서버 메시지 처리 오류:', data.content);
           const timeout = sendTimeouts.current.get(clientUuid!);
           if (timeout) { clearTimeout(timeout); sendTimeouts.current.delete(clientUuid!); }
           setMessages(prev => prev.map(m =>
@@ -1068,18 +1069,18 @@ export const Chat: React.FC = () => {
                   <BsThreeDotsVertical className="w-5 h-5" />
                 </button>
                 {showMoreMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 opacity-100 visible transition-all duration-200 transform origin-top-right">
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
                     <button
                       onClick={() => { navigate(`/seller/${selectedRoom.otherUser.no}`); setShowMoreMenu(false); }}
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
-                      <BsPersonCircle className="w-4 h-4 mr-2.5" /> 프로필 보기
+                      <BsPersonCircle className="w-4 h-4 mr-2.5 text-gray-400" /> 프로필 보기
                     </button>
                     <button
                       onClick={() => { navigate(`/products/${selectedRoom.productId}`); setShowMoreMenu(false); }}
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
-                      <BsBoxSeam className="w-4 h-4 mr-2.5" /> 상품 보기
+                      <BsBoxSeam className="w-4 h-4 mr-2.5 text-gray-400" /> 상품 보기
                     </button>
                     <button
                       onClick={() => {
@@ -1089,9 +1090,9 @@ export const Chat: React.FC = () => {
                         navigate(targetUrl);
                         setShowMoreMenu(false);
                       }}
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
-                      <BsLayoutTextSidebar className="w-4 h-4 mr-2.5" /> 거래 정보 보기
+                      <BsLayoutTextSidebar className="w-4 h-4 mr-2.5 text-gray-400" /> 거래 정보 보기
                     </button>
                     <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
                       <button

@@ -78,9 +78,9 @@ export const NoticeDetail: React.FC = () => {
         <div className="p-10 border-b border-gray-50">
           <div className="flex items-center gap-2 mb-4">
             <span className={`px-3 py-1 text-xs font-bold rounded-full shadow-lg shadow-gray-100/50 ${notice.category === '점검' ? 'bg-blue-50 text-blue-500' :
-                notice.category === '업데이트' ? 'bg-green-50 text-green-500' :
-                  notice.category === '이벤트' ? 'bg-purple-50 text-purple-500' :
-                    'bg-gray-50 text-gray-500'
+              notice.category === '업데이트' ? 'bg-green-50 text-green-500' :
+                notice.category === '이벤트' ? 'bg-purple-50 text-purple-500' :
+                  'bg-gray-50 text-gray-500'
               }`}>
               {notice.category}
             </span>
@@ -122,7 +122,7 @@ export const NoticeDetail: React.FC = () => {
               <div className="h-px bg-gray-200 my-6" />
 
               <p className="text-sm text-gray-500 leading-relaxed">
-                경매 종료 시간이 점검 시간과 겹치는 물품의 경우, 점검 시간만큼 경매 종료 시간이 자동으로 연장될 예정입니다. 입찰 참여 시 이 점 유의하시기 바랍니다.
+                경매 종료 시간이 점검 시간과 겹치는 물품의 경우, 점검 시간만큼 경매 종료 시간이 자동으로 연장될 예정입니다.<br /> 입찰 참여 시 이 점 유의하시기 바랍니다.
               </p>
             </div>
           )}
