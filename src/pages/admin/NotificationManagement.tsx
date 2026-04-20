@@ -22,17 +22,21 @@ export const NotificationManagement: React.FC = () => {
   const [message, setMessage] = useState('');
   const [link, setLink] = useState('');
   const [type, setType] = useState('시스템');
+  const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
 
   const fetchRecentNotifications = async () => {
+    setIsLoading(true);
     try {
       const res = await api.get('/admin/notifications/recent');
       setRecentNotifications(res.data);
     } catch (err) {
       console.error('알림 내역 조회 실패:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,6 +89,12 @@ export const NotificationManagement: React.FC = () => {
     { value: '활동', label: '활동' },
     { value: '입찰', label: '입찰' },
   ];
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
 
   return (
     <div className="space-y-6">

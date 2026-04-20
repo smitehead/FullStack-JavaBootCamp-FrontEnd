@@ -246,7 +246,7 @@ export const Points: React.FC = () => {
               ))}
               {hasMore && (
                 <div ref={loaderRef} className="py-8 flex justify-center">
-                  <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-brand/20 border-t-brand rounded-full animate-spin" />
                 </div>
               )}
             </div>

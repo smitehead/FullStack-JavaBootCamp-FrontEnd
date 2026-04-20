@@ -376,7 +376,7 @@ export const MyPage: React.FC = () => {
             </div>
             <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-indigo-600 hover:text-white transition-all duration-300 border border-gray-100 disabled:opacity-50">
               {uploadingProfile
-                ? <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                ? <div className="w-5 h-5 border-2 border-brand/20 border-t-brand rounded-full animate-spin" />
                 : <BsGear className="w-5 h-5" />
               }
             </button>
@@ -521,7 +521,7 @@ export const MyPage: React.FC = () => {
 
           {loading ? (
             <div className="flex justify-center py-20">
-              <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
             </div>
           ) : (
             <>

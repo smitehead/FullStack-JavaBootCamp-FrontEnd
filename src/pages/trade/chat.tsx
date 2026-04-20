@@ -1437,7 +1437,7 @@ export const Chat: React.FC = () => {
               <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100 min-h-[100px] flex flex-col justify-center">
                 {isAddressLoading ? (
                   <div className="flex justify-center">
-                    <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-6 h-6 border-2 border-brand/20 border-t-brand rounded-full animate-spin" />
                   </div>
                 ) : (
                   <div className="flex items-start gap-3">

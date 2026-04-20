@@ -27,6 +27,7 @@ export const NoticeManagement: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingNotice, setEditingNotice] = useState<NoticeItem | null>(null);
   const [noticeToDelete, setNoticeToDelete] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -39,17 +40,26 @@ export const NoticeManagement: React.FC = () => {
   const [maintenanceEnd, setMaintenanceEnd] = useState("");
 
   const fetchNotices = useCallback(async () => {
+    setIsLoading(true);
     try {
       const res = await api.get("/notices/all");
       setNotices(res.data || []);
     } catch {
       showToast("공지사항 목록을 불러오지 못했습니다.", "error");
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
     fetchNotices();
   }, [fetchNotices]);
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
 
   const filteredNotices = notices.filter(
     (n) =>

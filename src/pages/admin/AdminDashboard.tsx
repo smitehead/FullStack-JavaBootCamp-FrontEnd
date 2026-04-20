@@ -36,6 +36,7 @@ interface InquiryItem {
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { reports } = useAppContext();
+  const [isLoading, setIsLoading] = useState(true);
   const [unprocessedWithdraws, setUnprocessedWithdraws] = useState(0);
   const [unprocessedInquiries, setUnprocessedInquiries] = useState(0);
   const [recentNotices, setRecentNotices] = useState<NoticeItem[]>([]);
@@ -43,37 +44,19 @@ export const AdminDashboard: React.FC = () => {
   const [popularCategories, setPopularCategories] = useState<CategoryStat[]>([]);
 
   useEffect(() => {
-    // 미처리 출금 건수 조회
-    api.get('/admin/withdraws', { params: { status: '신청', size: 1 } })
-      .then(res => setUnprocessedWithdraws(res.data.totalElements || 0))
-      .catch(() => { });
-
-    // 최근 공지사항 조회
-    api.get('/notices/all')
-      .then(res => setRecentNotices((res.data || []).slice(0, 5)))
-      .catch(() => { });
-
-    // 미처리 문의 건수 및 최근 문의 조회
-    api.get('/admin/inquiries', { params: { status: 0, size: 5 } })
-      .then(res => {
-        setUnprocessedInquiries(res.data.totalElements || 0);
-        setRecentInquiries(res.data.content || []);
-      })
-      .catch(() => { });
-
-    // 대분류별 상품 건수 조회
-    api.get('/admin/products/category-stats')
-      .then(res => {
-        setPopularCategories(
-          (res.data || []).map((item: { name: string; count: number }, index: number) => ({
-            name: item.name,
-            count: Number(item.count),
-            color: PALETTE[index % PALETTE.length],
-          }))
-        );
-      })
-      .catch(() => { });
+    Promise.all([
+      api.get('/admin/withdraws', { params: { status: '신청', size: 1 } }).then(res => setUnprocessedWithdraws(res.data.totalElements || 0)).catch(() => {}),
+      api.get('/notices/all').then(res => setRecentNotices((res.data || []).slice(0, 5))).catch(() => {}),
+      api.get('/admin/inquiries', { params: { status: 0, size: 5 } }).then(res => { setUnprocessedInquiries(res.data.totalElements || 0); setRecentInquiries(res.data.content || []); }).catch(() => {}),
+      api.get('/admin/products/category-stats').then(res => { setPopularCategories((res.data || []).map((item: { name: string; count: number }, index: number) => ({ name: item.name, count: Number(item.count), color: PALETTE[index % PALETTE.length] }))); }).catch(() => {}),
+    ]).finally(() => setIsLoading(false));
   }, []);
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
 
   const unprocessedReports = reports.filter(r => r.status === 'pending').length;
 
