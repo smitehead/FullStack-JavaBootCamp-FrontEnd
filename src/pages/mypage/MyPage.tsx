@@ -100,6 +100,19 @@ export const MyPage: React.FC = () => {
   const [wishlistProducts, setWishlistProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // 탭별 페이징 상태
+  const [sellingPage, setSellingPage] = useState(1);
+  const [sellingTotalPages, setSellingTotalPages] = useState(1);
+  const [sellingTotal, setSellingTotal] = useState(0);
+  const [biddingPage, setBiddingPage] = useState(1);
+  const [biddingTotalPages, setBiddingTotalPages] = useState(1);
+  const [biddingTotal, setBiddingTotal] = useState(0);
+  const [purchasedPage, setPurchasedPage] = useState(1);
+  const [purchasedTotalPages, setPurchasedTotalPages] = useState(1);
+  const [wishlistPage, setWishlistPage] = useState(1);
+  const [wishlistTotalPages, setWishlistTotalPages] = useState(1);
+  const [wishlistTotal, setWishlistTotal] = useState(0);
+
   // SSE 실시간 입찰 상태 오버라이드: { [productId]: 'outbid' | 'bidding' }
   const [bidStatusOverrides, setBidStatusOverrides] = useState<Record<string, string>>({});
   const biddingProductsRef = useRef(biddingProducts);
@@ -156,11 +169,13 @@ export const MyPage: React.FC = () => {
   const triggerFileInput = () => fileInputRef.current?.click();
 
   // 데이터 로딩
-  const fetchSellingProducts = useCallback(async () => {
+  const fetchSellingProducts = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const res = await api.get('/products/my-selling');
-      setSellingProducts((res.data || []).map(mapToProduct));
+      const res = await api.get('/products/my-selling', { params: { page, size: 6 } });
+      setSellingProducts((res.data.content || []).map(mapToProduct));
+      setSellingTotalPages(res.data.totalPages || 1);
+      setSellingTotal(res.data.totalElements || 0);
     } catch (err) {
       console.error('판매 목록 조회 실패', err);
     } finally {
@@ -168,12 +183,14 @@ export const MyPage: React.FC = () => {
     }
   }, []);
 
-  const fetchBiddingProducts = useCallback(async () => {
+  const fetchBiddingProducts = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const res = await api.get('/products/my-bidding');
-      const products = (res.data || []).map(mapToProduct);
+      const res = await api.get('/products/my-bidding', { params: { page, size: 6 } });
+      const products = (res.data.content || []).map(mapToProduct);
       setBiddingProducts(products);
+      setBiddingTotalPages(res.data.totalPages || 1);
+      setBiddingTotal(res.data.totalElements || 0);
       return products;
     } catch (err) {
       console.error('입찰 목록 조회 실패', err);
@@ -183,11 +200,12 @@ export const MyPage: React.FC = () => {
     }
   }, []);
 
-  const fetchPurchasedProducts = useCallback(async () => {
+  const fetchPurchasedProducts = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const res = await api.get('/products/my-purchased');
-      setPurchasedProducts((res.data || []).map(mapToProduct));
+      const res = await api.get('/products/my-purchased', { params: { page, size: 6 } });
+      setPurchasedProducts((res.data.content || []).map(mapToProduct));
+      setPurchasedTotalPages(res.data.totalPages || 1);
     } catch (err) {
       console.error('구매 목록 조회 실패', err);
     } finally {
@@ -195,11 +213,13 @@ export const MyPage: React.FC = () => {
     }
   }, []);
 
-  const fetchWishlistProducts = useCallback(async () => {
+  const fetchWishlistProducts = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const res = await api.get('/wishlists/my');
-      setWishlistProducts((res.data || []).map(mapToProduct));
+      const res = await api.get('/wishlists/my', { params: { page, size: 6 } });
+      setWishlistProducts((res.data.content || []).map(mapToProduct));
+      setWishlistTotalPages(res.data.totalPages || 1);
+      setWishlistTotal(res.data.totalElements || 0);
     } catch (err) {
       console.error('찜 목록 조회 실패', err);
     } finally {
@@ -207,20 +227,20 @@ export const MyPage: React.FC = () => {
     }
   }, []);
 
-  // 로그인 시 카운트 표시용 사전 로드 (탭 클릭 전에도 갯수 표시)
+  // 로그인 시 카운트 표시용 사전 로드
   useEffect(() => {
     if (!user) return;
-    fetchBiddingProducts();
-    fetchWishlistProducts();
+    fetchBiddingProducts(1);
+    fetchWishlistProducts(1);
   }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 탭 변경 시 해당 데이터 로드
+  // 탭 변경 시 페이지 리셋 후 데이터 로드
   useEffect(() => {
     if (!user) return;
-    if (activeTab === 'selling') fetchSellingProducts();
-    else if (activeTab === 'bidding') { fetchBiddingProducts(); setBidStatusOverrides({}); }
-    else if (activeTab === 'purchased') fetchPurchasedProducts();
-    else if (activeTab === 'wishlist') fetchWishlistProducts();
+    if (activeTab === 'selling') { setSellingPage(1); fetchSellingProducts(1); }
+    else if (activeTab === 'bidding') { setBiddingPage(1); fetchBiddingProducts(1); setBidStatusOverrides({}); }
+    else if (activeTab === 'purchased') { setPurchasedPage(1); fetchPurchasedProducts(1); }
+    else if (activeTab === 'wishlist') { setWishlistPage(1); fetchWishlistProducts(1); }
   }, [activeTab, user, fetchSellingProducts, fetchBiddingProducts, fetchPurchasedProducts, fetchWishlistProducts]);
 
   // 입찰 내역 SSE 실시간 상태 업데이트
@@ -258,20 +278,20 @@ export const MyPage: React.FC = () => {
 
     const onPointUpdate = () => {
       // 포인트 변동 후 서버 재조회 — 서버가 현재 최고입찰자 여부를 정확히 반환하므로 오버라이드 전체 해제
-      fetchBiddingProducts().then(() => setBidStatusOverrides({}));
+      fetchBiddingProducts(biddingPage).then(() => setBidStatusOverrides({}));
     };
 
     const onNotification = (e: Event) => {
       const noti = (e as CustomEvent).detail as { type?: string };
       // 낙찰/입찰 관련 알림 → 경매 종료 후 낙찰성공/실패 뱃지 즉시 반영
       if (noti?.type === 'bid') {
-        fetchBiddingProducts().then(() => setBidStatusOverrides({}));
+        fetchBiddingProducts(biddingPage).then(() => setBidStatusOverrides({}));
       }
     };
 
     const onReconnected = () => {
       // SSE 재연결 시 누락된 이벤트 보정 — 서버에서 최신 상태 재조회
-      fetchBiddingProducts().then(() => setBidStatusOverrides({}));
+      fetchBiddingProducts(biddingPage).then(() => setBidStatusOverrides({}));
     };
 
     window.addEventListener('sse:priceUpdate', onPriceUpdate);
@@ -394,7 +414,7 @@ export const MyPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">입찰내역</p>
-                    <p className="text-lg font-bold text-gray-900">{biddingProducts.length}<span className="text-xs font-medium ml-0.5">건</span></p>
+                    <p className="text-lg font-bold text-gray-900">{biddingTotal}<span className="text-xs font-medium ml-0.5">건</span></p>
                   </div>
                 </button>
                 <button onClick={() => setActiveTab('wishlist')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group text-left">
@@ -403,7 +423,7 @@ export const MyPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">찜목록</p>
-                    <p className="text-lg font-bold text-gray-900">{wishlistProducts.length}<span className="text-xs font-medium ml-0.5">개</span></p>
+                    <p className="text-lg font-bold text-gray-900">{wishlistTotal}<span className="text-xs font-medium ml-0.5">개</span></p>
                   </div>
                 </button>
               </div>
@@ -577,6 +597,20 @@ export const MyPage: React.FC = () => {
               )}
               {activeTab === 'purchased' && purchasedProducts.length === 0 && <EmptyState message="구매 완료된 상품이 없습니다." />}
               {activeTab === 'wishlist' && wishlistProducts.length === 0 && <EmptyState message="찜한 상품이 없습니다." />}
+
+              {/* 페이지네이션 */}
+              {activeTab === 'selling' && sellingTotalPages > 1 && (
+                <Pagination currentPage={sellingPage} totalPages={sellingTotalPages} onPageChange={(p) => { setSellingPage(p); fetchSellingProducts(p); }} />
+              )}
+              {activeTab === 'bidding' && biddingTotalPages > 1 && (
+                <Pagination currentPage={biddingPage} totalPages={biddingTotalPages} onPageChange={(p) => { setBiddingPage(p); fetchBiddingProducts(p); setBidStatusOverrides({}); }} />
+              )}
+              {activeTab === 'purchased' && purchasedTotalPages > 1 && (
+                <Pagination currentPage={purchasedPage} totalPages={purchasedTotalPages} onPageChange={(p) => { setPurchasedPage(p); fetchPurchasedProducts(p); }} />
+              )}
+              {activeTab === 'wishlist' && wishlistTotalPages > 1 && (
+                <Pagination currentPage={wishlistPage} totalPages={wishlistTotalPages} onPageChange={(p) => { setWishlistPage(p); fetchWishlistProducts(p); }} />
+              )}
               {activeTab === 'reviews' && (
                 <div className="flex flex-col gap-8">
                   {/* 태그 집계 */}
@@ -668,5 +702,27 @@ const EmptyState = ({ message }: { message: string }) => (
   <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-500">
     <BsBox2 className="w-12 h-12 mx-auto mb-4 text-gray-300" />
     <p>{message}</p>
+  </div>
+);
+
+const Pagination = ({ currentPage, totalPages, onPageChange }: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) => (
+  <div className="flex items-center justify-center gap-1 mt-8">
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+      <button
+        key={p}
+        onClick={() => onPageChange(p)}
+        className={`w-9 h-9 text-sm font-bold rounded-xl transition-colors ${
+          p === currentPage
+            ? 'bg-red-500 text-white shadow-sm'
+            : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'
+        }`}
+      >
+        {p}
+      </button>
+    ))}
   </div>
 );
