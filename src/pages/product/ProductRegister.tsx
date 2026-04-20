@@ -592,7 +592,7 @@ export const ProductRegister: React.FC = () => {
                 <button
                   type="button"
                   onClick={openPostcode}
-                  className="px-6 py-4 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors whitespace-nowrap"
+                  className="px-6 py-4 bg-gray-900 text-white rounded-2xl text-sm font-bold hover:bg-gray-800 transition-colors whitespace-nowrap"
                 >
                   주소 검색
                 </button>

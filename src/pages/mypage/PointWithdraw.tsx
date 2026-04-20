@@ -191,7 +191,7 @@ export const PointWithdraw: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setIsMethodModalOpen(true)}
-                    className="px-4 py-2 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
+                    className="px-4 py-2 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-2xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
                   >
                     변경
                   </button>
@@ -227,7 +227,7 @@ export const PointWithdraw: React.FC = () => {
                         key={bank.name}
                         type="button"
                         onClick={() => setNewBank(bank.name)}
-                        className="w-[calc(25%-8px)] sm:w-[88px] aspect-square flex flex-col items-center justify-center p-2 rounded-xl border border-gray-100 bg-gray-50 hover:border-gray-200 transition-all shadow-sm hover:bg-gray-100"
+                        className="w-[calc(25%-8px)] sm:w-[88px] aspect-square flex flex-col items-center justify-center p-2 rounded-2xl border border-gray-100 bg-gray-50 hover:border-gray-200 transition-all shadow-sm hover:bg-gray-100"
                       >
                         <div className={`w-8 h-8 rounded-full mb-1 flex items-center justify-center overflow-hidden ${bank.logo ? 'bg-white border border-gray-100' : 'bg-gray-200'}`}>
                           {bank.logo ? (
@@ -269,7 +269,7 @@ export const PointWithdraw: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setNewBank('')}
-                      className="px-4 py-2 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
+                      className="px-4 py-2 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-2xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
                     >
                       변경
                     </button>
@@ -351,7 +351,7 @@ export const PointWithdraw: React.FC = () => {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => navigate('/settings/account-register')}
-                  className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
+                  className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
                 >
                   추가/수정
                 </button>

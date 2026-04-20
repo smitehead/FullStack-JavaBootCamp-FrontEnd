@@ -189,13 +189,13 @@ export const SellerAuctionResult: React.FC = () => {
                   <div className="flex bg-gray-100 p-1 rounded-xl w-fit mb-4">
                     <button
                       onClick={() => setActiveTransactionTab('delivery')}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTransactionTab === 'delivery' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${activeTransactionTab === 'delivery' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                       택배 거래
                     </button>
                     <button
                       onClick={() => setActiveTransactionTab('face-to-face')}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTransactionTab === 'face-to-face' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${activeTransactionTab === 'face-to-face' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                       직거래
                     </button>

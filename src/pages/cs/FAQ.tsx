@@ -161,7 +161,7 @@ export const FAQ: React.FC = () => {
             </div>
             <Link
               to="/cs/inquiry"
-              className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-colors">
+              className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-2xl text-sm font-bold transition-colors">
               문의하기
             </Link>
           </div>

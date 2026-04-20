@@ -647,7 +647,7 @@ export const ProductDetail: React.FC = () => {
 
     if (modalType === 'auto') {
       if (autoBidMaxAmount < (product.currentPrice || 0) + (product.minBidIncrement || 0)) {
-        showToast(`'자동 입찰 한도'는 최소 입찰 가능 금액(${( (product.currentPrice || 0) + (product.minBidIncrement || 0) ).toLocaleString()}원) 이상이어야 합니다.`, 'error');
+        showToast(`'자동 입찰 한도'는 최소 입찰 가능 금액(${((product.currentPrice || 0) + (product.minBidIncrement || 0)).toLocaleString()}원) 이상이어야 합니다.`, 'error');
         return;
       }
       if (activeAutoBid && autoBidMaxAmount === activeAutoBid.maxPrice) {
@@ -1061,7 +1061,7 @@ export const ProductDetail: React.FC = () => {
                 {(isFinished && product.winnerId === user?.id) && (
                   <button
                     onClick={() => navigate(`/chat?id=chat_1`)}
-                    className="px-3 py-1.5 text-gray-600 hover:text-brand hover:bg-brand/10 rounded-lg border border-gray-200 transition-all flex items-center gap-1.5"
+                    className="px-3 py-1.5 text-gray-600 hover:text-brand hover:bg-brand/10 rounded-2xl border border-gray-200 transition-all flex items-center gap-1.5"
                   >
                     <BsChat className="w-4 h-4" />
                     <span className="text-xs font-bold">채팅하기</span>
@@ -1144,7 +1144,7 @@ export const ProductDetail: React.FC = () => {
                     {/* 자동 입찰 버튼 */}
                     <button
                       onClick={() => openBidModal('auto')}
-                      className="flex-1 py-4 border border-brand text-brand font-bold rounded-xl hover:bg-brand/10 transition-colors"
+                      className="flex-1 py-4 border-2 border-brand text-brand font-bold rounded-2xl hover:bg-brand/10 transition-colors"
                     >
                       {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
                     </button>
@@ -1159,7 +1159,7 @@ export const ProductDetail: React.FC = () => {
                           }
                           setShowBidCancelModal(true);
                         }}
-                        className="flex-1 py-4 bg-brand text-white font-bold rounded-xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10"
+                        className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10"
                       >
                         입찰 취소하기
                       </button>
@@ -1181,7 +1181,7 @@ export const ProductDetail: React.FC = () => {
                             setShowBidTermsModal(true);
                           }
                         }}
-                        className="flex-1 py-4 bg-brand text-white font-bold rounded-xl hover:bg-brand-dark transition-colors shadow-lg shadow-brand/20"
+                        className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-colors shadow-lg shadow-brand/20"
                       >
                         입찰 참여하기
                       </button>
@@ -1341,7 +1341,7 @@ export const ProductDetail: React.FC = () => {
                     placeholder="상품에 대해 궁금한 점을 남겨주세요."
                     className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none"
                   />
-                  <button onClick={handleQnaSubmit} className="bg-gray-900 text-white px-8 py-3 rounded-xl text-sm font-bold hover:bg-black transition-colors">등록</button>
+                  <button onClick={handleQnaSubmit} className="bg-gray-900 text-white px-8 py-3 rounded-2xl text-sm font-bold hover:bg-black transition-colors">등록</button>
                 </div>
               )}
               <div className="space-y-6">
@@ -1391,7 +1391,7 @@ export const ProductDetail: React.FC = () => {
                               placeholder="답변을 입력하세요."
                               className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none"
                             />
-                            <button onClick={() => handleAnswerSubmit(qna.qnaNo)} className="bg-brand text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brand-dark">등록</button>
+                            <button onClick={() => handleAnswerSubmit(qna.qnaNo)} className="bg-brand text-white px-4 py-2 rounded-2xl text-sm font-bold hover:bg-brand-dark">등록</button>
                             <button onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: false }))} className="text-sm text-gray-400 hover:text-gray-600 px-2">취소</button>
                           </div>
                         ) : (
@@ -1668,7 +1668,7 @@ export const ProductDetail: React.FC = () => {
                       fallbackCopy();
                     }
                   }}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 shrink-0"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-2xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 shrink-0"
                 >
                   복사
                 </button>

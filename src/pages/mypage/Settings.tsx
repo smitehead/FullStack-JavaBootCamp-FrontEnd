@@ -423,40 +423,40 @@ export const Settings: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">계정 설정</h1>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Navigation/Categories */}
-        <div className="lg:col-span-1 space-y-4">
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Sidebar */}
+        <div className="w-full md:w-64 flex-shrink-0">
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="">
               <button
                 onClick={() => setActiveTab('notification')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'notification' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'notification' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <BsBell className={`w-5 h-5 mr-3 ${activeTab === 'notification' ? 'text-red-500' : ''}`} /> 알림 설정
+                <BsBell className="w-5 h-5 mr-3" /> 알림 설정
               </button>
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'profile' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'profile' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <BsPersonFillGear className={`w-5 h-5 mr-3 ${activeTab === 'profile' ? 'text-red-500' : ''}`} /> 프로필 수정
+                <BsPersonFillGear className="w-5 h-5 mr-3" /> 프로필 수정
               </button>
               <button
                 onClick={() => setActiveTab('block')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'block' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'block' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <BsShield className={`w-5 h-5 mr-3 ${activeTab === 'block' ? 'text-red-500' : ''}`} /> 차단 사용자 관리
+                <BsShield className="w-5 h-5 mr-3" /> 차단 사용자 관리
               </button>
               <button
                 onClick={() => setActiveTab('card')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'card' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'card' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <BsCreditCard className={`w-5 h-5 mr-3 ${activeTab === 'card' ? 'text-red-500' : ''}`} /> 카드 관리
+                <BsCreditCard className="w-5 h-5 mr-3" /> 카드 관리
               </button>
               <button
                 onClick={() => setActiveTab('account')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'account' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'account' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <BsBank className={`w-5 h-5 mr-3 ${activeTab === 'account' ? 'text-red-500' : ''}`} /> 계좌 관리
+                <BsBank className="w-5 h-5 mr-3" /> 계좌 관리
               </button>
               <button
                 onClick={openWithdrawModal}
@@ -469,16 +469,16 @@ export const Settings: React.FC = () => {
         </div>
 
         {/* Right Column: Content */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="flex-1 space-y-8">
           {activeTab === 'profile' && (
             <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-bold text-gray-900">프로필 수정</h3>
                 {!isProfileEditMode && (
-                  <button
-                    onClick={() => setIsProfileEditMode(true)}
-                    className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
-                  >
+                    <button
+                      onClick={() => setIsProfileEditMode(true)}
+                      className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
+                    >
                     프로필 수정하기
                   </button>
                 )}
@@ -659,7 +659,7 @@ export const Settings: React.FC = () => {
                       navigate('/points/charge');
                     }
                   }}
-                  className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
+                  className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
                 >
                   카드 등록
                 </button>
@@ -687,7 +687,7 @@ export const Settings: React.FC = () => {
                   </div>
                   <button
                     onClick={handleDeleteRegisteredCard}
-                    className="px-4 py-2 bg-red-50 text-red-500 text-xs font-bold rounded-xl hover:bg-red-100 transition-all"
+                    className="px-4 py-2 bg-red-50 text-red-500 text-xs font-bold rounded-2xl hover:bg-red-100 transition-all"
                   >
                     삭제
                   </button>
@@ -712,7 +712,7 @@ export const Settings: React.FC = () => {
                 {accounts.length < 3 && (
                   <button
                     onClick={() => navigate('/settings/account-register')}
-                    className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all"
+                    className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
                   >
                     계좌 추가
                   </button>
@@ -746,7 +746,7 @@ export const Settings: React.FC = () => {
                       </div>
                       <button
                         onClick={() => handleDeleteAccount(acc.accountNo)}
-                        className="px-3 py-1.5 bg-red-50 text-red-500 text-xs font-bold rounded-lg hover:bg-red-100 transition-all"
+                        className="px-3 py-1.5 bg-red-50 text-red-500 text-xs font-bold rounded-2xl hover:bg-red-100 transition-all"
                       >
                         삭제
                       </button>
@@ -843,7 +843,7 @@ export const Settings: React.FC = () => {
                       </div>
                       <button
                         onClick={() => unblockUser(user.id)}
-                        className="px-4 py-2 text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 transition-all"
+                        className="px-4 py-2 text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-2xl hover:bg-gray-100 transition-all"
                       >
                         차단 해제
                       </button>

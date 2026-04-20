@@ -146,7 +146,7 @@ export const InquiryList: React.FC = () => {
               <h4 className="text-xl font-bold mb-2">도움이 더 필요하신가요?</h4>
               <p className="text-gray-400 text-sm">자주 묻는 질문(FAQ)에서 빠르게 답을 찾아보실 수 있습니다.</p>
             </div>
-            <Link to="/faq" className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-colors">
+            <Link to="/faq" className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-2xl text-sm font-bold transition-colors">
               FAQ 바로가기
             </Link>
           </div>
