@@ -222,13 +222,13 @@ export const SellerProfile: React.FC = () => {
           <nav className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
             <button
               onClick={() => setActiveTab('selling')}
-              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
             >
               <BsBox2 className={`w-5 h-5 mr-3 ${activeTab === 'selling' ? 'text-red-500' : ''}`} /> 판매 상품
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
             >
               <BsChatLeft className={`w-5 h-5 mr-3 ${activeTab === 'reviews' ? 'text-red-500' : ''}`} /> 거래 후기
             </button>

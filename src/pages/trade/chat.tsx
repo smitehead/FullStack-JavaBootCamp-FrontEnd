@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus, BsChevronLeft, BsChevronRight, BsCrosshair } from 'react-icons/bs';
+import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus, BsChevronLeft, BsChevronRight, BsCrosshair, BsBoxArrowRight, BsExclamationTriangle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format, subMonths, addMonths, startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -46,6 +46,9 @@ export const Chat: React.FC = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isAttachmentMenuOpen, setIsAttachmentMenuOpen] = useState(false);
   const attachmentMenuRef = useRef<HTMLDivElement>(null);
+
+  // 채팅방 나가기 모달 상태
+  const [showExitModal, setShowExitModal] = useState(false);
 
   // 위치 공유 모달 상태
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -419,8 +422,7 @@ export const Chat: React.FC = () => {
       files.forEach(f => formData.append('files', f));
       const res = await api.post(
         `/chat/rooms/${selectedRoom.roomNo}/images`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
+        formData
       );
       imageUrls = res.data.urls;
     } catch (err) {
@@ -1066,16 +1068,9 @@ export const Chat: React.FC = () => {
                     </button>
                     <div className="border-t border-gray-50 mt-1 pt-1 flex justify-end px-4 pb-2">
                       <button
-                        onClick={async () => {
-                          if (window.confirm('이 채팅방을 나가시겠습니까?\n나가면 목록에서 삭제되지만 상대방은 계속 대화를 볼 수 있습니다.')) {
-                            try {
-                              await api.delete(`/chat/rooms/${selectedRoom.roomNo}`);
-                              setSelectedRoom(null);
-                              loadChatRooms();
-                              fetchChats(); // 전역 목록(헤더 알림 등) 동기화
-                            } catch { alert('삭제에 실패했습니다.'); }
-                          }
+                        onClick={() => {
                           setShowMoreMenu(false);
+                          setShowExitModal(true);
                         }}
                         className="text-[11px] font-medium text-gray-400 hover:text-gray-600 transition-colors"
                       >
@@ -1398,6 +1393,55 @@ export const Chat: React.FC = () => {
             왼쪽 목록에서 대화 상대를 선택하거나<br />
             상품 상세 페이지에서 문의하기를 눌러보세요.
           </p>
+        </div>
+      )}
+
+      {/* 채팅방 나가기 확인 모달 */}
+      {showExitModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="absolute inset-0" onClick={() => setShowExitModal(false)} />
+          <div className="relative bg-white w-full max-w-sm rounded-none shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-8 border-b border-gray-100 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-none bg-rose-50 flex items-center justify-center">
+                <BsBoxArrowRight className="w-6 h-6 text-rose-500" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 tracking-tight">채팅방 나가기</h3>
+                <p className="text-xs text-gray-400 font-medium">이 작업은 되돌릴 수 없습니다.</p>
+              </div>
+            </div>
+            <div className="p-8 space-y-4">
+              <div className="flex items-start gap-3 bg-rose-50 rounded-none p-4 border border-rose-100">
+                <BsExclamationTriangle className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />
+                <p className="text-[11px] text-rose-700 font-bold leading-relaxed">
+                  나가면 채팅 목록에서 삭제됩니다. 상대방은 계속 대화 내용을 볼 수 있습니다.
+                </p>
+              </div>
+            </div>
+            <div className="p-8 pt-0 flex gap-3">
+              <button
+                onClick={() => setShowExitModal(false)}
+                className="flex-1 py-4 bg-gray-100 text-gray-500 text-sm font-bold rounded-none hover:bg-gray-200 transition-all"
+              >
+                취소
+              </button>
+              <button
+                onClick={async () => {
+                  if (!selectedRoom) return;
+                  try {
+                    await api.delete(`/chat/rooms/${selectedRoom.roomNo}`);
+                    setSelectedRoom(null);
+                    loadChatRooms();
+                    fetchChats();
+                  } catch { showToast('채팅방 나가기에 실패했습니다.', 'error'); }
+                  setShowExitModal(false);
+                }}
+                className="flex-1 py-4 bg-rose-500 hover:bg-rose-600 text-white text-sm font-bold rounded-none transition-all shadow-lg shadow-rose-500/20"
+              >
+                나가기
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

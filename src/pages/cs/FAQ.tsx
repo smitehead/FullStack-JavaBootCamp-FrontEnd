@@ -106,7 +106,7 @@ export const FAQ: React.FC = () => {
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id as any)}
                 className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${activeCategory === cat.id
-                  ? 'bg-red-500 text-white border border-transparent shadow-lg shadow-red-500/10'
+                  ? 'bg-brand text-white border border-transparent shadow-lg shadow-brand/10'
                   : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100 shadow-sm'
                   }`}
               >
