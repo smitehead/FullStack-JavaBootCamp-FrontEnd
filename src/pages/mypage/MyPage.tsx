@@ -709,20 +709,48 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-}) => (
-  <div className="flex items-center justify-center gap-1 mt-8">
-    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-      <button
-        key={p}
-        onClick={() => onPageChange(p)}
-        className={`w-9 h-9 text-sm font-bold rounded-xl transition-colors ${
-          p === currentPage
-            ? 'bg-red-500 text-white shadow-sm'
-            : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'
-        }`}
-      >
-        {p}
-      </button>
-    ))}
-  </div>
-);
+}) => {
+  const pagesPerGroup = 5;
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(currentGroup * pagesPerGroup, totalPages);
+
+  return (
+    <div className="flex items-center justify-center gap-1 mt-8">
+      {/* 이전 블록 버튼 */}
+      {startPage > 1 && (
+        <button
+          onClick={() => onPageChange(startPage - 1)}
+          className="w-9 h-9 text-sm font-bold rounded-xl transition-colors bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
+        >
+          &lt;
+        </button>
+      )}
+
+      {/* 현재 블록 페이지 번호 */}
+      {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((p) => (
+        <button
+          key={p}
+          onClick={() => onPageChange(p)}
+          className={`w-9 h-9 text-sm font-bold rounded-xl transition-colors ${
+            p === currentPage
+              ? 'bg-red-500 text-white shadow-sm'
+              : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          {p}
+        </button>
+      ))}
+
+      {/* 다음 블록 버튼 */}
+      {endPage < totalPages && (
+        <button
+          onClick={() => onPageChange(endPage + 1)}
+          className="w-9 h-9 text-sm font-bold rounded-xl transition-colors bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
+        >
+          &gt;
+        </button>
+      )}
+    </div>
+  );
+};
