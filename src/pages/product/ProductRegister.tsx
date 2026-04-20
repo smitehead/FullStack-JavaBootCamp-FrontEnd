@@ -345,7 +345,7 @@ export const ProductRegister: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => removeImage(idx)}
-                  className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500"
+                  className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-brand"
                 >
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -502,7 +502,7 @@ export const ProductRegister: React.FC = () => {
                   key={d}
                   type="button"
                   onClick={() => { setDuration(d); setIsManualTime(false); }}
-                  className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${duration === d && !isManualTime ? 'bg-brand border-brand text-white shadow-md shadow-red-500/10' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
+                  className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${duration === d && !isManualTime ? 'bg-brand border-brand text-white shadow-md shadow-brand/10' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
                 >
                   {d === '14' ? '2주' : `${d}일`}
                 </button>
@@ -510,7 +510,7 @@ export const ProductRegister: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsManualTime(true)}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${isManualTime ? 'bg-brand border-brand text-white shadow-md shadow-red-500/10' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
+                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${isManualTime ? 'bg-brand border-brand text-white shadow-md shadow-brand/10' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
               >
                 직접 입력
               </button>
@@ -624,7 +624,7 @@ export const ProductRegister: React.FC = () => {
           </button>
           <button
             type="submit"
-            className="px-12 py-4 rounded-2xl bg-brand text-white font-bold text-base hover:bg-brand-dark transition-all shadow-lg shadow-red-500/10 active:scale-95"
+            className="px-12 py-4 rounded-2xl bg-brand text-white font-bold text-base hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
           >
             등록하기
           </button>

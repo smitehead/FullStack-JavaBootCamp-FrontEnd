@@ -379,7 +379,7 @@ export const SellerAuctionResult: React.FC = () => {
               </button>
               <button
                 onClick={executeApproveCancel}
-                className="flex-1 py-4 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-400 transition-all shadow-lg shadow-red-500/10 active:scale-95"
+                className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
               >
                 {isCancelRequested ? '승인하기' : '취소하기'}
               </button>

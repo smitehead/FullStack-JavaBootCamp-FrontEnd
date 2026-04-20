@@ -595,7 +595,7 @@ export const WonProductDetail: React.FC = () => {
               </button>
               <button
                 onClick={isForcePromoted ? executeCancel : executeRequestCancel}
-                className="flex-1 py-4 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-400 transition-all shadow-lg shadow-red-500/10 active:scale-95"
+                className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
               >
                 {isForcePromoted ? '즉시 취소하기' : '취소 요청하기'}
               </button>

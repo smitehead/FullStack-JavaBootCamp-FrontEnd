@@ -157,7 +157,7 @@ export const Report: React.FC = () => {
                       type="button"
                       onClick={() => setReason(r)}
                       className={`w-full p-4 text-left rounded-2xl border-2 transition-all font-bold text-sm ${reason === r
-                          ? 'border-red-500 bg-red-50 text-red-600'
+                          ? 'border-brand bg-brand/5 text-brand'
                           : 'border-gray-50 bg-gray-50 text-gray-600 hover:border-gray-200'
                         }`}
                     >
@@ -173,7 +173,7 @@ export const Report: React.FC = () => {
                 </label>
                 <textarea
                   rows={5}
-                  className="w-full p-5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-red-500/20 focus:bg-white outline-none transition-all resize-none placeholder:text-gray-300"
+                  className="w-full p-5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-brand/20 focus:bg-white outline-none transition-all resize-none placeholder:text-gray-300"
                   placeholder="신고 사유에 대한 구체적인 내용을 입력해주세요."
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
@@ -202,9 +202,9 @@ export const Report: React.FC = () => {
                     </div>
                   ))}
                   {images.length < 5 && (
-                    <label className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-300 hover:bg-red-50 transition-all group">
-                      <BsCamera className="w-6 h-6 text-gray-400 group-hover:text-red-500 transition-colors" />
-                      <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-500 transition-colors">사진 추가</span>
+                    <label className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-brand/50 hover:bg-brand/5 transition-all group">
+                      <BsCamera className="w-6 h-6 text-gray-400 group-hover:text-brand transition-colors" />
+                      <span className="text-[10px] font-bold text-gray-400 group-hover:text-brand transition-colors">사진 추가</span>
                       <input
                         type="file"
                         accept="image/*"

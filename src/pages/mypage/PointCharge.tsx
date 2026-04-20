@@ -179,7 +179,7 @@ export const PointCharge: React.FC = () => {
               </div>
               <button
                 onClick={handleDeleteCard}
-                className="px-4 py-2 bg-red-50 text-red-500 text-xs font-bold rounded-xl hover:bg-red-100 transition-all"
+                className="px-4 py-2 bg-brand/10 text-brand text-xs font-bold rounded-xl hover:bg-brand/20 transition-all"
               >
                 삭제
               </button>

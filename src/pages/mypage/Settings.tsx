@@ -1195,7 +1195,7 @@ export const Settings: React.FC = () => {
                         setWithdrawStep('reason');
                       }
                     }}
-                    className="w-full py-4 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all shadow-lg shadow-red-100"
+                    className="w-full py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10"
                   >
                     다음 단계
                   </button>
