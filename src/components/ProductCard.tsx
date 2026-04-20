@@ -214,7 +214,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               낙찰 성공!
             </div>
-            <div 
+            <div
               onClick={handleChatInteraction}
               className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 hover:bg-white hover:text-gray-800 transition-all active:scale-95"
             >
@@ -229,7 +229,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="bg-white text-gray-800 px-5 py-2 rounded-full font-semibold text-sm mb-2 shadow-xl">
               확정 대기 중
             </div>
-            <div 
+            <div
               onClick={handleChatInteraction}
               className="text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-white/30 hover:bg-white hover:text-gray-800 transition-all active:scale-95"
             >
@@ -259,10 +259,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
           {/* Timer pill */}
           <div className={`flex items-center h-6 px-2.5 rounded-lg text-[11px] font-bold leading-none ${isConfirmed
-              ? 'bg-gray-900 text-white'
-              : isFinished
-                ? 'bg-gray-100 text-gray-500'
-                : 'bg-red-50 text-red-500'
+            ? 'bg-gray-900 text-white'
+            : isFinished
+              ? 'bg-gray-100 text-gray-500'
+              : 'bg-red-50 text-red-500'
             }`}>
             {isConfirmed ? (
               <span>판매완료</span>

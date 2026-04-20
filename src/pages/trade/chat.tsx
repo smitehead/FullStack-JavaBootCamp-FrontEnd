@@ -1451,7 +1451,7 @@ export const Chat: React.FC = () => {
                         {locationAddrRoad || locationAddress || '등록된 주소가 없습니다.'}
                       </p>
                       {locationAddrDetail && (
-                        <p className="text-xs text-gray-500 mt-1.5 break-words font-medium">{locationAddrDetail}</p>
+                        <p className="text-sm text-gray-500 mt-1.5 break-words font-medium">{locationAddrDetail}</p>
                       )}
                     </div>
                   </div>
