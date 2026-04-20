@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
+  const isProd = mode === 'production';
   return {
     server: {
       port: 3000,
@@ -31,6 +32,13 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, 'src'),
       }
-    }
+    },
+    esbuild: {
+      // 프로덕션 빌드에서 console.log/info/warn/debug 제거 (console.error는 유지)
+      pure: isProd
+        ? ['console.log', 'console.info', 'console.warn', 'console.debug', 'console.trace']
+        : [],
+      drop: isProd ? ['debugger'] : [],
+    },
   };
 });
