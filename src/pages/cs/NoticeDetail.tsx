@@ -80,7 +80,7 @@ export const NoticeDetail: React.FC = () => {
             <span className={`px-3 py-1 text-xs font-bold rounded-full shadow-lg shadow-gray-100/50 ${notice.category === '점검' ? 'bg-blue-50 text-blue-500' :
               notice.category === '업데이트' ? 'bg-green-50 text-green-500' :
                 notice.category === '이벤트' ? 'bg-purple-50 text-purple-500' :
-                  'bg-gray-50 text-gray-500'
+                  'bg-gray-100 text-gray-600'
               }`}>
               {notice.category}
             </span>

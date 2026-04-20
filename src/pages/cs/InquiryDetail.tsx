@@ -92,11 +92,11 @@ export const InquiryDetail: React.FC = () => {
         <div className="p-10 border-b border-gray-50">
           <div className="flex items-center justify-between gap-4 mb-6">
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 text-xs font-bold rounded-md uppercase tracking-wider bg-gray-50 text-gray-500 shadow-lg shadow-gray-100/50">
+              <span className="px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider bg-gray-100 text-gray-600 shadow-lg shadow-gray-100/50">
                 {inquiry.type}
               </span>
               {inquiry.bugType && (
-                <span className="px-3 py-1 bg-blue-50 text-blue-500 text-xs font-semibold rounded-md uppercase tracking-wider">
+                <span className="px-3 py-1 bg-blue-50 text-blue-500 text-xs font-bold rounded-full uppercase tracking-wider shadow-lg shadow-blue-500/10">
                   {inquiry.bugType}
                 </span>
               )}

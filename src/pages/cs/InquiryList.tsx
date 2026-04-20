@@ -108,7 +108,7 @@ export const InquiryList: React.FC = () => {
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-24 shrink-0 flex items-center">
-                        <span className="text-xs font-bold px-2 py-1 bg-gray-50 text-gray-400 rounded-md shadow-lg shadow-gray-100/50">{inquiry.type}</span>
+                        <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded-md shadow-lg shadow-gray-100/50">{inquiry.type}</span>
                       </div>
                       <div className="flex-1 flex items-center gap-4 min-w-0">
                         <h3 className="flex-1 text-sm text-gray-900 group-hover:underline underline-offset-4 transition-all line-clamp-1 font-bold">
@@ -116,9 +116,9 @@ export const InquiryList: React.FC = () => {
                         </h3>
                         <div className="w-24 shrink-0 text-center">
                           {inquiry.status === 1 ? (
-                            <span className="text-xs font-bold px-2 py-1 bg-green-50 text-green-600 rounded-md shadow-lg shadow-green-500/10 inline-block">답변완료</span>
+                            <span className="text-xs font-semibold px-2 py-1 bg-green-50 text-green-600 rounded-md shadow-lg shadow-gray-100/50 inline-block">답변완료</span>
                           ) : (
-                            <span className="text-xs font-bold px-2 py-1 bg-amber-50 text-amber-600 rounded-md shadow-lg shadow-amber-500/10 inline-block">답변대기</span>
+                            <span className="text-xs font-semibold px-2 py-1 bg-amber-50 text-amber-600 rounded-md shadow-lg shadow-gray-100/50 inline-block">답변대기</span>
                           )}
                         </div>
                       </div>
