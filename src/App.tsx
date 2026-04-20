@@ -65,7 +65,7 @@ import { ReportManagement } from '@/pages/admin/ReportManagement';
 import { ActivityLogManagement } from '@/pages/admin/ActivityLogManagement';
 import { MannerHistoryManagement } from '@/pages/admin/MannerHistoryManagement';
 import { WithdrawManagement } from '@/pages/admin/WithdrawManagement';
-// ㅎㅇ요
+import { RevenueManagement } from '@/pages/admin/RevenueManagement';
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -142,6 +142,7 @@ const App: React.FC = () => {
                 <Route path="/activity-logs" element={<ActivityLogManagement />} />
                 <Route path="/manner-history" element={<MannerHistoryManagement />} />
                 <Route path="/withdraws" element={<WithdrawManagement />} />
+                <Route path="/revenue" element={<RevenueManagement />} />
               </Routes>
             </AdminLayout>
           } />

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  BsGrid, BsPeople, BsThermometerHalf, BsExclamationTriangle, 
-  BsMegaphone, BsBell, BsImage, BsWallet, 
+import {
+  BsGrid, BsPeople, BsThermometerHalf, BsExclamationTriangle,
+  BsMegaphone, BsBell, BsImage, BsWallet, BsBarChart,
   BsClockHistory, BsHouse, BsBoxArrowRight, BsHammer, BsChatLeftDots
 } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
@@ -60,9 +60,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       ]
     },
     {
-      title: '포인트 출금 관리',
+      title: '포인트 관리',
       items: [
         { path: '/admin/withdraws', icon: BsWallet, label: '출금 신청 관리' },
+        { path: '/admin/revenue', icon: BsBarChart, label: '수익 관리' },
       ]
     },
     {
