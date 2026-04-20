@@ -168,7 +168,7 @@ export const SellerProfile: React.FC = () => {
                     </button>
                     <Link
                       to={`/report?sellerId=${seller.sellerNo}&sellerNickname=${encodeURIComponent(seller.nickname)}`}
-                      className="text-xs font-medium hover:text-red-500 transition-colors flex items-center"
+                      className="text-xs font-medium hover:text-brand transition-colors flex items-center"
                     >
                       <BsFlagFill className="w-3 h-3 mr-1" /> 신고하기
                     </Link>

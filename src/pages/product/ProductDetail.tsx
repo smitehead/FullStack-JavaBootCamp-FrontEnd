@@ -1159,7 +1159,7 @@ export const ProductDetail: React.FC = () => {
                           }
                           setShowBidCancelModal(true);
                         }}
-                        className="flex-1 py-4 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/10"
+                        className="flex-1 py-4 bg-brand text-white font-bold rounded-xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10"
                       >
                         입찰 취소하기
                       </button>
@@ -1360,7 +1360,7 @@ export const ProductDetail: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <span className="text-xs text-gray-400">{new Date(qna.createdAt).toLocaleDateString('ko-KR')}</span>
                         {currentMemberNo === qna.memberNo && (
-                          <button onClick={() => handleQnaDelete(qna.qnaNo)} className="text-[10px] text-gray-400 hover:text-red-400">삭제</button>
+                          <button onClick={() => handleQnaDelete(qna.qnaNo)} className="text-[10px] text-gray-400 hover:text-brand">삭제</button>
                         )}
                       </div>
                     </div>
@@ -1373,7 +1373,7 @@ export const ProductDetail: React.FC = () => {
                           <div className="flex items-center gap-3">
                             <span className="text-[10px] text-gray-400">{qna.answeredAt ? new Date(qna.answeredAt).toLocaleDateString('ko-KR') : ''}</span>
                             {isSeller && (
-                              <button onClick={() => handleAnswerDelete(qna.qnaNo)} className="text-[10px] text-gray-400 hover:text-red-400">삭제</button>
+                              <button onClick={() => handleAnswerDelete(qna.qnaNo)} className="text-[10px] text-gray-400 hover:text-brand">삭제</button>
                             )}
                           </div>
                         </div>
@@ -1756,7 +1756,7 @@ export const ProductDetail: React.FC = () => {
                         </button>
                         <button
                           onClick={handleAuctionCancel}
-                          className="flex-1 py-4 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 active:scale-95"
+                          className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/20 active:scale-95"
                         >
                           패널티 감수하고 취소
                         </button>
@@ -1934,7 +1934,7 @@ export const ProductDetail: React.FC = () => {
                     <button
                       onClick={handleBidCancelConfirm}
                       disabled={!agreedNoRebid || !agreedPenalty || isBidCancelling || !canAfford}
-                      className="flex-1 py-4 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {isBidCancelling ? (
                         <>
@@ -2097,7 +2097,7 @@ export const ProductDetail: React.FC = () => {
                 <button
                   onClick={handleDeleteProduct}
                   disabled={isDeleting}
-                  className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-2"
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm flex items-center justify-center gap-2"
                 >
                   {isDeleting ? <div className="spinner-border w-4 h-4" style={{ borderTopColor: '#fff', borderLeftColor: 'rgba(255,255,255,0.2)', borderBottomColor: 'rgba(255,255,255,0.2)', borderRightColor: 'rgba(255,255,255,0.2)' }} /> : '삭제하기'}
                 </button>

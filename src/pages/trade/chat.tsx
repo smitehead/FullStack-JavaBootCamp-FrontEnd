@@ -1264,7 +1264,7 @@ export const Chat: React.FC = () => {
                             )}
                             {isMe && msg.status === 'FAILED' && (
                               <button onClick={() => handleRetry(msg)}
-                                className="flex items-center gap-0.5 text-red-500 text-[10px] font-bold hover:underline">
+                                className="flex items-center gap-0.5 text-brand text-[10px] font-bold hover:underline">
                                 <BsExclamationCircle className="w-3 h-3" />
                                 <BsArrowRepeat className="w-3 h-3" />
                                 재전송
