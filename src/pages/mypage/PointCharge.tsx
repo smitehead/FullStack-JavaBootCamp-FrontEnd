@@ -160,9 +160,7 @@ export const PointCharge: React.FC = () => {
 
           {isCardLoading ? (
             <div className="flex items-center gap-3 py-2">
-              <div className="spinner-border w-5 h-5 text-gray-300" role="status">
-                <span className="sr-only">Loading...</span>
-              </div>
+              <div className="w-5 h-5 border-2 border-brand/20 border-t-brand rounded-full animate-spin" />
               <span className="text-sm text-gray-400">카드 정보를 불러오는 중...</span>
             </div>
           ) : registeredCard ? (

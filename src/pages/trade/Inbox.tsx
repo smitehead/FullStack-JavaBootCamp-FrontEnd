@@ -228,7 +228,7 @@ export const Inbox: React.FC = () => {
 
       {isLoading && (
         <div className="flex justify-center py-8">
-          <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
         </div>
       )}
     </div>

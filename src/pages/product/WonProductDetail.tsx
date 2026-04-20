@@ -108,7 +108,7 @@ export const WonProductDetail: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="spinner-border w-8 h-8" />
+        <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
       </div>
     );
   }
