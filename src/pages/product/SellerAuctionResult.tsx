@@ -265,11 +265,11 @@ export const SellerAuctionResult: React.FC = () => {
 
                 {/* 취소 요청 안내 배너 */}
                 {isCancelRequested && (
-                  <div className="mt-6 rounded-2xl bg-orange-50 border border-orange-100 p-4 flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                  <div className="mt-6 rounded-2xl bg-brand/10 border border-brand/20 p-4 flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-brand shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold text-orange-700 mb-1">구매자 취소 요청 수신</p>
-                      <p className="text-[11px] text-orange-600 leading-relaxed font-medium">
+                      <p className="text-xs font-bold text-brand-dark mb-1">구매자 취소 요청 수신</p>
+                      <p className="text-[11px] text-brand-dark leading-relaxed font-medium">
                         구매자가 낙찰 취소를 요청했습니다.<br />
                         승인하면 구매자에게 포인트가 환불되고 경매는 유찰 처리됩니다.
                       </p>

@@ -270,7 +270,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               <Link
                                 key={noti.id}
                                 to={noti.link || '/inbox?tab=noti'}
-                                className={`block px-5 py-4 text-sm transition-colors hover:bg-gray-50 relative ${!noti.read ? 'bg-orange-50/60' : 'bg-white'}`}
+                                className={`block px-5 py-4 text-sm transition-colors hover:bg-gray-50 relative ${!noti.read ? 'bg-brand/10' : 'bg-white'}`}
                                 onClick={() => {
                                   markNotificationAsRead(noti.id);
                                   setIsNotiOpen(false);
@@ -290,7 +290,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               <Link
                                 key={chat.id}
                                 to={`/chat?roomNo=${chat.roomNo}`}
-                                className={`block px-5 py-4 text-sm transition-colors hover:bg-gray-50 relative ${chat.unreadCount > 0 ? 'bg-orange-50/60' : 'bg-white'}`}
+                                className={`block px-5 py-4 text-sm transition-colors hover:bg-gray-50 relative ${chat.unreadCount > 0 ? 'bg-brand/10' : 'bg-white'}`}
                                 onClick={() => {
                                   setIsNotiOpen(false);
                                 }}

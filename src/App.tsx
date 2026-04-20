@@ -75,21 +75,33 @@ const App: React.FC = () => {
       rafId = requestAnimationFrame(() => {
         const toaster = document.querySelector<HTMLElement>('[data-sonner-toaster]');
         if (!toaster) return;
-        // 컨테이너 전체 너비
-        toaster.style.setProperty('width', '100vw', 'important');
-        toaster.style.setProperty('left', '0', 'important');
-        toaster.style.setProperty('right', '0', 'important');
-        toaster.style.setProperty('transform', 'none', 'important');
-        toaster.style.setProperty('pointer-events', 'none', 'important');
-        // 각 toast: margin auto 중앙 (transform 안 건드림)
-        toaster.querySelectorAll<HTMLElement>('[data-sonner-toast]').forEach((el) => {
-          el.style.setProperty('left', '0', 'important');
-          el.style.setProperty('right', '0', 'important');
-          el.style.setProperty('margin-left', 'auto', 'important');
-          el.style.setProperty('margin-right', 'auto', 'important');
-          el.style.setProperty('width', 'fit-content', 'important');
-          el.style.setProperty('pointer-events', 'auto', 'important');
-        });
+
+        // 중앙 정렬이 필요한 toast들 (data-position이 center를 포함하는 경우)
+        const centerToasts = toaster.querySelectorAll<HTMLElement>('[data-sonner-toast][data-position*="center"]');
+        
+        if (centerToasts.length > 0) {
+          toaster.style.setProperty('width', '100vw', 'important');
+          toaster.style.setProperty('left', '0', 'important');
+          toaster.style.setProperty('right', '0', 'important');
+          toaster.style.setProperty('transform', 'none', 'important');
+          toaster.style.setProperty('pointer-events', 'none', 'important');
+
+          centerToasts.forEach((el) => {
+            el.style.setProperty('left', '0', 'important');
+            el.style.setProperty('right', '0', 'important');
+            el.style.setProperty('margin-left', 'auto', 'important');
+            el.style.setProperty('margin-right', 'auto', 'important');
+            el.style.setProperty('width', 'fit-content', 'important');
+            el.style.setProperty('pointer-events', 'auto', 'important');
+          });
+        } else {
+          // 중앙 정렬할 toast가 없으면 기본값으로 복구 (bottom-right 등 다른 위치의 toast를 위해)
+          toaster.style.removeProperty('width');
+          toaster.style.removeProperty('left');
+          toaster.style.removeProperty('right');
+          toaster.style.removeProperty('transform');
+          toaster.style.removeProperty('pointer-events');
+        }
       });
     };
     const observer = new MutationObserver(applyCenter);

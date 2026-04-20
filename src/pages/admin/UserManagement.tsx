@@ -360,7 +360,7 @@ export const UserManagement: React.FC = () => {
 
       {isModalOpen && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white w-full max-sm rounded-2xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in duration-300">
             <h2 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">
               {modalType === 'manner' && '매너온도 조절'}
               {modalType === 'suspend' && '계정 정지 처리'}
@@ -370,7 +370,7 @@ export const UserManagement: React.FC = () => {
               <span className="text-[#FF5A5A] font-bold">{selectedUser.nickname}</span> 회원님 처리
             </p>
 
-            <div className="space-y-4 mb-8">
+            <div className="space-y-4 mb-6">
               {modalType === 'manner' && (
                 <div className="space-y-6">
                   <div className="space-y-4">

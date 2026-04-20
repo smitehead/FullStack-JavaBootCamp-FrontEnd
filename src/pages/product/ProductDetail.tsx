@@ -928,7 +928,7 @@ export const ProductDetail: React.FC = () => {
               <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
                 <div className={`flex items-center px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md ${isHighestBidder
                   ? 'bg-emerald-600 text-white'
-                  : 'bg-orange-500 text-white'
+                  : 'bg-brand text-white'
                   }`}>
                   <span className="text-xs font-semibold tracking-tight">
                     입찰 중 <span className="mx-1.5 opacity-50">|</span> {isHighestBidder ? '최고 입찰' : '추월 변동'}
@@ -961,7 +961,7 @@ export const ProductDetail: React.FC = () => {
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`w-2 h-2 rounded-full transition-all ${selectedImage === idx ? 'bg-orange-500 w-4' : 'bg-white/50 hover:bg-white'}`}
+                  className={`w-2 h-2 rounded-full transition-all ${selectedImage === idx ? 'bg-brand w-4' : 'bg-white/50 hover:bg-white'}`}
                 />
               ))}
             </div>
@@ -1061,7 +1061,7 @@ export const ProductDetail: React.FC = () => {
                 {(isFinished && product.winnerId === user?.id) && (
                   <button
                     onClick={() => navigate(`/chat?id=chat_1`)}
-                    className="px-3 py-1.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-lg border border-gray-200 transition-all flex items-center gap-1.5"
+                    className="px-3 py-1.5 text-gray-600 hover:text-brand hover:bg-brand/10 rounded-lg border border-gray-200 transition-all flex items-center gap-1.5"
                   >
                     <BsChat className="w-4 h-4" />
                     <span className="text-xs font-bold">채팅하기</span>
@@ -1109,7 +1109,7 @@ export const ProductDetail: React.FC = () => {
               </div>
               <div className="flex justify-between items-end pt-2 border-t border-gray-50">
                 <span className="text-gray-500 font-bold mb-1">{isFinished ? '최종 낙찰가' : '현재 입찰가'}</span>
-                <span className={`text-3xl font-bold ${isFinished ? 'text-gray-900' : 'text-orange-500'}`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
+                <span className={`text-3xl font-bold ${isFinished ? 'text-gray-900' : 'text-brand'}`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
               </div>
             </div>
 
@@ -1144,7 +1144,7 @@ export const ProductDetail: React.FC = () => {
                     {/* 자동 입찰 버튼 */}
                     <button
                       onClick={() => openBidModal('auto')}
-                      className="flex-1 py-4 border border-orange-500 text-orange-500 font-bold rounded-xl hover:bg-orange-50 transition-colors"
+                      className="flex-1 py-4 border border-brand text-brand font-bold rounded-xl hover:bg-brand/10 transition-colors"
                     >
                       {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
                     </button>
@@ -1181,7 +1181,7 @@ export const ProductDetail: React.FC = () => {
                             setShowBidTermsModal(true);
                           }
                         }}
-                        className="flex-1 py-4 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10"
+                        className="flex-1 py-4 bg-brand text-white font-bold rounded-xl hover:bg-brand-dark transition-colors shadow-lg shadow-brand/20"
                       >
                         입찰 참여하기
                       </button>
@@ -1223,7 +1223,7 @@ export const ProductDetail: React.FC = () => {
                 className={`pb-4 px-6 font-bold text-sm transition-all relative ${activeTab === tab.id ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
               >
                 {tab.label}
-                {activeTab === tab.id && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500"></span>}
+                {activeTab === tab.id && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-brand"></span>}
               </button>
             ))}
           </div>
@@ -1245,11 +1245,11 @@ export const ProductDetail: React.FC = () => {
               <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-bold text-gray-800 flex items-center">
-                    <BsGraphUpArrow className="w-5 h-5 mr-2 text-orange-500" /> 실시간 입찰 현황
+                    <BsGraphUpArrow className="w-5 h-5 mr-2 text-brand" /> 실시간 입찰 현황
                   </h3>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-gray-400">시작가 대비</span>
-                    <span className="text-sm font-bold text-orange-500">
+                    <span className="text-sm font-bold text-brand">
                       +{(((product.currentPrice - product.startPrice) / product.startPrice) * 100).toFixed(1)}%
                     </span>
                   </div>
@@ -1261,7 +1261,7 @@ export const ProductDetail: React.FC = () => {
                       <XAxis dataKey="label" tick={{ fontSize: 10 }} stroke="#9ca3af" />
                       <YAxis domain={['auto', 'auto']} tickFormatter={(value) => `${((value || 0) / 10000).toLocaleString()}만`} stroke="#9ca3af" tick={{ fontSize: 10 }} />
                       <Tooltip formatter={(value: number) => `${(value || 0).toLocaleString()}원`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
-                      <Line type="monotone" dataKey="amount" stroke="#f97316" strokeWidth={3} dot={{ r: 4, fill: '#f97316' }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="amount" stroke="#FF5A5A" strokeWidth={3} dot={{ r: 4, fill: '#FF5A5A' }} activeDot={{ r: 6 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -1286,7 +1286,7 @@ export const ProductDetail: React.FC = () => {
                         <td className="px-6 py-4 font-medium text-gray-900 max-w-[150px] truncate" title={bid.bidderName}>
                           {bid.bidderName}
                         </td>
-                        <td className="px-6 py-4 text-right font-bold text-orange-500">{(bid.amount || 0).toLocaleString()}원</td>
+                        <td className="px-6 py-4 text-right font-bold text-brand">{(bid.amount || 0).toLocaleString()}원</td>
                         <td className="px-6 py-4 text-right text-gray-400">{new Date(bid.timestamp).toLocaleString()}</td>
                       </tr>
                     ))}
@@ -1339,7 +1339,7 @@ export const ProductDetail: React.FC = () => {
                     onChange={e => setQnaInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleQnaSubmit()}
                     placeholder="상품에 대해 궁금한 점을 남겨주세요."
-                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none"
                   />
                   <button onClick={handleQnaSubmit} className="bg-gray-900 text-white px-8 py-3 rounded-xl text-sm font-bold hover:bg-black transition-colors">등록</button>
                 </div>
@@ -1369,7 +1369,7 @@ export const ProductDetail: React.FC = () => {
                     {qna.answer ? (
                       <div className="bg-gray-50 p-4 rounded-xl ml-6 border border-gray-100">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-bold text-sm text-orange-600">판매자 답변</span>
+                          <span className="font-bold text-sm text-brand-dark">판매자 답변</span>
                           <div className="flex items-center gap-3">
                             <span className="text-[10px] text-gray-400">{qna.answeredAt ? new Date(qna.answeredAt).toLocaleDateString('ko-KR') : ''}</span>
                             {isSeller && (
@@ -1389,15 +1389,15 @@ export const ProductDetail: React.FC = () => {
                               onChange={e => setAnswerInputs(prev => ({ ...prev, [qna.qnaNo]: e.target.value }))}
                               onKeyDown={e => e.key === 'Enter' && handleAnswerSubmit(qna.qnaNo)}
                               placeholder="답변을 입력하세요."
-                              className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                              className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none"
                             />
-                            <button onClick={() => handleAnswerSubmit(qna.qnaNo)} className="bg-orange-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-orange-600">등록</button>
+                            <button onClick={() => handleAnswerSubmit(qna.qnaNo)} className="bg-brand text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brand-dark">등록</button>
                             <button onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: false }))} className="text-sm text-gray-400 hover:text-gray-600 px-2">취소</button>
                           </div>
                         ) : (
                           <button
                             onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: true }))}
-                            className="mt-2 ml-6 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-orange-500"
+                            className="mt-2 ml-6 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-brand"
                           >
                             <BsReply className="w-3 h-3" /> 답글 달기
                           </button>
@@ -1425,8 +1425,8 @@ export const ProductDetail: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BsGeoAltFill className="w-5 h-5 text-orange-500" />
+                  <div className="w-8 h-8 bg-brand/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BsGeoAltFill className="w-5 h-5 text-brand" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 mb-1">대면 거래는 공공장소에서</p>
@@ -1525,7 +1525,7 @@ export const ProductDetail: React.FC = () => {
                         value={bidAmount}
                         step={product.minBidIncrement}
                         onChange={(e) => setBidAmount(Number(e.target.value))}
-                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-orange-500 focus:bg-white outline-none transition-all pr-12"
+                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-brand focus:bg-white outline-none transition-all pr-12"
                       />
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
                     </div>
@@ -1549,7 +1549,7 @@ export const ProductDetail: React.FC = () => {
                         value={autoBidMaxAmount}
                         step={product.minBidIncrement}
                         onChange={(e) => setAutoBidMaxAmount(Number(e.target.value))}
-                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-orange-500 focus:bg-white outline-none transition-all pr-12"
+                        className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-brand focus:bg-white outline-none transition-all pr-12"
                       />
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
                     </div>
@@ -1582,7 +1582,7 @@ export const ProductDetail: React.FC = () => {
                     )}
                     <button
                       onClick={handleBidSubmit}
-                      className="flex-1 py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                      className="flex-1 py-5 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98]"
                     >
                       입찰하기
                     </button>
@@ -1611,7 +1611,7 @@ export const ProductDetail: React.FC = () => {
                     </button>
                     <button
                       onClick={handleBidSubmit}
-                      className="flex-1 py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                      className="flex-1 py-5 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98]"
                     >
                       변경하기
                     </button>
@@ -1619,7 +1619,7 @@ export const ProductDetail: React.FC = () => {
                 ) : (
                   <button
                     onClick={handleBidSubmit}
-                    className="w-full py-5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 active:scale-[0.98]"
+                    className="w-full py-5 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98]"
                   >
                     자동 입찰 설정하기
                   </button>
@@ -1769,7 +1769,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="space-y-6">
                       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                         <div className="flex items-center gap-2 mb-3">
-                          <BsExclamationCircle className="w-4 h-4 text-orange-500" />
+                          <BsExclamationCircle className="w-4 h-4 text-brand" />
                           <p className="text-sm font-black text-gray-900">마감 임박 (12시간 이내)</p>
                         </div>
                         <p className="text-xs text-gray-600 leading-relaxed font-bold">
@@ -1863,9 +1863,9 @@ export const ProductDetail: React.FC = () => {
 
                     {/* 포인트 부족 알림 */}
                     {!canAfford && (
-                      <div className="flex items-start gap-3 bg-orange-50 border border-orange-100 rounded-2xl p-4">
-                        <BsExclamationCircle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
-                        <p className="text-xs font-bold text-orange-800 leading-relaxed">
+                      <div className="flex items-start gap-3 bg-brand/10 border border-orange-100 rounded-2xl p-4">
+                        <BsExclamationCircle className="w-5 h-5 text-brand shrink-0 mt-0.5" />
+                        <p className="text-xs font-bold text-brand-dark leading-relaxed">
                           위약금 납부를 위한 포인트가 부족합니다. <br />포인트 충전을 완료하셔야 취소가 가능합니다.
                         </p>
                       </div>
@@ -2059,7 +2059,7 @@ export const ProductDetail: React.FC = () => {
                 </button>
                 <button
                   onClick={() => { setShowRechargePrompt(false); navigate('/points/charge'); }}
-                  className="flex-1 py-3.5 bg-orange-600 text-white font-bold rounded-2xl hover:bg-orange-700 transition-colors shadow-lg shadow-orange-100 flex items-center justify-center gap-2 text-sm"
+                  className="flex-1 py-3.5 bg-brand-dark text-white font-bold rounded-2xl hover:bg-brand-dark transition-colors shadow-lg shadow-orange-100 flex items-center justify-center gap-2 text-sm"
                 >
                   충전하기
                 </button>
@@ -2192,7 +2192,7 @@ export const ProductDetail: React.FC = () => {
                 <button
                   onClick={executeStandardBid}
                   disabled={isBidProcessing}
-                  className="flex-1 py-3.5 bg-orange-500 text-white rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-100 text-sm flex items-center justify-center gap-2"
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-orange-100 text-sm flex items-center justify-center gap-2"
                 >
                   {isBidProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '입찰하기'}
                 </button>
@@ -2222,7 +2222,7 @@ export const ProductDetail: React.FC = () => {
                 <button
                   onClick={executeAutoBid}
                   disabled={isBidProcessing}
-                  className="flex-1 py-3.5 bg-orange-500 text-white rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-100 text-sm flex items-center justify-center gap-2"
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-orange-100 text-sm flex items-center justify-center gap-2"
                 >
                   {isBidProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '설정하기'}
                 </button>

@@ -460,7 +460,7 @@ export const MyPage: React.FC = () => {
               to="/chat"
               className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
             >
-              <BsChat className="w-5 h-5 mr-3 text-orange-500" /> 채팅방
+              <BsChat className="w-5 h-5 mr-3 text-brand" /> 채팅방
             </Link>
           </nav>
         </div>

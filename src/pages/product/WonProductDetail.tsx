@@ -413,10 +413,10 @@ export const WonProductDetail: React.FC = () => {
                   {(isPending || isCancelRequested) && (
                     isCancelRequested ? (
                       /* 취소요청 상태: 판매자 승인 대기 중 안내 */
-                      <div className="bg-orange-50 border border-orange-100 p-5 rounded-2xl text-center space-y-2">
-                        <AlertCircle className="w-8 h-8 text-orange-400 mx-auto" />
-                        <p className="text-sm font-bold text-orange-700">취소 요청 대기 중</p>
-                        <p className="text-xs text-orange-600 font-medium">판매자가 취소 요청을 검토 중입니다.<br />승인 완료 시 포인트가 자동 환불됩니다.</p>
+                      <div className="bg-brand/10 border border-brand/20 p-5 rounded-2xl text-center space-y-2">
+                        <AlertCircle className="w-8 h-8 text-brand-light mx-auto" />
+                        <p className="text-sm font-bold text-brand-dark">취소 요청 대기 중</p>
+                        <p className="text-xs text-brand-dark font-medium">판매자가 취소 요청을 검토 중입니다.<br />승인 완료 시 포인트가 자동 환불됩니다.</p>
                       </div>
                     ) : (
                       /* 배송대기: [낙찰 취소하기] 왼쪽 + [상품 수령 확인] 오른쪽 — 모든 낙찰자 공통 */

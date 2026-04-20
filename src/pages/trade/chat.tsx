@@ -982,7 +982,7 @@ export const Chat: React.FC = () => {
                   setSelectedRoom(room);
                   navigate(`/chat?roomNo=${room.roomNo}`, { replace: true });
                 }}
-                className={`w-full p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 ${selectedRoom?.roomNo === room.roomNo ? 'bg-orange-50' : ''
+                className={`w-full p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 ${selectedRoom?.roomNo === room.roomNo ? 'bg-brand/10' : ''
                   }`}>
                 <img src={room.otherUser.profileImage || '/images/default-profile.png'}
                   alt="" className="w-12 h-12 rounded-full flex-shrink-0 bg-gray-50 object-cover" />
@@ -998,7 +998,7 @@ export const Chat: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <p className="text-xs text-gray-500 truncate">{room.lastMessage}</p>
                     {room.unreadCount > 0 && (
-                      <span className="ml-2 px-1.5 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded-full flex-shrink-0">
+                      <span className="ml-2 px-1.5 py-0.5 bg-brand text-white text-[10px] font-bold rounded-full flex-shrink-0">
                         {room.unreadCount > 99 ? '99+' : room.unreadCount}
                       </span>
                     )}
@@ -1098,13 +1098,6 @@ export const Chat: React.FC = () => {
               )}
               {!hasMore && messages.length > 0 && (
                 <div className="text-center text-xs text-gray-400 py-2">이전 메시지가 없습니다</div>
-              )}
-              {messages.length === 0 && !isLoadingMore && (
-                <div className="flex flex-col items-center justify-center py-20 animate-in fade-in duration-700">
-                  <div className="text-center text-xs text-gray-400 leading-relaxed">
-                    안전한 거래를 위해 직거래 장소 또는 배송지에 대해 협의해 주세요.
-                  </div>
-                </div>
               )}
               {messages.map((msg, idx) => {
                 const isMe = msg.senderNo === memberNo;
@@ -1222,7 +1215,7 @@ export const Chat: React.FC = () => {
                             </div>
                           ) : msg.msgType === 'LOCATION' ? (
                             <div
-                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[220px] ${isMe ? 'border-orange-200 rounded-tr-none' : 'border-gray-100 rounded-tl-none'
+                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[220px] ${isMe ? 'border-brand/40 rounded-tr-none' : 'border-gray-100 rounded-tl-none'
                                 } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
                             >
                               {/* 위치 지도 미리보기 (Static Map 또는 플레이스홀더) */}
@@ -1240,13 +1233,13 @@ export const Chat: React.FC = () => {
                                   />
                                 </a>
                               )}
-                              <div className={`p-3 ${isMe ? 'bg-orange-500' : 'bg-white'}`}>
+                              <div className={`p-3 ${isMe ? 'bg-brand' : 'bg-white'}`}>
                                 <div className={`flex items-start gap-1.5 ${isMe ? 'text-white' : 'text-gray-800'}`}>
                                   <BsGeoAltFill className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                                   <div>
                                     <p className="text-xs font-bold leading-snug">{msg.addrRoad || '위치 정보'}</p>
                                     {msg.addrDetail && (
-                                      <p className={`text-[10px] mt-0.5 ${isMe ? 'text-orange-200' : 'text-gray-500'}`}>{msg.addrDetail}</p>
+                                      <p className={`text-[10px] mt-0.5 ${isMe ? 'text-brand/50' : 'text-gray-500'}`}>{msg.addrDetail}</p>
                                     )}
                                   </div>
                                 </div>
@@ -1256,7 +1249,7 @@ export const Chat: React.FC = () => {
                             <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${isMe
                               ? msg.status === 'FAILED'
                                 ? 'bg-red-100 text-red-800 rounded-tr-none'
-                                : 'bg-orange-500 text-white rounded-tr-none'
+                                : 'bg-brand text-white rounded-tr-none'
                               : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
                               } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
                               {msg.content}
@@ -1279,7 +1272,7 @@ export const Chat: React.FC = () => {
                             )}
                             {/* 읽음 표시 */}
                             {isMe && msg.status === 'SENT' && msg.isRead === 0 && (
-                              <span className="text-[9px] text-orange-400 font-bold">1</span>
+                              <span className="text-[9px] text-brand-light font-bold">1</span>
                             )}
                             <span className="text-[9px] text-gray-400 font-medium">
                               {formatTime(msg.createdAt)}
@@ -1312,7 +1305,7 @@ export const Chat: React.FC = () => {
                     type="button"
                     onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
                     className={`p-3 rounded-2xl transition-all ${isConnected
-                      ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50'
+                      ? 'text-gray-400 hover:text-brand hover:bg-brand/10'
                       : 'text-gray-200 cursor-not-allowed'
                       }`}
                   >
@@ -1379,7 +1372,7 @@ export const Chat: React.FC = () => {
                     }}
                     placeholder="메시지를 입력하세요..."
                     maxLength={MAX_CONTENT_LENGTH}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all" />
+                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all" />
                   {newMessage.length > 3800 && (
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">
                       {newMessage.length}/{MAX_CONTENT_LENGTH}
@@ -1388,7 +1381,7 @@ export const Chat: React.FC = () => {
                 </div>
                 <button type="submit"
                   disabled={!newMessage.trim() || !isConnected}
-                  className="p-3 bg-orange-500 text-white rounded-2xl hover:bg-orange-600 transition-all disabled:opacity-50 disabled:hover:bg-orange-500 shadow-lg shadow-orange-100">
+                  className="p-3 bg-brand text-white rounded-2xl hover:bg-brand-dark transition-all disabled:opacity-50 disabled:hover:bg-brand shadow-lg shadow-brand/20">
                   <BsSend className="w-5 h-5" />
                 </button>
               </form>
@@ -1451,7 +1444,7 @@ export const Chat: React.FC = () => {
                 <button
                   onClick={handleSendLocation}
                   disabled={isAddressLoading || !locationAddrRoad}
-                  className="flex-1 py-4 bg-orange-500 text-white rounded-2xl text-sm font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-100 active:scale-95 disabled:opacity-50 whitespace-nowrap"
+                  className="flex-1 py-4 bg-brand text-white rounded-2xl text-sm font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/20 active:scale-95 disabled:opacity-50 whitespace-nowrap"
                 >
                   보내기
                 </button>
