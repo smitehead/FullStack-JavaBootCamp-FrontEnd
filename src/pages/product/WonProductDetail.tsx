@@ -380,14 +380,14 @@ export const WonProductDetail: React.FC = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500 font-medium">배송비</span>
-                    <span className={`font-bold ${result.tradeType === '직거래' ? 'text-gray-900' : 'text-gray-400'}`}>
+                    <span className={`font-medium ${result.tradeType === '직거래' ? 'text-gray-900' : 'text-gray-400'}`}>
                       {result.tradeType === '직거래' ? '-' : '(배송비 별도)'}
                     </span>
                   </div>
 
                   <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
                     <span className="text-base font-bold text-gray-900">총 결제 금액</span>
-                    <span className="text-2xl font-bold text-gray-900">{result.finalPrice.toLocaleString()}원</span>
+                    <span className="text-2xl font-bold text-brand">{result.finalPrice.toLocaleString()}원</span>
                   </div>
                 </div>
 
@@ -409,11 +409,10 @@ export const WonProductDetail: React.FC = () => {
                 <div className="mt-8 space-y-3">
                   {(isPending || isCancelRequested) && (
                     isCancelRequested ? (
-                      /* 취소요청 상태: 판매자 승인 대기 중 안내 */
-                      <div className="bg-brand/10 border border-brand/20 p-5 rounded-2xl text-center space-y-2">
-                        <AlertCircle className="w-8 h-8 text-brand-light mx-auto" />
-                        <p className="text-sm font-bold text-brand-dark">취소 요청 대기 중</p>
-                        <p className="text-xs text-brand-dark font-medium">판매자가 취소 요청을 검토 중입니다.<br />승인 완료 시 포인트가 자동 환불됩니다.</p>
+                      /* 취소요청 상태: 판매자 승인 대기 중 안내 (간결한 텍스트 형태) */
+                      <div className="flex items-center justify-center gap-2 py-4">
+                        <AlertCircle className="w-5 h-5 text-brand" />
+                        <p className="text-sm font-bold text-brand">취소 요청 대기 중</p>
                       </div>
                     ) : (
                       /* 배송대기: [낙찰 취소하기] 왼쪽 + [상품 수령 확인] 오른쪽 — 모든 낙찰자 공통 */
@@ -518,8 +517,8 @@ export const WonProductDetail: React.FC = () => {
                 <div className="flex gap-3">
                   <BsInfoCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs font-bold text-gray-900 mb-1">안전 거래 안내</p>
-                    <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
+                    <p className="text-sm font-bold text-gray-900 mb-1">안전 거래 안내</p>
+                    <p className="text-xs text-gray-400 leading-relaxed">
                       배송 완료 후 7일이 지나면 자동으로 구매가 확정되어 판매자에게 정산됩니다.
                     </p>
                   </div>

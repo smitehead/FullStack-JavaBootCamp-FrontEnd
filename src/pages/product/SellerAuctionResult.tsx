@@ -263,6 +263,12 @@ export const SellerAuctionResult: React.FC = () => {
                         <span className="text-gray-500 font-medium">플랫폼 이용료 (안심 결제 수수료 {feePercent})</span>
                         <span className="text-brand font-bold">- {fee.toLocaleString()} P</span>
                       </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-medium">배송비</span>
+                        <span className={`font-medium ${result.tradeType === '직거래' ? 'text-gray-900' : 'text-gray-400'}`}>
+                          {result.tradeType === '직거래' ? '-' : '(배송비 별도)'}
+                        </span>
+                      </div>
                       <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
                         <span className="text-base font-bold text-gray-900">
                           {isCompleted ? '최종 정산 금액' : '최종 정산 예정 금액'}
@@ -277,13 +283,13 @@ export const SellerAuctionResult: React.FC = () => {
 
                 <div className="mt-8 space-y-3">
                   {isCancelRequested && (
-                    <div className="flex items-center gap-1.5 mb-2 group relative">
-                      <AlertCircle className="w-4 h-4 text-brand" />
-                      <span className="text-xs font-bold text-brand cursor-help border-b border-dashed border-brand/30">
+                    <div className="flex items-center gap-2 mb-3 group relative">
+                      <AlertCircle className="w-[18px] h-[18px] text-brand" />
+                      <span className="text-sm font-bold text-brand cursor-help border-b border-dashed border-brand/30">
                         구매자 취소 요청 수신
                       </span>
                       {/* Tooltip */}
-                      <div className="absolute bottom-full left-0 mb-2 w-64 bg-gray-900/95 backdrop-blur-md text-white text-[11px] p-4 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl pointer-events-none border border-white/10">
+                      <div className="absolute bottom-full left-0 mb-2 w-64 bg-gray-900/95 backdrop-blur-md text-white text-xs p-4 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl pointer-events-none border border-white/10">
                         <p className="leading-relaxed font-medium">
                           구매자가 낙찰 취소를 요청했습니다.<br />
                           승인하면 구매자에게 포인트가 환불되고 경매는 유찰 처리됩니다.
@@ -369,9 +375,9 @@ export const SellerAuctionResult: React.FC = () => {
                 <div className="flex gap-3">
                   <BsInfoCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs font-bold text-gray-900 mb-1">안전 거래 안내</p>
-                    <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
-                      낙찰 포인트는 LiveBid에서 안전하게 보관하며, 구매자가 '수령 확인'을 완료한 후 판매자에게 정산됩니다.
+                    <p className="text-sm font-bold text-gray-900 mb-1">안전 거래 안내</p>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      낙찰 포인트는 JAVAJAVA에서 안전하게 보관하며, 구매자가 '수령 확인'을 완료한 후 판매자에게 정산됩니다.
                     </p>
                   </div>
                 </div>
