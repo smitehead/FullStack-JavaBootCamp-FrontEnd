@@ -151,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               navigate(`/search?q=${encodeURIComponent(term)}`);
                               setIsSearchFocused(false);
                             }}
-                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-between group"
+                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-between group"
                           >
                             <div className="flex items-center gap-3">
                               <BsClock className="w-3.5 h-3.5 text-gray-300" />
@@ -185,7 +185,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               navigate(`/search?q=${encodeURIComponent(term)}`);
                               setIsSearchFocused(false);
                             }}
-                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors flex items-center gap-3"
+                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-3"
                           >
                             <BsArrowUpRight className="w-3.5 h-3.5 text-gray-300" />
                             {term}
@@ -338,19 +338,19 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100">
                     <Link
                       to="/mypage"
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                     >
                       <BsPersonCircle className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </Link>
                     <Link
                       to="/chat"
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                     >
                       <BsChat className="w-4 h-4 mr-2.5" /> 채팅방 가기
                     </Link>
                     <Link
                       to="/settings"
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                     >
                       <BsGear className="w-4 h-4 mr-2.5" /> 계정 설정
                     </Link>

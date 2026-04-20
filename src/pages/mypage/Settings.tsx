@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsBell, BsShield, BsShieldCheck, BsCreditCard, BsBank, BsPersonDash, BsExclamationCircle, BsCheckCircle, BsPersonFillGear, BsChevronDown, BsX } from 'react-icons/bs';
+import { BsBell, BsShield, BsShieldCheck, BsCreditCard, BsBank, BsPersonDash, BsExclamationCircle, BsCheckCircle, BsPersonFillGear, BsChevronDown, BsX, BsToggle2On, BsToggle2Off } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
@@ -430,33 +430,33 @@ export const Settings: React.FC = () => {
             <div className="">
               <button
                 onClick={() => setActiveTab('notification')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'notification' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'notification' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <BsBell className="w-5 h-5 mr-3" /> 알림 설정
+                <BsBell className={`w-5 h-5 mr-3 ${activeTab === 'notification' ? 'text-red-500' : ''}`} /> 알림 설정
               </button>
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'profile' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'profile' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <BsPersonFillGear className="w-5 h-5 mr-3" /> 프로필 수정
+                <BsPersonFillGear className={`w-5 h-5 mr-3 ${activeTab === 'profile' ? 'text-red-500' : ''}`} /> 프로필 수정
               </button>
               <button
                 onClick={() => setActiveTab('block')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'block' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'block' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <BsShield className="w-5 h-5 mr-3" /> 차단 사용자 관리
+                <BsShield className={`w-5 h-5 mr-3 ${activeTab === 'block' ? 'text-red-500' : ''}`} /> 차단 사용자 관리
               </button>
               <button
                 onClick={() => setActiveTab('card')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'card' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'card' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <BsCreditCard className="w-5 h-5 mr-3" /> 카드 관리
+                <BsCreditCard className={`w-5 h-5 mr-3 ${activeTab === 'card' ? 'text-red-500' : ''}`} /> 카드 관리
               </button>
               <button
                 onClick={() => setActiveTab('account')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'account' ? 'bg-red-50 text-red-900' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'account' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <BsBank className="w-5 h-5 mr-3" /> 계좌 관리
+                <BsBank className={`w-5 h-5 mr-3 ${activeTab === 'account' ? 'text-red-500' : ''}`} /> 계좌 관리
               </button>
               <button
                 onClick={openWithdrawModal}
@@ -775,9 +775,9 @@ export const Settings: React.FC = () => {
                   </div>
                   <button
                     onClick={() => toggleSetting('auctionEnd')}
-                    className={`w-12 h-6 rounded-full transition-all relative ${settings.auctionEnd ? 'bg-emerald-500' : 'bg-gray-200'}`}
+                    className={`text-3xl transition-all ${settings.auctionEnd ? 'text-brand' : 'text-gray-300 hover:text-gray-400'}`}
                   >
-                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settings.auctionEnd ? 'left-7' : 'left-1'}`}></div>
+                    {settings.auctionEnd ? <BsToggle2On /> : <BsToggle2Off />}
                   </button>
                 </div>
 
@@ -788,9 +788,9 @@ export const Settings: React.FC = () => {
                   </div>
                   <button
                     onClick={() => toggleSetting('newBid')}
-                    className={`w-12 h-6 rounded-full transition-all relative ${settings.newBid ? 'bg-emerald-500' : 'bg-gray-200'}`}
+                    className={`text-3xl transition-all ${settings.newBid ? 'text-brand' : 'text-gray-300 hover:text-gray-400'}`}
                   >
-                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settings.newBid ? 'left-7' : 'left-1'}`}></div>
+                    {settings.newBid ? <BsToggle2On /> : <BsToggle2Off />}
                   </button>
                 </div>
 
@@ -801,9 +801,9 @@ export const Settings: React.FC = () => {
                   </div>
                   <button
                     onClick={() => toggleSetting('chat')}
-                    className={`w-12 h-6 rounded-full transition-all relative ${settings.chat ? 'bg-emerald-500' : 'bg-gray-200'}`}
+                    className={`text-3xl transition-all ${settings.chat ? 'text-brand' : 'text-gray-300 hover:text-gray-400'}`}
                   >
-                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settings.chat ? 'left-7' : 'left-1'}`}></div>
+                    {settings.chat ? <BsToggle2On /> : <BsToggle2Off />}
                   </button>
                 </div>
 
@@ -814,9 +814,9 @@ export const Settings: React.FC = () => {
                   </div>
                   <button
                     onClick={() => toggleSetting('marketing')}
-                    className={`w-12 h-6 rounded-full transition-all relative ${settings.marketing ? 'bg-emerald-500' : 'bg-gray-200'}`}
+                    className={`text-3xl transition-all ${settings.marketing ? 'text-brand' : 'text-gray-300 hover:text-gray-400'}`}
                   >
-                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settings.marketing ? 'left-7' : 'left-1'}`}></div>
+                    {settings.marketing ? <BsToggle2On /> : <BsToggle2Off />}
                   </button>
                 </div>
               </div>

@@ -222,15 +222,15 @@ export const SellerProfile: React.FC = () => {
           <nav className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
             <button
               onClick={() => setActiveTab('selling')}
-              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-emerald-50 text-emerald-900' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-50'}`}
             >
-              <BsBox2 className="w-5 h-5 mr-3" /> 판매 상품
+              <BsBox2 className={`w-5 h-5 mr-3 ${activeTab === 'selling' ? 'text-red-500' : ''}`} /> 판매 상품
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-emerald-50 text-emerald-900' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-900 border-r-2 border-red-500' : 'text-gray-600 hover:bg-gray-50'}`}
             >
-              <BsChatLeft className="w-5 h-5 mr-3" /> 거래 후기
+              <BsChatLeft className={`w-5 h-5 mr-3 ${activeTab === 'reviews' ? 'text-red-500' : ''}`} /> 거래 후기
             </button>
           </nav>
         </div>
@@ -246,7 +246,7 @@ export const SellerProfile: React.FC = () => {
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 {(['all', 'active', 'completed'] as const).map(f => (
                   <button key={f} onClick={() => setSellingFilter(f)}
-                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === f ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {f === 'all' ? '전체' : f === 'active' ? '경매중' : '판매완료'}
                   </button>
                 ))}
