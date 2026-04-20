@@ -3,6 +3,7 @@ import { BsBox2, BsChat, BsChevronRight, BsBell, BsClock } from 'react-icons/bs'
 import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { getProfileImageUrl } from '@/utils/imageUtils';
+import { formatMessagePreview } from '@/utils/chatUtils';
 
 export const Inbox: React.FC = () => {
   const { user, notifications, chats, markNotificationAsRead, markChatAsRead } = useAppContext();
@@ -162,7 +163,7 @@ export const Inbox: React.FC = () => {
                   <BsBell className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-gray-900 font-bold leading-snug mb-2">{noti.message}</p>
+                  <p className="text-gray-900 font-bold leading-snug mb-2">{formatMessagePreview(noti.message)}</p>
                   <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                     <BsClock className="w-3 h-3" />
                     {new Date(noti.createdAt).toLocaleString()}
@@ -206,7 +207,7 @@ export const Inbox: React.FC = () => {
                       {chat.otherUser.role === 'seller' ? '판매자' : '구매자'}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 truncate font-medium">{chat.lastMessage}</p>
+                  <p className="text-sm text-gray-500 truncate font-medium">{formatMessagePreview(chat.lastMessage)}</p>
                   <div className="flex items-center gap-2 mt-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
                     <BsBox2 className="w-3 h-3" />
                     <span className="truncate">{chat.productTitle}</span>

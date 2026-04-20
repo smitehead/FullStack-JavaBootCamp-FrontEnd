@@ -137,7 +137,7 @@ export const Report: React.FC = () => {
         <div className="bg-white rounded-[32px] shadow-xl border border-gray-100 overflow-hidden">
           <div className="p-8 md:p-12">
             <div className="mb-10">
-              <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-2">
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">
                 {sellerId ? `${sellerNickname}님 신고하기` : '상품 신고하기'}
               </h1>
               <p className="text-sm text-gray-400 font-bold">
@@ -230,7 +230,7 @@ export const Report: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-5 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? '접수 중...' : '신고 접수하기'}
               </button>

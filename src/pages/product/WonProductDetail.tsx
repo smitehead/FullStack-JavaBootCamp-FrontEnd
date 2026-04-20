@@ -402,7 +402,7 @@ export const WonProductDetail: React.FC = () => {
                       <p className="text-xs font-bold text-amber-700 mb-1">자동 승계 낙찰 안내</p>
                       <p className="text-[11px] text-amber-600 leading-relaxed font-medium">
                         상위 입찰자의 취소로 자동 승계된 낙찰입니다.<br />
-                        원하지 않을 경우 <span className="font-black">패널티 없이</span> 낙찰 취소가 가능합니다.
+                        원하지 않을 경우 <span className="font-bold">패널티 없이</span> 낙찰 취소가 가능합니다.
                       </p>
                     </div>
                   </div>
@@ -579,7 +579,7 @@ export const WonProductDetail: React.FC = () => {
               <>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">낙찰 취소를 요청하시겠습니까?</h3>
                 <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
-                  일반 낙찰 건의 취소는 <span className="font-black text-gray-700">판매자의 동의(상호 합의)</span>가 필요합니다.
+                  일반 낙찰 건의 취소는 <span className="font-bold text-gray-700">판매자의 동의(상호 합의)</span>가 필요합니다.
                 </p>
                 <p className="text-xs text-red-500 font-bold mb-8 flex items-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5" /> 취소 요청 후 판매자가 승인해야 환불됩니다.

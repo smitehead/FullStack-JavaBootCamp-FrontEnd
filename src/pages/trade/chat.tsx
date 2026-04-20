@@ -10,6 +10,7 @@ import api from '@/services/api';
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { showToast } from '@/components/toastService';
+import { formatMessagePreview } from '@/utils/chatUtils';
 
 // ──── 상수 ────
 const PAGE_SIZE = 20;
@@ -1013,7 +1014,7 @@ export const Chat: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p className="text-xs text-gray-500 truncate">{room.lastMessage}</p>
+                    <p className="text-xs text-gray-500 truncate">{formatMessagePreview(room.lastMessage)}</p>
                     {room.unreadCount > 0 && (
                       <span className="ml-2 px-1.5 py-0.5 bg-brand text-white text-[10px] font-bold rounded-full flex-shrink-0">
                         {room.unreadCount > 99 ? '99+' : room.unreadCount}

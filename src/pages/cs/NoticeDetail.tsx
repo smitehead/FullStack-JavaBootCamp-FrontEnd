@@ -63,10 +63,15 @@ export const NoticeDetail: React.FC = () => {
   return (
     <div className="max-w-[1000px] mx-auto px-6 py-12">
       {/* Back Button */}
-      <Link to="/notice" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
-        <BsChevronLeft className="w-4 h-4 mr-2" />
+      <button
+        onClick={() => navigate('/notice')}
+        className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8 group"
+      >
+        <svg className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
         공지사항 목록
-      </Link>
+      </button>
 
       <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
         {/* Header Section */}
@@ -131,7 +136,7 @@ export const NoticeDetail: React.FC = () => {
           <div className="p-6 flex items-center justify-center bg-gray-50/30">
             <Link
               to="/notice"
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all"
             >
               <BsList className="w-4 h-4" />
               <BsChevronRight className="w-4 h-4 ml-2" />

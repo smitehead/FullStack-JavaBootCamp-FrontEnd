@@ -8,6 +8,7 @@ import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { getProfileImageUrl } from '@/utils/imageUtils';
+import { formatMessagePreview } from '@/utils/chatUtils';
 import { SORRY_IMAGE_BASE64 } from '@/assets/images/sorry_base64';
 import mainLogo from '@/assets/images/main_logo.png';
 
@@ -279,7 +280,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                 {!noti.read && (
                                   <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FF5A5A]" />
                                 )}
-                                <p className={`leading-snug line-clamp-2 ${!noti.read ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{noti.message}</p>
+                                <p className={`leading-snug line-clamp-2 ${!noti.read ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{formatMessagePreview(noti.message)}</p>
                                 <span className="text-[10px] text-gray-300 mt-1 block">{new Date(noti.createdAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
                               </Link>
                             )) : (
@@ -305,7 +306,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                       <span className="font-bold text-gray-900 truncate">{chat.otherUser.nickname}</span>
                                       <span className="text-[10px] text-gray-400">{new Date(chat.lastMessageAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
                                     </div>
-                                    <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{chat.lastMessage}</p>
+                                    <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{formatMessagePreview(chat.lastMessage)}</p>
                                   </div>
                                 </div>
                               </Link>
@@ -702,7 +703,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
               {/* 안내 문구 */}
               <div className="mb-8">
-                <h2 className="text-[30px] font-black text-[#111827] tracking-tight mb-4">서비스 점검 중</h2>
+                <h2 className="text-[30px] font-bold text-[#111827] tracking-tight mb-4">서비스 점검 중</h2>
                 <p className="text-[16px] text-[#6b7280] font-medium leading-relaxed">
                   보다 안정적인 서비스 제공을 위해 서버 점검 중입니다.<br />
                   점검이 완료되면 자동으로 페이지가 복구됩니다.
