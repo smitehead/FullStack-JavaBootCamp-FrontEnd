@@ -251,17 +251,30 @@ export const SellerAuctionResult: React.FC = () => {
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                   정산 정보
                 </h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 font-medium">낙찰 금액</span>
-                    <span className="text-gray-900 font-bold">{result.finalPrice.toLocaleString()}원</span>
-                  </div>
-
-                  <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
-                    <span className="text-base font-bold text-gray-900">총 수령 예정액</span>
-                    <span className="text-2xl font-bold text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
-                  </div>
-                </div>
+                {(() => {
+                  const feeRate = result.tradeType === '직거래' ? 0.01 : 0.02;
+                  const feePercent = result.tradeType === '직거래' ? '1%' : '2%';
+                  const fee = Math.round(result.finalPrice * feeRate);
+                  const settlementAmount = result.finalPrice - fee;
+                  return (
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-medium">최종 낙찰가</span>
+                        <span className="text-gray-900 font-bold">{result.finalPrice.toLocaleString()} P</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-medium">플랫폼 이용료 (안심 결제 수수료 {feePercent})</span>
+                        <span className="text-rose-500 font-bold">- {fee.toLocaleString()} P</span>
+                      </div>
+                      <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
+                        <span className="text-base font-bold text-gray-900">
+                          {isCompleted ? '최종 정산 금액' : '최종 정산 예정 금액'}
+                        </span>
+                        <span className="text-2xl font-bold text-emerald-600">{settlementAmount.toLocaleString()} P</span>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* 취소 요청 안내 배너 */}
                 {isCancelRequested && (
