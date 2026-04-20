@@ -1505,7 +1505,7 @@ export const Chat: React.FC = () => {
                 </button>
                 <button
                   onClick={handleLeaveRoom}
-                  className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-100 text-sm"
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
                 >
                   나가기
                 </button>
@@ -1664,26 +1664,25 @@ export const Chat: React.FC = () => {
 
                 {/* ── 장소 ── */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest block">장소</label>
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2 block px-1">장소</label>
+                  <div className="flex gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={openApptPostcode}
+                      className="flex-1 flex items-center gap-2 px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-600 hover:bg-white hover:ring-2 hover:ring-[#FF5A5A]/20 transition-all text-left overflow-hidden"
+                    >
+                      <BsGeoAltFill className="w-4 h-4 text-[#FF5A5A] flex-shrink-0" />
+                      <span className="truncate">{apptAddrRoad || '주소 검색'}</span>
+                    </button>
                     <button
                       type="button"
                       onClick={handleApptPasteMyAddress}
-                      className="p-1 px-2 text-gray-400 hover:text-[#FF5A5A] transition-colors flex items-center gap-1 group relative"
+                      className="w-[56px] h-[56px] flex items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl text-gray-400 hover:text-[#FF5A5A] hover:bg-white hover:ring-2 hover:ring-[#FF5A5A]/20 transition-all shrink-0"
                       title="내 주소 불러오기"
                     >
-                      <BsCrosshair className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold">내 주소</span>
+                      <BsCrosshair className="w-5 h-5" />
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={openApptPostcode}
-                    className="w-full flex items-center gap-2 px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-600 hover:bg-white hover:ring-2 hover:ring-[#FF5A5A]/20 transition-all mb-3 text-left"
-                  >
-                    <BsGeoAltFill className="w-4 h-4 text-[#FF5A5A] flex-shrink-0" />
-                    <span className="truncate">{apptAddrRoad || '주소 검색'}</span>
-                  </button>
                   <input
                     type="text"
                     value={apptAddrDetail}

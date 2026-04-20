@@ -21,6 +21,8 @@ interface ProductCardProps {
   customLink?: string;
   /** 이미지 위 오버레이(낙찰성공, 판매완료, 경매종료 등)를 모두 숨김 */
   hideOverlay?: boolean;
+  /** 찜 상태 변경 시 콜백 */
+  onWishlistToggle?: (productId: string, isWishlisted: boolean) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -32,6 +34,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   sellerCancelRequested = false,
   customLink,
   hideOverlay = false,
+  onWishlistToggle
 }) => {
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [isFinished, setIsFinished] = useState<boolean>(false);
@@ -94,7 +97,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       const memberNo = getMemberNo(user);
       if (!memberNo) return;
       const response = await api.post(`/wishlists/toggle?productNo=${product.id}`);
-      setIsWishlisted(response.data);
+      const newState = response.data;
+      setIsWishlisted(newState);
+      if (onWishlistToggle) {
+        onWishlistToggle(product.id, newState);
+      }
     } catch (error) {
       console.error('위시리스트 변경 실패', error);
       alert('찜 처리 중 오류가 발생했습니다.');
@@ -252,7 +259,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <p className="text-[10px] text-gray-400 mb-0.5">
               {product.status === 'completed' ? '최종 낙찰가' : '현재 입찰가'}
             </p>
-            <p className={`text-lg font-bold transition-colors duration-500 ${priceHighlight ? 'text-red-600 animate-pulse' : (showBadge ? 'text-indigo-600' : 'text-gray-900')}`}>
+            <p className={`text-lg font-bold transition-colors duration-500 ${priceHighlight ? 'text-red-600 animate-pulse' : (showBadge ? 'text-brand' : 'text-gray-900')}`}>
               {product.currentPrice.toLocaleString()}원
             </p>
           </div>

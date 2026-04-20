@@ -42,7 +42,7 @@ export const InquiryDetail: React.FC = () => {
         <p className="text-gray-400 font-bold">로그인이 필요한 서비스입니다.</p>
         <button
           onClick={() => navigate('/login')}
-          className="px-8 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+          className="px-8 py-3 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-colors shadow-lg shadow-brand/10"
         >
           로그인하러 가기
         </button>
@@ -77,7 +77,7 @@ export const InquiryDetail: React.FC = () => {
   return (
     <div className="max-w-[1000px] mx-auto px-6 py-12">
       {/* Back Button */}
-      <Link to="/inquiry" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
+      <Link to="/inquiry" className="inline-flex items-center gap-2 text-sm font-bold text-brand hover:text-brand-dark transition-colors mb-8">
         <BsChevronLeft className="w-4 h-4" />
         문의 목록으로
       </Link>
@@ -150,7 +150,7 @@ export const InquiryDetail: React.FC = () => {
           {inquiry.status === 1 && inquiry.answer && (
             <div className="mt-12 p-8 bg-gray-50 rounded-3xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-red-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/20">
+                <div className="w-10 h-10 rounded-2xl bg-brand flex items-center justify-center shrink-0 shadow-lg shadow-brand/10">
                   <BsShieldCheck className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">

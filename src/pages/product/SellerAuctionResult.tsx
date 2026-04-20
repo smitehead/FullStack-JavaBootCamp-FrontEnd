@@ -260,14 +260,14 @@ export const SellerAuctionResult: React.FC = () => {
                         <span className="text-gray-900 font-bold">{result.finalPrice.toLocaleString()} P</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500 font-medium">플랫폼 이용료 (안심 결제 수수료 {feePercent})</span>
-                        <span className="text-brand font-bold">- {fee.toLocaleString()} P</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
                         <span className="text-gray-500 font-medium">배송비</span>
                         <span className={`font-medium ${result.tradeType === '직거래' ? 'text-gray-900' : 'text-gray-400'}`}>
                           {result.tradeType === '직거래' ? '-' : '(배송비 별도)'}
                         </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-medium">플랫폼 이용료 (안심 결제 수수료 {feePercent})</span>
+                        <span className="text-brand font-bold">- {fee.toLocaleString()} P</span>
                       </div>
                       <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
                         <span className="text-base font-bold text-gray-900">

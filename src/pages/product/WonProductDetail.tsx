@@ -409,10 +409,21 @@ export const WonProductDetail: React.FC = () => {
                 <div className="mt-8 space-y-3">
                   {(isPending || isCancelRequested) && (
                     isCancelRequested ? (
-                      /* 취소요청 상태: 판매자 승인 대기 중 안내 (간결한 텍스트 형태) */
-                      <div className="flex items-center justify-center gap-2 py-4">
-                        <AlertCircle className="w-5 h-5 text-brand" />
-                        <p className="text-sm font-bold text-brand">취소 요청 대기 중</p>
+                      /* 취소요청 상태: 판매자 승인 대기 중 안내 (흰색 칩 + 툴팁 형태) */
+                      <div className="flex items-center justify-center py-4">
+                        <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-full shadow-sm group relative cursor-help">
+                          <AlertCircle className="w-5 h-5 text-brand" />
+                          <span className="text-sm font-bold text-brand">취소 요청 대기 중</span>
+                          
+                          {/* Tooltip */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 bg-gray-900/95 backdrop-blur-md text-white text-xs p-4 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl pointer-events-none border border-white/10 text-center">
+                            <p className="leading-relaxed font-medium">
+                              판매자가 취소요청을 검토 중입니다.<br />
+                              승인 완료 시 포인트가 자동 환불됩니다.
+                            </p>
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-gray-900/95" />
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       /* 배송대기: [낙찰 취소하기] 왼쪽 + [상품 수령 확인] 오른쪽 — 모든 낙찰자 공통 */

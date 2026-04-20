@@ -204,11 +204,11 @@ export const AuctionManagement: React.FC = () => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="relative w-full max-w-md bg-white rounded-2xl p-8 shadow-2xl overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-2 bg-red-500" />
+              <div className="absolute top-0 left-0 w-full h-2 bg-brand" />
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 rounded-none bg-red-50 flex items-center justify-center shrink-0">
-                  <BsExclamationCircle className="w-6 h-6 text-red-500" />
+                  <BsExclamationCircle className="w-6 h-6 text-brand" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">경매 강제 종료</h3>
@@ -224,13 +224,13 @@ export const AuctionManagement: React.FC = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowCancelModal(false)}
-                  className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-none hover:bg-gray-200 transition-all active:scale-95"
+                  className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-95"
                 >
                   취소
                 </button>
                 <button
                   onClick={handleCancelAuction}
-                  className="flex-1 py-4 bg-red-500 text-white font-bold rounded-none hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 active:scale-95"
+                  className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
                 >
                   강제 종료 실행
                 </button>

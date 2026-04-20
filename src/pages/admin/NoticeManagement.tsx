@@ -293,7 +293,7 @@ export const NoticeManagement: React.FC = () => {
                   <label className="flex items-center space-x-2 cursor-pointer group">
                     <input
                       type="checkbox"
-                      className="w-5 h-5 rounded-none border-gray-300 text-[#FF5A5A] focus:ring-[#FF5A5A] cursor-pointer"
+                      className="w-5 h-5 rounded-none border-gray-300 text-brand focus:ring-brand cursor-pointer"
                       checked={isImportant}
                       onChange={(e) => setIsImportant(e.target.checked)}
                     />
@@ -389,13 +389,13 @@ export const NoticeManagement: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 py-3 rounded-none font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
+                className="flex-1 py-3 rounded-2xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
               >
                 취소
               </button>
               <button
                 onClick={confirmDelete}
-                className="flex-1 py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 text-sm"
+                className="flex-1 py-3 rounded-2xl font-bold text-white bg-brand hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
               >
                 확인
               </button>
