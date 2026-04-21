@@ -408,7 +408,7 @@ export const Signup: React.FC = () => {
             <button
               disabled={!isAllRequiredTermsChecked}
               onClick={() => setStep('info')}
-              className={`w-full mt-10 py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+              className={`w-full mt-10 h-[56px] rounded-2xl font-bold transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
             >
               다음 단계로
               <BsChevronRight className="w-4 h-4" />
@@ -620,7 +620,7 @@ export const Signup: React.FC = () => {
                           <button
                             type="button"
                             onClick={verifyCode}
-                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm flex items-center justify-center"
                           >
                             인증 확인
                           </button>
@@ -628,7 +628,7 @@ export const Signup: React.FC = () => {
                             type="button"
                             onClick={() => sendVerificationCode(true)}
                             disabled={cooldown > 0 || !emailId || (isCustomDomain ? !customDomain : !emailDomain)}
-                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
                           >
                             {cooldown > 0 ? `${cooldown}초 후 가능` : '재요청'}
                           </button>
@@ -735,7 +735,7 @@ export const Signup: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-4 bg-[#FF5A5A] text-white font-bold text-sm rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 flex items-center justify-center gap-2"
+                className="w-full h-[56px] bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 flex items-center justify-center gap-2"
               >
                 가입 완료하기
               </button>

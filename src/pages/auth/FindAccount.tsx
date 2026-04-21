@@ -136,13 +136,13 @@ export const FindAccount: React.FC = () => {
         <div className="flex border-b border-gray-100">
           <button
             onClick={() => setActiveTab('id')}
-            className={`flex-1 py-5 text-sm font-bold transition-all ${activeTab === 'id' ? 'text-gray-900 bg-white border-b-2 border-[#FF5A5A]' : 'text-gray-400 bg-gray-50/50 hover:bg-gray-50'}`}
+            className={`flex-1 py-5 font-bold transition-all ${activeTab === 'id' ? 'text-gray-900 bg-white border-b-2 border-[#FF5A5A]' : 'text-gray-400 bg-gray-50/50 hover:bg-gray-50'}`}
           >
             아이디 찾기
           </button>
           <button
             onClick={() => setActiveTab('pw')}
-            className={`flex-1 py-5 text-sm font-bold transition-all ${activeTab === 'pw' ? 'text-gray-900 bg-white border-b-2 border-[#FF5A5A]' : 'text-gray-400 bg-gray-50/50 hover:bg-gray-50'}`}
+            className={`flex-1 py-5 font-bold transition-all ${activeTab === 'pw' ? 'text-gray-900 bg-white border-b-2 border-[#FF5A5A]' : 'text-gray-400 bg-gray-50/50 hover:bg-gray-50'}`}
           >
             비밀번호 찾기
           </button>
@@ -174,7 +174,7 @@ export const FindAccount: React.FC = () => {
 
                   <button
                     type="submit"
-                    className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg active:scale-95"
+                    className="w-full h-[56px] flex items-center justify-center bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg active:scale-95"
                   >
                     아이디 찾기
                   </button>
@@ -188,13 +188,13 @@ export const FindAccount: React.FC = () => {
                   <div className="space-y-3">
                     <Link
                       to="/login"
-                      className="block w-full py-4 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 text-center"
+                      className="block w-full h-[56px] flex items-center justify-center bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-100 text-center"
                     >
                       로그인 하러가기
                     </Link>
                     <button
                       onClick={() => setActiveTab('pw')}
-                      className="block w-full py-4 bg-gray-50 text-gray-600 font-bold rounded-2xl hover:bg-gray-100 transition-all text-center"
+                      className="block w-full h-[56px] flex items-center justify-center bg-gray-50 text-gray-600 font-bold rounded-2xl hover:bg-gray-100 transition-all text-center"
                     >
                       비밀번호 찾기
                     </button>
@@ -289,7 +289,7 @@ export const FindAccount: React.FC = () => {
                           type="button"
                           onClick={handleSendCode}
                           disabled={isPwVerified || !pwEmailId || (isPwCustomDomain ? !pwCustomDomain : !pwEmailDomain)}
-                          className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
+                          className="px-5 h-[56px] bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
                         >
                           인증번호 전송
                         </button>
@@ -329,7 +329,7 @@ export const FindAccount: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={handleVerifyCode}
-                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm flex items-center justify-center"
                               >
                                 인증 확인
                               </button>
@@ -337,7 +337,7 @@ export const FindAccount: React.FC = () => {
                                 type="button"
                                 onClick={handleSendCode}
                                 disabled={cooldown > 0}
-                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-50"
+                                className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-400 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-50 flex items-center justify-center"
                               >
                                 {cooldown > 0 ? `${cooldown}초 후 재요청` : '재요청'}
                               </button>
@@ -356,7 +356,7 @@ export const FindAccount: React.FC = () => {
                   <button
                     type="submit"
                     disabled={!isPwVerified}
-                    className={`w-full py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isPwVerified ? 'bg-gray-900 text-white shadow-lg hover:bg-black active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+                    className={`w-full h-[56px] rounded-2xl font-bold transition-all flex items-center justify-center gap-2 ${isPwVerified ? 'bg-gray-900 text-white shadow-lg hover:bg-black active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
                   >
                     임시 비밀번호 전송
                   </button>
@@ -375,7 +375,7 @@ export const FindAccount: React.FC = () => {
                   </div>
                   <Link
                     to="/login"
-                    className="block w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg text-center"
+                    className="block w-full h-[56px] flex items-center justify-center bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg text-center"
                   >
                     로그인 하러가기
                   </Link>

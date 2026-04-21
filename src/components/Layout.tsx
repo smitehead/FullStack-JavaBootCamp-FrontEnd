@@ -517,19 +517,19 @@ const Footer: React.FC = () => {
           <div className="md:col-span-3">
             <h4 className="text-sm font-bold text-gray-800 mb-6 uppercase tracking-wider">서비스 및 정책</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
-              <li><Link to="/about?tab=intro" className="hover:text-[#FF5A5A] transition-colors">서비스 소개</Link></li>
-              <li><Link to="/about?tab=privacy" className="hover:text-[#FF5A5A] transition-colors">개인정보처리방침</Link></li>
-              <li><Link to="/about?tab=terms" className="hover:text-[#FF5A5A] transition-colors">이용약관</Link></li>
-              <li><Link to="/about?tab=policy" className="hover:text-[#FF5A5A] transition-colors">운영정책</Link></li>
+              <li><Link to="/about?tab=intro" className="hover:text-gray-900 transition-colors">서비스 소개</Link></li>
+              <li><Link to="/about?tab=privacy" className="hover:text-gray-900 transition-colors">개인정보처리방침</Link></li>
+              <li><Link to="/about?tab=terms" className="hover:text-gray-900 transition-colors">이용약관</Link></li>
+              <li><Link to="/about?tab=policy" className="hover:text-gray-900 transition-colors">운영정책</Link></li>
             </ul>
           </div>
 
           <div className="md:col-span-4">
             <h4 className="text-sm font-bold text-gray-800 mb-6 uppercase tracking-wider">고객지원</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
-              <li className="flex items-center gap-2"><Link to="/notice" className="hover:text-[#FF5A5A] transition-colors">공지사항</Link></li>
-              <li className="flex items-center gap-2"><Link to="/faq" className="hover:text-[#FF5A5A] transition-colors">자주 묻는 질문 (FAQ)</Link></li>
-              <li className="flex items-center gap-2"><Link to="/inquiry" className="hover:text-[#FF5A5A] transition-colors">1:1 문의하기</Link></li>
+              <li className="flex items-center gap-2"><Link to="/notice" className="hover:text-gray-900 transition-colors">공지사항</Link></li>
+              <li className="flex items-center gap-2"><Link to="/faq" className="hover:text-gray-900 transition-colors">자주 묻는 질문 (FAQ)</Link></li>
+              <li className="flex items-center gap-2"><Link to="/inquiry" className="hover:text-gray-900 transition-colors">1:1 문의하기</Link></li>
             </ul>
           </div>
         </div>

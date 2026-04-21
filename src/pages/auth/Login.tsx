@@ -112,7 +112,7 @@ export const Login: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-bold rounded-2xl text-white bg-[#FF5A5A] hover:bg-[#FF4545] focus:outline-none transition-all shadow-lg shadow-red-500/10 active:scale-95"
+              className="group relative w-full flex justify-center items-center h-[56px] px-4 border border-transparent font-bold rounded-2xl text-white bg-[#FF5A5A] hover:bg-[#FF4545] focus:outline-none transition-all shadow-lg shadow-red-500/10 active:scale-95"
             >
               로그인
             </button>
@@ -125,7 +125,7 @@ export const Login: React.FC = () => {
           </p>
           <Link
             to="/signup"
-            className="mt-4 inline-flex items-center justify-center w-full py-3.5 px-4 border-2 border-gray-100 text-sm font-bold rounded-2xl text-gray-700 hover:bg-gray-50 hover:border-gray-200 transition-all group"
+            className="mt-4 inline-flex items-center justify-center w-full h-[56px] px-4 border-2 border-gray-100 font-bold rounded-2xl text-gray-700 hover:bg-gray-50 hover:border-gray-200 transition-all group"
           >
             회원가입 하러가기
             <BsChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />

@@ -475,10 +475,10 @@ export const Settings: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-bold text-gray-900">프로필 수정</h3>
                 {!isProfileEditMode && (
-                    <button
-                      onClick={() => setIsProfileEditMode(true)}
-                      className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
-                    >
+                  <button
+                    onClick={() => setIsProfileEditMode(true)}
+                    className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
+                  >
                     프로필 수정하기
                   </button>
                 )}
@@ -491,17 +491,17 @@ export const Settings: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* 닉네임 */}
                       <div className="md:col-start-1">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">닉네임</p>
-                        <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">닉네임</p>
+                        <div className="px-5 py-3.5 flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
                           {formData.nickname}
                         </div>
                       </div>
 
                       {/* 이메일 */}
                       <div className="md:col-start-1">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일</p>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일</p>
                         <div
-                          className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900 truncate"
+                          className="px-5 py-3.5 flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900 truncate"
                           title={formData.email}
                         >
                           <span className="truncate w-full">{formData.email}</span>
@@ -510,8 +510,8 @@ export const Settings: React.FC = () => {
 
                       {/* 휴대폰 번호 */}
                       <div>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">휴대폰 번호</p>
-                        <div className="px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">휴대폰 번호</p>
+                        <div className="px-5 py-3.5 flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
                           {formData.phoneNum}
                         </div>
                       </div>
@@ -519,12 +519,12 @@ export const Settings: React.FC = () => {
 
                     {/* 주소 */}
                     <div>
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</p>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</p>
                       <div className="space-y-3">
-                        <div className="w-full px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                        <div className="w-full px-5 py-3.5 flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
                           {formData.addrRoad || '도로명 주소'}
                         </div>
-                        <div className="w-full px-5 h-[56px] flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
+                        <div className="w-full px-5 py-3.5 flex items-center bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-900">
                           {formData.addrDetail || '상세 주소'}
                         </div>
                       </div>
@@ -538,17 +538,17 @@ export const Settings: React.FC = () => {
                         {/* 닉네임 */}
                         <div className="space-y-2 md:col-start-1">
                           <div className="flex items-center justify-between px-1">
-                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">닉네임</label>
+                            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">닉네임</label>
                             <button
                               onClick={() => setIsPasswordModalOpen(true)}
-                              className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
+                              className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
                             >
                               비밀번호 변경
                             </button>
                           </div>
                           <input
                             type="text"
-                            className="block w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
+                            className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
                             value={formData.nickname}
                             onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
                           />
@@ -557,17 +557,17 @@ export const Settings: React.FC = () => {
                         {/* 이메일 */}
                         <div className="space-y-2 md:col-start-1">
                           <div className="flex items-center justify-between px-1">
-                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">이메일</label>
+                            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">이메일</label>
                             <button
                               onClick={() => setIsEmailModalOpen(true)}
-                              className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
+                              className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
                             >
                               이메일 변경
                             </button>
                           </div>
                           <input
                             type="email"
-                            className="block w-full px-5 h-[56px] bg-gray-100 border border-gray-100 rounded-2xl text-sm text-gray-500 cursor-not-allowed outline-none font-bold"
+                            className="block w-full px-5 py-3.5 bg-gray-100 border border-gray-100 rounded-2xl text-sm text-gray-500 cursor-not-allowed outline-none font-bold"
                             value={formData.email}
                             readOnly
                           />
@@ -575,10 +575,10 @@ export const Settings: React.FC = () => {
 
                         {/* 휴대폰 번호 */}
                         <div className="space-y-2">
-                          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">휴대폰 번호</label>
+                          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">휴대폰 번호</label>
                           <input
                             type="tel"
-                            className="block w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
+                            className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
                             placeholder="010-0000-0000"
                             value={formData.phoneNum}
                             onChange={(e) => {
@@ -599,7 +599,7 @@ export const Settings: React.FC = () => {
 
                       {/* 주소 */}
                       <div className="space-y-3">
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">주소</label>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">주소</label>
 
                         <div className="flex gap-3">
                           <input
@@ -607,12 +607,12 @@ export const Settings: React.FC = () => {
                             readOnly
                             placeholder="주소 검색을 이용해주세요"
                             value={formData.addrRoad}
-                            className="flex-1 px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
+                            className="flex-1 px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none font-bold text-gray-900 cursor-not-allowed"
                           />
                           <button
                             type="button"
                             onClick={openPostcode}
-                            className="h-[56px] px-6 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-2xl transition-all whitespace-nowrap"
+                            className="py-3.5 px-6 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-2xl transition-all whitespace-nowrap"
                           >
                             주소 검색
                           </button>
@@ -625,7 +625,7 @@ export const Settings: React.FC = () => {
                           value={formData.addrDetail}
                           disabled={!formData.addrRoad}
                           onChange={(e) => setFormData({ ...formData, addrDetail: e.target.value })}
-                          className={`block w-full px-5 h-[56px] border border-gray-100 rounded-2xl text-sm transition-all outline-none font-bold ${!formData.addrRoad
+                          className={`block w-full px-5 py-3.5 border border-gray-100 rounded-2xl text-sm transition-all outline-none font-bold ${!formData.addrRoad
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             : 'bg-gray-50 focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white text-gray-900'
                             }`}
@@ -637,7 +637,7 @@ export const Settings: React.FC = () => {
                     <div className="pt-4 flex gap-3">
                       <button
                         onClick={() => setIsProfileEditMode(false)}
-                        className="flex-1 h-[56px] bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+                        className="flex-1 py-3.5 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
                       >
                         취소
                       </button>
@@ -647,7 +647,7 @@ export const Settings: React.FC = () => {
                           setIsProfileEditMode(false);
                         }}
                         disabled={isProfileSaving}
-                        className="flex-1 h-[56px] bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50"
+                        className="flex-1 py-3.5 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50"
                       >
                         {isProfileSaving ? '저장 중...' : '프로필 정보 저장'}
                       </button>
