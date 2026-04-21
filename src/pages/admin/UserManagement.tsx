@@ -258,20 +258,20 @@ export const UserManagement: React.FC = () => {
             <div key={user.id} className={`px-5 py-2.5 hover:bg-gray-50 transition-colors group ${user.isWithdrawn ? 'opacity-60' : ''}`}>
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center min-w-0 flex-1">
-                  <img src={getProfileImageUrl(user.profileImage)} alt={user.nickname} className="w-7 h-7 rounded-none object-cover bg-gray-100 shrink-0 mr-2.5" />
+                  <img src={getProfileImageUrl(user.profileImage)} alt={user.nickname} className="w-8 h-8 rounded-none object-cover bg-gray-100 shrink-0 mr-3" />
                   {/* 닉네임 */}
                   <button
                     onClick={() => handleUserClick(user.nickname)}
                     title={user.nickname}
-                    className="w-[100px] shrink-0 text-sm font-bold text-gray-900 hover:text-[#FF5A5A] transition-colors truncate text-left"
+                    className="w-[110px] shrink-0 text-[13px] font-bold text-gray-900 hover:text-[#FF5A5A] transition-colors truncate text-left"
                   >
                     {user.nickname}
                   </button>
                   {/* 권한 뱃지 */}
-                  <div className="w-[60px] shrink-0">
+                  <div className="w-[62px] shrink-0">
                     {!user.isWithdrawn && (
                       <div className="relative inline-flex group/role">
-                        <span className={`inline-flex items-center h-[17px] px-1.5 rounded-none text-[10px] font-bold cursor-pointer ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                        <span className={`inline-flex items-center h-[18px] px-1.5 rounded-none text-[11px] font-bold cursor-pointer ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
                           {user.isAdmin ? <BsShield className="w-2.5 h-2.5 mr-1" /> : <BsPerson className="w-2.5 h-2.5 mr-1" />}
                           {user.isAdmin ? '관리자' : '일반'}
                         </span>
@@ -283,35 +283,38 @@ export const UserManagement: React.FC = () => {
                     )}
                   </div>
                   {/* 상태 뱃지 */}
-                  <div className="w-[52px] shrink-0">
-                    <span className={`inline-flex items-center h-[17px] px-1.5 rounded-none text-[10px] font-bold ${user.status === '영구정지' ? 'bg-black text-white' : user.status === '정지' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                  <div className="w-[56px] shrink-0">
+                    <span className={`inline-flex items-center h-[18px] px-1.5 rounded-none text-[11px] font-bold ${user.status === '영구정지' ? 'bg-black text-white' : user.status === '정지' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                       {user.status}
                     </span>
                   </div>
-                  <span className="text-gray-200 shrink-0 w-[20px] text-center">|</span>
+                  <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                   {/* 이메일 */}
-                  <span title={user.email || '이메일 없음'} className="w-[180px] shrink-0 text-[11px] text-gray-400 truncate">{user.email || '이메일 없음'}</span>
+                  <span title={user.email || '이메일 없음'} className="w-[190px] shrink-0 text-xs text-gray-400 truncate">{user.email || '이메일 없음'}</span>
+                  <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                  {/* 전화번호 */}
+                  <span title={(user as any).phoneNum || '-'} className="w-[110px] shrink-0 text-xs text-gray-400 truncate">{(user as any).phoneNum || '-'}</span>
                   {!user.isWithdrawn && (
                     <>
-                      <span className="text-gray-200 shrink-0 w-[20px] text-center">|</span>
+                      <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                       {/* 매너온도 */}
-                      <span className="w-[68px] shrink-0 inline-flex items-center gap-1 text-xs font-bold text-gray-600">
-                        <BsThermometerHalf className={`w-3 h-3 shrink-0 ${user.mannerTemp >= 36.5 ? 'text-orange-500' : 'text-blue-500'}`} />
+                      <span className="w-[72px] shrink-0 inline-flex items-center gap-1 text-xs font-bold text-gray-600">
+                        <BsThermometerHalf className={`w-3.5 h-3.5 shrink-0 ${user.mannerTemp >= 36.5 ? 'text-orange-500' : 'text-blue-500'}`} />
                         {Number(user.mannerTemp).toFixed(1)}°C
                       </span>
-                      <span className="text-gray-200 shrink-0 w-[20px] text-center">|</span>
+                      <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                       {/* 포인트 */}
-                      <span title={`${user.points.toLocaleString()}P`} className="w-[88px] shrink-0 text-xs font-bold text-gray-600 truncate">
-                        <BsCoin className="w-3 h-3 inline mr-0.5 text-yellow-500" />{user.points.toLocaleString()}P
+                      <span title={`${user.points.toLocaleString()}P`} className="w-[96px] shrink-0 text-xs font-bold text-gray-600 truncate">
+                        <BsCoin className="w-3.5 h-3.5 inline mr-0.5 text-yellow-500" />{user.points.toLocaleString()}P
                       </span>
-                      <span className="text-gray-200 shrink-0 w-[20px] text-center">|</span>
+                      <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                       {/* 경매수 */}
-                      <span className="w-[52px] shrink-0 text-[11px] text-gray-500">경매 {user.postCount || 0}건</span>
+                      <span className="w-[56px] shrink-0 text-xs text-gray-500">경매 {user.postCount || 0}건</span>
                     </>
                   )}
-                  <span className="text-gray-200 shrink-0 w-[20px] text-center">|</span>
+                  <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                   {/* 가입일 */}
-                  <span className="w-[88px] shrink-0 text-[11px] text-gray-400">가입 {user.joinedAt.split('T')[0]}</span>
+                  <span className="w-[96px] shrink-0 text-xs text-gray-400">가입 {user.joinedAt.split('T')[0]}</span>
                 </div>
                 {!user.isWithdrawn && (
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
