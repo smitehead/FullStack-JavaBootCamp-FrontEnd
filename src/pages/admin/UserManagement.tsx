@@ -177,14 +177,14 @@ export const UserManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-4">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">사용자 관리</h1>
-          <div className="flex items-center gap-2 mt-1">
-            <p className="text-gray-500 text-[11px] font-medium">회원 정보 조회 및 제재 조치를 관리합니다.</p>
+          <h1 className="text-lg font-bold text-gray-900 tracking-tight">사용자 관리</h1>
+          <div className="flex items-center gap-2 mt-0.5">
+            <p className="text-gray-500 text-xs font-medium">회원 정보 조회 및 제재 조치를 관리합니다.</p>
             <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-            <p className="text-[#FF5A5A] text-[11px] font-bold">총 {allUsers.length}명</p>
+            <p className="text-[#FF5A5A] text-xs font-bold">총 {allUsers.length}명</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3">
@@ -229,9 +229,9 @@ export const UserManagement: React.FC = () => {
       </header>
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <BsPerson className="w-5 h-5 text-gray-400" /> 사용자 목록
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <BsPerson className="w-4 h-4 text-gray-400" /> 사용자 목록
           </h2>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 flex-wrap">
@@ -255,7 +255,7 @@ export const UserManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {filteredAndSortedUsers.slice(0, visibleCount).map((user) => (
-            <div key={user.id} className={`px-8 py-5 hover:bg-gray-50 transition-colors group ${user.isWithdrawn ? 'opacity-60' : ''}`}>
+            <div key={user.id} className={`px-5 py-3 hover:bg-gray-50 transition-colors group ${user.isWithdrawn ? 'opacity-60' : ''}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 min-w-0 flex-1">
                   <img src={getProfileImageUrl(user.profileImage)} alt={user.nickname} className="w-10 h-10 rounded-none object-cover bg-gray-100 shrink-0" />
@@ -344,9 +344,8 @@ export const UserManagement: React.FC = () => {
             </div>
           ))}
           {filteredAndSortedUsers.length === 0 && (
-            <div className="px-8 py-20 text-center">
-              <BsPerson className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-              <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
+            <div className="px-5 py-14 text-center">
+              <p className="text-gray-400 font-bold text-sm">검색 결과가 없습니다.</p>
             </div>
           )}
         </div>

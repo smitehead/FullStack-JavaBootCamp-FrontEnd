@@ -132,14 +132,14 @@ export const WithdrawManagement: React.FC = () => {
   const formatDate = (d: string | null) => d ? new Date(d).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-';
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-4">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">출금 신청 관리</h1>
-          <div className="flex items-center gap-2 mt-1">
-            <p className="text-gray-500 text-[11px] font-medium">포인트 출금 신청 목록을 확인하고 처리합니다.</p>
+          <h1 className="text-lg font-bold text-gray-900 tracking-tight">출금 신청 관리</h1>
+          <div className="flex items-center gap-2 mt-0.5">
+            <p className="text-gray-500 text-xs font-medium">포인트 출금 신청 목록을 확인하고 처리합니다.</p>
             <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-            <p className="text-[#FF5A5A] text-[11px] font-bold">총 {withdraws.length}건</p>
+            <p className="text-[#FF5A5A] text-xs font-bold">총 {withdraws.length}건</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3">
@@ -174,16 +174,16 @@ export const WithdrawManagement: React.FC = () => {
       </header>
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <BsWallet className="w-5 h-5 text-gray-400" /> 출금 신청 목록
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <BsWallet className="w-4 h-4 text-gray-400" /> 출금 신청 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredWithdraws.length}건</span>
         </div>
 
         <div className="divide-y divide-gray-50">
           {filteredWithdraws.map(item => (
-            <div key={item.withdrawNo} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
+            <div key={item.withdrawNo} className="px-5 py-3 hover:bg-gray-50 transition-colors group">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 min-w-0 flex-1">
                   <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
@@ -255,9 +255,8 @@ export const WithdrawManagement: React.FC = () => {
             </div>
           ))}
           {!isLoading && filteredWithdraws.length === 0 && (
-            <div className="px-8 py-20 text-center">
-              <BsWallet className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-              <p className="text-gray-400 font-bold">출금 신청 내역이 없습니다.</p>
+            <div className="px-5 py-14 text-center">
+              <p className="text-gray-400 font-bold text-sm">출금 신청 내역이 없습니다.</p>
             </div>
           )}
         </div>

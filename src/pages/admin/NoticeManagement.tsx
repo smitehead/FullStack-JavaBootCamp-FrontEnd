@@ -149,13 +149,13 @@ export const NoticeManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-4">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-lg font-bold text-gray-900 tracking-tight">
             공지사항 관리
           </h1>
-          <p className="text-gray-500 mt-1 text-[11px] font-medium">
+          <p className="text-gray-500 mt-0.5 text-xs font-medium">
             서비스 공지사항을 등록하고 관리합니다.
           </p>
         </div>
@@ -174,17 +174,17 @@ export const NoticeManagement: React.FC = () => {
           </div>
           <button
             onClick={() => handleOpenModal()}
-            className="bg-[#FF5A5A] text-white px-6 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-sm"
+            className="bg-[#FF5A5A] text-white px-5 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-xs"
           >
-            <BsPlusLg className="w-5 h-5 mr-2" /> 새 공지사항
+            <BsPlusLg className="w-4 h-4 mr-2" /> 새 공지사항
           </button>
         </div>
       </header>
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <BsFileEarmarkText className="w-5 h-5 text-gray-400" /> 공지 목록
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <BsFileEarmarkText className="w-4 h-4 text-gray-400" /> 공지 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredNotices.length}건</span>
         </div>
@@ -193,7 +193,7 @@ export const NoticeManagement: React.FC = () => {
           {filteredNotices.slice(0, visibleCount).map((notice) => (
             <div
               key={notice.id}
-              className={`px-8 py-5 hover:bg-gray-50 transition-colors group ${notice.isDeleted ? 'opacity-40' : ''}`}
+              className={`px-5 py-3 hover:bg-gray-50 transition-colors group ${notice.isDeleted ? 'opacity-40' : ''}`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
@@ -249,8 +249,8 @@ export const NoticeManagement: React.FC = () => {
             </div>
           ))}
           {filteredNotices.length === 0 && (
-            <div className="px-8 py-20 text-center">
-              <p className="text-gray-400 font-bold">공지사항이 없습니다.</p>
+            <div className="px-5 py-14 text-center">
+              <p className="text-gray-400 font-bold text-sm">공지사항이 없습니다.</p>
             </div>
           )}
         </div>

@@ -44,11 +44,11 @@ export const ActivityLogManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-4">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">관리자 활동 로그</h1>
-          <p className="text-gray-500 mt-1 text-[11px] font-medium">관리자들의 모든 활동 내역을 기록하고 모니터링합니다.</p>
+          <h1 className="text-lg font-bold text-gray-900 tracking-tight">관리자 활동 로그</h1>
+          <p className="text-gray-500 mt-0.5 text-xs font-medium">관리자들의 모든 활동 내역을 기록하고 모니터링합니다.</p>
         </div>
         <div className="relative w-full sm:w-64 flex items-center h-10">
           <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
@@ -65,9 +65,9 @@ export const ActivityLogManagement: React.FC = () => {
       </header>
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <BsClockHistory className="w-5 h-5 text-gray-400" /> 활동 내역
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <BsClockHistory className="w-4 h-4 text-gray-400" /> 활동 내역
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredLogs.length}건</span>
         </div>
@@ -77,7 +77,7 @@ export const ActivityLogManagement: React.FC = () => {
             const target = getTargetLabel(log.targetType);
             const TargetIcon = target.icon;
             return (
-              <div key={log.id} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
+              <div key={log.id} className="px-5 py-3 hover:bg-gray-50 transition-colors group">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 min-w-0 flex-1">
                     <div className="w-8 h-8 rounded-none bg-red-50 flex items-center justify-center shrink-0 mt-0.5">
@@ -104,9 +104,8 @@ export const ActivityLogManagement: React.FC = () => {
             );
           })}
           {filteredLogs.length === 0 && (
-            <div className="px-8 py-20 text-center">
-              <BsClockHistory className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-              <p className="text-gray-400 font-bold">활동 로그가 없습니다.</p>
+            <div className="px-5 py-14 text-center">
+              <p className="text-gray-400 font-bold text-sm">활동 로그가 없습니다.</p>
             </div>
           )}
         </div>

@@ -149,17 +149,17 @@ export const BannerManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-4">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">배너 관리</h1>
-          <p className="text-gray-500 mt-1 text-[11px] font-medium">메인 화면의 히어로 배너와 하단 광고 배너를 관리합니다.</p>
+          <h1 className="text-lg font-bold text-gray-900 tracking-tight">배너 관리</h1>
+          <p className="text-gray-500 mt-0.5 text-xs font-medium">메인 화면의 히어로 배너와 하단 광고 배너를 관리합니다.</p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-[#FF5A5A] text-white px-6 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-sm"
+          className="bg-[#FF5A5A] text-white px-5 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-xs"
         >
-          <BsPlusLg className="w-5 h-5 mr-2" /> 새 배너 등록
+          <BsPlusLg className="w-4 h-4 mr-2" /> 새 배너 등록
         </button>
       </header>
 
@@ -273,7 +273,7 @@ export const BannerManagement: React.FC = () => {
       </section>
 
       {/* Banner Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filteredBanners.map((banner) => (
           <div key={banner.bannerNo} className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
             <div className="relative h-48 overflow-hidden">

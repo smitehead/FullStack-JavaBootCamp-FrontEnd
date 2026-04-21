@@ -468,3 +468,39 @@ api.ts 인터셉터:
   요청 → Authorization: Bearer {token} 자동 삽입
   401 응답 → sessionStorage 초기화 + window.dispatchEvent('forceLogout')
 ```
+
+---
+
+## 날짜: 2026-04-21
+
+### 관리자 페이지 레이아웃 compact 적용
+
+#### 문제
+관리자 페이지들의 여백이 과도하게 넓어 한 화면에 보이는 정보량이 적고 직관성이 떨어짐.
+리스트 행의 placeholder 아이콘(BsPerson/BsBell)이 시각적 노이즈를 유발함.
+
+#### 수정 내용
+
+**공통 패턴 일괄 축소** (`src/pages/admin/*.tsx`)
+- 최상위 컨테이너 `space-y-6` → `space-y-4`
+- 헤더 `gap-4` → `gap-3`, `mt-1` → `mt-0.5`
+- 페이지 제목 `text-xl` → `text-lg`
+- 서브타이틀/카운트 `text-[11px]` → `text-xs`
+- 섹션 헤더 `px-8 py-6` → `px-5 py-3.5`, `text-xl` → `text-sm`, 아이콘 `w-5 h-5` → `w-4 h-4`
+- 리스트 아이템 `px-8 py-5` → `px-5 py-3`
+- 빈 상태 `px-8 py-20` → `px-5 py-14` (큰 placeholder 아이콘 제거, 텍스트에 `text-sm` 추가)
+- 등록 버튼 `text-sm` → `text-xs`, 아이콘 `w-5 h-5` → `w-4 h-4`
+
+**적용 파일**
+- `AdminDashboard.tsx` — 카드 grid `gap-4 p-5/6` → `gap-3 p-4`, 통계 수치 `text-xl` → `text-lg`
+- `UserManagement.tsx`
+- `MannerHistoryManagement.tsx` — 리스트 행의 BsPerson 썸네일 아이콘 제거 (import도 정리)
+- `NotificationManagement.tsx` — 리스트 행의 BsBell 타입 아이콘 제거, 새 알림 발송 폼 `p-8 mb-6` → `p-5 mb-4`
+- `NoticeManagement.tsx`
+- `InquiryManagement.tsx` — 2단 레이아웃 `space-x-6 h-[calc(100vh-140px)]` → `space-x-4 h-[calc(100vh-120px)]`, 상세 패널 `p-8 p-5 mb-8` → `p-5 p-4 mb-6`, 선택 대기 placeholder 아이콘 제거
+- `RevenueManagement.tsx` — 통계 카드 `px-6 py-5 gap-4` → `px-4 py-3.5 gap-3`, 필터 바 `px-6 py-4 gap-3` → `px-4 py-3 gap-2`, 수치 `text-2xl` → `text-xl`
+- `WithdrawManagement.tsx`
+- `ReportManagement.tsx` — 리스트 로딩 스피너 색상 red → brand 통일
+- `AuctionManagement.tsx`
+- `ActivityLogManagement.tsx`
+- `BannerManagement.tsx` — 배너 그리드 `gap-6` → `gap-4`, 등록 버튼 `px-6` → `px-5`

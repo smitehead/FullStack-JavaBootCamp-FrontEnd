@@ -67,38 +67,38 @@ export const AdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-4 pb-6">
       <header>
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">관리자 대시보드</h1>
-        <p className="text-gray-500 mt-1 text-xs font-medium">서비스 현황을 확인하세요.</p>
+        <h1 className="text-lg font-bold text-gray-900 tracking-tight">관리자 대시보드</h1>
+        <p className="text-gray-500 mt-0.5 text-xs font-medium">서비스 현황을 확인하세요.</p>
       </header>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
             <button
               key={stat.label}
               onClick={() => navigate(stat.path)}
-              className="bg-white p-5 rounded-none shadow-sm border border-gray-200 flex items-center space-x-4 hover:shadow-md transition-all text-left group"
+              className="bg-white p-4 rounded-none shadow-sm border border-gray-200 flex items-center space-x-3 hover:shadow-md transition-all text-left group"
             >
-              <div className={`${stat.color} p-3 rounded-none text-white shadow-lg group-hover:scale-110 transition-transform`}>
-                <Icon className="w-6 h-6" />
+              <div className={`${stat.color} p-2.5 rounded-none text-white shadow-lg group-hover:scale-110 transition-transform`}>
+                <Icon className="w-5 h-5" />
               </div>
               <div>
                 <p className="text-[11px] font-bold text-gray-500 mb-0.5">{stat.label}</p>
-                <p className="text-xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-lg font-bold text-gray-900">{stat.value}</p>
               </div>
             </button>
           );
         })}
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {/* Popular Categories */}
-        <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
-          <h2 className="text-lg font-bold text-gray-900 mb-6">인기 카테고리</h2>
+        <section className="bg-white p-4 rounded-none shadow-sm border border-gray-200">
+          <h2 className="text-sm font-bold text-gray-900 mb-4">인기 카테고리</h2>
           {popularCategories.length > 0 ? (
             <>
               <div className="h-[200px] w-full">
@@ -142,9 +142,9 @@ export const AdminDashboard: React.FC = () => {
         </section>
 
         {/* Recent Inquiries */}
-        <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-gray-900">최근 문의사항</h2>
+        <section className="bg-white p-4 rounded-none shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-gray-900">최근 문의사항</h2>
             <button
               onClick={() => navigate('/admin/inquiries')}
               className="text-xs font-bold text-[#FF5A5A] hover:underline"
@@ -179,9 +179,9 @@ export const AdminDashboard: React.FC = () => {
         </section>
 
         {/* Recent Notices */}
-        <section className="bg-white p-6 rounded-none shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-gray-900">최근 공지사항</h2>
+        <section className="bg-white p-4 rounded-none shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-gray-900">최근 공지사항</h2>
             <button
               onClick={() => navigate('/admin/notices')}
               className="text-xs font-bold text-[#FF5A5A] hover:underline"
