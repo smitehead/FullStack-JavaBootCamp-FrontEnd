@@ -61,7 +61,7 @@ export const Login: React.FC = () => {
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">아이디</label>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">아이디</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <BsEnvelope className="h-5 w-5 text-gray-400" />
@@ -77,7 +77,7 @@ export const Login: React.FC = () => {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">비밀번호</label>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">비밀번호</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <BsLock className="h-5 w-5 text-gray-400" />
@@ -101,7 +101,7 @@ export const Login: React.FC = () => {
             </div>
           )}
 
-          <div className="flex items-center justify-between text-xs font-bold">
+          <div className="flex items-center justify-between text-xs font-semibold">
             <div className="flex items-center space-x-4">
               <Link to="/find-id" className="text-gray-400 hover:text-gray-600 transition-colors">아이디 찾기</Link>
               <span className="text-gray-200">|</span>

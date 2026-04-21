@@ -159,7 +159,7 @@ export const FindAccount: React.FC = () => {
               {!foundId ? (
                 <form className="space-y-6" onSubmit={handleFindId}>
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 주소</label>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 주소</label>
                     <div className="relative">
                       <input
                         type="email"
@@ -213,7 +213,7 @@ export const FindAccount: React.FC = () => {
                 <form className="space-y-6" onSubmit={handleFindPw}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">아이디</label>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">아이디</label>
                       <div className="relative">
                         <input
                           type="text"
@@ -228,7 +228,7 @@ export const FindAccount: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 인증</label>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 인증</label>
                       <div className="flex flex-col gap-2 mb-2">
                         <div className="flex items-center gap-2">
                           <div className="relative flex-1">
@@ -387,7 +387,7 @@ export const FindAccount: React.FC = () => {
           <div className="mt-10 pt-6 border-t border-gray-50 text-center">
             <button
               onClick={() => navigate('/login')}
-              className="inline-flex items-center text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors"
+              className="inline-flex items-center text-xs font-semibold text-gray-400 hover:text-gray-600 transition-colors"
             >
               <BsChevronLeft className="w-4 h-4 mr-1" /> 로그인 화면으로 돌아가기
             </button>

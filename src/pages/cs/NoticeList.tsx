@@ -142,32 +142,34 @@ export const NoticeList: React.FC = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-10">
+            <div className="flex justify-center items-center space-x-2 pt-12">
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-2 border border-gray-100 rounded-2xl hover:bg-gray-50 transition-colors disabled:opacity-30"
+                className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all"
               >
-                <BsChevronLeft className="w-4 h-4 text-gray-400" />
+                <BsChevronLeft className="w-5 h-5" />
               </button>
-              {pageNumbers.map(page => (
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 rounded-2xl text-sm font-semibold transition-all ${page === currentPage
-                    ? 'bg-brand text-white border border-transparent shadow-lg shadow-brand/10'
-                    : 'bg-white border border-gray-100 text-gray-500 hover:bg-gray-50'
+                  className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${page === currentPage
+                    ? 'bg-brand text-white'
+                    : 'border border-gray-200 text-gray-500 hover:border-brand hover:text-brand'
                     }`}
                 >
                   {page}
                 </button>
               ))}
+
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="p-2 border border-gray-100 rounded-2xl hover:bg-gray-50 transition-colors disabled:opacity-30"
+                className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all"
               >
-                <BsChevronRight className="w-4 h-4 text-gray-400" />
+                <BsChevronRight className="w-5 h-5" />
               </button>
             </div>
           )}

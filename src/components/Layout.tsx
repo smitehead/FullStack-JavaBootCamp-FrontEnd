@@ -308,7 +308,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                         <span className="text-[10px] text-gray-400">{new Date(chat.lastMessageAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
                                       )}
                                     </div>
-                                    <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{formatMessagePreview(chat.lastMessage)}</p>
+                                    <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{formatMessagePreview(chat.lastMessage) || '첫 대화를 남겨보세요'}</p>
                                   </div>
                                 </div>
                               </Link>

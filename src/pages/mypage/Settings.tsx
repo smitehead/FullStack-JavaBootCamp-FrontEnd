@@ -579,8 +579,20 @@ export const Settings: React.FC = () => {
                           <input
                             type="tel"
                             className="block w-full px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
+                            placeholder="010-0000-0000"
                             value={formData.phoneNum}
-                            onChange={(e) => setFormData({ ...formData, phoneNum: e.target.value })}
+                            onChange={(e) => {
+                              const digits = e.target.value.replace(/[^0-9]/g, '');
+                              let formatted = digits;
+                              if (digits.length <= 3) {
+                                formatted = digits;
+                              } else if (digits.length <= 7) {
+                                formatted = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+                              } else {
+                                formatted = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+                              }
+                              setFormData({ ...formData, phoneNum: formatted });
+                            }}
                           />
                         </div>
                       </div>
@@ -656,7 +668,7 @@ export const Settings: React.FC = () => {
                     if (registeredCard) {
                       showToast('이미 카드가 등록되어 있습니다. 삭제 후 다시 눌러주세요.', 'warning');
                     } else {
-                      navigate('/points/charge');
+                      navigate('/points/card-register');
                     }
                   }}
                   className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"

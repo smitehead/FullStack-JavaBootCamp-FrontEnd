@@ -229,7 +229,7 @@ export const Inbox: React.FC = () => {
                     <BsBox2 className="w-3 h-3 text-gray-400" />
                     <span className="text-xs text-gray-500 font-bold truncate">{chat.productTitle}</span>
                   </div>
-                  <p className="text-sm text-gray-900 truncate font-semibold">{formatMessagePreview(chat.lastMessage)}</p>
+                  <p className="text-sm text-gray-900 truncate font-semibold">{formatMessagePreview(chat.lastMessage) || '첫 대화를 남겨보세요'}</p>
                 </div>
                 <BsChevronRight className="w-5 h-5 text-gray-300" />
               </Link>

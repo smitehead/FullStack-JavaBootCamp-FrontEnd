@@ -125,7 +125,7 @@ export const Report: React.FC = () => {
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-50 py-12 px-4">
-      <div className="max-w-[1200px] mx-auto">
+      <div className="max-w-4xl mx-auto">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center text-sm font-bold text-gray-400 hover:text-gray-900 transition-colors mb-6 group"
@@ -230,7 +230,7 @@ export const Report: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full h-[56px] flex items-center justify-center bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? '접수 중...' : '신고 접수하기'}
               </button>
