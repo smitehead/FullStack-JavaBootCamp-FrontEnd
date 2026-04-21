@@ -290,7 +290,7 @@ export const UserManagement: React.FC = () => {
                   </div>
                   <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                   {/* 이메일 */}
-                  <span title={user.email || '이메일 없음'} className="w-[190px] shrink-0 text-xs text-gray-400 truncate">{user.email || '이메일 없음'}</span>
+                  <span title={user.email || '이메일 없음'} className="w-[150px] shrink-0 text-xs text-gray-400 truncate">{user.email || '이메일 없음'}</span>
                   <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                   {/* 전화번호 */}
                   <span title={(user as any).phoneNum || '-'} className="w-[110px] shrink-0 text-xs text-gray-400 truncate">{(user as any).phoneNum || '-'}</span>
