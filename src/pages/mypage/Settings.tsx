@@ -637,7 +637,7 @@ export const Settings: React.FC = () => {
                     <div className="pt-4 flex gap-3">
                       <button
                         onClick={() => setIsProfileEditMode(false)}
-                        className="flex-1 py-3.5 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+                        className="flex-1 h-[56px] bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all flex items-center justify-center"
                       >
                         취소
                       </button>
@@ -647,7 +647,7 @@ export const Settings: React.FC = () => {
                           setIsProfileEditMode(false);
                         }}
                         disabled={isProfileSaving}
-                        className="flex-1 py-3.5 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50"
+                        className="flex-1 h-[56px] bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-xl shadow-red-100 active:scale-95 disabled:opacity-50 flex items-center justify-center"
                       >
                         {isProfileSaving ? '저장 중...' : '프로필 정보 저장'}
                       </button>
@@ -920,7 +920,7 @@ export const Settings: React.FC = () => {
                     </div>
                     <button
                       onClick={handlePasswordChange}
-                      className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl"
+                      className="w-full h-[56px] bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl flex items-center justify-center"
                     >
                       확인
                     </button>
@@ -962,7 +962,7 @@ export const Settings: React.FC = () => {
                   <div className="pt-4">
                     <button
                       onClick={handlePasswordChange}
-                      className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl"
+                      className="w-full h-[56px] bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl flex items-center justify-center"
                     >
                       비밀번호 변경 완료
                     </button>
@@ -1017,7 +1017,7 @@ export const Settings: React.FC = () => {
                         <div className="relative flex-1">
                           <select
                             disabled={isCodeSent}
-                            className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50 appearance-none font-bold"
+                            className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none disabled:opacity-50 appearance-none"
                             value={isNewCustomDomain ? 'custom' : newEmailDomain}
                             onChange={(e) => {
                               if (e.target.value === 'custom') {
@@ -1060,7 +1060,7 @@ export const Settings: React.FC = () => {
                         <button
                           onClick={() => sendVerificationCode('email')}
                           disabled={!newEmailId || (isNewCustomDomain ? !newCustomDomain : !newEmailDomain)}
-                          className="w-full py-4 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-black transition-all disabled:opacity-50"
+                          className="w-full h-[56px] bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center"
                         >
                           인증번호 발송
                         </button>

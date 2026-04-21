@@ -443,7 +443,7 @@ export const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleIdCheck}
-                      className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
+                      className="px-5 py-3.5 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-black transition-all"
                     >
                       중복확인
                     </button>
@@ -508,7 +508,7 @@ export const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleNicknameCheck}
-                      className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
+                      className="px-5 py-3.5 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-black transition-all"
                     >
                       중복확인
                     </button>
@@ -585,7 +585,7 @@ export const Signup: React.FC = () => {
                       type="button"
                       onClick={() => sendVerificationCode(false)}
                       disabled={isEmailVerified || cooldown > 0 || !emailId || (isCustomDomain ? !customDomain : !emailDomain)}
-                      className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
+                      className="h-[56px] px-6 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap flex items-center justify-center"
                     >
                       코드전송
                     </button>
@@ -664,7 +664,7 @@ export const Signup: React.FC = () => {
                       <button
                         type="button"
                         onClick={openPostcode}
-                        className="px-5 py-3.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-2xl transition-all whitespace-nowrap"
+                        className="px-5 py-3.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-2xl transition-all whitespace-nowrap"
                       >
                         주소 검색
                       </button>

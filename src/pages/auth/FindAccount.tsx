@@ -180,10 +180,10 @@ export const FindAccount: React.FC = () => {
                   </button>
                 </form>
               ) : (
-                <div className="space-y-8 animate-in zoom-in-95 duration-300 text-left">
-                  <div className="bg-red-50 p-8 rounded-2xl text-left border border-red-100">
-                    <p className="text-xs font-bold text-red-400 uppercase tracking-widest mb-2">찾으시는 아이디는</p>
-                    <p className="text-2xl font-bold text-[#FF5A5A] tracking-wider">{foundId}</p>
+                <div className="space-y-8 animate-in zoom-in-95 duration-300 text-center">
+                  <div className="bg-gray-50 p-8 rounded-2xl text-center border border-gray-100">
+                    <p className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-2">찾으시는 아이디는</p>
+                    <p className="text-2xl font-bold text-gray-900 tracking-wider font-mono">{foundId}</p>
                   </div>
                   <div className="space-y-3">
                     <Link

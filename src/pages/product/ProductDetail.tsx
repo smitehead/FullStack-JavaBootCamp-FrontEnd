@@ -1174,7 +1174,11 @@ export const ProductDetail: React.FC = () => {
                     {/* 자동 입찰 버튼 */}
                     <button
                       onClick={() => openBidModal('auto')}
-                      className="flex-1 h-[56px] border-2 border-brand text-brand font-bold rounded-2xl hover:bg-brand/10 transition-colors flex items-center justify-center"
+                      className={`flex-1 h-[56px] font-bold rounded-2xl transition-all flex items-center justify-center ${
+                        activeAutoBid 
+                          ? 'bg-slate-900 text-white hover:bg-black shadow-lg shadow-gray-200' 
+                          : 'border-2 border-brand text-brand hover:bg-brand/10'
+                      }`}
                     >
                       {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
                     </button>
@@ -1189,7 +1193,7 @@ export const ProductDetail: React.FC = () => {
                           }
                           setShowBidCancelModal(true);
                         }}
-                        className="flex-1 h-[56px] bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 flex items-center justify-center"
+                        className="flex-1 h-[56px] bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg shadow-gray-200 flex items-center justify-center"
                       >
                         입찰 취소하기
                       </button>
@@ -1596,7 +1600,7 @@ export const ProductDetail: React.FC = () => {
                       setIsBidModalOpen(false);
                       setShowBidCancelModal(true);
                     }}
-                    className="w-full h-[56px] bg-gray-50 border-2 border-gray-100 text-gray-400 font-bold rounded-2xl hover:bg-[#FF5A5A] hover:text-white hover:border-[#FF5A5A] transition-all active:scale-[0.98] flex items-center justify-center"
+                    className="w-full h-[56px] bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all active:scale-[0.98] flex items-center justify-center shadow-lg shadow-gray-200"
                   >
                     입찰 취소하기
                   </button>

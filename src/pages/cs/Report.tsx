@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { BsCheckCircle, BsInfoCircle, BsCamera, BsX, BsChevronLeft } from 'react-icons/bs';
+import { BsCheckCircle, BsInfoCircle, BsCamera, BsX, BsChevronLeft, BsExclamationCircle } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
@@ -109,8 +109,8 @@ export const Report: React.FC = () => {
     return (
       <div className="min-h-[calc(100vh-64px)] bg-gray-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white p-12 rounded-[40px] shadow-2xl text-center border border-gray-100">
-          <div className="w-24 h-24 bg-emerald-100 rounded-3xl flex items-center justify-center mx-auto mb-8">
-            <BsCheckCircle className="w-12 h-12 text-emerald-600" />
+          <div className="flex items-center justify-center mx-auto mb-8">
+            <BsCheckCircle className="w-12 h-12 text-emerald-500" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">신고 접수 완료</h2>
           <p className="text-gray-500 font-medium leading-relaxed">
@@ -125,7 +125,7 @@ export const Report: React.FC = () => {
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center text-sm font-bold text-gray-400 hover:text-gray-900 transition-colors mb-6 group"
@@ -157,8 +157,8 @@ export const Report: React.FC = () => {
                       type="button"
                       onClick={() => setReason(r)}
                       className={`w-full p-4 text-left rounded-2xl border-2 transition-all font-bold text-sm ${reason === r
-                          ? 'border-brand bg-brand/5 text-brand'
-                          : 'border-gray-50 bg-gray-50 text-gray-600 hover:border-gray-200'
+                        ? 'border-brand bg-brand/5 text-brand'
+                        : 'border-gray-50 bg-gray-50 text-gray-600 hover:border-gray-200'
                         }`}
                     >
                       {r}
@@ -217,14 +217,21 @@ export const Report: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100">
-                <div className="flex gap-3">
-                  <BsInfoCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-800 leading-relaxed font-medium">
-                    허위 신고로 판명될 경우 서비스 이용에 제한이 있을 수 있습니다.
-                    신고 내용은 운영팀에서 신중하게 검토하겠습니다.
-                  </p>
+              <div className="mt-12 p-6 bg-gray-50 rounded-3xl border border-gray-100">
+                <div className="flex items-center gap-2 mb-4 text-gray-900">
+                  <BsExclamationCircle className="w-5 h-5 text-gray-900" />
+                  <span className="font-bold">신고 전 확인해주세요</span>
                 </div>
+                <ul className="space-y-3 text-sm text-gray-500 font-medium">
+                  <li className="flex gap-2">
+                    <span className="text-brand">•</span>
+                    허위 신고로 판명될 경우 서비스 이용에 제한이 있을 수 있습니다.
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-brand">•</span>
+                    신고 내용은 운영팀에서 신중하게 검토하겠습니다.
+                  </li>
+                </ul>
               </div>
 
               <button
