@@ -5,8 +5,11 @@ import { useAppContext } from '@/context/AppContext';
 import { getProfileImageUrl } from '@/utils/imageUtils';
 import { formatMessagePreview } from '@/utils/chatUtils';
 
-const formatDate = (date: Date | string) => {
+const formatDate = (date: Date | string | null | undefined) => {
+  if (!date) return '';
   const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
@@ -72,7 +75,7 @@ export const Inbox: React.FC = () => {
   });
 
   return (
-    <div className="max-w-[800px] mx-auto px-6 py-12">
+    <div className="max-w-[1200px] mx-auto px-6 py-12">
       <div className="flex items-center justify-center mb-10">
         <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">알림함</h2>
       </div>
@@ -215,8 +218,12 @@ export const Inbox: React.FC = () => {
                       }`}>
                       {chat.otherUser.role === 'seller' ? '판매자' : '구매자'}
                     </span>
-                    <span className="text-gray-300 mx-1">•</span>
-                    <span className="text-xs text-gray-400 font-medium">{formatDate(chat.lastMessageAt)}</span>
+                    {chat.lastMessageAt && (
+                      <>
+                        <span className="text-gray-300 mx-1">•</span>
+                        <span className="text-xs text-gray-400 font-medium">{formatDate(chat.lastMessageAt)}</span>
+                      </>
+                    )}
                   </div>
                   <div className="flex items-center gap-1.5 mb-1.5">
                     <BsBox2 className="w-3 h-3 text-gray-400" />

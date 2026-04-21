@@ -304,7 +304,9 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                   <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-center mb-1">
                                       <span className="font-bold text-gray-900 truncate">{chat.otherUser.nickname}</span>
-                                      <span className="text-[10px] text-gray-400">{new Date(chat.lastMessageAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                                      {chat.lastMessageAt && (
+                                        <span className="text-[10px] text-gray-400">{new Date(chat.lastMessageAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                                      )}
                                     </div>
                                     <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{formatMessagePreview(chat.lastMessage)}</p>
                                   </div>

@@ -75,7 +75,7 @@ export const InquiryDetail: React.FC = () => {
   }
 
   return (
-    <div className="max-w-[1000px] mx-auto px-6 py-12">
+    <div className="max-w-[1200px] mx-auto px-6 py-12">
       {/* Back Button */}
       <button
         onClick={() => navigate('/inquiry')}
