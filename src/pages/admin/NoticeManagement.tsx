@@ -184,7 +184,7 @@ export const NoticeManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-            <BsFileEarmarkText className="w-4 h-4 text-gray-400" /> 공지 목록
+            <BsMegaphone className="w-4 h-4 text-gray-400" /> 공지 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredNotices.length}건</span>
         </div>
