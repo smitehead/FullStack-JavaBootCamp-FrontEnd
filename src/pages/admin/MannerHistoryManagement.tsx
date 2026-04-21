@@ -70,9 +70,9 @@ export const MannerHistoryManagement: React.FC = () => {
           {filteredHistory.slice(0, visibleCount).map((history) => {
             const isIncrease = history.newTemp > history.previousTemp;
             return (
-              <div key={history.id} className="px-5 py-3 hover:bg-gray-50 transition-colors group">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-4 min-w-0 flex-1">
+              <div key={history.id} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-3 flex-wrap mb-1">
                         <span className="text-sm font-bold text-gray-900">{getNickname(history.userId)}</span>

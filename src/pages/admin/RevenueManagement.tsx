@@ -215,13 +215,13 @@ export const RevenueManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {items.map((item, idx) => (
-            <div key={item.revenueNo} className="px-5 py-3 hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-4">
+            <div key={item.revenueNo} className="px-5 py-2 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-3">
                 <span className="w-6 text-[11px] font-bold text-gray-300 shrink-0">
                   {(page - 1) * 20 + idx + 1}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
                     <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-bold rounded-none border ${getReasonBadgeClass(item.reason)}`}>
                       {item.reason}
                     </span>

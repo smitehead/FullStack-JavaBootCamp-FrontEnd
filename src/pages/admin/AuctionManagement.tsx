@@ -109,17 +109,17 @@ export const AuctionManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {filteredProducts.slice(0, visibleCount).map((product) => (
-            <div key={product.id} className="px-5 py-3 hover:bg-gray-50 transition-colors group">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4 min-w-0 flex-1">
+            <div key={product.id} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   <img
                     src={resolveImageUrl(product.images[0]) || ''}
                     alt={product.title}
-                    className="w-12 h-12 rounded-none object-cover bg-gray-100 shrink-0"
+                    className="w-9 h-9 rounded-none object-cover bg-gray-100 shrink-0"
                     referrerPolicy="no-referrer"
                   />
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
                       <Link
                         to={`/products/${product.id.replace('prod_', '')}`}
                         target="_blank"

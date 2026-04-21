@@ -77,14 +77,14 @@ export const ActivityLogManagement: React.FC = () => {
             const target = getTargetLabel(log.targetType);
             const TargetIcon = target.icon;
             return (
-              <div key={log.id} className="px-5 py-3 hover:bg-gray-50 transition-colors group">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-4 min-w-0 flex-1">
-                    <div className="w-8 h-8 rounded-none bg-red-50 flex items-center justify-center shrink-0 mt-0.5">
+              <div key={log.id} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="w-8 h-8 rounded-none bg-red-50 flex items-center justify-center shrink-0">
                       <BsExclamationTriangle className="w-4 h-4 text-[#FF5A5A]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-0.5">
                         <span className="text-sm font-bold text-gray-900">{log.adminNickname}</span>
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-bold ${target.color}`}>
                           <TargetIcon className="w-3 h-3" />

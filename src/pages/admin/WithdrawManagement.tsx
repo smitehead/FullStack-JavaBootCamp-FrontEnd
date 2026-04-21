@@ -183,20 +183,20 @@ export const WithdrawManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {filteredWithdraws.map(item => (
-            <div key={item.withdrawNo} className="px-5 py-3 hover:bg-gray-50 transition-colors group">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4 min-w-0 flex-1">
-                  <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+            <div key={item.withdrawNo} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0">
                     <BsWallet className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
                       {getStatusBadge(item.status)}
                       <span className="text-sm font-bold text-gray-900">{item.memberNickname}</span>
                       <span className="text-[10px] text-gray-400 font-medium">#{item.memberNo}</span>
                       <span className="text-sm font-bold text-[#FF5A5A]">{item.amount.toLocaleString()}원</span>
                     </div>
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-[10px] font-bold px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-none">{item.bankName}</span>
                       <span className="text-xs font-bold text-gray-900">{item.accountNumber}</span>
                       <span className="text-[10px] text-gray-400 font-medium">예금주: {item.accountHolder}</span>

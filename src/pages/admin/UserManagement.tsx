@@ -255,12 +255,12 @@ export const UserManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {filteredAndSortedUsers.slice(0, visibleCount).map((user) => (
-            <div key={user.id} className={`px-5 py-3 hover:bg-gray-50 transition-colors group ${user.isWithdrawn ? 'opacity-60' : ''}`}>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4 min-w-0 flex-1">
-                  <img src={getProfileImageUrl(user.profileImage)} alt={user.nickname} className="w-10 h-10 rounded-none object-cover bg-gray-100 shrink-0" />
+            <div key={user.id} className={`px-5 py-2 hover:bg-gray-50 transition-colors group ${user.isWithdrawn ? 'opacity-60' : ''}`}>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <img src={getProfileImageUrl(user.profileImage)} alt={user.nickname} className="w-8 h-8 rounded-none object-cover bg-gray-100 shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
                       <button
                         onClick={() => handleUserClick(user.nickname)}
                         className="text-sm font-bold text-gray-900 hover:text-[#FF5A5A] transition-colors"
@@ -296,7 +296,7 @@ export const UserManagement: React.FC = () => {
                         {user.status}
                       </span>
                     </div>
-                    <p className="text-[10px] font-medium text-gray-400 mb-1">{user.email || '이메일 없음'}</p>
+                    <p className="text-[10px] font-medium text-gray-400 mb-0.5">{user.email || '이메일 없음'}</p>
                     <div className="flex items-center gap-3 flex-wrap text-xs">
                       {!user.isWithdrawn && (
                         <>

@@ -195,12 +195,12 @@ export const NotificationManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {recentNotifications.slice(0, visibleCount).map((noti) => (
-            <div key={noti.notiNo} className="px-5 py-3 hover:bg-gray-50 transition-colors group">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4">
+            <div key={noti.notiNo} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
                   <div>
                     <p className="text-sm font-bold text-gray-900 leading-relaxed">{noti.content}</p>
-                    <div className="flex items-center gap-3 mt-2 flex-wrap">
+                    <div className="flex items-center gap-3 mt-1 flex-wrap">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                         {noti.type}
                       </span>
