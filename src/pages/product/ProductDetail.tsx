@@ -956,6 +956,17 @@ export const ProductDetail: React.FC = () => {
               </div>
             )}
 
+            {/* 낙찰 성공 칩 */}
+            {isFinished && isHighestBidder && (product.status === 'completed' || product.status === 'pending_payment') && (
+              <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
+                <div className="flex items-center px-3 py-1.5 rounded-full shadow-lg bg-white border border-gray-100">
+                  <span className="text-xs font-medium text-gray-900 tracking-tight">
+                    낙찰 성공
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Navigation Arrows */}
             {product.images.length > 1 && (
               <>
@@ -1533,7 +1544,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-sm font-bold text-gray-700">입찰 금액</label>
                       {product.instantPrice ? (
-                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                        <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
                           즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
                         </span>
                       ) : null}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
-import { BsShieldCheck, BsClock, BsPerson, BsCalendarCheck, BsList } from 'react-icons/bs';
+import { BsShieldCheck, BsClock, BsPerson, BsCalendar, BsList } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
 import { Inquiry } from '@/types';
@@ -107,7 +107,7 @@ export const InquiryDetail: React.FC = () => {
 
           <div className="flex items-center gap-6 text-sm text-gray-400 font-bold">
             <div className="flex items-center gap-2">
-              <BsCalendarCheck className="w-4 h-4" />
+              <BsCalendar className="w-4 h-4" />
               작성일: {format(new Date(inquiry.createdAt), 'yyyy.MM.dd HH:mm')}
             </div>
           </div>

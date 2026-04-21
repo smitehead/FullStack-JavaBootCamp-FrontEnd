@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BsExclamationCircle, BsCurrencyDollar, BsFileText, BsChatLeftDots } from 'react-icons/bs';
+import { BsExclamationCircle, BsCurrencyDollar, BsMegaphone, BsChatLeftDots } from 'react-icons/bs';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -210,7 +210,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             )) : (
               <div className="py-10 text-center text-gray-400 text-sm font-bold">
-                <BsFileText className="w-8 h-8 mx-auto mb-2 text-gray-100" />
+                <BsMegaphone className="w-8 h-8 mx-auto mb-2 text-gray-100" />
                 공지사항이 없습니다.
               </div>
             )}

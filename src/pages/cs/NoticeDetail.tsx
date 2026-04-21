@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { BsList } from 'react-icons/bs';
 
 import { BsInfoCircle, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
-import { BsCalendarCheck } from 'react-icons/bs';
+import { BsCalendar } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
 
@@ -115,7 +115,7 @@ export const NoticeDetail: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-6">{notice.title}</h1>
           <div className="flex items-center gap-6 text-sm text-gray-400 font-medium">
             <div className="flex items-center gap-2">
-              <BsCalendarCheck className="w-4 h-4" />
+              <BsCalendar className="w-4 h-4" />
               {format(new Date(notice.createdAt), 'yyyy.MM.dd')}
             </div>
           </div>

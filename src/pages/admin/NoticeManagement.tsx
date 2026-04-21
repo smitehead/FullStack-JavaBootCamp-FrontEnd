@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { BsPen, BsTrash3, BsFileEarmarkText } from 'react-icons/bs';
+import { BsPen, BsTrash3, BsMegaphone } from 'react-icons/bs';
 
 import { BsPlusLg, BsSearch } from 'react-icons/bs';
 import { NoticeCategory } from "@/types";
@@ -184,7 +184,7 @@ export const NoticeManagement: React.FC = () => {
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <BsFileEarmarkText className="w-5 h-5 text-gray-400" /> 공지 목록
+            <BsMegaphone className="w-5 h-5 text-gray-400" /> 공지 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredNotices.length}건</span>
         </div>

@@ -478,7 +478,7 @@ export const Chat: React.FC = () => {
         body: JSON.stringify({
           roomId: selectedRoom.roomNo,
           senderId: memberNo,
-          content: '',
+          content: imageUrls.length > 1 ? '사진들' : '사진',
           msgType: 'IMAGE',
           imageUrls,
           clientUuid,
@@ -500,7 +500,7 @@ export const Chat: React.FC = () => {
       setChatRooms(prev =>
         prev.map(r =>
           r.roomNo === selectedRoom.roomNo
-            ? { ...r, lastMessage: '사진', lastMessageAt: new Date().toISOString() }
+            ? { ...r, lastMessage: imageUrls.length > 1 ? '사진들' : '사진', lastMessageAt: new Date().toISOString() }
             : r
         )
       );
