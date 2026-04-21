@@ -157,7 +157,7 @@ export const NoticeList: React.FC = () => {
                   onClick={() => setCurrentPage(page)}
                   className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${page === currentPage
                     ? 'bg-brand text-white'
-                    : 'border border-gray-200 text-gray-500 hover:border-brand hover:text-brand'
+                    : 'border border-gray-200 text-gray-500 hover:border-gray-900 hover:text-gray-900'
                     }`}
                 >
                   {page}
