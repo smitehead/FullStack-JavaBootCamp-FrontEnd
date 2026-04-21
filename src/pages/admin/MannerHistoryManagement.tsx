@@ -90,7 +90,7 @@ export const MannerHistoryManagement: React.FC = () => {
                   </div>
                   <div className="flex flex-col items-end shrink-0">
                     <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400">
-                      <BsCalendarCheck className="w-3 h-3" />
+                      <BsCalendar className="w-3 h-3" />
                       {new Date(history.createdAt).toLocaleDateString()}
                     </div>
                     <span className="text-[10px] text-gray-400 font-medium">

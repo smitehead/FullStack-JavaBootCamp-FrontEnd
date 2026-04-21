@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsBag } from 'react-icons/bs';
 
-import { BsInfoCircle, BsPerson, BsCalendarCheck, BsExclamationTriangle, BsClockHistory, BsSearch } from 'react-icons/bs';
+import { BsInfoCircle, BsPerson, BsCalendar, BsExclamationTriangle, BsClockHistory, BsSearch } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { ActivityLog } from '@/types';
 
@@ -96,7 +96,7 @@ export const ActivityLogManagement: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400 shrink-0">
-                    <BsCalendarCheck className="w-3 h-3" />
+                    <BsCalendar className="w-3 h-3" />
                     {new Date(log.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
                   </div>
                 </div>

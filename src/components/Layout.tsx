@@ -210,7 +210,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             {user && (
               <div className="flex flex-col items-end">
                 <Link to="/points" className="bg-[#F8F9FA] px-4 py-2.5 rounded-2xl flex items-center space-x-2 border border-gray-50 hover:bg-gray-100 transition-colors">
-                  <span className="text-[#FF5A5A] font-bold text-sm">P</span>
+                  <span className="text-brand font-bold text-sm">P</span>
                   <span className="text-sm font-bold text-gray-700">
                     {user.points.toLocaleString()}
                   </span>
@@ -224,7 +224,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               <>
                 <Link
                   to="/register"
-                  className="hidden lg:flex items-center space-x-1.5 bg-[#FF5A5A] text-white px-5 py-3 rounded-2xl text-sm font-semibold hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95"
+                  className="hidden lg:flex items-center space-x-1.5 bg-brand text-white px-5 py-3 rounded-2xl text-sm font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/20 active:scale-95"
                 >
                   <span>경매 등록</span>
                 </Link>
@@ -241,7 +241,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                   >
                     <BsBell className="w-6 h-6" />
                     {(unreadNotificationsCount > 0 || unreadChatsCount > 0) && (
-                      <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#FF5A5A] rounded-full border-2 border-white"></span>
+                      <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-brand rounded-full border-2 border-white"></span>
                     )}
                   </button>
                   {isNotiOpen && (
@@ -278,7 +278,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                 }}
                               >
                                 {!noti.read && (
-                                  <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FF5A5A]" />
+                                  <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-brand" />
                                 )}
                                 <p className={`leading-snug line-clamp-2 ${!noti.read ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{formatMessagePreview(noti.message)}</p>
                                 <span className="text-[10px] text-gray-300 mt-1 block">{new Date(noti.createdAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
@@ -297,14 +297,16 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                 }}
                               >
                                 {chat.unreadCount > 0 && (
-                                  <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FF5A5A]" />
+                                  <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-brand" />
                                 )}
                                 <div className="flex items-center gap-3">
                                   <img src={getProfileImageUrl(chat.otherUser.profileImage)} alt="" className="w-8 h-8 rounded-full bg-gray-100 object-cover" />
                                   <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-center mb-1">
                                       <span className="font-bold text-gray-900 truncate">{chat.otherUser.nickname}</span>
-                                      <span className="text-[10px] text-gray-400">{new Date(chat.lastMessageAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                                      {chat.lastMessageAt && (
+                                        <span className="text-[10px] text-gray-400">{new Date(chat.lastMessageAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                                      )}
                                     </div>
                                     <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{formatMessagePreview(chat.lastMessage)}</p>
                                   </div>
@@ -645,7 +647,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                   closeForceLogoutModal();
                   navigate('/login');
                 }}
-                className="w-full py-3.5 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10"
+                className="w-full py-3.5 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10"
               >
                 로그인 페이지로 이동
               </button>
@@ -672,7 +674,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 </button>
                 <button
                   onClick={confirmLogout}
-                  className="flex-1 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/10"
+                  className="flex-1 py-3.5 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10"
                 >
                   로그아웃
                 </button>

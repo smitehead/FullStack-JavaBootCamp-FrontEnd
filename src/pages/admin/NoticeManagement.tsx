@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { BsPen, BsTrash3, BsFileEarmarkText } from 'react-icons/bs';
+import { BsPen, BsTrash3, BsMegaphone } from 'react-icons/bs';
 
 import { BsPlusLg, BsSearch } from 'react-icons/bs';
 import { NoticeCategory } from "@/types";
@@ -55,12 +55,6 @@ export const NoticeManagement: React.FC = () => {
     fetchNotices();
   }, [fetchNotices]);
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
-    </div>
-  );
-
   const filteredNotices = notices.filter(
     (n) =>
       !n.isDeleted &&
@@ -83,6 +77,12 @@ export const NoticeManagement: React.FC = () => {
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
   }, [handleObserver]);
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
 
   const handleOpenModal = (notice?: NoticeItem) => {
     if (notice) {
@@ -293,7 +293,7 @@ export const NoticeManagement: React.FC = () => {
                   <label className="flex items-center space-x-2 cursor-pointer group">
                     <input
                       type="checkbox"
-                      className="w-5 h-5 rounded-none border-gray-300 text-[#FF5A5A] focus:ring-[#FF5A5A] cursor-pointer"
+                      className="w-5 h-5 rounded-none border-gray-300 text-brand focus:ring-brand cursor-pointer"
                       checked={isImportant}
                       onChange={(e) => setIsImportant(e.target.checked)}
                     />
@@ -389,13 +389,13 @@ export const NoticeManagement: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 py-3 rounded-none font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
+                className="flex-1 py-3 rounded-2xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
               >
                 취소
               </button>
               <button
                 onClick={confirmDelete}
-                className="flex-1 py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 text-sm"
+                className="flex-1 py-3 rounded-2xl font-bold text-white bg-brand hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
               >
                 확인
               </button>

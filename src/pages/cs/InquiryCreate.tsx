@@ -74,7 +74,7 @@ export const InquiryCreate: React.FC = () => {
   };
 
   return (
-    <div className="max-w-[800px] mx-auto px-6 py-12">
+    <div className="max-w-[1200px] mx-auto px-6 py-12">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
@@ -100,10 +100,13 @@ export const InquiryCreate: React.FC = () => {
               <button
                 key={cat}
                 type="button"
-                onClick={() => setType(cat)}
+                onClick={() => {
+                  setType(cat);
+                  if (cat !== '버그 신고') setBugType('');
+                }}
                 className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${type === cat
-                    ? 'bg-red-500 border-red-500 text-white shadow-md shadow-red-100 active:scale-95'
-                    : 'bg-white border-gray-100 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900'
+                  ? 'bg-brand border-brand text-white shadow-md shadow-brand/10 active:scale-95'
+                  : 'bg-white border-gray-100 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900'
                   }`}
               >
                 {cat}
@@ -123,8 +126,8 @@ export const InquiryCreate: React.FC = () => {
                   type="button"
                   onClick={() => setBugType(type)}
                   className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border ${bugType === type
-                      ? 'bg-gray-900 border-gray-900 text-white shadow-md shadow-gray-200 active:scale-95'
-                      : 'bg-white border-gray-100 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900'
+                    ? 'bg-gray-900 border-gray-900 text-white shadow-md shadow-gray-200 active:scale-95'
+                    : 'bg-white border-gray-100 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900'
                     }`}
                 >
                   {type}
@@ -200,7 +203,7 @@ export const InquiryCreate: React.FC = () => {
         <div className="pt-6">
           <button
             type="submit"
-            className="w-full py-4 rounded-2xl font-bold text-base shadow-lg shadow-red-500/10 transition-all flex items-center justify-center gap-3 bg-red-500 text-white hover:bg-red-600 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-[56px] rounded-2xl font-bold text-base shadow-lg shadow-brand/10 transition-all flex items-center justify-center gap-3 bg-brand text-white hover:bg-brand-dark active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <>
@@ -223,11 +226,11 @@ export const InquiryCreate: React.FC = () => {
         <ul className="space-y-3 text-sm text-gray-500 font-medium">
 
           <li className="flex gap-2">
-            <span className="text-red-500">•</span>
+            <span className="text-brand">•</span>
             버그 신고 시 오류가 발생한 화면의 스크린샷을 첨부해 주시면 원인 파악에 큰 도움이 됩니다.
           </li>
           <li className="flex gap-2">
-            <span className="text-red-500">•</span>
+            <span className="text-brand">•</span>
             문의 답변은 영업일 기준 최대 48시간 이내에 완료됩니다.
           </li>
         </ul>

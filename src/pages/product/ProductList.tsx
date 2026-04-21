@@ -539,7 +539,7 @@ export const ProductList: React.FC = () => {
                 type="checkbox"
                 checked={faceToFace}
                 onChange={(e) => { setFaceToFace(e.target.checked); updateParams({ face: e.target.checked ? 'true' : '' }); }}
-                className="w-4 h-4 rounded border-gray-300 text-gray-600 focus:ring-gray-400"
+                className="w-4 h-4 rounded border-gray-300 text-brand focus:ring-brand"
               />
               <span className="text-sm text-gray-600 group-hover:text-gray-900">대면거래</span>
             </label>
@@ -548,7 +548,7 @@ export const ProductList: React.FC = () => {
                 type="checkbox"
                 checked={delivery}
                 onChange={(e) => { setDelivery(e.target.checked); updateParams({ delivery: e.target.checked ? 'true' : '' }); }}
-                className="w-4 h-4 rounded border-gray-300 text-gray-600 focus:ring-gray-400"
+                className="w-4 h-4 rounded border-gray-300 text-brand focus:ring-brand"
               />
               <span className="text-sm text-gray-600 group-hover:text-gray-900">택배거래</span>
             </label>

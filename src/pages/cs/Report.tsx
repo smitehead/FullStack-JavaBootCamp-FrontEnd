@@ -125,7 +125,7 @@ export const Report: React.FC = () => {
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-50 py-12 px-4">
-      <div className="max-w-xl mx-auto">
+      <div className="max-w-[1200px] mx-auto">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center text-sm font-bold text-gray-400 hover:text-gray-900 transition-colors mb-6 group"

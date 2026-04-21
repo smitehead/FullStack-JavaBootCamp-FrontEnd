@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus, BsChevronLeft, BsChevronRight, BsCrosshair } from 'react-icons/bs';
+import { BsSend, BsImage, BsGeoAltFill, BsBoxSeam, BsArrowRepeat, BsThreeDotsVertical, BsChat, BsArrowLeft, BsPersonCircle, BsPlusLg, BsExclamationCircle, BsLayoutTextSidebar, BsCalendarPlus, BsChevronLeft, BsChevronRight, BsCrosshair, BsBoxArrowRight, BsExclamationTriangle } from 'react-icons/bs';
 import { ChatRoom, ChatMessage, MessageStatus } from '@/types';
 import { format, subMonths, addMonths, startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -11,6 +11,7 @@ import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { showToast } from '@/components/toastService';
 import { formatMessagePreview } from '@/utils/chatUtils';
+import { ImageLightbox } from '@/components/ImageLightbox';
 
 // ──── 상수 ────
 const PAGE_SIZE = 20;
@@ -35,6 +36,11 @@ export const Chat: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
+  // 라이트박스 (이미지 뷰어)
+  const [lightboxImages, setLightboxImages] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // STOMP
   const stompClientRef = useRef<Client | null>(null);
@@ -286,6 +292,18 @@ export const Chat: React.FC = () => {
 
         if (clientUuid) receivedUuids.current.add(clientUuid);
 
+        // 서버에서 ERROR 응답이 오면 즉시 FAILED 처리
+        if (data.msgType === 'ERROR') {
+          console.error('[Chat] 서버 메시지 처리 오류:', data.content);
+          const timeout = sendTimeouts.current.get(clientUuid!);
+          if (timeout) { clearTimeout(timeout); sendTimeouts.current.delete(clientUuid!); }
+          setMessages(prev => prev.map(m =>
+            m.clientUuid === clientUuid ? { ...m, status: 'FAILED' } : m
+          ));
+          showToast('메시지 전송에 실패했습니다. 잠시 후 재시도해주세요.', 'error');
+          return;
+        }
+
         setMessages(prev => {
           // clientUuid로 낙관적 메시지 찾기
           const optimisticIdx = prev.findIndex(
@@ -460,7 +478,7 @@ export const Chat: React.FC = () => {
         body: JSON.stringify({
           roomId: selectedRoom.roomNo,
           senderId: memberNo,
-          content: '',
+          content: imageUrls.length > 1 ? '사진들' : '사진',
           msgType: 'IMAGE',
           imageUrls,
           clientUuid,
@@ -482,7 +500,7 @@ export const Chat: React.FC = () => {
       setChatRooms(prev =>
         prev.map(r =>
           r.roomNo === selectedRoom.roomNo
-            ? { ...r, lastMessage: '사진', lastMessageAt: new Date().toISOString() }
+            ? { ...r, lastMessage: imageUrls.length > 1 ? '사진들' : '사진', lastMessageAt: new Date().toISOString() }
             : r
         )
       );
@@ -1005,7 +1023,7 @@ export const Chat: React.FC = () => {
                 <img src={room.otherUser.profileImage || '/images/default-profile.png'}
                   alt="" className="w-12 h-12 rounded-full flex-shrink-0 bg-gray-50 object-cover" />
                 <div className="flex-1 min-w-0 text-left">
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between mb-0.5">
                     <span className="font-bold text-sm text-gray-900 truncate">
                       {room.otherUser.nickname}
                     </span>
@@ -1013,6 +1031,9 @@ export const Chat: React.FC = () => {
                       {formatTime(room.lastMessageAt)}
                     </span>
                   </div>
+                  <p className="text-[10px] text-gray-400 truncate mb-1">
+                    {room.productTitle}
+                  </p>
                   <div className="flex items-center justify-between">
                     <p className="text-xs text-gray-500 truncate">{formatMessagePreview(room.lastMessage)}</p>
                     {room.unreadCount > 0 && (
@@ -1021,7 +1042,6 @@ export const Chat: React.FC = () => {
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-gray-400 truncate mt-0.5">{room.productTitle}</p>
                 </div>
               </button>
             ))
@@ -1043,7 +1063,7 @@ export const Chat: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <button
                   onClick={() => navigate(`/seller/${selectedRoom.otherUser.no}`)}
-                  className="font-bold text-sm text-gray-900 truncate hover:text-[#FF5A5A] transition-colors block text-left"
+                  className="font-bold text-sm text-gray-900 truncate hover:text-gray-600 transition-colors block text-left"
                 >
                   {selectedRoom.otherUser.nickname}
                 </button>
@@ -1057,16 +1077,16 @@ export const Chat: React.FC = () => {
                   <BsThreeDotsVertical className="w-5 h-5" />
                 </button>
                 {showMoreMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 opacity-100 visible transition-all duration-200 transform origin-top-right">
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
                     <button
                       onClick={() => { navigate(`/seller/${selectedRoom.otherUser.no}`); setShowMoreMenu(false); }}
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
                       <BsPersonCircle className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </button>
                     <button
                       onClick={() => { navigate(`/products/${selectedRoom.productId}`); setShowMoreMenu(false); }}
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
                       <BsBoxSeam className="w-4 h-4 mr-2.5" /> 상품 보기
                     </button>
@@ -1078,7 +1098,7 @@ export const Chat: React.FC = () => {
                         navigate(targetUrl);
                         setShowMoreMenu(false);
                       }}
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors w-full text-left"
+                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
                       <BsLayoutTextSidebar className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                     </button>
@@ -1209,12 +1229,16 @@ export const Chat: React.FC = () => {
                             >
                               {msg.imageUrls.slice(0, 4).map((url, i) => (
                                 <div key={i} className="relative aspect-square">
-                                  <img
-                                    src={url}
-                                    alt=""
-                                    className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition-all"
-                                    onClick={() => window.open(url, '_blank')}
-                                  />
+                                    <img
+                                      src={url}
+                                      alt=""
+                                      className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition-all"
+                                      onClick={() => {
+                                        setLightboxImages(msg.imageUrls!);
+                                        setLightboxIndex(i);
+                                        setIsLightboxOpen(true);
+                                      }}
+                                    />
                                   {/* 4장 초과 시 마지막 칸에 +N 오버레이 */}
                                   {i === 3 && msg.imageUrls!.length > 4 && (
                                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold text-lg">
@@ -1439,7 +1463,7 @@ export const Chat: React.FC = () => {
                         {locationAddrRoad || locationAddress || '등록된 주소가 없습니다.'}
                       </p>
                       {locationAddrDetail && (
-                        <p className="text-xs text-gray-500 mt-1.5 break-words font-medium">{locationAddrDetail}</p>
+                        <p className="text-sm text-gray-500 mt-1.5 break-words font-medium">{locationAddrDetail}</p>
                       )}
                     </div>
                   </div>
@@ -1491,7 +1515,7 @@ export const Chat: React.FC = () => {
                 </button>
                 <button
                   onClick={handleLeaveRoom}
-                  className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-100 text-sm"
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
                 >
                   나가기
                 </button>
@@ -1650,26 +1674,25 @@ export const Chat: React.FC = () => {
 
                 {/* ── 장소 ── */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest block">장소</label>
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2 block px-1">장소</label>
+                  <div className="flex gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={openApptPostcode}
+                      className="flex-1 flex items-center gap-2 px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-600 hover:bg-white hover:ring-2 hover:ring-[#FF5A5A]/20 transition-all text-left overflow-hidden"
+                    >
+                      <BsGeoAltFill className="w-4 h-4 text-[#FF5A5A] flex-shrink-0" />
+                      <span className="truncate">{apptAddrRoad || '주소 검색'}</span>
+                    </button>
                     <button
                       type="button"
                       onClick={handleApptPasteMyAddress}
-                      className="p-1 px-2 text-gray-400 hover:text-[#FF5A5A] transition-colors flex items-center gap-1 group relative"
+                      className="p-2.5 text-gray-400 hover:text-[#FF5A5A] transition-all flex items-center justify-center shrink-0"
                       title="내 주소 불러오기"
                     >
-                      <BsCrosshair className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold">내 주소</span>
+                      <BsCrosshair className="w-5 h-5" />
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={openApptPostcode}
-                    className="w-full flex items-center gap-2 px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-600 hover:bg-white hover:ring-2 hover:ring-[#FF5A5A]/20 transition-all mb-3 text-left"
-                  >
-                    <BsGeoAltFill className="w-4 h-4 text-[#FF5A5A] flex-shrink-0" />
-                    <span className="truncate">{apptAddrRoad || '주소 검색'}</span>
-                  </button>
                   <input
                     type="text"
                     value={apptAddrDetail}
@@ -1702,6 +1725,15 @@ export const Chat: React.FC = () => {
           </div>
         );
       })()}
+      {/* 라이트박스 */}
+      {isLightboxOpen && (
+        <ImageLightbox
+          urls={lightboxImages}
+          index={lightboxIndex}
+          onClose={() => setIsLightboxOpen(false)}
+          onNav={(idx) => setLightboxIndex(idx)}
+        />
+      )}
     </div>
   );
 };

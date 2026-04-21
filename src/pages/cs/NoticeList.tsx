@@ -78,7 +78,7 @@ export const NoticeList: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button type="submit" className="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center">
-                <BsSearch className="w-5 h-5 text-gray-400" />
+              <BsSearch className="w-5 h-5 text-gray-400" />
             </button>
           </form>
 
@@ -118,9 +118,9 @@ export const NoticeList: React.FC = () => {
                     <div className="flex items-center gap-4">
                       <div className="w-20 shrink-0">
                         {notice.isImportant ? (
-                          <span className="px-2 py-0.5 bg-gray-900 text-white text-[10px] font-semibold rounded-md inline-block shadow-lg shadow-gray-900/10">공지</span>
+                          <span className="px-2 py-1 bg-gray-900 text-white text-xs font-semibold rounded-md inline-block shadow-lg shadow-gray-900/10">공지</span>
                         ) : (
-                          <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-500 rounded-md shadow-lg shadow-gray-200/50">{notice.category}</span>
+                          <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded-md shadow-lg shadow-gray-100/50">{notice.category}</span>
                         )}
                       </div>
                       <h3 className={`flex-1 text-sm text-gray-900 group-hover:underline underline-offset-4 transition-all line-clamp-1 ${notice.isImportant ? 'font-bold' : 'font-bold'}`}>

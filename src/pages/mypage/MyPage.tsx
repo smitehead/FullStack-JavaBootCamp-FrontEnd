@@ -227,6 +227,20 @@ export const MyPage: React.FC = () => {
     }
   }, []);
 
+  const handleWishlistToggle = useCallback((productId: string, isWishlisted: boolean) => {
+    // 찜 목록 탭에서 '찜 해제' 시 즉시 목록에서 제거
+    if (activeTab === 'wishlist' && !isWishlisted) {
+      setWishlistProducts(prev => prev.filter(p => p.id !== productId));
+      setWishlistTotal(prev => Math.max(0, prev - 1));
+    }
+
+    // 타 탭에 해당 상품이 있을 경우 하트 상태 동기화 (판매/입찰/구매)
+    const updateList = (prev: Product[]) => prev.map(p => p.id === productId ? { ...p, isWishlisted } : p);
+    setSellingProducts(updateList);
+    setBiddingProducts(prev => prev.map(p => p.id === productId ? { ...p, isWishlisted } : p));
+    setPurchasedProducts(updateList);
+  }, [activeTab]);
+
   // 로그인 시 카운트 표시용 사전 로드
   useEffect(() => {
     if (!user) return;
@@ -374,7 +388,7 @@ export const MyPage: React.FC = () => {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-indigo-600 hover:text-white transition-all duration-300 border border-gray-100 disabled:opacity-50">
+            <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-gray-100 hover:border-gray-200 transition-all duration-300 border border-gray-100 disabled:opacity-50">
               {uploadingProfile
                 ? <div className="w-5 h-5 border-2 border-brand/20 border-t-brand rounded-full animate-spin" />
                 : <BsGear className="w-5 h-5" />
@@ -544,6 +558,7 @@ export const MyPage: React.FC = () => {
                       isSellerPending={hasPendingResult}
                       sellerCancelRequested={ars === '취소요청'}
                       customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
+                      onWishlistToggle={handleWishlistToggle}
                     />
                   );
                 })}
@@ -556,6 +571,7 @@ export const MyPage: React.FC = () => {
                         product={p}
                         isWon={effectiveStatus === 'won'}
                         hideOverlay={effectiveStatus === 'lost'}
+                        onWishlistToggle={handleWishlistToggle}
                       />
                       <div className="flex items-center px-1">
                         {getBidStatusBadge(effectiveStatus)}
@@ -567,7 +583,7 @@ export const MyPage: React.FC = () => {
                 {/* 구매 내역 */}
                 {activeTab === 'purchased' && purchasedProducts.map(p => (
                   <div key={p.id} className="flex flex-col gap-2">
-                    <ProductCard product={p} hideOverlay />
+                    <ProductCard product={p} hideOverlay onWishlistToggle={handleWishlistToggle} />
                     <div className="flex items-center justify-end px-1">
                       {p.hasReview === false && p.resultNo && (
                         <button
@@ -587,7 +603,11 @@ export const MyPage: React.FC = () => {
 
                 {/* 찜 목록 */}
                 {activeTab === 'wishlist' && wishlistProducts.map(p => (
-                  <ProductCard key={p.id} product={p} />
+                  <ProductCard 
+                    key={p.id} 
+                    product={p} 
+                    onWishlistToggle={handleWishlistToggle}
+                  />
                 ))}
               </div>
 

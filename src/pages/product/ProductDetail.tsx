@@ -328,8 +328,10 @@ export const ProductDetail: React.FC = () => {
       // 경매가 활성 상태가 아니거나 시간이 다 된 경우 종료 표시
       const isEnded = product.status !== 'active' || new Date(product.endTime).getTime() <= Date.now();
 
-      if (isEnded) {
-        setTimeLeft('--:--:--');
+      if (product.status === 'canceled') {
+        setTimeLeft('취소됨');
+      } else if (isEnded) {
+        setTimeLeft('종료');
       } else {
         const end = new Date(product.endTime).getTime();
         const now = new Date().getTime();
@@ -944,11 +946,22 @@ export const ProductDetail: React.FC = () => {
             {!isFinished && hasBid && (
               <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
                 <div className={`flex items-center px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md ${isHighestBidder
-                  ? 'bg-emerald-600 text-white'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-brand text-white'
                   }`}>
-                  <span className="text-xs font-semibold tracking-tight">
+                  <span className="text-xs font-medium tracking-tight">
                     입찰 중 <span className="mx-1.5 opacity-50">|</span> {isHighestBidder ? '최고 입찰' : '추월 변동'}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* 낙찰 성공 칩 */}
+            {isFinished && isHighestBidder && (product.status === 'completed' || product.status === 'pending_payment') && (
+              <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
+                <div className="flex items-center px-3 py-1.5 rounded-full shadow-lg bg-white border border-gray-100">
+                  <span className="text-xs font-medium text-gray-900 tracking-tight">
+                    낙찰 성공
                   </span>
                 </div>
               </div>
@@ -1120,13 +1133,13 @@ export const ProductDetail: React.FC = () => {
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500">즉시 구매가</span>
-                <span className="font-bold text-emerald-600">
+                <span className="font-bold text-indigo-600">
                   {product.instantPrice ? `${Number(product.instantPrice).toLocaleString()} 원` : '-'}
                 </span>
               </div>
               <div className="flex justify-between items-end pt-2 border-t border-gray-50">
                 <span className="text-gray-500 font-bold mb-1">{isFinished ? '최종 낙찰가' : '현재 입찰가'}</span>
-                <span className={`text-3xl font-bold ${isFinished ? 'text-gray-900' : 'text-brand'}`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
+                <span className={`text-3xl font-bold text-brand`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
               </div>
             </div>
 
@@ -1531,7 +1544,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-sm font-bold text-gray-700">입찰 금액</label>
                       {product.instantPrice ? (
-                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                        <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
                           즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
                         </span>
                       ) : null}
@@ -1555,7 +1568,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-sm font-bold text-gray-700">자동 입찰 한도</label>
                       {product.instantPrice ? (
-                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                        <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
                           즉시 구매가: {Number(product.instantPrice).toLocaleString()}원
                         </span>
                       ) : null}
@@ -1592,7 +1605,7 @@ export const ProductDetail: React.FC = () => {
                     {product.instantPrice && (
                       <button
                         onClick={handleBuyout}
-                        className="flex-1 h-[56px] bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-[0.98] flex items-center justify-center"
+                        className="flex-1 h-[56px] bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-[0.98] flex items-center justify-center"
                       >
                         즉시 구매하기
                       </button>
@@ -2013,7 +2026,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="relative flex items-center justify-center w-5 h-5">
                       <input
                         type="checkbox"
-                        className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-md checked:bg-indigo-600 checked:border-indigo-600 transition-all cursor-pointer"
+                        className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-md checked:bg-brand checked:border-brand transition-all cursor-pointer"
                         checked={dontAskToday}
                         onChange={(e) => setDontAskToday(e.target.checked)}
                       />
@@ -2043,7 +2056,7 @@ export const ProductDetail: React.FC = () => {
                   </button>
                   <button
                     onClick={handleBidTermsConfirm}
-                    className={`flex-1 h-[56px] font-bold rounded-2xl transition-all active:scale-95 bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100 flex items-center justify-center ${isConfirming ? 'animate-pulse' : ''
+                    className={`flex-1 h-[56px] font-bold rounded-2xl transition-all active:scale-95 bg-gray-900 text-white hover:bg-black shadow-lg shadow-gray-200 flex items-center justify-center ${isConfirming ? 'animate-pulse' : ''
                       }`}
                   >
                     {isConfirming ? '한 번 더 탭하여 확인' : '확인 및 입찰하기'}
@@ -2209,7 +2222,7 @@ export const ProductDetail: React.FC = () => {
                 <button
                   onClick={executeStandardBid}
                   disabled={isBidProcessing}
-                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-orange-100 text-sm flex items-center justify-center gap-2"
+                  className="flex-1 py-3.5 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all shadow-lg shadow-gray-200 text-sm flex items-center justify-center gap-2"
                 >
                   {isBidProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '입찰하기'}
                 </button>
@@ -2239,7 +2252,7 @@ export const ProductDetail: React.FC = () => {
                 <button
                   onClick={executeAutoBid}
                   disabled={isBidProcessing}
-                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-orange-100 text-sm flex items-center justify-center gap-2"
+                  className="flex-1 py-3.5 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all shadow-lg shadow-gray-200 text-sm flex items-center justify-center gap-2"
                 >
                   {isBidProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '설정하기'}
                 </button>
@@ -2267,7 +2280,7 @@ export const ProductDetail: React.FC = () => {
                 </button>
                 <button
                   onClick={executeQnaDelete}
-                  className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-100 text-sm"
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
                 >
                   삭제하기
                 </button>
@@ -2296,7 +2309,7 @@ export const ProductDetail: React.FC = () => {
                 </button>
                 <button
                   onClick={executeAnswerDelete}
-                  className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-100 text-sm"
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
                 >
                   삭제하기
                 </button>

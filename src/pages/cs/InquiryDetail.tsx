@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
-import { BsShieldCheck, BsInfoCircle, BsClock, BsPerson, BsCalendarCheck, BsChevronLeft } from 'react-icons/bs';
+import { BsShieldCheck, BsClock, BsPerson, BsCalendar, BsList } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
 import { Inquiry } from '@/types';
@@ -42,7 +42,7 @@ export const InquiryDetail: React.FC = () => {
         <p className="text-gray-400 font-bold">로그인이 필요한 서비스입니다.</p>
         <button
           onClick={() => navigate('/login')}
-          className="px-8 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+          className="px-8 py-3 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-colors shadow-lg shadow-brand/10"
         >
           로그인하러 가기
         </button>
@@ -75,44 +75,39 @@ export const InquiryDetail: React.FC = () => {
   }
 
   return (
-    <div className="max-w-[1000px] mx-auto px-6 py-12">
+    <div className="max-w-[1200px] mx-auto px-6 py-12">
       {/* Back Button */}
-      <Link to="/inquiry" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors mb-8">
-        <BsChevronLeft className="w-4 h-4" />
+      <button
+        onClick={() => navigate('/inquiry')}
+        className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8 group"
+      >
+        <svg className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
         문의 목록으로
-      </Link>
+      </button>
 
       <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
         {/* Header Section */}
         <div className="p-10 border-b border-gray-50">
           <div className="flex items-center justify-between gap-4 mb-6">
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 text-xs font-bold rounded-md uppercase tracking-wider bg-gray-50 text-gray-500 shadow-lg shadow-gray-100/50">
+              <span className="px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider bg-gray-100 text-gray-600 shadow-lg shadow-gray-100/50">
                 {inquiry.type}
               </span>
               {inquiry.bugType && (
-                <span className="px-3 py-1 bg-blue-50 text-blue-500 text-xs font-semibold rounded-md uppercase tracking-wider">
+                <span className="px-3 py-1 bg-blue-50 text-blue-500 text-xs font-bold rounded-full uppercase tracking-wider shadow-lg shadow-gray-100/50">
                   {inquiry.bugType}
                 </span>
               )}
             </div>
-
-            {inquiry.status === 1 ? (
-              <div className="px-4 py-2 bg-green-50 text-green-600 rounded-full text-xs font-bold shadow-lg shadow-green-500/10">
-                답변 완료
-              </div>
-            ) : (
-              <div className="px-4 py-2 bg-amber-50 text-amber-600 rounded-full text-xs font-bold shadow-lg shadow-amber-500/10">
-                답변 대기중
-              </div>
-            )}
           </div>
 
           <h1 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">{inquiry.title}</h1>
 
           <div className="flex items-center gap-6 text-sm text-gray-400 font-bold">
             <div className="flex items-center gap-2">
-              <BsCalendarCheck className="w-4 h-4" />
+              <BsCalendar className="w-4 h-4" />
               작성일: {format(new Date(inquiry.createdAt), 'yyyy.MM.dd HH:mm')}
             </div>
           </div>
@@ -150,7 +145,7 @@ export const InquiryDetail: React.FC = () => {
           {inquiry.status === 1 && inquiry.answer && (
             <div className="mt-12 p-8 bg-gray-50 rounded-3xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-red-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/20">
+                <div className="w-10 h-10 rounded-2xl bg-brand flex items-center justify-center shrink-0 shadow-lg shadow-brand/10">
                   <BsShieldCheck className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
@@ -203,9 +198,9 @@ export const InquiryDetail: React.FC = () => {
           <div className="p-6 flex items-center justify-center bg-gray-50/30">
             <Link
               to="/inquiry"
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-red-500 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/5 transition-all"
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all"
             >
-              <BsInfoCircle className="w-4 h-4" />
+              <BsList className="w-4 h-4" />
               목록으로
             </Link>
           </div>
