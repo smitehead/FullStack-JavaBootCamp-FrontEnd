@@ -67,7 +67,7 @@ export const MyPage: React.FC = () => {
   useEffect(() => {
     setSearchParams({ tab: activeTab }, { replace: true });
   }, [activeTab, setSearchParams]);
-  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'ended' | 'completed'>('all');
+  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'ended' | 'pending' | 'completed' | 'canceled' | 'failed'>('all');
   const [biddingFilter, setBiddingFilter] = useState<'all' | 'leader' | 'outbid' | 'lost'>('all');
 
   interface ReviewItem {
@@ -504,14 +504,19 @@ export const MyPage: React.FC = () => {
 
             {activeTab === 'selling' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
-                {(['all', 'active', 'ended', 'completed'] as const).map(filter => (
+                {(['all', 'active', 'pending', 'completed', 'canceled', 'failed'] as const).map(filter => (
                   <button key={filter} onClick={() => {
                     setSellingFilter(filter);
                     setSellingPage(1);
                     fetchSellingProducts(1, filter);
                   }}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {filter === 'all' ? '전체' : filter === 'active' ? '경매중' : filter === 'ended' ? '경매종료' : '판매완료'}
+                    {filter === 'all' ? '전체'
+                      : filter === 'active' ? '경매중'
+                      : filter === 'pending' ? '확정대기'
+                      : filter === 'completed' ? '판매완료'
+                      : filter === 'canceled' ? '거래취소'
+                      : '유찰'}
                   </button>
                 ))}
               </div>
@@ -543,17 +548,16 @@ export const MyPage: React.FC = () => {
                 {/* 판매 내역 */}
                 {activeTab === 'selling' && sellingProducts.map(p => {
                   const ars = p.auctionResultStatus;
-                  // 낙찰 후 구매 확정 대기 중: 배송대기 | 결제완료 | 취소요청
-                  const hasPendingResult = p.status === 'completed'
-                    && ars != null
-                    && !['유찰', '구매확정', '거래취소'].includes(String(ars));
-                  const isResultConfirmed = ars === '구매확정';
+                  // pending = 낙찰 후 구매 확정 대기 (배송대기 | 취소요청 | 판매자취소요청)
+                  const hasPendingResult = p.status === 'pending';
+                  const isResultConfirmed = p.status === 'completed';
+                  const isResultCanceled = p.status === 'canceled';
 
                   return (
                     <ProductCard
                       key={p.id}
                       product={p}
-                      isSold={p.status === 'completed'}
+                      isSold={isResultConfirmed || isResultCanceled}
                       isConfirmed={isResultConfirmed}
                       isSellerPending={hasPendingResult}
                       sellerCancelRequested={ars === '취소요청'}
