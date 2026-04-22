@@ -93,7 +93,7 @@ const mapAdminProductToFrontend = (p: any): Product => ({
   images: p.mainImageUrl ? [p.mainImageUrl] : [],
   participantCount: p.participantCount || 0,
   bids: [],
-  status: p.status === 0 ? 'active' as const : p.status === 1 ? 'completed' as const : 'canceled' as const,
+  status: (p.status || 'active') as Product['status'],
   location: '',
   transactionMethod: 'both' as const,
 });
@@ -128,7 +128,7 @@ interface AppContextType {
   suspendUser: (userId: string, days: number, reason: string) => void;
   unsuspendUser: (userId: string) => void;
   addProduct: (newProduct: Product) => void;
-  cancelAuction: (productId: string, reason: string) => void;
+  cancelAuction: (productId: string, reason: string) => Promise<void>;
   resolveReport: (reportId: string, action: string) => void;
   markNotificationAsRead: (id: string) => void;
   markAllNotificationsAsRead: () => void;

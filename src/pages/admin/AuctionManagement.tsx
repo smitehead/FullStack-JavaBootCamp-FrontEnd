@@ -14,7 +14,7 @@ const ITEMS_PER_PAGE = 15;
 export const AuctionManagement: React.FC = () => {
   const { products, cancelAuction, isAdminLoading } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'completed' | 'canceled'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'ended' | 'pending' | 'completed' | 'canceled' | 'failed'>('all');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
@@ -45,7 +45,7 @@ export const AuctionManagement: React.FC = () => {
 
   const handleCancelAuction = async () => {
     if (selectedProduct) {
-      cancelAuction(selectedProduct.id, '관리자에 의한 강제 종료');
+      await cancelAuction(selectedProduct.id, '관리자에 의한 강제 종료');
       setShowCancelModal(false);
       setSelectedProduct(null);
       showToast('경매가 강제 종료되었습니다.', 'info');
@@ -53,12 +53,12 @@ export const AuctionManagement: React.FC = () => {
   };
 
   const getRemainingTime = (product: Product) => {
-    if (product.status !== 'active' || !product.endTime) return '종료';
+    if (product.status !== 'active' || !product.endTime) return '-';
     const diff = new Date(product.endTime).getTime() - Date.now();
     if (diff <= 0) return '종료 임박';
     const hours = Math.floor(diff / 3600000);
     const mins = Math.floor((diff % 3600000) / 60000);
-    return hours > 24 ? `${Math.floor(hours / 24)}일 ${hours % 24}시간` : `${hours}시간 ${mins}분`;
+    return hours >= 24 ? `${Math.floor(hours / 24)}일 ${hours % 24}시간` : `${hours}시간 ${mins}분`;
   };
 
   return (
@@ -91,8 +91,11 @@ export const AuctionManagement: React.FC = () => {
             >
               <option value="all">전체 상태</option>
               <option value="active">진행 중</option>
-              <option value="completed">종료됨</option>
-              <option value="canceled">취소됨</option>
+              <option value="pending">정산 대기</option>
+              <option value="completed">거래 완료</option>
+              <option value="canceled">거래 취소</option>
+              <option value="failed">유찰</option>
+              <option value="ended">종료(미처리)</option>
             </select>
           </div>
         </div>
@@ -121,8 +124,20 @@ export const AuctionManagement: React.FC = () => {
                   {product.title}
                 </Link>
                 <div className="w-[56px] shrink-0">
-                  <span className={`inline-flex px-1.5 py-0.5 rounded-none text-[11px] font-bold ${product.status === 'active' ? 'bg-green-50 text-green-600' : product.status === 'completed' ? 'bg-gray-100 text-gray-500' : 'bg-red-50 text-red-600'}`}>
-                    {product.status === 'active' ? '진행중' : product.status === 'completed' ? '종료됨' : '취소됨'}
+                  <span className={`inline-flex px-1.5 py-0.5 rounded-none text-[11px] font-bold ${
+                    product.status === 'active'    ? 'bg-green-50 text-green-600' :
+                    product.status === 'pending'   ? 'bg-blue-50 text-blue-600' :
+                    product.status === 'completed' ? 'bg-gray-100 text-gray-500' :
+                    product.status === 'canceled'  ? 'bg-red-50 text-red-600' :
+                    product.status === 'failed'    ? 'bg-orange-50 text-orange-500' :
+                                                     'bg-yellow-50 text-yellow-600'
+                  }`}>
+                    {product.status === 'active'    ? '진행중' :
+                     product.status === 'pending'   ? '정산대기' :
+                     product.status === 'completed' ? '거래완료' :
+                     product.status === 'canceled'  ? '거래취소' :
+                     product.status === 'failed'    ? '유찰' :
+                                                      '종료(미처리)'}
                   </span>
                 </div>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
