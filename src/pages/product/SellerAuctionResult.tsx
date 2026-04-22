@@ -71,7 +71,8 @@ export const SellerAuctionResult: React.FC = () => {
   if (!result) return null;
 
   const isPending = result.status === '배송대기';
-  const isCancelRequested = result.status === '취소요청';
+  const isCancelRequested = result.status === '취소요청';       // 구매자가 취소 요청한 상태
+  const isSellerCancelRequested = result.status === '판매자취소요청'; // 판매자가 취소 요청, 구매자 승인 대기
   const isCompleted = result.status === '구매확정';
   const isCanceled = result.status === '거래취소';
 
@@ -98,6 +99,7 @@ export const SellerAuctionResult: React.FC = () => {
     }
   };
 
+  // 구매자의 취소요청을 판매자가 승인
   const executeApproveCancel = async () => {
     setShowCancelConfirm(false);
     setIsProcessing(true);
@@ -112,13 +114,28 @@ export const SellerAuctionResult: React.FC = () => {
     }
   };
 
-  const cancelButtonLabel = isCancelRequested ? '취소 승인' : '낙찰 취소';
+  // 판매자가 취소를 요청 (구매자 동의 대기)
+  const executeRequestCancelBySeller = async () => {
+    setShowCancelConfirm(false);
+    setIsProcessing(true);
+    try {
+      await api.post(`/auction-results/${result.resultNo}/seller-request-cancel`);
+      setResult(prev => prev ? { ...prev, status: '판매자취소요청' } : null);
+      showToast('구매자에게 취소 요청을 보냈습니다. 구매자의 동의를 기다려주세요.', 'success');
+    } catch (err: any) {
+      showToast(err.response?.data?.message || '취소 요청 중 오류가 발생했습니다.', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const cancelButtonLabel = isCancelRequested ? '취소 승인' : '취소 요청하기';
   const cancelModalTitle = isCancelRequested
     ? '구매자의 취소 요청을 승인하시겠습니까?'
-    : '낙찰을 취소하시겠습니까?';
+    : '구매자에게 취소를 요청하시겠습니까?';
   const cancelModalDesc = isCancelRequested
     ? '승인 시 양측 합의 취소로 처리됩니다. 구매자에게 낙찰 포인트가 전액 환불됩니다.'
-    : '판매자가 낙찰을 취소합니다. 구매자에게 포인트가 전액 환불됩니다.';
+    : '구매자가 동의해야만 최종 취소됩니다. 요청 후 구매자의 승인을 기다려야 합니다.';
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6">
@@ -276,7 +293,7 @@ export const SellerAuctionResult: React.FC = () => {
                   );
                 })()}
 
-                {/* 취소 요청 안내 배너 */}
+                {/* 구매자 취소 요청 수신 배너 */}
                 {isCancelRequested && (
                   <div className="mt-6 rounded-2xl bg-brand/10 border border-brand/20 p-4 flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-brand shrink-0 mt-0.5" />
@@ -290,16 +307,31 @@ export const SellerAuctionResult: React.FC = () => {
                   </div>
                 )}
 
+                {/* 판매자 취소 요청 대기 배너 */}
+                {isSellerCancelRequested && (
+                  <div className="mt-6 rounded-2xl bg-amber-50 border border-amber-200 p-4 flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-bold text-amber-700 mb-1">취소 요청 전송됨</p>
+                      <p className="text-[11px] text-amber-700 leading-relaxed font-medium">
+                        구매자에게 취소를 요청했습니다.<br />
+                        구매자가 동의하면 거래가 취소되고 포인트가 환불됩니다.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Action Buttons */}
                 <div className="mt-8 space-y-3">
-                  {(isPending || isCancelRequested) && (
+                  {/* 배송대기: 취소 요청하기 버튼 (즉시 취소 아님, 구매자 동의 필요) */}
+                  {isPending && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <button
                         onClick={() => setShowCancelConfirm(true)}
                         disabled={isProcessing}
                         className="w-full py-5 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
                       >
-                        {cancelButtonLabel}
+                        취소 요청하기
                       </button>
                       <button
                         disabled
@@ -307,6 +339,33 @@ export const SellerAuctionResult: React.FC = () => {
                       >
                         구매 확정 대기
                       </button>
+                    </div>
+                  )}
+
+                  {/* 구매자 취소 요청 수신: 판매자가 승인 */}
+                  {isCancelRequested && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button
+                        onClick={() => setShowCancelConfirm(true)}
+                        disabled={isProcessing}
+                        className="w-full py-5 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
+                      >
+                        취소 승인
+                      </button>
+                      <button
+                        disabled
+                        className="w-full py-5 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
+                      >
+                        구매 확정 대기
+                      </button>
+                    </div>
+                  )}
+
+                  {/* 판매자 취소 요청 후 구매자 응답 대기 */}
+                  {isSellerCancelRequested && (
+                    <div className="bg-amber-50 border border-amber-100 p-5 rounded-2xl text-center space-y-1">
+                      <p className="text-sm font-bold text-amber-700">구매자 동의 대기 중</p>
+                      <p className="text-xs text-amber-600 font-medium">구매자가 취소에 동의하면 자동으로 처리됩니다.</p>
                     </div>
                   )}
 
@@ -391,10 +450,10 @@ export const SellerAuctionResult: React.FC = () => {
                 아니오
               </button>
               <button
-                onClick={executeApproveCancel}
+                onClick={isCancelRequested ? executeApproveCancel : executeRequestCancelBySeller}
                 className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
               >
-                {isCancelRequested ? '승인하기' : '취소하기'}
+                {isCancelRequested ? '승인하기' : '요청 보내기'}
               </button>
             </div>
           </div>
