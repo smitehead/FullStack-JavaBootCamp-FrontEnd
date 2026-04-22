@@ -184,6 +184,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         lastMessage: r.lastMessage || '',
         lastMessageAt: r.lastMessageAt || '',
         unreadCount: r.unreadCount || 0,
+        productPrice: r.productPrice || r.currentPrice || 0,
       }));
       
       const currentUnread = mapped.reduce((sum, r) => sum + r.unreadCount, 0);

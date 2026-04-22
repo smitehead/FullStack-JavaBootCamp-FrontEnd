@@ -10,7 +10,7 @@ import api from '@/services/api';
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { showToast } from '@/components/toastService';
-import { formatMessagePreview } from '@/utils/chatUtils';
+import { formatMessagePreview, formatRelativeTime } from '@/utils/chatUtils';
 import { ImageLightbox } from '@/components/ImageLightbox';
 
 // ──── 상수 ────
@@ -136,6 +136,7 @@ export const Chat: React.FC = () => {
         lastMessage: r.lastMessage || '',
         lastMessageAt: r.lastMessageAt || '',
         unreadCount: r.unreadCount || 0,
+        productPrice: r.productPrice || r.currentPrice || 0,
       }));
       setChatRooms(rooms);
     } catch (err) {
@@ -954,11 +955,7 @@ export const Chat: React.FC = () => {
     return room.otherUser.role === filter;
   });
 
-  const formatTime = (dateStr: string) => {
-    if (!dateStr) return '';
-    try { return format(new Date(dateStr), 'HH:mm', { locale: ko }); }
-    catch { return ''; }
-  };
+
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
@@ -1020,28 +1017,37 @@ export const Chat: React.FC = () => {
                 }}
                 className={`w-full p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 ${selectedRoom?.roomNo === room.roomNo ? 'bg-brand/10' : ''
                   }`}>
-                <img src={room.otherUser.profileImage || '/images/default-profile.png'}
-                  alt="" className="w-12 h-12 rounded-full flex-shrink-0 bg-gray-50 object-cover" />
+                <div className="relative flex-shrink-0">
+                  {/* 메인: 상품 이미지 (rounded-xl 적용) */}
+                  <img
+                    src={room.productImage || '/images/default-product.png'}
+                    alt={room.productTitle}
+                    className="w-12 h-12 rounded-xl object-cover border border-gray-100"
+                  />
+
+                  {/* 오버레이: 상대방 프로필 이미지 (오른쪽 하단 배치) */}
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white overflow-hidden shadow-sm bg-gray-100">
+                    <img
+                      src={room.otherUser.profileImage || '/images/default-profile.png'}
+                      alt={room.otherUser.nickname}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                </div>
+
                 <div className="flex-1 min-w-0 text-left">
-                  <div className="flex items-center justify-between mb-0.5">
+                  <div className="flex items-center justify-between mb-1">
                     <span className="font-bold text-sm text-gray-900 truncate">
                       {room.otherUser.nickname}
                     </span>
                     <span className="text-[10px] text-gray-400 flex-shrink-0 ml-2">
-                      {formatTime(room.lastMessageAt)}
-                    </span>
+                       {formatRelativeTime(room.lastMessageAt)}
+                     </span>
                   </div>
-                  <p className="text-[10px] text-gray-400 truncate mb-1">
-                    {room.productTitle}
+                  <p className={`text-xs truncate ${room.unreadCount > 0 ? 'text-brand font-bold' : 'text-gray-500'}`}>
+                    {formatMessagePreview(room.lastMessage) || '첫 대화를 남겨보세요'}
                   </p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-gray-500 truncate">{formatMessagePreview(room.lastMessage) || '첫 대화를 남겨보세요'}</p>
-                    {room.unreadCount > 0 && (
-                      <span className="ml-2 px-1.5 py-0.5 bg-brand text-white text-[10px] font-bold rounded-full flex-shrink-0">
-                        {room.unreadCount > 99 ? '99+' : room.unreadCount}
-                      </span>
-                    )}
-                  </div>
                 </div>
               </button>
             ))
@@ -1058,16 +1064,15 @@ export const Chat: React.FC = () => {
               <button onClick={() => setSelectedRoom(null)} className="md:hidden p-1 text-gray-600">
                 <BsArrowLeft className="w-5 h-5" />
               </button>
-              <img src={selectedRoom.otherUser.profileImage || '/images/default-profile.png'}
-                alt="" className="w-10 h-10 rounded-full bg-gray-50 object-cover" />
+              <img src={selectedRoom.productImage || '/images/default-product.png'}
+                alt="" className="w-10 h-10 rounded-xl bg-gray-50 object-cover" />
               <div className="flex-1 min-w-0">
-                <button
-                  onClick={() => navigate(`/seller/${selectedRoom.otherUser.no}`)}
-                  className="font-bold text-sm text-gray-900 truncate hover:text-gray-600 transition-colors block text-left"
-                >
-                  {selectedRoom.otherUser.nickname}
-                </button>
-                <p className="text-[11px] text-gray-400 truncate">{selectedRoom.productTitle}</p>
+                <h4 className="font-bold text-sm text-gray-900 truncate">
+                  {selectedRoom.productTitle}
+                </h4>
+                <p className="text-xs text-black font-black mt-0.5">
+                  {(selectedRoom.productPrice || 0).toLocaleString()}원
+                </p>
               </div>
               <div className="relative group" ref={menuRef}>
                 <button
@@ -1132,12 +1137,36 @@ export const Chat: React.FC = () => {
               )}
               {messages.map((msg, idx) => {
                 const isMe = msg.senderNo === memberNo;
+                const prevMsg = idx > 0 ? messages[idx - 1] : null;
+                const nextMsg = idx < messages.length - 1 ? messages[idx + 1] : null;
+
+                // HH:mm 단위 시간 추출 (그룹화 기준)
+                const getMsgMinute = (dateStr: string) => {
+                  try { return format(new Date(dateStr), 'HH:mm'); }
+                  catch { return ''; }
+                };
+                const currTime = getMsgMinute(msg.createdAt);
+
+                // 그룹의 첫 번째 메시지인지 판단
+                const isFirstInGroup = !prevMsg ||
+                  prevMsg.senderNo !== msg.senderNo ||
+                  getMsgMinute(prevMsg.createdAt) !== currTime ||
+                  shouldShowDateDivider(idx) ||
+                  prevMsg.msgType === 'SYSTEM';
+
+                // 그룹의 마지막 메시지인지 판단
+                const isLastInGroup = !nextMsg ||
+                  nextMsg.senderNo !== msg.senderNo ||
+                  getMsgMinute(nextMsg.createdAt) !== currTime ||
+                  shouldShowDateDivider(idx + 1) ||
+                  nextMsg.msgType === 'SYSTEM';
+
                 return (
                   <React.Fragment key={msg.id}>
                     {/* 날짜 구분선 */}
                     {shouldShowDateDivider(idx) && (
-                      <div className="flex items-center justify-center py-3">
-                        <span className="inline-flex items-center justify-center bg-gray-200/80 text-gray-500 text-[10px] font-bold px-3 py-1.5 rounded-full leading-none">
+                      <div className="flex items-center justify-center py-6">
+                        <span className="inline-flex items-center justify-center bg-gray-100/80 backdrop-blur-sm text-gray-500 text-[10px] font-bold px-4 py-2 rounded-full border border-gray-100/50 shadow-sm leading-none">
                           {formatDate(msg.createdAt)}
                         </span>
                       </div>
@@ -1153,176 +1182,179 @@ export const Chat: React.FC = () => {
                       </div>
                     )}
 
-                    <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-2`}>
-                      <div className={`flex items-end gap-2 max-w-[70%] ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                          {/* ──── 메시지 콘텐츠 (msgType 분기) ──── */}
-                          {msg.msgType === 'APPOINTMENT' ? (() => {
-                            let appt: any = {};
-                            try { appt = JSON.parse(msg.content); } catch { appt = { dateLabel: msg.content }; }
-                            return (
-                              <div className={`rounded-3xl overflow-hidden border border-gray-200 shadow-sm w-[260px] bg-white ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
-                                <div className="bg-[#FF5A5A] px-5 py-3.5 flex items-center justify-center gap-2">
-                                  <span className="text-white text-xs font-semibold tracking-wide">약속 잡기</span>
-                                </div>
-                                <div className="p-5 space-y-4">
-                                  <div className="space-y-1.5">
-                                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">날짜</p>
-                                    <p className="text-sm font-bold text-gray-900">{appt.dateLabel || '-'}</p>
+                    {msg.msgType !== 'SYSTEM' && (
+                      <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} ${isFirstInGroup ? 'mt-4' : 'mt-1'}`}>
+                        {/* 상대방 프로필 표시 영역 */}
+                        {!isMe && (
+                          <div className="flex-shrink-0 w-8 mr-2 flex flex-col justify-start pt-1">
+                            {isFirstInGroup && (
+                              <img
+                                src={selectedRoom.otherUser.profileImage || '/images/default-profile.png'}
+                                alt=""
+                                className="w-8 h-8 rounded-full border border-gray-100 object-cover shadow-sm bg-white"
+                              />
+                            )}
+                          </div>
+                        )}
+
+                        <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]`}>
+                          {/* 닉네임 표시 (상대방 첫 메시지인 경우) */}
+                          {!isMe && isFirstInGroup && (
+                            <span className="text-[11px] font-bold text-gray-400 mb-1.5 ml-1">
+                              {selectedRoom.otherUser.nickname}
+                            </span>
+                          )}
+
+                          <div className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                            <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                              {/* ──── 메시지 콘텐츠 (msgType 분기) ──── */}
+                              {msg.msgType === 'APPOINTMENT' ? (() => {
+                                let appt: any = {};
+                                try { appt = JSON.parse(msg.content); } catch { appt = { dateLabel: msg.content }; }
+                                return (
+                                  <div className={`rounded-3xl overflow-hidden border border-gray-200 shadow-sm w-[260px] bg-white ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
+                                    <div className="bg-[#FF5A5A] px-5 py-3.5 flex items-center justify-center gap-2">
+                                      <span className="text-white text-xs font-semibold tracking-wide">약속 잡기</span>
+                                    </div>
+                                    <div className="p-5 space-y-4">
+                                      <div className="space-y-1.5">
+                                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">날짜</p>
+                                        <p className="text-sm font-bold text-gray-900">{appt.dateLabel || '-'}</p>
+                                      </div>
+                                      <div className="space-y-1.5">
+                                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">시간</p>
+                                        <p className="text-sm font-bold text-gray-900">{appt.timeLabel || '-'}</p>
+                                      </div>
+                                      {appt.addrRoad && (
+                                        <div className="pt-3 border-t border-gray-50 space-y-1.5">
+                                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">장소</p>
+                                          <div>
+                                            <p className="text-sm font-bold text-gray-900 leading-snug">{appt.addrRoad}</p>
+                                            {appt.addrDetail && <p className="text-sm text-gray-400 mt-1 font-medium">{appt.addrDetail}</p>}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
-                                  <div className="space-y-1.5">
-                                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">시간</p>
-                                    <p className="text-sm font-bold text-gray-900">{appt.timeLabel || '-'}</p>
-                                  </div>
-                                  {appt.addrRoad && (
-                                    <div className="pt-3 border-t border-gray-50 space-y-1.5">
-                                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">장소</p>
-                                      <div>
-                                        <p className="text-sm font-bold text-gray-900 leading-snug">{appt.addrRoad}</p>
-                                        {appt.addrDetail && <p className="text-sm text-gray-400 mt-1 font-medium">{appt.addrDetail}</p>}
+                                );
+                              })() : msg.msgType === 'ADDRESS' ? (
+                                <div className={`rounded-3xl overflow-hidden border border-gray-200 shadow-sm w-[260px] ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
+                                  <div className="p-5 bg-white">
+                                    <div className="flex items-start gap-3 text-gray-800">
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-1 mb-2">
+                                          <BsGeoAltFill className="w-3 h-3 text-[#FF5A5A]" />
+                                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">배송지</p>
+                                        </div>
+                                        <p className="text-sm font-bold leading-snug text-gray-900 break-words">
+                                          {msg.addrRoad || msg.content || '주소 정보'}
+                                        </p>
+                                        {msg.addrDetail && (
+                                          <p className="text-sm mt-1.5 break-words text-gray-500 font-medium">
+                                            {msg.addrDetail}
+                                          </p>
+                                        )}
                                       </div>
                                     </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })() : msg.msgType === 'ADDRESS' ? (
-                            <div
-                              className={`rounded-3xl overflow-hidden border border-gray-200 shadow-sm w-[260px] ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
-                            >
-                              <div className={`p-5 bg-white`}>
-                                <div className={`flex items-start gap-3 text-gray-800`}>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-1 mb-2">
-                                      <BsGeoAltFill className="w-3 h-3 text-[#FF5A5A]" />
-                                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">배송지</p>
-                                    </div>
-                                    <p className="text-sm font-bold leading-snug text-gray-900 break-words">
-                                      {msg.addrRoad || msg.content || '주소 정보'}
-                                    </p>
-                                    {msg.addrDetail && (
-                                      <p className={`text-sm mt-1.5 break-words text-gray-500 font-medium`}>
-                                        {msg.addrDetail}
-                                      </p>
-                                    )}
                                   </div>
-                                </div>
-                              </div>
-                              {/* 판매자(상대방이 구매자)에게만 확인 버튼 표시 */}
-                              {!isMe && selectedRoom.otherUser.role === 'buyer' && (
-                                <div className="border-t border-gray-100 bg-gray-50 hover:bg-gray-100 transition-colors">
-                                  <button
-                                    type="button"
-                                    onClick={() => handleConfirmAddress(msg)}
-                                    className="w-full py-3.5 text-xs font-semibold text-gray-700 hover:text-gray-900 transition-colors"
-                                  >
-                                    배송지 저장
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          ) : msg.msgType === 'IMAGE' && msg.imageUrls && msg.imageUrls.length > 0 ? (
-                            <div
-                              className={`grid gap-1 rounded-2xl overflow-hidden max-w-[240px] ${msg.status === 'SENDING' ? 'opacity-70' : ''
-                                } ${msg.imageUrls.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
-                                }`}
-                            >
-                              {msg.imageUrls.slice(0, 4).map((url, i) => (
-                                <div key={i} className="relative aspect-square">
-                                    <img
-                                      src={url}
-                                      alt=""
-                                      className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition-all"
-                                      onClick={() => {
-                                        setLightboxImages(msg.imageUrls!);
-                                        setLightboxIndex(i);
-                                        setIsLightboxOpen(true);
-                                      }}
-                                    />
-                                  {/* 4장 초과 시 마지막 칸에 +N 오버레이 */}
-                                  {i === 3 && msg.imageUrls!.length > 4 && (
-                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold text-lg">
-                                      +{msg.imageUrls!.length - 4}
+                                  {!isMe && selectedRoom.otherUser.role === 'buyer' && (
+                                    <div className="border-t border-gray-100 bg-gray-50 hover:bg-gray-100 transition-colors">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleConfirmAddress(msg)}
+                                        className="w-full py-3.5 text-xs font-semibold text-gray-700 hover:text-gray-900 transition-colors"
+                                      >
+                                        배송지 저장
+                                      </button>
                                     </div>
                                   )}
                                 </div>
-                              ))}
-                            </div>
-                          ) : msg.msgType === 'LOCATION' ? (
-                            <div
-                              className={`rounded-2xl overflow-hidden border shadow-sm max-w-[220px] ${isMe ? 'border-brand/40 rounded-tr-none' : 'border-gray-100 rounded-tl-none'
-                                } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}
-                            >
-                              {/* 위치 지도 미리보기 (Static Map 또는 플레이스홀더) */}
-                              {msg.latitude && msg.longitude && (
-                                <a
-                                  href={`https://map.kakao.com/link/map/${msg.addrRoad || '위치'},${msg.latitude},${msg.longitude}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  <img
-                                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${msg.latitude},${msg.longitude}&zoom=15&size=220x120&markers=color:red%7C${msg.latitude},${msg.longitude}&key=YOUR_KEY`}
-                                    alt="지도"
-                                    className="w-full h-24 object-cover bg-gray-100"
-                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                  />
-                                </a>
-                              )}
-                              <div className={`p-3 ${isMe ? 'bg-brand' : 'bg-white'}`}>
-                                <div className={`flex items-start gap-1.5 ${isMe ? 'text-white' : 'text-gray-800'}`}>
-                                  <BsGeoAltFill className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                                  <div>
-                                    <p className="text-xs font-bold leading-snug">{msg.addrRoad || '위치 정보'}</p>
-                                    {msg.addrDetail && (
-                                      <p className={`text-[10px] mt-0.5 ${isMe ? 'text-brand/50' : 'text-gray-500'}`}>{msg.addrDetail}</p>
-                                    )}
+                              ) : msg.msgType === 'IMAGE' && msg.imageUrls && msg.imageUrls.length > 0 ? (
+                                <div className={`grid gap-1 rounded-2xl overflow-hidden max-w-[240px] ${msg.status === 'SENDING' ? 'opacity-70' : ''} ${msg.imageUrls.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                                  {msg.imageUrls.slice(0, 4).map((url, i) => (
+                                    <div key={i} className="relative aspect-square">
+                                      <img
+                                        src={url}
+                                        alt=""
+                                        className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition-all"
+                                        onClick={() => {
+                                          setLightboxImages(msg.imageUrls!);
+                                          setLightboxIndex(i);
+                                          setIsLightboxOpen(true);
+                                        }}
+                                      />
+                                      {i === 3 && msg.imageUrls!.length > 4 && (
+                                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold text-lg">
+                                          +{msg.imageUrls!.length - 4}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : msg.msgType === 'LOCATION' ? (
+                                <div className={`rounded-2xl overflow-hidden border shadow-sm max-w-[220px] ${isMe ? 'border-brand/40 shadow-brand/5' : 'border-gray-100'} ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
+                                  {msg.latitude && msg.longitude && (
+                                    <a
+                                      href={`https://map.kakao.com/link/map/${msg.addrRoad || '위치'},${msg.latitude},${msg.longitude}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      <img
+                                        src={`https://maps.googleapis.com/maps/api/staticmap?center=${msg.latitude},${msg.longitude}&zoom=15&size=220x120&markers=color:red%7C${msg.latitude},${msg.longitude}&key=YOUR_KEY`}
+                                        alt="지도"
+                                        className="w-full h-24 object-cover bg-gray-100"
+                                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                      />
+                                    </a>
+                                  )}
+                                  <div className={`p-3 ${isMe ? 'bg-brand' : 'bg-white'}`}>
+                                    <div className={`flex items-start gap-1.5 ${isMe ? 'text-white' : 'text-gray-800'}`}>
+                                      <BsGeoAltFill className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                                      <div>
+                                        <p className="text-xs font-bold leading-snug">{msg.addrRoad || '위치 정보'}</p>
+                                        {msg.addrDetail && (
+                                          <p className={`text-[10px] mt-0.5 ${isMe ? 'text-white/60' : 'text-gray-500'}`}>{msg.addrDetail}</p>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
+                              ) : (
+                                <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${isMe
+                                  ? msg.status === 'FAILED' ? 'bg-red-50 text-red-800 rounded-tr-none border border-red-100' : 'bg-brand text-white rounded-tr-none'
+                                  : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
+                                  } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
+                                  {msg.content}
+                                </div>
+                              )}
                             </div>
-                          ) : (
-                            <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${isMe
-                              ? msg.status === 'FAILED'
-                                ? 'bg-red-100 text-red-800 rounded-tr-none'
-                                : 'bg-brand text-white rounded-tr-none'
-                              : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
-                              } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>
-                              {msg.content}
+
+                            {/* 부가 정보 표시 (안읽음 + 전송상태 + 시간) */}
+                            <div className={`flex flex-col items-center gap-1 mb-0.5 min-w-[24px] ${isMe ? 'items-end' : 'items-start'}`}>
+                              {/* 안읽음 표시 (1) - 본인 메시지인 경우 상시 표시 */}
+                              {isMe && msg.status === 'SENT' && msg.isRead === 0 && (
+                                <span className="text-[9px] text-brand-light font-bold">1</span>
+                              )}
+                              
+                              {/* 전송 중/실패 상태 */}
+                              {isMe && msg.status === 'SENDING' && (
+                                <div className="animate-spin w-2.5 h-2.5 border-2 border-gray-300 border-t-gray-500 rounded-full" />
+                              )}
+                              {isMe && msg.status === 'FAILED' && (
+                                <button onClick={() => handleRetry(msg)} className="text-red-500 hover:scale-110 transition-transform">
+                                  <BsExclamationCircle className="w-3 h-3" />
+                                </button>
+                              )}
+
+                              {/* 시간 표시 (마지막 메시지인 경우에만) */}
+                              {isLastInGroup && (
+                                <span className="text-[8px] text-gray-400 font-medium whitespace-nowrap">
+                                  {formatRelativeTime(msg.createdAt)}
+                                </span>
+                              )}
                             </div>
-                          )}
-                          <div className="flex items-center gap-1 mt-1">
-                            {/* 전송 상태 표시 */}
-                            {isMe && msg.status === 'SENDING' && (
-                              <div className="spinner-border w-3 h-3 text-gray-400" role="status">
-                                <span className="sr-only">Loading...</span>
-                              </div>
-                            )}
-                            {isMe && msg.status === 'FAILED' && (
-                              <button onClick={() => handleRetry(msg)}
-                                className="flex items-center gap-0.5 text-brand text-[10px] font-bold hover:underline">
-                                <BsExclamationCircle className="w-3 h-3" />
-                                <BsArrowRepeat className="w-3 h-3" />
-                                재전송
-                              </button>
-                            )}
-                            {/* 읽음 표시 */}
-                            {isMe && msg.status === 'SENT' && msg.isRead === 0 && (
-                              <span className="text-[9px] text-brand-light font-bold">1</span>
-                            )}
-                            <span className="text-[9px] text-gray-400 font-medium">
-                              {formatTime(msg.createdAt)}
-                            </span>
                           </div>
                         </div>
-                      </div>
-                    </div>
-
-                    {/* 약속 상태 메시지 (시스템 메시지 스타일) */}
-                    {msg.msgType === 'APPOINTMENT' && msg.status !== 'FAILED' && (
-                      <div className="flex justify-center w-full my-6 animate-in fade-in zoom-in duration-300">
-                        <span className="inline-flex items-center justify-center bg-white/80 backdrop-blur-sm text-gray-500 text-[11px] font-bold px-5 py-2.5 rounded-full border border-gray-100 shadow-sm gap-2 leading-none">
-                          약속이 잡혔습니다
-                        </span>
                       </div>
                     )}
                   </React.Fragment>

@@ -4,7 +4,7 @@ import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
 import { BsBag, BsBagFill, BsPencilSquare, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 
-import { BsHeart, BsHeartFill, BsGear, BsWallet, BsBox2, BsShop, BsTrophy, BsChat, BsCheckCircle } from 'react-icons/bs';
+import { BsHeart, BsHeartFill, BsGear, BsGearFill, BsWallet, BsBox2, BsShop, BsTrophy, BsChat, BsCheckCircle } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -375,10 +375,15 @@ export const MyPage: React.FC = () => {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-gray-100 hover:border-gray-200 transition-all duration-300 border border-gray-100 disabled:opacity-50">
+            <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-gray-100 hover:border-gray-200 transition-all duration-300 border border-gray-100 disabled:opacity-50 group">
               {uploadingProfile
                 ? <div className="w-5 h-5 border-2 border-brand/20 border-t-brand rounded-full animate-spin" />
-                : <BsGear className="w-5 h-5" />
+                : (
+                  <>
+                    <BsGear className="w-5 h-5 block group-hover:hidden" />
+                    <BsGearFill className="w-5 h-5 hidden group-hover:block" />
+                  </>
+                )
               }
             </button>
             <input type="file" ref={fileInputRef} onChange={handleProfileImageChange} accept="image/*" className="hidden" />
