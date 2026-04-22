@@ -72,12 +72,15 @@ export const MannerHistoryManagement: React.FC = () => {
             return (
               <div key={history.id} className="px-5 py-2.5 hover:bg-gray-50 transition-colors">
                 <div className="flex items-center min-w-0">
-                  <span className="w-[120px] shrink-0 text-[13px] font-bold text-gray-900 truncate" title={getNickname(history.userId)}>{getNickname(history.userId)}</span>
+                  <span className="w-[120px] shrink-0 text-[13px] font-bold text-gray-900 truncate" title={history.userNickname || getNickname(history.userId)}>{history.userNickname || getNickname(history.userId)}</span>
                   <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
-                  <div className="w-[150px] shrink-0 inline-flex items-center gap-1.5">
+                  <div className="w-[180px] shrink-0 inline-flex items-center gap-1.5">
                     <span className="text-xs text-gray-400">{history.previousTemp.toFixed(1)}°C</span>
                     <span className="text-xs text-gray-300">→</span>
                     <span className={`text-xs font-bold px-1.5 py-0.5 rounded-none ${isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>{history.newTemp.toFixed(1)}°C</span>
+                    <span className={`text-xs font-bold ${isIncrease ? 'text-green-500' : 'text-red-500'}`}>
+                      ({isIncrease ? '+' : ''}{(history.newTemp - history.previousTemp).toFixed(1)})
+                    </span>
                   </div>
                   <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                   <span className="flex-1 min-w-0 text-xs text-gray-600 truncate" title={history.reason}>{history.reason}</span>
