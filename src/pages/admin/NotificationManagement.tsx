@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BsSend, BsLink } from 'react-icons/bs';
 
-import { BsInfoCircle, BsBell, BsPlusLg, BsX } from 'react-icons/bs';
+import { BsInfoCircle, BsBell, BsPlusLg, BsX, BsFunnel } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
@@ -108,13 +108,28 @@ export const NotificationManagement: React.FC = () => {
           <h1 className="text-lg font-bold text-gray-900 tracking-tight">알림 관리</h1>
           <p className="text-gray-500 mt-0.5 text-xs font-medium">사용자에게 새로운 알림을 발송하고 내역을 확인합니다.</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-xs"
-        >
-          {showForm ? <BsX className="w-4 h-4" /> : <BsPlusLg className="w-4 h-4" />}
-          {showForm ? '닫기' : '새 알림 등록'}
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-none px-4 py-2.5 shadow-sm">
+            <BsFunnel className="w-3.5 h-3.5 text-gray-400" />
+            <select
+              className="bg-transparent text-xs font-bold text-gray-600 focus:outline-none cursor-pointer"
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}
+            >
+              <option value="all">전체 유형</option>
+              <option value="시스템">시스템</option>
+              <option value="활동">활동</option>
+              <option value="입찰">입찰</option>
+            </select>
+          </div>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-xs"
+          >
+            {showForm ? <BsX className="w-4 h-4" /> : <BsPlusLg className="w-4 h-4" />}
+            {showForm ? '닫기' : '새 알림 등록'}
+          </button>
+        </div>
       </header>
 
       <AnimatePresence>
@@ -191,26 +206,11 @@ export const NotificationManagement: React.FC = () => {
 
       {/* Notification History */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between gap-4">
-          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2 shrink-0">
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
             <BsBell className="w-4 h-4 text-gray-400" /> 발송 내역
           </h2>
-          <div className="flex items-center gap-1.5">
-            {(['all', '시스템', '활동', '입찰'] as TypeFilter[]).map((f) => (
-              <button
-                key={f}
-                onClick={() => setTypeFilter(f)}
-                className={`px-3 py-1 text-[11px] font-bold rounded-none transition-all ${
-                  typeFilter === f
-                    ? 'bg-[#FF5A5A] text-white'
-                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                }`}
-              >
-                {f === 'all' ? '전체' : f}
-              </button>
-            ))}
-          </div>
-          <span className="text-xs font-bold text-gray-400 shrink-0">{recentNotifications.length}건</span>
+          <span className="text-xs font-bold text-gray-400">{recentNotifications.length}건</span>
         </div>
 
         <div className="divide-y divide-gray-50">
