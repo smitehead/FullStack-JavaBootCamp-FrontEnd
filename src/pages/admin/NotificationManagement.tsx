@@ -22,17 +22,21 @@ export const NotificationManagement: React.FC = () => {
   const [message, setMessage] = useState('');
   const [link, setLink] = useState('');
   const [type, setType] = useState('시스템');
+  const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
 
   const fetchRecentNotifications = async () => {
+    setIsLoading(true);
     try {
       const res = await api.get('/admin/notifications/recent');
       setRecentNotifications(res.data);
     } catch (err) {
       console.error('알림 내역 조회 실패:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -86,16 +90,22 @@ export const NotificationManagement: React.FC = () => {
     { value: '입찰', label: '입찰' },
   ];
 
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
+
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-4">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">알림 관리</h1>
-          <p className="text-gray-500 mt-1 text-[11px] font-medium">사용자에게 새로운 알림을 발송하고 내역을 확인합니다.</p>
+          <h1 className="text-lg font-bold text-gray-900 tracking-tight">알림 관리</h1>
+          <p className="text-gray-500 mt-0.5 text-xs font-medium">사용자에게 새로운 알림을 발송하고 내역을 확인합니다.</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-sm"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-xs"
         >
           {showForm ? <BsX className="w-4 h-4" /> : <BsPlusLg className="w-4 h-4" />}
           {showForm ? '닫기' : '새 알림 등록'}
@@ -108,10 +118,10 @@ export const NotificationManagement: React.FC = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="bg-white rounded-none p-8 shadow-sm border border-gray-100"
+            className="bg-white rounded-none p-5 shadow-sm border border-gray-100"
           >
-            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <BsSend className="w-5 h-5 text-[#FF5A5A]" /> 새 알림 발송
+            <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <BsSend className="w-4 h-4 text-[#FF5A5A]" /> 새 알림 발송
             </h2>
 
             <form onSubmit={handleSend} className="flex flex-col lg:flex-row items-end gap-6">
@@ -176,27 +186,21 @@ export const NotificationManagement: React.FC = () => {
 
       {/* Notification History */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <BsBell className="w-5 h-5 text-gray-400" /> 발송 내역
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <BsBell className="w-4 h-4 text-gray-400" /> 발송 내역
           </h2>
           <span className="text-xs font-bold text-gray-400">{recentNotifications.length}건</span>
         </div>
 
         <div className="divide-y divide-gray-50">
           {recentNotifications.slice(0, visibleCount).map((noti) => (
-            <div key={noti.notiNo} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  <div className={`mt-1 w-8 h-8 rounded-none flex items-center justify-center shrink-0 ${noti.type === '시스템' ? 'bg-blue-50 text-blue-500' :
-                    noti.type === '활동' ? 'bg-purple-50 text-purple-500' :
-                      'bg-orange-50 text-orange-500'
-                    }`}>
-                    <BsBell className="w-4 h-4" />
-                  </div>
+            <div key={noti.notiNo} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
                   <div>
                     <p className="text-sm font-bold text-gray-900 leading-relaxed">{noti.content}</p>
-                    <div className="flex items-center gap-3 mt-2 flex-wrap">
+                    <div className="flex items-center gap-3 mt-1 flex-wrap">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                         {noti.type}
                       </span>
@@ -217,8 +221,8 @@ export const NotificationManagement: React.FC = () => {
             </div>
           ))}
           {recentNotifications.length === 0 && (
-            <div className="px-8 py-20 text-center">
-              <p className="text-gray-400 font-bold">발송된 알림이 없습니다.</p>
+            <div className="px-5 py-14 text-center">
+              <p className="text-gray-400 font-bold text-sm">발송된 알림이 없습니다.</p>
             </div>
           )}
         </div>

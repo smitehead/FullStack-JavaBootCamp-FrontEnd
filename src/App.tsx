@@ -2,10 +2,12 @@ import React, { useEffect } from 'react';
 import { Toaster } from 'sonner';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, [pathname]);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
   return null;
 };
 

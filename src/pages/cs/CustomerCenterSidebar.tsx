@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BsQuestionCircle, BsChatLeftDots, BsBell } from 'react-icons/bs';
+import { BsQuestionCircle, BsChatLeftDots, BsMegaphone } from 'react-icons/bs';
 
 export const CustomerCenterSidebar: React.FC = () => {
   const location = useLocation();
   const activePath = location.pathname;
 
   const menuItems = [
-    { path: '/notice', label: '공지사항', icon: BsBell },
+    { path: '/notice', label: '공지사항', icon: BsMegaphone },
     { path: '/faq', label: '자주 묻는 질문', icon: BsQuestionCircle },
     { path: '/inquiry', label: '문의하기', icon: BsChatLeftDots },
   ];

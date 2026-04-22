@@ -5,7 +5,7 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { AlertCircle } from 'lucide-react';
-import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill } from 'react-icons/bs';
+import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill, BsPerson } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 
 interface SellerResultDetail {
@@ -39,7 +39,6 @@ export const SellerAuctionResult: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [imgIndex, setImgIndex] = useState(0);
   const [activeTransactionTab, setActiveTransactionTab] = useState<'delivery' | 'face-to-face'>('delivery');
 
   useEffect(() => {
@@ -129,7 +128,6 @@ export const SellerAuctionResult: React.FC = () => {
     }
   };
 
-  const cancelButtonLabel = isCancelRequested ? '취소 승인' : '취소 요청하기';
   const cancelModalTitle = isCancelRequested
     ? '구매자의 취소 요청을 승인하시겠습니까?'
     : '구매자에게 취소를 요청하시겠습니까?';
@@ -166,23 +164,7 @@ export const SellerAuctionResult: React.FC = () => {
                 <div className="flex gap-6">
                   {images.length > 0 && (
                     <div className="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-100">
-                      <img src={images[imgIndex] || undefined} alt={result.title} className="w-full h-full object-cover" />
-                      {images.length > 1 && (
-                        <>
-                          <button
-                            onClick={() => setImgIndex(i => Math.max(0, i - 1))}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-r"
-                          >
-                            <BsChevronLeft className="w-3 h-3" />
-                          </button>
-                          <button
-                            onClick={() => setImgIndex(i => Math.min(images.length - 1, i + 1))}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/30 text-white p-0.5 rounded-l"
-                          >
-                            <BsChevronRight className="w-3 h-3" />
-                          </button>
-                        </>
-                      )}
+                      <img src={images[0] || undefined} alt={result.title} className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className="flex-1">
@@ -192,7 +174,7 @@ export const SellerAuctionResult: React.FC = () => {
                     <p className="text-sm text-gray-500 mb-4 line-clamp-1">{result.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">최종 낙찰가</span>
-                      <span className="text-2xl font-bold text-emerald-600">{result.finalPrice.toLocaleString()}원</span>
+                      <span className="text-2xl font-bold text-gray-900">{result.finalPrice.toLocaleString()}원</span>
                     </div>
                   </div>
                 </div>
@@ -206,13 +188,13 @@ export const SellerAuctionResult: React.FC = () => {
                   <div className="flex bg-gray-100 p-1 rounded-xl w-fit mb-4">
                     <button
                       onClick={() => setActiveTransactionTab('delivery')}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${activeTransactionTab === 'delivery' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTransactionTab === 'delivery' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                       택배 거래
                     </button>
                     <button
                       onClick={() => setActiveTransactionTab('face-to-face')}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-2xl transition-all ${activeTransactionTab === 'face-to-face' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeTransactionTab === 'face-to-face' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                       직거래
                     </button>
@@ -224,16 +206,13 @@ export const SellerAuctionResult: React.FC = () => {
                     <h3 className="text-lg font-bold text-gray-900">
                       {activeTransactionTab === 'face-to-face' ? '거래 방식 및 장소' : '배송지 정보'}
                     </h3>
-                    <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">
-                      {activeTransactionTab === 'face-to-face' ? '직거래' : '택배거래'}
-                    </span>
                   </div>
 
                   {activeTransactionTab === 'face-to-face' ? (
                     <div className="space-y-4">
                       <div className="flex items-start gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 flex-shrink-0">
-                          <BsGeoAltFill className="w-5 h-5 text-indigo-600" />
+                          <BsGeoAltFill className="w-5 h-5 text-brand" />
                         </div>
                         <div>
                           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">희망 거래 장소</p>
@@ -280,81 +259,75 @@ export const SellerAuctionResult: React.FC = () => {
                         <span className="text-gray-900 font-bold">{result.finalPrice.toLocaleString()} P</span>
                       </div>
                       <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-medium">배송비</span>
+                        <span className={`font-medium ${result.tradeType === '직거래' ? 'text-gray-900' : 'text-gray-400'}`}>
+                          {result.tradeType === '직거래' ? '-' : '(배송비 별도)'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
                         <span className="text-gray-500 font-medium">플랫폼 이용료 (안심 결제 수수료 {feePercent})</span>
-                        <span className="text-rose-500 font-bold">- {fee.toLocaleString()} P</span>
+                        <span className="text-brand font-bold">- {fee.toLocaleString()} P</span>
                       </div>
                       <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
                         <span className="text-base font-bold text-gray-900">
                           {isCompleted ? '최종 정산 금액' : '최종 정산 예정 금액'}
                         </span>
-                        <span className="text-2xl font-bold text-emerald-600">{settlementAmount.toLocaleString()} P</span>
+                        <span className="text-2xl font-bold text-blue-500">{settlementAmount.toLocaleString()} P</span>
                       </div>
                     </div>
                   );
                 })()}
 
-                {/* 구매자 취소 요청 수신 배너 */}
-                {isCancelRequested && (
-                  <div className="mt-6 rounded-2xl bg-brand/10 border border-brand/20 p-4 flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-brand shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-xs font-bold text-brand-dark mb-1">구매자 취소 요청 수신</p>
-                      <p className="text-[11px] text-brand-dark leading-relaxed font-medium">
-                        구매자가 낙찰 취소를 요청했습니다.<br />
-                        승인하면 구매자에게 포인트가 환불되고 경매는 유찰 처리됩니다.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* 판매자 취소 요청 대기 배너 */}
-                {isSellerCancelRequested && (
-                  <div className="mt-6 rounded-2xl bg-amber-50 border border-amber-200 p-4 flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-xs font-bold text-amber-700 mb-1">취소 요청 전송됨</p>
-                      <p className="text-[11px] text-amber-700 leading-relaxed font-medium">
-                        구매자에게 취소를 요청했습니다.<br />
-                        구매자가 동의하면 거래가 취소되고 포인트가 환불됩니다.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
                 <div className="mt-8 space-y-3">
-                  {/* 배송대기: 취소 요청하기 버튼 (즉시 취소 아님, 구매자 동의 필요) */}
+                  {/* 구매자 취소 요청 수신 — 툴팁 인라인 알림 */}
+                  {isCancelRequested && (
+                    <div className="flex items-center gap-2 mb-3 group relative">
+                      <AlertCircle className="w-[18px] h-[18px] text-brand" />
+                      <span className="text-sm font-bold text-brand cursor-help border-b border-dashed border-brand/30">
+                        구매자 취소 요청 수신
+                      </span>
+                      <div className="absolute bottom-full left-0 mb-2 w-64 bg-gray-900/95 backdrop-blur-md text-white text-xs p-4 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl pointer-events-none border border-white/10">
+                        <p className="leading-relaxed font-medium">
+                          구매자가 낙찰 취소를 요청했습니다.<br />
+                          승인하면 구매자에게 포인트가 환불되고 경매는 유찰 처리됩니다.
+                        </p>
+                        <div className="absolute top-full left-4 border-[6px] border-transparent border-t-gray-900/95" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 배송대기: [취소 요청하기] — 즉시 취소 아님, 구매자 동의 필요 */}
                   {isPending && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <button
                         onClick={() => setShowCancelConfirm(true)}
                         disabled={isProcessing}
-                        className="w-full py-5 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
+                        className="w-full h-[56px] flex items-center justify-center border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
                       >
                         취소 요청하기
                       </button>
                       <button
                         disabled
-                        className="w-full py-5 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
+                        className="w-full h-[56px] bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200 flex items-center justify-center"
                       >
                         구매 확정 대기
                       </button>
                     </div>
                   )}
 
-                  {/* 구매자 취소 요청 수신: 판매자가 승인 */}
+                  {/* 구매자 취소 요청 수신: [취소 승인] 버튼 */}
                   {isCancelRequested && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <button
                         onClick={() => setShowCancelConfirm(true)}
                         disabled={isProcessing}
-                        className="w-full py-5 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
+                        className="w-full h-[56px] flex items-center justify-center border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
                       >
                         취소 승인
                       </button>
                       <button
                         disabled
-                        className="w-full py-5 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
+                        className="w-full h-[56px] bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200 flex items-center justify-center"
                       >
                         구매 확정 대기
                       </button>
@@ -373,7 +346,7 @@ export const SellerAuctionResult: React.FC = () => {
                     <div className="grid grid-cols-1 gap-3">
                       <button
                         disabled
-                        className="w-full py-5 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
+                        className="w-full h-[56px] flex items-center justify-center bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
                       >
                         거래 완료
                       </button>
@@ -407,9 +380,13 @@ export const SellerAuctionResult: React.FC = () => {
                     <p className="font-bold text-white truncate">{result.buyer.nickname}</p>
                     <p className="text-xs text-white/50">매너온도 {Number(result.buyer.mannerTemp).toFixed(1)}°</p>
                   </div>
+                  <Link to={`/seller/${result.buyer.buyerNo}`} className="p-2 bg-white/5 hover:bg-white/10 rounded-2xl transition-colors shrink-0">
+                    <BsChevronRight className="w-4 h-4" />
+                  </Link>
                 </div>
 
-                <div className="pt-8 border-t border-white/10">
+                <div className="pt-8 border-t border-white/10 space-y-3">
+
                   <button
                     onClick={handleChatWithBuyer}
                     className="w-full py-5 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
@@ -424,9 +401,9 @@ export const SellerAuctionResult: React.FC = () => {
                 <div className="flex gap-3">
                   <BsInfoCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs font-bold text-gray-900 mb-1">안전 거래 안내</p>
-                    <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
-                      낙찰 포인트는 LiveBid에서 안전하게 보관하며, 구매자가 '수령 확인'을 완료한 후 판매자에게 정산됩니다.
+                    <p className="text-sm font-bold text-gray-900 mb-1">안전 거래 안내</p>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      낙찰 포인트는 JAVAJAVA에서 안전하게 보관하며, 구매자가 '수령 확인'을 완료한 후 판매자에게 정산됩니다.
                     </p>
                   </div>
                 </div>

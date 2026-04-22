@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BsBarChart, BsCurrencyDollar, BsCalendar3, BsSearch, BsFilter, BsInbox } from 'react-icons/bs';
+import { BsBarChart, BsCurrencyDollar, BsCalendar3, BsSearch, BsFilter } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 
@@ -97,15 +97,15 @@ export const RevenueManagement: React.FC = () => {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <header>
-        <h1 className="text-xl font-bold text-gray-900 tracking-tight">수익 관리</h1>
-        <div className="flex items-center gap-2 mt-1">
-          <p className="text-gray-500 text-[11px] font-medium">플랫폼 수익 내역을 확인합니다.</p>
+        <h1 className="text-lg font-bold text-gray-900 tracking-tight">수익 관리</h1>
+        <div className="flex items-center gap-2 mt-0.5">
+          <p className="text-gray-500 text-xs font-medium">플랫폼 수익 내역을 확인합니다.</p>
           {stats && (
             <>
               <span className="w-1 h-1 bg-gray-300 rounded-full" />
-              <p className="text-[#FF5A5A] text-[11px] font-bold">총 {stats.totalCount.toLocaleString()}건</p>
+              <p className="text-[#FF5A5A] text-xs font-bold">총 {stats.totalCount.toLocaleString()}건</p>
             </>
           )}
         </div>
@@ -113,40 +113,40 @@ export const RevenueManagement: React.FC = () => {
 
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-none border border-gray-100 shadow-sm px-6 py-5">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center">
-                <BsCurrencyDollar className="w-4 h-4 text-gray-500" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="bg-white rounded-none border border-gray-100 shadow-sm px-4 py-3.5">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-7 h-7 rounded-none bg-gray-100 flex items-center justify-center">
+                <BsCurrencyDollar className="w-3.5 h-3.5 text-gray-500" />
               </div>
               <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">전체 누적 수익</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.totalRevenue.toLocaleString()}<span className="text-sm font-bold text-gray-400 ml-1">P</span></p>
+            <p className="text-xl font-bold text-gray-900">{stats.totalRevenue.toLocaleString()}<span className="text-xs font-bold text-gray-400 ml-1">P</span></p>
           </div>
-          <div className="bg-white rounded-none border border-gray-100 shadow-sm px-6 py-5">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-none bg-blue-50 flex items-center justify-center">
-                <BsBarChart className="w-4 h-4 text-blue-500" />
+          <div className="bg-white rounded-none border border-gray-100 shadow-sm px-4 py-3.5">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-7 h-7 rounded-none bg-blue-50 flex items-center justify-center">
+                <BsBarChart className="w-3.5 h-3.5 text-blue-500" />
               </div>
               <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">이번 달 수익</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.monthlyRevenue.toLocaleString()}<span className="text-sm font-bold text-gray-400 ml-1">P</span></p>
+            <p className="text-xl font-bold text-gray-900">{stats.monthlyRevenue.toLocaleString()}<span className="text-xs font-bold text-gray-400 ml-1">P</span></p>
           </div>
-          <div className="bg-white rounded-none border border-gray-100 shadow-sm px-6 py-5">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-none bg-emerald-50 flex items-center justify-center">
-                <BsCalendar3 className="w-4 h-4 text-emerald-500" />
+          <div className="bg-white rounded-none border border-gray-100 shadow-sm px-4 py-3.5">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-7 h-7 rounded-none bg-emerald-50 flex items-center justify-center">
+                <BsCalendar3 className="w-3.5 h-3.5 text-emerald-500" />
               </div>
               <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">오늘 수익</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.todayRevenue.toLocaleString()}<span className="text-sm font-bold text-gray-400 ml-1">P</span></p>
+            <p className="text-xl font-bold text-gray-900">{stats.todayRevenue.toLocaleString()}<span className="text-xs font-bold text-gray-400 ml-1">P</span></p>
           </div>
         </div>
       )}
 
       {/* Filter Bar */}
-      <form onSubmit={handleSearch} className="bg-white rounded-none border border-gray-100 shadow-sm px-6 py-4">
-        <div className="flex flex-wrap items-center gap-3">
+      <form onSubmit={handleSearch} className="bg-white rounded-none border border-gray-100 shadow-sm px-4 py-3">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-none px-3 py-2">
             <BsFilter className="w-3.5 h-3.5 text-gray-400" />
             <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">필터</span>
@@ -206,22 +206,22 @@ export const RevenueManagement: React.FC = () => {
 
       {/* Table */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <BsBarChart className="w-5 h-5 text-gray-400" /> 수익 내역
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <BsBarChart className="w-4 h-4 text-gray-400" /> 수익 내역
           </h2>
           <span className="text-xs font-bold text-gray-400">{items.length}건</span>
         </div>
 
         <div className="divide-y divide-gray-50">
           {items.map((item, idx) => (
-            <div key={item.revenueNo} className="px-8 py-5 hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-4">
+            <div key={item.revenueNo} className="px-5 py-2 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-3">
                 <span className="w-6 text-[11px] font-bold text-gray-300 shrink-0">
                   {(page - 1) * 20 + idx + 1}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
                     <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-bold rounded-none border ${getReasonBadgeClass(item.reason)}`}>
                       {item.reason}
                     </span>
@@ -245,22 +245,21 @@ export const RevenueManagement: React.FC = () => {
           ))}
 
           {!isLoading && items.length === 0 && (
-            <div className="px-8 py-20 text-center">
-              <BsInbox className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-              <p className="text-gray-400 font-bold">수익 내역이 없습니다.</p>
+            <div className="px-5 py-14 text-center">
+              <p className="text-gray-400 font-bold text-sm">수익 내역이 없습니다.</p>
             </div>
           )}
 
           {isLoading && (
-            <div className="px-8 py-10 text-center text-gray-400 text-xs font-bold">
-              불러오는 중...
+            <div className="flex justify-center py-10">
+              <div className="w-8 h-8 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
             </div>
           )}
         </div>
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-8 py-4 border-t border-gray-50 flex items-center justify-center gap-1">
+          <div className="px-5 py-3 border-t border-gray-50 flex items-center justify-center gap-1">
             {pageNumbers.map((p) => (
               <button
                 key={p}

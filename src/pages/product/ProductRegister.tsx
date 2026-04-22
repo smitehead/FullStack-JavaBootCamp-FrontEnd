@@ -618,13 +618,13 @@ export const ProductRegister: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-8 py-4 rounded-2xl border border-gray-200 text-gray-500 font-bold hover:bg-gray-50 transition-all active:scale-95"
+            className="px-8 h-[56px] flex items-center justify-center rounded-2xl border border-gray-200 text-gray-500 font-bold hover:bg-gray-50 transition-all active:scale-95"
           >
             취소
           </button>
           <button
             type="submit"
-            className="px-12 py-4 rounded-2xl bg-brand text-white font-bold text-base hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
+            className="px-12 h-[56px] flex items-center justify-center rounded-2xl bg-brand text-white font-bold text-base hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
           >
             등록하기
           </button>

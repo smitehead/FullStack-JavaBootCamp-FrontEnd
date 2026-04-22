@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { BsPen, BsTrash3, BsFileEarmarkText } from 'react-icons/bs';
+import { BsPen, BsTrash3, BsMegaphone } from 'react-icons/bs';
 
 import { BsPlusLg, BsSearch } from 'react-icons/bs';
 import { NoticeCategory } from "@/types";
@@ -27,6 +27,7 @@ export const NoticeManagement: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingNotice, setEditingNotice] = useState<NoticeItem | null>(null);
   const [noticeToDelete, setNoticeToDelete] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -39,11 +40,14 @@ export const NoticeManagement: React.FC = () => {
   const [maintenanceEnd, setMaintenanceEnd] = useState("");
 
   const fetchNotices = useCallback(async () => {
+    setIsLoading(true);
     try {
       const res = await api.get("/notices/all");
       setNotices(res.data || []);
     } catch {
       showToast("공지사항 목록을 불러오지 못했습니다.", "error");
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -73,6 +77,12 @@ export const NoticeManagement: React.FC = () => {
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
   }, [handleObserver]);
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
 
   const handleOpenModal = (notice?: NoticeItem) => {
     if (notice) {
@@ -139,13 +149,13 @@ export const NoticeManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-4">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-lg font-bold text-gray-900 tracking-tight">
             공지사항 관리
           </h1>
-          <p className="text-gray-500 mt-1 text-[11px] font-medium">
+          <p className="text-gray-500 mt-0.5 text-xs font-medium">
             서비스 공지사항을 등록하고 관리합니다.
           </p>
         </div>
@@ -164,17 +174,17 @@ export const NoticeManagement: React.FC = () => {
           </div>
           <button
             onClick={() => handleOpenModal()}
-            className="bg-[#FF5A5A] text-white px-6 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-sm"
+            className="bg-[#FF5A5A] text-white px-5 py-2 rounded-none font-bold hover:bg-[#E04848] transition-all flex items-center justify-center shadow-lg shadow-red-900/10 active:scale-95 shrink-0 text-xs"
           >
-            <BsPlusLg className="w-5 h-5 mr-2" /> 새 공지사항
+            <BsPlusLg className="w-4 h-4 mr-2" /> 새 공지사항
           </button>
         </div>
       </header>
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <BsFileEarmarkText className="w-5 h-5 text-gray-400" /> 공지 목록
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <BsMegaphone className="w-4 h-4 text-gray-400" /> 공지 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredNotices.length}건</span>
         </div>
@@ -183,11 +193,11 @@ export const NoticeManagement: React.FC = () => {
           {filteredNotices.slice(0, visibleCount).map((notice) => (
             <div
               key={notice.id}
-              className={`px-8 py-5 hover:bg-gray-50 transition-colors group ${notice.isDeleted ? 'opacity-40' : ''}`}
+              className={`px-5 py-2 hover:bg-gray-50 transition-colors group ${notice.isDeleted ? 'opacity-40' : ''}`}
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
                     <span
                       className={`px-2 py-0.5 rounded-none text-[10px] font-bold ${notice.category === "점검"
                         ? "bg-orange-100 text-orange-700"
@@ -239,8 +249,8 @@ export const NoticeManagement: React.FC = () => {
             </div>
           ))}
           {filteredNotices.length === 0 && (
-            <div className="px-8 py-20 text-center">
-              <p className="text-gray-400 font-bold">공지사항이 없습니다.</p>
+            <div className="px-5 py-14 text-center">
+              <p className="text-gray-400 font-bold text-sm">공지사항이 없습니다.</p>
             </div>
           )}
         </div>
@@ -283,7 +293,7 @@ export const NoticeManagement: React.FC = () => {
                   <label className="flex items-center space-x-2 cursor-pointer group">
                     <input
                       type="checkbox"
-                      className="w-5 h-5 rounded-none border-gray-300 text-[#FF5A5A] focus:ring-[#FF5A5A] cursor-pointer"
+                      className="w-5 h-5 rounded-none border-gray-300 text-brand focus:ring-brand cursor-pointer"
                       checked={isImportant}
                       onChange={(e) => setIsImportant(e.target.checked)}
                     />
@@ -379,13 +389,13 @@ export const NoticeManagement: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 py-3 rounded-none font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
+                className="flex-1 py-3 rounded-2xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all text-sm"
               >
                 취소
               </button>
               <button
                 onClick={confirmDelete}
-                className="flex-1 py-3 rounded-none font-bold text-white bg-[#FF5A5A] hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 text-sm"
+                className="flex-1 py-3 rounded-2xl font-bold text-white bg-brand hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
               >
                 확인
               </button>

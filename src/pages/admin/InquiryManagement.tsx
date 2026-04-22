@@ -18,6 +18,7 @@ export const InquiryManagement: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('전체');
   const [lightboxUrls, setLightboxUrls] = useState<string[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const filteredInquiries = inquiries.filter(i => {
     const matchesSearch = i.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -40,10 +41,15 @@ export const InquiryManagement: React.FC = () => {
 
   const statusParam = activeTab === '전체' ? null : activeTab === '답변 대기중' ? 0 : 1;
   const fetchInquiries = async () => {
-    const res = await api.get('/admin/inquiries', {
-      params: { status: statusParam, page: 1, size: 50 }
-    });
-    setInquiries(res.data.content || []);
+    setIsLoading(true);
+    try {
+      const res = await api.get('/admin/inquiries', {
+        params: { status: statusParam, page: 1, size: 50 }
+      });
+      setInquiries(res.data.content || []);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => { fetchInquiries(); }, [activeTab]);
@@ -77,14 +83,20 @@ export const InquiryManagement: React.FC = () => {
     return inquiry.memberNickname || '알 수 없는 사용자';
   };
 
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    </div>
+  );
+
   return (
-    <div className="flex h-[calc(100vh-140px)] space-x-6">
+    <div className="flex h-[calc(100vh-120px)] space-x-4">
       {/* Inquiry List */}
-      <div className="w-1/2 flex flex-col space-y-4">
+      <div className="w-1/2 flex flex-col space-y-3">
         <header className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-gray-900 tracking-tight">문의사항 관리</h1>
-            <p className="text-gray-500 mt-1 text-[11px] font-medium">사용자들의 문의에 답변을 작성합니다.</p>
+            <h1 className="text-lg font-bold text-gray-900 tracking-tight">문의사항 관리</h1>
+            <p className="text-gray-500 mt-0.5 text-xs font-medium">사용자들의 문의에 답변을 작성합니다.</p>
           </div>
         </header>
 
@@ -147,12 +159,12 @@ export const InquiryManagement: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+        <div className="flex-1 overflow-y-auto space-y-2 pr-2">
           {filteredInquiries.map((inquiry) => (
             <button
               key={inquiry.inquiryNo}
               onClick={() => handleSelectInquiry(inquiry)}
-              className={`w-full text-left p-4 rounded-none border-2 transition-all ${selectedInquiry?.inquiryNo === inquiry.inquiryNo
+              className={`w-full text-left p-3 rounded-none border-2 transition-all ${selectedInquiry?.inquiryNo === inquiry.inquiryNo
                 ? 'bg-white border-[#FF5A5A] shadow-lg shadow-red-900/5'
                 : 'bg-white border-gray-100 shadow-sm hover:shadow-md'
                 }`}
@@ -186,9 +198,9 @@ export const InquiryManagement: React.FC = () => {
       {/* Inquiry Detail & Answer */}
       <div className="w-1/2 bg-white rounded-none shadow-sm border border-gray-100 flex flex-col overflow-hidden">
         {selectedInquiry ? (
-          <div className="flex-1 flex flex-col p-8 overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">문의 상세 내용</h2>
+          <div className="flex-1 flex flex-col p-5 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-bold text-gray-900">문의 상세 내용</h2>
               <button
                 onClick={() => handleDelete(selectedInquiry.inquiryNo)}
                 className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
@@ -197,8 +209,8 @@ export const InquiryManagement: React.FC = () => {
               </button>
             </div>
 
-            <div className="space-y-6 mb-8">
-              <div className="p-5 bg-gray-50 rounded-none border border-gray-100">
+            <div className="space-y-4 mb-6">
+              <div className="p-4 bg-gray-50 rounded-none border border-gray-100">
                 <div className="flex items-center space-x-2 mb-3">
                   <div className="w-8 h-8 bg-white rounded-none flex items-center justify-center shadow-sm">
                     <BsPerson className="w-5 h-5 text-indigo-600" />
@@ -231,7 +243,7 @@ export const InquiryManagement: React.FC = () => {
               </div>
 
               {selectedInquiry.status === 1 && (
-                <div className="p-5 bg-[#FF5A5A]/5 rounded-none border border-[#FF5A5A]/10">
+                <div className="p-4 bg-[#FF5A5A]/5 rounded-none border border-[#FF5A5A]/10">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="w-8 h-8 bg-[#FF5A5A] rounded-none flex items-center justify-center shadow-lg shadow-red-900/10">
                       <BsCheckCircle className="w-4 h-4 text-white" />
@@ -248,12 +260,12 @@ export const InquiryManagement: React.FC = () => {
               )}
             </div>
 
-            <div className="mt-auto pt-6 border-t border-gray-100">
-              <h3 className="text-base font-bold text-gray-900 mb-3">답변 작성</h3>
+            <div className="mt-auto pt-4 border-t border-gray-100">
+              <h3 className="text-sm font-bold text-gray-900 mb-2">답변 작성</h3>
               <textarea
                 rows={4}
                 placeholder="답변 내용을 입력하세요"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-medium resize-none mb-4 text-sm"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-medium resize-none mb-3 text-sm"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
               />
@@ -267,12 +279,9 @@ export const InquiryManagement: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-            <div className="w-20 h-20 bg-gray-50 rounded-none flex items-center justify-center mb-4">
-              <BsChatLeftDots className="w-8 h-8 text-gray-300" />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-1">문의를 선택해주세요</h3>
-            <p className="text-gray-400 text-sm font-medium">왼쪽 목록에서 답변할 문의사항을 선택하세요.</p>
+          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <h3 className="text-base font-bold text-gray-900 mb-1">문의를 선택해주세요</h3>
+            <p className="text-gray-400 text-xs font-medium">왼쪽 목록에서 답변할 문의사항을 선택하세요.</p>
           </div>
         )}
       </div>

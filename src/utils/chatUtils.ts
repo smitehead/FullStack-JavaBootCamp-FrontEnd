@@ -6,6 +6,9 @@ export const formatMessagePreview = (content: string | null | undefined): string
   if (!content) return '';
 
   // 1. 이미지 메시지 체크
+  if (content === '사진들' || (content.match(/IMAGE_UPLOAD_PLACEHOLDER/g) || []).length > 1) {
+    return '사진을 여러장 보냈습니다.';
+  }
   if (content === '사진' || content.includes('IMAGE_UPLOAD_PLACEHOLDER')) {
     return '사진을 보냈습니다.';
   }

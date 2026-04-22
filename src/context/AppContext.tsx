@@ -25,6 +25,7 @@ const mapMemberToUser = (m: any): User => ({
   suspensionEndDate: m.suspendUntil,
   suspensionReason: m.suspendReason,
   isPermanentlySuspended: m.isPermanentSuspended === 1,
+  postCount: m.postCount ?? 0,
 });
 
 const mapReportToFrontend = (r: any): Report => ({

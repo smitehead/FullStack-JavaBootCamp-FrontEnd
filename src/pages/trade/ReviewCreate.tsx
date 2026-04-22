@@ -106,7 +106,7 @@ export const ReviewCreate: React.FC = () => {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="w-full py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
+            className="w-full h-[56px] flex items-center justify-center bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
           >
             {isSubmitting ? '등록 중...' : '후기 등록하기'}
           </button>

@@ -63,11 +63,11 @@ export const AuctionManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-4">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">경매 관리</h1>
-          <p className="text-gray-500 mt-1 text-[11px] font-medium">진행 중인 경매를 모니터링하고 필요한 경우 강제 종료 처리합니다.</p>
+          <h1 className="text-lg font-bold text-gray-900 tracking-tight">경매 관리</h1>
+          <p className="text-gray-500 mt-0.5 text-xs font-medium">진행 중인 경매를 모니터링하고 필요한 경우 강제 종료 처리합니다.</p>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3">
           <div className="relative w-64 flex items-center h-10">
@@ -100,26 +100,26 @@ export const AuctionManagement: React.FC = () => {
       </header>
 
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <BsBag className="w-5 h-5 text-gray-400" /> 경매 목록
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <BsBag className="w-4 h-4 text-gray-400" /> 경매 목록
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredProducts.length}건</span>
         </div>
 
         <div className="divide-y divide-gray-50">
           {filteredProducts.slice(0, visibleCount).map((product) => (
-            <div key={product.id} className="px-8 py-5 hover:bg-gray-50 transition-colors group">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4 min-w-0 flex-1">
+            <div key={product.id} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   <img
                     src={resolveImageUrl(product.images[0]) || ''}
                     alt={product.title}
-                    className="w-12 h-12 rounded-none object-cover bg-gray-100 shrink-0"
+                    className="w-9 h-9 rounded-none object-cover bg-gray-100 shrink-0"
                     referrerPolicy="no-referrer"
                   />
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
                       <Link
                         to={`/products/${product.id.replace('prod_', '')}`}
                         target="_blank"
@@ -173,9 +173,8 @@ export const AuctionManagement: React.FC = () => {
             </div>
           ))}
           {filteredProducts.length === 0 && (
-            <div className="px-8 py-20 text-center">
-              <BsBag className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-              <p className="text-gray-400 font-bold">검색 결과가 없습니다.</p>
+            <div className="px-5 py-14 text-center">
+              <p className="text-gray-400 font-bold text-sm">검색 결과가 없습니다.</p>
             </div>
           )}
         </div>
@@ -204,11 +203,11 @@ export const AuctionManagement: React.FC = () => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="relative w-full max-w-md bg-white rounded-2xl p-8 shadow-2xl overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-2 bg-red-500" />
+              <div className="absolute top-0 left-0 w-full h-2 bg-brand" />
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 rounded-none bg-red-50 flex items-center justify-center shrink-0">
-                  <BsExclamationCircle className="w-6 h-6 text-red-500" />
+                  <BsExclamationCircle className="w-6 h-6 text-brand" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">경매 강제 종료</h3>
@@ -224,13 +223,13 @@ export const AuctionManagement: React.FC = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowCancelModal(false)}
-                  className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-none hover:bg-gray-200 transition-all active:scale-95"
+                  className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-95"
                 >
                   취소
                 </button>
                 <button
                   onClick={handleCancelAuction}
-                  className="flex-1 py-4 bg-red-500 text-white font-bold rounded-none hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 active:scale-95"
+                  className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
                 >
                   강제 종료 실행
                 </button>

@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { BsBox2, BsChat, BsChevronRight, BsBell, BsClock } from 'react-icons/bs';
+import { BsBox2, BsChat, BsChevronRight, BsBell } from 'react-icons/bs';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { getProfileImageUrl } from '@/utils/imageUtils';
 import { formatMessagePreview } from '@/utils/chatUtils';
+
+const formatDate = (date: Date | string | null | undefined) => {
+  if (!date) return '';
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
+};
 
 export const Inbox: React.FC = () => {
   const { user, notifications, chats, markNotificationAsRead, markChatAsRead } = useAppContext();
@@ -62,7 +75,7 @@ export const Inbox: React.FC = () => {
   });
 
   return (
-    <div className="max-w-[800px] mx-auto px-6 py-12">
+    <div className="max-w-[1200px] mx-auto px-6 py-12">
       <div className="flex items-center justify-center mb-10">
         <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">알림함</h2>
       </div>
@@ -153,10 +166,10 @@ export const Inbox: React.FC = () => {
                 key={noti.id}
                 to={noti.link}
                 onClick={() => markNotificationAsRead(noti.id)}
-                className={`flex items-start gap-4 p-5 rounded-3xl border transition-all hover:shadow-md ${noti.read ? 'bg-white border-gray-100' : 'bg-indigo-50/30 border-indigo-100'
+                className={`flex items-start gap-4 p-5 rounded-3xl border transition-all hover:shadow-md ${noti.read ? 'bg-white border-gray-100' : 'bg-brand/5 border-brand/20'
                   }`}
               >
-                <div className={`p-3 rounded-2xl ${noti.type === 'bid' ? 'bg-emerald-50 text-emerald-600' :
+                <div className={`p-3 rounded-2xl ${noti.type === 'bid' ? 'bg-brand/10 text-brand' :
                     noti.type === 'activity' ? 'bg-indigo-50 text-indigo-600' :
                       'bg-gray-50 text-gray-600'
                   }`}>
@@ -165,8 +178,7 @@ export const Inbox: React.FC = () => {
                 <div className="flex-1">
                   <p className="text-gray-900 font-bold leading-snug mb-2">{formatMessagePreview(noti.message)}</p>
                   <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-                    <BsClock className="w-3 h-3" />
-                    {new Date(noti.createdAt).toLocaleString()}
+                    {formatDate(noti.createdAt)}
                   </div>
                 </div>
                 <BsChevronRight className="w-5 h-5 text-gray-300 self-center" />
@@ -202,18 +214,22 @@ export const Inbox: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-bold text-gray-900 truncate">{chat.otherUser.nickname}</span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${chat.otherUser.role === 'seller' ? 'bg-indigo-100 text-indigo-600' : 'bg-emerald-100 text-emerald-600'
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${chat.otherUser.role === 'seller' ? 'bg-indigo-100 text-indigo-600' : 'bg-brand/10 text-brand'
                       }`}>
                       {chat.otherUser.role === 'seller' ? '판매자' : '구매자'}
                     </span>
+                    {chat.lastMessageAt && (
+                      <>
+                        <span className="text-gray-300 mx-1">•</span>
+                        <span className="text-xs text-gray-400 font-medium">{formatDate(chat.lastMessageAt)}</span>
+                      </>
+                    )}
                   </div>
-                  <p className="text-sm text-gray-500 truncate font-medium">{formatMessagePreview(chat.lastMessage)}</p>
-                  <div className="flex items-center gap-2 mt-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                    <BsBox2 className="w-3 h-3" />
-                    <span className="truncate">{chat.productTitle}</span>
-                    <span className="mx-1">•</span>
-                    <span>{new Date(chat.lastMessageAt).toLocaleDateString()}</span>
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <BsBox2 className="w-3 h-3 text-gray-400" />
+                    <span className="text-xs text-gray-500 font-bold truncate">{chat.productTitle}</span>
                   </div>
+                  <p className="text-sm text-gray-900 truncate font-semibold">{formatMessagePreview(chat.lastMessage) || '첫 대화를 남겨보세요'}</p>
                 </div>
                 <BsChevronRight className="w-5 h-5 text-gray-300" />
               </Link>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBag, BsBagFill, BsPencilSquare } from 'react-icons/bs';
+import { BsBag, BsBagFill, BsPencilSquare, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 
 import { BsHeart, BsHeartFill, BsGear, BsWallet, BsBox2, BsShop, BsTrophy, BsChat, BsCheckCircle } from 'react-icons/bs';
 import { Product } from '@/types';
@@ -169,10 +169,10 @@ export const MyPage: React.FC = () => {
   const triggerFileInput = () => fileInputRef.current?.click();
 
   // 데이터 로딩
-  const fetchSellingProducts = useCallback(async (page = 1) => {
+  const fetchSellingProducts = useCallback(async (page = 1, filter = sellingFilter) => {
     try {
       setLoading(true);
-      const res = await api.get('/products/my-selling', { params: { page, size: 6 } });
+      const res = await api.get('/products/my-selling', { params: { page, size: 6, filter } });
       setSellingProducts((res.data.content || []).map(mapToProduct));
       setSellingTotalPages(res.data.totalPages || 1);
       setSellingTotal(res.data.totalElements || 0);
@@ -181,12 +181,12 @@ export const MyPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [sellingFilter]);
 
-  const fetchBiddingProducts = useCallback(async (page = 1) => {
+  const fetchBiddingProducts = useCallback(async (page = 1, filter = biddingFilter) => {
     try {
       setLoading(true);
-      const res = await api.get('/products/my-bidding', { params: { page, size: 6 } });
+      const res = await api.get('/products/my-bidding', { params: { page, size: 6, filter } });
       const products = (res.data.content || []).map(mapToProduct);
       setBiddingProducts(products);
       setBiddingTotalPages(res.data.totalPages || 1);
@@ -198,7 +198,7 @@ export const MyPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [biddingFilter]);
 
   const fetchPurchasedProducts = useCallback(async (page = 1) => {
     try {
@@ -227,6 +227,20 @@ export const MyPage: React.FC = () => {
     }
   }, []);
 
+  const handleWishlistToggle = useCallback((productId: string, isWishlisted: boolean) => {
+    // 찜 목록 탭에서 '찜 해제' 시 즉시 목록에서 제거
+    if (activeTab === 'wishlist' && !isWishlisted) {
+      setWishlistProducts(prev => prev.filter(p => p.id !== productId));
+      setWishlistTotal(prev => Math.max(0, prev - 1));
+    }
+
+    // 타 탭에 해당 상품이 있을 경우 하트 상태 동기화 (판매/입찰/구매)
+    const updateList = (prev: Product[]) => prev.map(p => p.id === productId ? { ...p, isWishlisted } : p);
+    setSellingProducts(updateList);
+    setBiddingProducts(prev => prev.map(p => p.id === productId ? { ...p, isWishlisted } : p));
+    setPurchasedProducts(updateList);
+  }, [activeTab]);
+
   // 로그인 시 카운트 표시용 사전 로드
   useEffect(() => {
     if (!user) return;
@@ -237,11 +251,11 @@ export const MyPage: React.FC = () => {
   // 탭 변경 시 페이지 리셋 후 데이터 로드
   useEffect(() => {
     if (!user) return;
-    if (activeTab === 'selling') { setSellingPage(1); fetchSellingProducts(1); }
-    else if (activeTab === 'bidding') { setBiddingPage(1); fetchBiddingProducts(1); setBidStatusOverrides({}); }
+    if (activeTab === 'selling') { setSellingPage(1); fetchSellingProducts(1, sellingFilter); }
+    else if (activeTab === 'bidding') { setBiddingPage(1); fetchBiddingProducts(1, biddingFilter); setBidStatusOverrides({}); }
     else if (activeTab === 'purchased') { setPurchasedPage(1); fetchPurchasedProducts(1); }
     else if (activeTab === 'wishlist') { setWishlistPage(1); fetchWishlistProducts(1); }
-  }, [activeTab, user, fetchSellingProducts, fetchBiddingProducts, fetchPurchasedProducts, fetchWishlistProducts]);
+  }, [activeTab, user, fetchSellingProducts, fetchBiddingProducts, fetchPurchasedProducts, fetchWishlistProducts, sellingFilter, biddingFilter]);
 
   // 입찰 내역 SSE 실시간 상태 업데이트
   useEffect(() => {
@@ -304,24 +318,11 @@ export const MyPage: React.FC = () => {
       window.removeEventListener('sse:notification', onNotification);
       window.removeEventListener('sse:reconnected', onReconnected);
     };
-  }, [activeTab, user, fetchBiddingProducts]);
+  }, [activeTab, user, fetchBiddingProducts, biddingFilter, biddingPage]);
 
 
-  // 판매 필터링
-  const filteredSellingProducts = sellingProducts.filter(p => {
-    if (sellingFilter === 'all') return true;
-    if (sellingFilter === 'active') return p.status === 'active';
-    if (sellingFilter === 'ended') return p.status !== 'active' && p.auctionResultStatus !== '구매확정';
-    if (sellingFilter === 'completed') return p.auctionResultStatus === '구매확정';
-    return true;
-  });
+  // 서버 사이드 필터링 사용으로 변경 (이전의 클라이언트 필터링 로직 제거)
 
-  const filteredBiddingProducts = biddingProducts.filter(p => {
-    const status = bidStatusOverrides[p.id] || p.bidStatus;
-    if (biddingFilter === 'all') return true;
-    if (biddingFilter === 'leader') return status === 'bidding' || status === 'won';
-    return status === biddingFilter;
-  });
 
   // 입찰 상태별 뱃지
   // bidding  → 상위입찰자 (경매 진행 중, 내가 최고 입찰자)
@@ -374,7 +375,7 @@ export const MyPage: React.FC = () => {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-indigo-600 hover:text-white transition-all duration-300 border border-gray-100 disabled:opacity-50">
+            <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-gray-100 hover:border-gray-200 transition-all duration-300 border border-gray-100 disabled:opacity-50">
               {uploadingProfile
                 ? <div className="w-5 h-5 border-2 border-brand/20 border-t-brand rounded-full animate-spin" />
                 : <BsGear className="w-5 h-5" />
@@ -499,7 +500,11 @@ export const MyPage: React.FC = () => {
             {activeTab === 'selling' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 {(['all', 'active', 'ended', 'completed'] as const).map(filter => (
-                  <button key={filter} onClick={() => setSellingFilter(filter)}
+                  <button key={filter} onClick={() => {
+                    setSellingFilter(filter);
+                    setSellingPage(1);
+                    fetchSellingProducts(1, filter);
+                  }}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {filter === 'all' ? '전체' : filter === 'active' ? '경매중' : filter === 'ended' ? '경매종료' : '판매완료'}
                   </button>
@@ -510,7 +515,11 @@ export const MyPage: React.FC = () => {
             {activeTab === 'bidding' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 {(['all', 'leader', 'outbid', 'lost'] as const).map(filter => (
-                  <button key={filter} onClick={() => setBiddingFilter(filter)}
+                  <button key={filter} onClick={() => {
+                    setBiddingFilter(filter);
+                    setBiddingPage(1);
+                    fetchBiddingProducts(1, filter);
+                  }}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${biddingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {filter === 'all' ? '전체' : filter === 'leader' ? '상위입찰' : filter === 'outbid' ? '추월변동' : '낙찰실패'}
                   </button>
@@ -527,7 +536,7 @@ export const MyPage: React.FC = () => {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* 판매 내역 */}
-                {activeTab === 'selling' && filteredSellingProducts.map(p => {
+                {activeTab === 'selling' && sellingProducts.map(p => {
                   const ars = p.auctionResultStatus;
                   // 낙찰 후 구매 확정 대기 중: 배송대기 | 결제완료 | 취소요청
                   const hasPendingResult = p.status === 'completed'
@@ -544,11 +553,12 @@ export const MyPage: React.FC = () => {
                       isSellerPending={hasPendingResult}
                       sellerCancelRequested={ars === '취소요청'}
                       customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
+                      onWishlistToggle={handleWishlistToggle}
                     />
                   );
                 })}
 
-                {activeTab === 'bidding' && filteredBiddingProducts.map(p => {
+                {activeTab === 'bidding' && biddingProducts.map(p => {
                   const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
                   return (
                     <div key={p.id} className="flex flex-col gap-2">
@@ -556,6 +566,7 @@ export const MyPage: React.FC = () => {
                         product={p}
                         isWon={effectiveStatus === 'won'}
                         hideOverlay={effectiveStatus === 'lost'}
+                        onWishlistToggle={handleWishlistToggle}
                       />
                       <div className="flex items-center px-1">
                         {getBidStatusBadge(effectiveStatus)}
@@ -567,7 +578,7 @@ export const MyPage: React.FC = () => {
                 {/* 구매 내역 */}
                 {activeTab === 'purchased' && purchasedProducts.map(p => (
                   <div key={p.id} className="flex flex-col gap-2">
-                    <ProductCard product={p} hideOverlay />
+                    <ProductCard product={p} hideOverlay onWishlistToggle={handleWishlistToggle} />
                     <div className="flex items-center justify-end px-1">
                       {p.hasReview === false && p.resultNo && (
                         <button
@@ -587,12 +598,16 @@ export const MyPage: React.FC = () => {
 
                 {/* 찜 목록 */}
                 {activeTab === 'wishlist' && wishlistProducts.map(p => (
-                  <ProductCard key={p.id} product={p} />
+                  <ProductCard 
+                    key={p.id} 
+                    product={p} 
+                    onWishlistToggle={handleWishlistToggle}
+                  />
                 ))}
               </div>
 
-              {activeTab === 'selling' && filteredSellingProducts.length === 0 && <EmptyState message="해당하는 판매 상품이 없습니다." />}
-              {activeTab === 'bidding' && filteredBiddingProducts.length === 0 && (
+              {activeTab === 'selling' && sellingProducts.length === 0 && <EmptyState message="해당하는 판매 상품이 없습니다." />}
+              {activeTab === 'bidding' && biddingProducts.length === 0 && (
                 <EmptyState message={biddingFilter === 'all' ? "입찰 참여 내역이 없습니다." : "조건에 맞는 입찰 내역이 없습니다."} />
               )}
               {activeTab === 'purchased' && purchasedProducts.length === 0 && <EmptyState message="구매 완료된 상품이 없습니다." />}
@@ -710,47 +725,38 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: {
   totalPages: number;
   onPageChange: (page: number) => void;
 }) => {
-  const pagesPerGroup = 5;
-  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
-  const startPage = (currentGroup - 1) * pagesPerGroup + 1;
-  const endPage = Math.min(currentGroup * pagesPerGroup, totalPages);
+  if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-center gap-1 mt-8">
-      {/* 이전 블록 버튼 */}
-      {startPage > 1 && (
-        <button
-          onClick={() => onPageChange(startPage - 1)}
-          className="w-9 h-9 text-sm font-bold rounded-xl transition-colors bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
-        >
-          &lt;
-        </button>
-      )}
+    <div className="flex justify-center items-center space-x-2 pt-12">
+      <button
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage === 1}
+        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
+      >
+        <BsChevronLeft className="w-5 h-5" />
+      </button>
 
-      {/* 현재 블록 페이지 번호 */}
-      {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((p) => (
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
         <button
           key={p}
           onClick={() => onPageChange(p)}
-          className={`w-9 h-9 text-sm font-bold rounded-xl transition-colors ${
-            p === currentPage
-              ? 'bg-red-500 text-white shadow-sm'
-              : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'
-          }`}
+          className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${p === currentPage
+            ? 'bg-brand text-white'
+            : 'border border-gray-200 text-gray-500 hover:border-gray-900 hover:text-gray-900'
+            }`}
         >
           {p}
         </button>
       ))}
 
-      {/* 다음 블록 버튼 */}
-      {endPage < totalPages && (
-        <button
-          onClick={() => onPageChange(endPage + 1)}
-          className="w-9 h-9 text-sm font-bold rounded-xl transition-colors bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
-        >
-          &gt;
-        </button>
-      )}
+      <button
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage === totalPages}
+        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
+      >
+        <BsChevronRight className="w-5 h-5" />
+      </button>
     </div>
   );
 };

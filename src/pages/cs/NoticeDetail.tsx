@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { BsList } from 'react-icons/bs';
 
-import { BsExclamationTriangle, BsInfoCircle, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
-import { BsCalendarCheck } from 'react-icons/bs';
+import { BsInfoCircle, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
+import { BsCalendar } from 'react-icons/bs';
 import { format } from 'date-fns';
 import api from '@/services/api';
 
@@ -18,6 +18,11 @@ interface NoticeItem {
   maintenanceEnd?: string;
 }
 
+interface NeighborNotice {
+  id: number;
+  title: string;
+}
+
 export const NoticeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -25,17 +30,23 @@ export const NoticeDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchNotice = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const res = await api.get(`/notices/${id}`);
-        setNotice(res.data);
-      } catch {
+        const [detailRes, listRes] = await Promise.all([
+          api.get(`/notices/${id}`),
+          api.get('/notices/all')
+        ]);
+        
+        setNotice(detailRes.data);
+      } catch (err) {
+        console.error("Notice fetch error:", err);
         setNotice(null);
       } finally {
         setLoading(false);
       }
     };
-    fetchNotice();
+    fetchData();
   }, [id]);
 
   if (loading) {
@@ -61,7 +72,7 @@ export const NoticeDetail: React.FC = () => {
   }
 
   return (
-    <div className="max-w-[1000px] mx-auto px-6 py-12">
+    <div className="max-w-[1200px] mx-auto px-6 py-12">
       {/* Back Button */}
       <button
         onClick={() => navigate('/notice')}
@@ -78,9 +89,9 @@ export const NoticeDetail: React.FC = () => {
         <div className="p-10 border-b border-gray-50">
           <div className="flex items-center gap-2 mb-4">
             <span className={`px-3 py-1 text-xs font-bold rounded-full shadow-lg shadow-gray-100/50 ${notice.category === '점검' ? 'bg-blue-50 text-blue-500' :
-                notice.category === '업데이트' ? 'bg-green-50 text-green-500' :
-                  notice.category === '이벤트' ? 'bg-purple-50 text-purple-500' :
-                    'bg-gray-50 text-gray-500'
+              notice.category === '업데이트' ? 'bg-green-50 text-green-500' :
+                notice.category === '이벤트' ? 'bg-purple-50 text-purple-500' :
+                  'bg-gray-100 text-gray-600'
               }`}>
               {notice.category}
             </span>
@@ -88,7 +99,7 @@ export const NoticeDetail: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-6">{notice.title}</h1>
           <div className="flex items-center gap-6 text-sm text-gray-400 font-medium">
             <div className="flex items-center gap-2">
-              <BsCalendarCheck className="w-4 h-4" />
+              <BsCalendar className="w-4 h-4" />
               {format(new Date(notice.createdAt), 'yyyy.MM.dd')}
             </div>
           </div>
@@ -117,30 +128,26 @@ export const NoticeDetail: React.FC = () => {
                   </span>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Warning Box */}
-          {notice.category === '점검' && (
-            <div className="mt-6 p-6 bg-amber-50 rounded-2xl border border-amber-100 flex items-start gap-4">
-              <BsExclamationTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-700 leading-relaxed">
-                경매 종료 시간이 점검 시간과 겹치는 물품의 경우, 점검 시간만큼 경매 종료 시간이 자동으로 연장될 예정입니다. 입찰 참여 시 이 점 유의하시기 바랍니다.
+              {/* Separator Line */}
+              <div className="h-px bg-gray-200 my-6" />
+
+              <p className="text-sm text-gray-500 leading-relaxed">
+                경매 종료 시간이 점검 시간과 겹치는 물품의 경우, 점검 시간만큼 경매 종료 시간이 자동으로 연장될 예정입니다.<br /> 입찰 참여 시 이 점 유의하시기 바랍니다.
               </p>
             </div>
           )}
         </div>
 
         {/* Navigation Footer */}
-        <div className="border-t border-gray-100">
-          <div className="p-6 flex items-center justify-center bg-gray-50/30">
+        <div className="border-t border-gray-100 bg-gray-50/30 p-8">
+          <div className="flex justify-center">
             <Link
               to="/notice"
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all"
+              className="flex items-center gap-2 px-6 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:border-gray-900 transition-all shadow-sm"
             >
-              <BsList className="w-4 h-4" />
-              <BsChevronRight className="w-4 h-4 ml-2" />
-              목록으로
+              <BsList className="w-5 h-5" />
+              목록보기
             </Link>
           </div>
         </div>

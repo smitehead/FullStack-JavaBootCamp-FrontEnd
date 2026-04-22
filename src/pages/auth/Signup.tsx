@@ -408,7 +408,7 @@ export const Signup: React.FC = () => {
             <button
               disabled={!isAllRequiredTermsChecked}
               onClick={() => setStep('info')}
-              className={`w-full mt-10 py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+              className={`w-full mt-10 h-[56px] rounded-2xl font-bold transition-all flex items-center justify-center gap-2 ${isAllRequiredTermsChecked ? 'bg-[#FF5A5A] text-white shadow-lg shadow-red-500/10 hover:bg-[#FF4545] active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
             >
               다음 단계로
               <BsChevronRight className="w-4 h-4" />
@@ -424,7 +424,7 @@ export const Signup: React.FC = () => {
               {/* ID & PW */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">아이디</label>
+                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">아이디</label>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <input
@@ -443,7 +443,7 @@ export const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleIdCheck}
-                      className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
+                      className="px-5 py-3.5 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-black transition-all"
                     >
                       중복확인
                     </button>
@@ -457,7 +457,7 @@ export const Signup: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">비밀번호</label>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">비밀번호</label>
                     <div className="relative">
                       <input
                         type="password"
@@ -470,7 +470,7 @@ export const Signup: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">비밀번호 확인</label>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">비밀번호 확인</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <BsShieldCheck className={`h-5 w-5 ${formData.confirmPassword === '' ? 'text-gray-400' : (formData.password === formData.confirmPassword ? 'text-emerald-500' : 'text-red-500')}`} />
@@ -491,7 +491,7 @@ export const Signup: React.FC = () => {
               {/* Nickname & Email */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">닉네임</label>
+                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">닉네임</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -508,7 +508,7 @@ export const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleNicknameCheck}
-                      className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
+                      className="px-5 py-3.5 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-black transition-all"
                     >
                       중복확인
                     </button>
@@ -521,7 +521,7 @@ export const Signup: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 인증</label>
+                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 인증</label>
                   <div className="flex flex-col gap-2 mb-2">
                     <div className="flex items-center gap-2">
                       <div className="relative flex-1">
@@ -585,7 +585,7 @@ export const Signup: React.FC = () => {
                       type="button"
                       onClick={() => sendVerificationCode(false)}
                       disabled={isEmailVerified || cooldown > 0 || !emailId || (isCustomDomain ? !customDomain : !emailDomain)}
-                      className="px-5 py-3.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap"
+                      className="h-[56px] px-6 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap flex items-center justify-center"
                     >
                       코드전송
                     </button>
@@ -620,7 +620,7 @@ export const Signup: React.FC = () => {
                           <button
                             type="button"
                             onClick={verifyCode}
-                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm"
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm flex items-center justify-center"
                           >
                             인증 확인
                           </button>
@@ -628,7 +628,7 @@ export const Signup: React.FC = () => {
                             type="button"
                             onClick={() => sendVerificationCode(true)}
                             disabled={cooldown > 0 || !emailId || (isCustomDomain ? !customDomain : !emailDomain)}
-                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="px-6 py-2.5 border border-gray-200 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap shadow-sm disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
                           >
                             {cooldown > 0 ? `${cooldown}초 후 가능` : '재요청'}
                           </button>
@@ -650,7 +650,7 @@ export const Signup: React.FC = () => {
               <div className="space-y-4">
                 {/* 주소 */}
                 <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</label>
+                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">주소</label>
                   <div className="space-y-2">
 
                     <div className="flex gap-2">
@@ -664,7 +664,7 @@ export const Signup: React.FC = () => {
                       <button
                         type="button"
                         onClick={openPostcode}
-                        className="px-5 py-3.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-2xl transition-all whitespace-nowrap"
+                        className="px-5 py-3.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-2xl transition-all whitespace-nowrap"
                       >
                         주소 검색
                       </button>
@@ -687,7 +687,7 @@ export const Signup: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">휴대폰 번호</label>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">휴대폰 번호</label>
                     <div className="relative">
                       <input
                         type="tel"
@@ -712,7 +712,7 @@ export const Signup: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">생년월일 (6자리)</label>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">생년월일 (6자리)</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -735,7 +735,7 @@ export const Signup: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-4 bg-[#FF5A5A] text-white font-bold text-sm rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 flex items-center justify-center gap-2"
+                className="w-full h-[56px] bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 flex items-center justify-center gap-2"
               >
                 가입 완료하기
               </button>
@@ -755,13 +755,13 @@ export const Signup: React.FC = () => {
             <div className="flex gap-3">
               <Link
                 to="/login"
-                className="flex-1 py-5 bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 text-center"
+                className="flex-1 h-[56px] flex items-center justify-center bg-[#FF5A5A] text-white font-bold rounded-2xl hover:bg-[#FF4545] transition-all shadow-lg shadow-red-500/10 active:scale-95 text-center"
               >
                 로그인 하러가기
               </Link>
               <Link
                 to="/"
-                className="flex-1 py-5 bg-gray-50 text-gray-600 font-bold rounded-2xl hover:bg-gray-100 transition-all text-center"
+                className="flex-1 h-[56px] flex items-center justify-center bg-gray-50 text-gray-600 font-bold rounded-2xl hover:bg-gray-100 transition-all text-center"
               >
                 메인으로 이동
               </Link>
