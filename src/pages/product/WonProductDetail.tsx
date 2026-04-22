@@ -50,6 +50,7 @@ export const WonProductDetail: React.FC = () => {
 
   const [showPurchaseConfirm, setShowPurchaseConfirm] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showSellerCancelApproveConfirm, setShowSellerCancelApproveConfirm] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showReviewSuccess, setShowReviewSuccess] = useState(false);
 
@@ -117,7 +118,8 @@ export const WonProductDetail: React.FC = () => {
   const isPaid = result.status === '결제완료';
   const isCompleted = result.status === '구매확정';
   const isCanceled = result.status === '거래취소';
-  const isCancelRequested = result.status === '취소요청';
+  const isCancelRequested = result.status === '취소요청';           // 구매자가 취소 요청, 판매자 승인 대기
+  const isSellerCancelRequested = result.status === '판매자취소요청'; // 판매자가 취소 요청, 구매자 동의 대기
   const isForcePromoted = result.isForcePromoted === 1;
 
   const images = result.images.map(img => resolveImageUrl(img) || img);
@@ -169,6 +171,21 @@ export const WonProductDetail: React.FC = () => {
       showToast('취소 요청을 보냈습니다. 판매자 승인 후 환불됩니다.', 'success');
     } catch (err: any) {
       showToast(err.response?.data?.message || '취소 요청 중 오류가 발생했습니다.', 'error');
+    }
+  };
+
+  // 판매자의 취소 요청을 구매자가 동의 → 에스크로 환불
+  const executeApproveCancelBySeller = async () => {
+    setShowSellerCancelApproveConfirm(false);
+    setIsProcessing(true);
+    try {
+      await api.post(`/auction-results/${result.resultNo}/buyer-approve-cancel`);
+      setResult(prev => prev ? { ...prev, status: '거래취소' } : null);
+      showToast('취소에 동의했습니다. 포인트가 환불됩니다.', 'success');
+    } catch (err: any) {
+      showToast(err.response?.data?.message || '처리 중 오류가 발생했습니다.', 'error');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -390,6 +407,39 @@ export const WonProductDetail: React.FC = () => {
 
                 {/* Local Action Buttons */}
                 <div className="mt-8 space-y-3">
+                  {/* 판매자 취소 요청 수신: 구매자에게 동의/거절 UI */}
+                  {isSellerCancelRequested && (
+                    <div className="space-y-3">
+                      <div className="rounded-2xl bg-rose-50 border border-rose-200 p-4 flex items-start gap-3">
+                        <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-bold text-rose-700 mb-1">판매자가 거래 취소를 요청했습니다.</p>
+                          <p className="text-[11px] text-rose-600 leading-relaxed font-medium">
+                            동의하면 낙찰 포인트가 전액 환불됩니다.<br />
+                            동의하지 않으면 기존대로 거래가 진행됩니다.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button
+                          onClick={() => setShowSellerCancelApproveConfirm(true)}
+                          disabled={isProcessing}
+                          className="w-full py-5 border-2 border-rose-200 text-rose-600 font-bold rounded-2xl hover:bg-rose-50 transition-all active:scale-95 disabled:opacity-50"
+                        >
+                          취소 동의
+                        </button>
+                        <button
+                          onClick={handleConfirmClick}
+                          disabled={isProcessing}
+                          className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50"
+                        >
+                          {isProcessing ? '처리 중...' : '상품 수령 확인 (구매 확정)'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 배송대기 / 구매자 취소요청 상태 */}
                   {(isPending || isCancelRequested) && (
                     isCancelRequested ? (
                       /* 취소요청 상태: 판매자 승인 대기 중 안내 (흰색 칩 + 툴팁 형태) */
@@ -588,6 +638,35 @@ export const WonProductDetail: React.FC = () => {
                 className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
               >
                 {isForcePromoted ? '즉시 취소하기' : '취소 요청하기'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 판매자 취소 요청 동의 모달 */}
+      {showSellerCancelApproveConfirm && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">거래 취소에 동의하시겠습니까?</h3>
+            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-2">
+              판매자의 취소 요청에 동의합니다.
+            </p>
+            <p className="text-xs text-emerald-600 font-bold mb-8 flex items-center gap-1">
+              <BsCheckCircle className="w-3.5 h-3.5" /> 동의 시 낙찰 포인트가 전액 환불됩니다.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowSellerCancelApproveConfirm(false)}
+                className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+              >
+                아니오
+              </button>
+              <button
+                onClick={executeApproveCancelBySeller}
+                className="flex-1 py-4 bg-rose-500 text-white font-bold rounded-2xl hover:bg-rose-400 transition-all shadow-lg shadow-rose-500/10 active:scale-95"
+              >
+                동의하기
               </button>
             </div>
           </div>
