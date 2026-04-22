@@ -101,7 +101,7 @@ export const ActivityLogManagement: React.FC = () => {
               </div>
             );
           })}
-          {filteredLogs.length === 0 && (
+          {filteredLogs.length === 0 && !isAdminLoading && (
             <div className="px-5 py-14 text-center">
               <p className="text-gray-400 font-bold text-sm">활동 로그가 없습니다.</p>
             </div>

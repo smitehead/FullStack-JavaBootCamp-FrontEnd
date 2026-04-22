@@ -342,7 +342,7 @@ export const UserManagement: React.FC = () => {
               </div>
             </div>
           ))}
-          {filteredAndSortedUsers.length === 0 && (
+          {filteredAndSortedUsers.length === 0 && !isAdminLoading && (
             <div className="px-5 py-14 text-center">
               <p className="text-gray-400 font-bold text-sm">검색 결과가 없습니다.</p>
             </div>
