@@ -15,6 +15,8 @@ interface AdminNotification {
   createdAt: string;
 }
 
+type TypeFilter = 'all' | '시스템' | '활동' | '입찰';
+
 const ITEMS_PER_PAGE = 15;
 
 export const NotificationManagement: React.FC = () => {
@@ -22,16 +24,18 @@ export const NotificationManagement: React.FC = () => {
   const [message, setMessage] = useState('');
   const [link, setLink] = useState('');
   const [type, setType] = useState('시스템');
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const fetchRecentNotifications = async () => {
+  const fetchRecentNotifications = async (filter: TypeFilter = typeFilter) => {
     setIsLoading(true);
     try {
-      const res = await api.get('/admin/notifications/recent');
+      const params = filter !== 'all' ? { type: filter } : {};
+      const res = await api.get('/admin/notifications/recent', { params });
       setRecentNotifications(res.data);
     } catch (err) {
       console.error('알림 내역 조회 실패:', err);
@@ -41,8 +45,9 @@ export const NotificationManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchRecentNotifications();
-  }, []);
+    fetchRecentNotifications(typeFilter);
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [typeFilter]);
 
   const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
     if (entries[0].isIntersecting && visibleCount < recentNotifications.length) {
@@ -75,7 +80,7 @@ export const NotificationManagement: React.FC = () => {
       setType('시스템');
       setShowForm(false);
       showToast('알림이 성공적으로 전송되었습니다.', 'success');
-      await fetchRecentNotifications();
+      await fetchRecentNotifications(typeFilter);
     } catch (err) {
       console.error('알림 발송 실패:', err);
       showToast('알림 발송에 실패했습니다.', 'error');
@@ -186,11 +191,26 @@ export const NotificationManagement: React.FC = () => {
 
       {/* Notification History */}
       <div className="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+        <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between gap-4">
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2 shrink-0">
             <BsBell className="w-4 h-4 text-gray-400" /> 발송 내역
           </h2>
-          <span className="text-xs font-bold text-gray-400">{recentNotifications.length}건</span>
+          <div className="flex items-center gap-1.5">
+            {(['all', '시스템', '활동', '입찰'] as TypeFilter[]).map((f) => (
+              <button
+                key={f}
+                onClick={() => setTypeFilter(f)}
+                className={`px-3 py-1 text-[11px] font-bold rounded-none transition-all ${
+                  typeFilter === f
+                    ? 'bg-[#FF5A5A] text-white'
+                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
+              >
+                {f === 'all' ? '전체' : f}
+              </button>
+            ))}
+          </div>
+          <span className="text-xs font-bold text-gray-400 shrink-0">{recentNotifications.length}건</span>
         </div>
 
         <div className="divide-y divide-gray-50">
