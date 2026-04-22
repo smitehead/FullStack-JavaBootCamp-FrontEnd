@@ -336,10 +336,9 @@ export const SellerAuctionResult: React.FC = () => {
 
                   {/* 판매자 취소 요청 후 구매자 응답 대기 */}
                   {isSellerCancelRequested && (
-                    <div className="bg-brand/10 border border-brand/20 p-5 rounded-2xl text-center space-y-2">
-                      <AlertCircle className="w-8 h-8 text-brand mx-auto" />
-                      <p className="text-sm font-bold text-brand-dark">구매자 동의 대기 중</p>
-                      <p className="text-xs text-brand-dark font-medium">구매자가 취소 요청을 검토 중입니다.<br />동의 완료 시 포인트가 자동 환불됩니다.</p>
+                    <div className="bg-amber-50 border border-amber-100 p-5 rounded-2xl text-center space-y-1">
+                      <p className="text-sm font-bold text-amber-700">구매자 동의 대기 중</p>
+                      <p className="text-xs text-amber-600 font-medium">구매자가 취소에 동의하면 자동으로 처리됩니다.</p>
                     </div>
                   )}
 
