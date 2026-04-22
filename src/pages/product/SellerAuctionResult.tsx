@@ -334,13 +334,37 @@ export const SellerAuctionResult: React.FC = () => {
                     </div>
                   )}
 
-                  {/* 판매자 취소 요청 후 구매자 응답 대기 */}
+                  {/* 판매자 취소 요청 후 구매자 응답 대기 — 인라인 알림 + 비활성 버튼 */}
                   {isSellerCancelRequested && (
-                    <div className="bg-brand/10 border border-brand/20 p-5 rounded-2xl text-center space-y-2">
-                      <AlertCircle className="w-8 h-8 text-brand mx-auto" />
-                      <p className="text-sm font-bold text-brand-dark">구매자 동의 대기 중</p>
-                      <p className="text-xs text-brand-dark font-medium">구매자가 취소 요청을 검토 중입니다.<br />동의 완료 시 포인트가 자동 환불됩니다.</p>
-                    </div>
+                    <>
+                      <div className="flex items-center gap-2 mb-3 group relative">
+                        <AlertCircle className="w-[18px] h-[18px] text-brand" />
+                        <span className="text-sm font-bold text-brand cursor-help border-b border-dashed border-brand/30">
+                          취소 요청을 보냈습니다
+                        </span>
+                        <div className="absolute bottom-full left-0 mb-2 w-64 bg-gray-900/95 backdrop-blur-md text-white text-xs p-4 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl pointer-events-none border border-white/10">
+                          <p className="leading-relaxed font-medium">
+                            구매자가 취소 요청을 검토 중입니다.<br />
+                            동의 완료 시 포인트가 자동 환불됩니다.
+                          </p>
+                          <div className="absolute top-full left-4 border-[6px] border-transparent border-t-gray-900/95" />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button
+                          disabled
+                          className="w-full h-[56px] bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200 flex items-center justify-center"
+                        >
+                          구매자 동의 대기 중
+                        </button>
+                        <button
+                          disabled
+                          className="w-full h-[56px] bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200 flex items-center justify-center"
+                        >
+                          구매 확정 대기
+                        </button>
+                      </div>
+                    </>
                   )}
 
                   {isCompleted && (
