@@ -12,7 +12,7 @@ import { showToast } from '@/components/toastService';
 const ITEMS_PER_PAGE = 15;
 
 export const AuctionManagement: React.FC = () => {
-  const { products, cancelAuction } = useAppContext();
+  const { products, cancelAuction, isAdminLoading } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'completed' | 'canceled'>('all');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -105,6 +105,12 @@ export const AuctionManagement: React.FC = () => {
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredProducts.length}건</span>
         </div>
+
+        {isAdminLoading && (
+          <div className="flex items-center justify-center py-14">
+            <div className="w-8 h-8 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+          </div>
+        )}
 
         <div className="divide-y divide-gray-50">
           {filteredProducts.slice(0, visibleCount).map((product) => (

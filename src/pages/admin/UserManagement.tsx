@@ -16,7 +16,7 @@ type SortOrder = 'asc' | 'desc';
 const ITEMS_PER_PAGE = 15;
 
 export const UserManagement: React.FC = () => {
-  const { users, suspendUser, unsuspendUser, updateUserRole, updateUserManner, updateUserPoints, mannerHistory } = useAppContext();
+  const { users, suspendUser, unsuspendUser, updateUserRole, updateUserManner, updateUserPoints, mannerHistory, isAdminLoading } = useAppContext();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialSearch = searchParams.get('nickname') || '';
 
@@ -252,6 +252,12 @@ export const UserManagement: React.FC = () => {
             <span className="text-xs font-bold text-gray-400">{filteredAndSortedUsers.length}명</span>
           </div>
         </div>
+
+        {isAdminLoading && (
+          <div className="flex items-center justify-center py-14">
+            <div className="w-8 h-8 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+          </div>
+        )}
 
         <div className="divide-y divide-gray-50">
           {filteredAndSortedUsers.slice(0, visibleCount).map((user) => (

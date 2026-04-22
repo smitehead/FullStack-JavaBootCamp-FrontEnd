@@ -7,7 +7,7 @@ import { useAppContext } from '@/context/AppContext';
 const ITEMS_PER_PAGE = 15;
 
 export const MannerHistoryManagement: React.FC = () => {
-  const { mannerHistory, users } = useAppContext();
+  const { mannerHistory, users, isAdminLoading } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -65,6 +65,12 @@ export const MannerHistoryManagement: React.FC = () => {
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredHistory.length}건</span>
         </div>
+
+        {isAdminLoading && (
+          <div className="flex items-center justify-center py-14">
+            <div className="w-8 h-8 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+          </div>
+        )}
 
         <div className="divide-y divide-gray-50">
           {filteredHistory.slice(0, visibleCount).map((history) => {

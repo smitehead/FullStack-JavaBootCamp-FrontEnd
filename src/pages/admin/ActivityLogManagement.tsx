@@ -8,7 +8,7 @@ import { ActivityLog } from '@/types';
 const ITEMS_PER_PAGE = 15;
 
 export const ActivityLogManagement: React.FC = () => {
-  const { activityLogs } = useAppContext();
+  const { activityLogs, isAdminLoading } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -71,6 +71,12 @@ export const ActivityLogManagement: React.FC = () => {
           </h2>
           <span className="text-xs font-bold text-gray-400">{filteredLogs.length}건</span>
         </div>
+
+        {isAdminLoading && (
+          <div className="flex items-center justify-center py-14">
+            <div className="w-8 h-8 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+          </div>
+        )}
 
         <div className="divide-y divide-gray-50">
           {filteredLogs.slice(0, visibleCount).map((log) => {
