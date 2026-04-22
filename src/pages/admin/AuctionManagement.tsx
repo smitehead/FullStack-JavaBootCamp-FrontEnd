@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsBag, BsFunnel } from 'react-icons/bs';
 
-import { BsClock, BsStopwatch, BsPeople, BsExclamationCircle, BsBan, BsSearch } from 'react-icons/bs';
+import { BsStopwatch, BsPeople, BsExclamationCircle, BsBan, BsSearch } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { Product } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,7 +16,6 @@ export const AuctionManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'completed' | 'canceled'>('all');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [cancelReason, setCancelReason] = useState('');
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -46,7 +45,7 @@ export const AuctionManagement: React.FC = () => {
 
   const handleCancelAuction = async () => {
     if (selectedProduct) {
-      await cancelAuction(selectedProduct.id, '관리자에 의한 강제 종료');
+      cancelAuction(selectedProduct.id, '관리자에 의한 강제 종료');
       setShowCancelModal(false);
       setSelectedProduct(null);
       showToast('경매가 강제 종료되었습니다.', 'info');
@@ -126,6 +125,7 @@ export const AuctionManagement: React.FC = () => {
                 </Link>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                 <span className="w-[96px] shrink-0 text-xs font-bold text-gray-900 truncate" title={`${product.currentPrice.toLocaleString()}원`}>{product.currentPrice.toLocaleString()}원</span>
+                <span className="w-[80px] shrink-0 text-[11px] text-gray-400 truncate">시작 {product.startPrice.toLocaleString()}원</span>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                 <span className="w-[60px] shrink-0 inline-flex items-center gap-1 text-xs font-bold text-blue-600">
                   <BsPeople className="w-3 h-3" />{product.participantCount}명

@@ -202,7 +202,9 @@ export const NoticeManagement: React.FC = () => {
                   {notice.isImportant && <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded-none">중요</span>}
                 </div>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
-                <h3 className="flex-1 min-w-0 text-[13px] font-bold text-gray-900 truncate" title={notice.title}>{notice.title}</h3>
+                <h3 className="w-[240px] shrink-0 text-[13px] font-bold text-gray-900 truncate" title={notice.title}>{notice.title}</h3>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="flex-1 min-w-0 text-xs text-gray-400 truncate" title={notice.content}>{notice.content}</span>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                 <span className="w-[88px] shrink-0 text-xs text-gray-400">{notice.createdAt?.split("T")[0]}</span>
                 {!notice.isDeleted && (
