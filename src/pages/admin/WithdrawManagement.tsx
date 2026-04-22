@@ -129,7 +129,7 @@ export const WithdrawManagement: React.FC = () => {
     }
   };
 
-  const formatDate = (d: string | null) => d ? new Date(d).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-';
+  const formatDate = (d: string | null) => d ? new Date(d).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : '-';
 
   return (
     <div className="space-y-4">
@@ -195,11 +195,11 @@ export const WithdrawManagement: React.FC = () => {
                 <span className="w-[120px] shrink-0 text-xs font-bold text-gray-900 ml-1.5 truncate" title={item.accountNumber}>{item.accountNumber}</span>
                 <span className="w-[72px] shrink-0 text-[11px] text-gray-400 truncate" title={item.accountHolder}>{item.accountHolder}</span>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
-                <span className="w-[88px] shrink-0 text-[11px] text-gray-400">신청 {formatDate(item.createdAt)}</span>
+                <span className="w-[110px] shrink-0 text-[11px] text-gray-400">신청 {formatDate(item.createdAt)}</span>
                 {item.processedAt && (
                   <>
                     <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
-                    <span className="w-[88px] shrink-0 text-[11px] text-gray-400">처리 {formatDate(item.processedAt)}</span>
+                    <span className="w-[110px] shrink-0 text-[11px] text-gray-400">처리 {formatDate(item.processedAt)}</span>
                   </>
                 )}
                 {item.rejectReason && (

@@ -32,7 +32,8 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401) {
       const url = error.config?.url ?? '';
-      if (!url.includes('/auth/logout')) {
+      const hadToken = !!sessionStorage.getItem('java_token');
+      if (!url.includes('/auth/logout') && hadToken) {
         window.dispatchEvent(new CustomEvent('forceLogout'));
       }
     }

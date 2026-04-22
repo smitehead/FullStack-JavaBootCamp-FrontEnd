@@ -219,7 +219,7 @@ export const ReportManagement: React.FC = () => {
                       </span>
                     </div>
                     <span className="w-[40px] shrink-0 text-[11px] font-bold text-gray-400">#{report.reportNo}</span>
-                    <div className="w-[100px] shrink-0 overflow-hidden">
+                    <div className="w-[180px] shrink-0 overflow-hidden">
                       <span title={report.type || '-'} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-none text-[10px] font-bold max-w-full truncate ${target.bgColor} ${target.color}`}>
                         <TargetIcon className="w-2.5 h-2.5 shrink-0" />{report.type || '-'}
                       </span>
@@ -238,11 +238,9 @@ export const ReportManagement: React.FC = () => {
                     </Link>
                     <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                     <span className="w-[96px] shrink-0 text-[11px] text-gray-400">{report.createdAt ? new Date(report.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-'}</span>
-                    {!resolved && (
-                      <button onClick={() => { setSelectedReport(report); setShowResolveModal(true); }} className="ml-2 p-1.5 text-gray-400 hover:text-[#FF5A5A] hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0" title="신고 처리">
-                        <BsShieldExclamation className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                    <button onClick={!resolved ? () => { setSelectedReport(report); setShowResolveModal(true); } : undefined} className={`ml-2 p-1.5 rounded-none shrink-0 transition-all ${resolved ? 'invisible' : 'text-gray-400 hover:text-[#FF5A5A] hover:bg-red-50 opacity-0 group-hover:opacity-100'}`} title="신고 처리">
+                      <BsShieldExclamation className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               );

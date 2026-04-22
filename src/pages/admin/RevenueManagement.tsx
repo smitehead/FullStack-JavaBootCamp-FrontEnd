@@ -218,7 +218,7 @@ export const RevenueManagement: React.FC = () => {
             <div key={item.revenueNo} className="px-5 py-2.5 hover:bg-gray-50 transition-colors">
               <div className="flex items-center min-w-0">
                 <span className="w-[28px] shrink-0 text-[11px] font-bold text-gray-300">{(page - 1) * 20 + idx + 1}</span>
-                <div className="w-[120px] shrink-0 overflow-hidden">
+                <div className="w-[240px] shrink-0 overflow-hidden">
                   <span title={item.reason} className={`inline-flex items-center px-1.5 py-0.5 text-[11px] font-bold rounded-none border max-w-full truncate ${getReasonBadgeClass(item.reason)}`}>{item.reason}</span>
                 </div>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
