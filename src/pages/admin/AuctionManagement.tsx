@@ -130,6 +130,8 @@ export const AuctionManagement: React.FC = () => {
                   {product.seller.nickname}
                 </Link>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[96px] shrink-0 text-xs text-gray-400 truncate" title={product.category}>{product.category}</span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                 <span className="w-[96px] shrink-0 text-xs font-bold text-gray-900 truncate" title={`${product.currentPrice.toLocaleString()}원`}>{product.currentPrice.toLocaleString()}원</span>
                 <span className="w-[80px] shrink-0 text-[11px] text-gray-400 truncate">시작 {product.startPrice.toLocaleString()}원</span>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
