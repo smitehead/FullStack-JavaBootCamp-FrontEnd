@@ -4,6 +4,26 @@ import api from '@/services/api';
 import { resolveImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
+import { CATEGORY_DATA } from '@/data/category_data';
+
+const getCategoryNameByNo = (categoryNo: number | null | undefined): Category => {
+  if (!categoryNo) return Category.ETC;
+  const id = String(categoryNo);
+  for (const large of CATEGORY_DATA) {
+    if (large.id === id) return large.name as Category;
+    if (large.subCategories) {
+      for (const medium of large.subCategories) {
+        if (medium.id === id) return large.name as Category;
+        if (medium.subCategories) {
+          for (const small of medium.subCategories) {
+            if (small.id === id) return large.name as Category;
+          }
+        }
+      }
+    }
+  }
+  return Category.ETC;
+};
 
 // ── API 응답 → 프론트 타입 변환 헬퍼 ──
 
@@ -54,7 +74,7 @@ const mapAdminProductToFrontend = (p: any): Product => ({
   id: `prod_${p.productNo}`,
   title: p.title,
   description: '',
-  category: Category.ETC,
+  category: getCategoryNameByNo(p.categoryNo),
   seller: {
     id: `user_${p.sellerNo}`,
     nickname: p.sellerNickname,
@@ -91,6 +111,7 @@ const mapActivityLogToFrontend = (log: any): ActivityLog => ({
 
 interface AppContextType {
   isInitialized: boolean;
+  isAdminLoading: boolean;
   user: User | null;
   users: User[];
   products: Product[];
@@ -132,6 +153,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -245,7 +267,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     if (!user) return;
 
-    const token = sessionStorage.getItem('java_token');
+    const token = localStorage.getItem('java_token');
     if (!token) return;
 
     const memberNo = extractMemberNo(user.id);
@@ -276,7 +298,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             if (!prev) return prev;
             if (prev.points === data.points) return prev;
             const updated = { ...prev, points: data.points };
-            sessionStorage.setItem('java_user', JSON.stringify(updated));
+            localStorage.setItem('java_user', JSON.stringify(updated));
             return updated;
           });
           // ProductDetail 등 다른 컴포넌트에서 포인트 변동을 감지할 수 있도록 window event 발행
@@ -336,8 +358,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // 다른 기기에서 로그인 시 즉시 강제 로그아웃 처리
     eventSource.addEventListener('forceLogout', () => {
       eventSource.close();
-      sessionStorage.removeItem('java_token');
-      sessionStorage.removeItem('java_user');
+      localStorage.removeItem('java_token');
+      localStorage.removeItem('java_user');
       setUser(null);
       setForceLogoutModalOpen(true);
     });
@@ -352,9 +374,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
   }, [user?.id]); // 사용자 ID가 바뀔 때(로그인/로그아웃) 재연결
 
-  // 앱 시작 시 sessionStorage에 저장된 로그인 정보 복원 (탭별 격리)
+  // 앱 시작 시 localStorage에 저장된 로그인 정보 복원 (탭별 격리)
   useEffect(() => {
-    const savedUser = sessionStorage.getItem('java_user');
+    const savedUser = localStorage.getItem('java_user');
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
       setUser(parsedUser);
@@ -371,7 +393,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                 mannerTemp: res.data.mannerTemp || 36.5,
                 profileImage: resolveImageUrl(res.data.profileImgUrl) || prev.profileImage,
               };
-              sessionStorage.setItem('java_user', JSON.stringify(updated));
+              localStorage.setItem('java_user', JSON.stringify(updated));
               return updated;
             });
           }
@@ -388,7 +410,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const response = await api.post('/auth/login', { userId, password });
       const { token, memberNo, nickname, addrShort } = response.data;
 
-      sessionStorage.setItem('java_token', token);
+      localStorage.setItem('java_token', token);
 
       let dbPoints = 0;
       let dbMannerTemp = 36.5;
@@ -420,7 +442,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       };
 
       setUser(loggedInUser);
-      sessionStorage.setItem('java_user', JSON.stringify(loggedInUser));
+      localStorage.setItem('java_user', JSON.stringify(loggedInUser));
       return true;
     } catch (error) {
       console.error('로그인 실패', error);
@@ -431,8 +453,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const logout = () => {
     api.post('/auth/logout').catch(console.error);
     setUser(null);
-    sessionStorage.removeItem('java_user');
-    sessionStorage.removeItem('java_token');
+    localStorage.removeItem('java_user');
+    localStorage.removeItem('java_token');
   };
 
   const closeForceLogoutModal = () => setForceLogoutModalOpen(false);
@@ -440,8 +462,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // api.ts의 401 인터셉터에서 발생시키는 커스텀 이벤트 처리 (SSE 미연결 상태 백업)
   useEffect(() => {
     const handleForceLogout = () => {
-      sessionStorage.removeItem('java_token');
-      sessionStorage.removeItem('java_user');
+      localStorage.removeItem('java_token');
+      localStorage.removeItem('java_user');
       setUser(null);
       setForceLogoutModalOpen(true);
     };
@@ -452,6 +474,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // ── 관리자 데이터 API 로딩 ──
 
   const fetchAdminData = useCallback(async () => {
+    setIsAdminLoading(true);
     try {
       const [membersRes, reportsRes, historyRes, logsRes, productsRes] = await Promise.all([
         api.get('/admin/members'),
@@ -467,6 +490,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setProducts(productsRes.data.map(mapAdminProductToFrontend));
     } catch (err) {
       console.error('[Admin] 데이터 로딩 실패:', err);
+    } finally {
+      setIsAdminLoading(false);
     }
   }, []);
 
@@ -633,7 +658,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       const updated = { ...user, points };
       setUser(updated);
-      sessionStorage.setItem('java_user', JSON.stringify(updated));
+      localStorage.setItem('java_user', JSON.stringify(updated));
     }
   };
 
@@ -641,7 +666,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       const updated = { ...user, profileImage: profileImageUrl };
       setUser(updated);
-      sessionStorage.setItem('java_user', JSON.stringify(updated));
+      localStorage.setItem('java_user', JSON.stringify(updated));
     }
   };
 
@@ -649,7 +674,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       const updated = { ...user, address };
       setUser(updated);
-      sessionStorage.setItem('java_user', JSON.stringify(updated));
+      localStorage.setItem('java_user', JSON.stringify(updated));
     }
   };
 
@@ -660,7 +685,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setUser(prev => {
         if (!prev) return prev;
         const updated = { ...prev, account };
-        sessionStorage.setItem('java_user', JSON.stringify(updated));
+        localStorage.setItem('java_user', JSON.stringify(updated));
         return updated;
       });
       showToast('계좌가 성공적으로 등록되었습니다.', 'success');
@@ -677,6 +702,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   return (
     <AppContext.Provider value={{
       isInitialized,
+      isAdminLoading,
       user,
       users,
       products,
