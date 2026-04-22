@@ -46,7 +46,7 @@ export const AdminDashboard: React.FC = () => {
   useEffect(() => {
     Promise.all([
       api.get('/admin/withdraws', { params: { status: '신청', size: 1 } }).then(res => setUnprocessedWithdraws(res.data.totalElements || 0)).catch(() => {}),
-      api.get('/notices/all').then(res => setRecentNotices((res.data || []).slice(0, 5))).catch(() => {}),
+      api.get('/notices', { params: { size: 5 } }).then(res => setRecentNotices(res.data.content || [])).catch(() => {}),
       api.get('/admin/inquiries', { params: { status: 0, size: 5 } }).then(res => { setUnprocessedInquiries(res.data.totalElements || 0); setRecentInquiries(res.data.content || []); }).catch(() => {}),
       api.get('/admin/products/category-stats').then(res => { setPopularCategories((res.data || []).map((item: { name: string; count: number }, index: number) => ({ name: item.name, count: Number(item.count), color: PALETTE[index % PALETTE.length] }))); }).catch(() => {}),
     ]).finally(() => setIsLoading(false));

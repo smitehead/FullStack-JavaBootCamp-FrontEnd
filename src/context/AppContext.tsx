@@ -4,6 +4,26 @@ import api from '@/services/api';
 import { resolveImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
+import { CATEGORY_DATA } from '@/data/category_data';
+
+const getCategoryNameByNo = (categoryNo: number | null | undefined): Category => {
+  if (!categoryNo) return Category.ETC;
+  const id = String(categoryNo);
+  for (const large of CATEGORY_DATA) {
+    if (large.id === id) return large.name as Category;
+    if (large.subCategories) {
+      for (const medium of large.subCategories) {
+        if (medium.id === id) return large.name as Category;
+        if (medium.subCategories) {
+          for (const small of medium.subCategories) {
+            if (small.id === id) return large.name as Category;
+          }
+        }
+      }
+    }
+  }
+  return Category.ETC;
+};
 
 // ── API 응답 → 프론트 타입 변환 헬퍼 ──
 
@@ -54,7 +74,7 @@ const mapAdminProductToFrontend = (p: any): Product => ({
   id: `prod_${p.productNo}`,
   title: p.title,
   description: '',
-  category: Category.ETC,
+  category: getCategoryNameByNo(p.categoryNo),
   seller: {
     id: `user_${p.sellerNo}`,
     nickname: p.sellerNickname,
