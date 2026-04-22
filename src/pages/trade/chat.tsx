@@ -1070,7 +1070,7 @@ export const Chat: React.FC = () => {
                 <h4 className="font-bold text-sm text-gray-900 truncate">
                   {selectedRoom.productTitle}
                 </h4>
-                <p className="text-xs text-black font-black mt-0.5">
+                <p className="text-xs text-black font-medium mt-0.5">
                   {(selectedRoom.productPrice || 0).toLocaleString()}원
                 </p>
               </div>
@@ -1200,7 +1200,7 @@ export const Chat: React.FC = () => {
                         <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]`}>
                           {/* 닉네임 표시 (상대방 첫 메시지인 경우) */}
                           {!isMe && isFirstInGroup && (
-                            <span className="text-[11px] font-bold text-gray-400 mb-1.5 ml-1">
+                            <span className="text-[11px] font-semibold text-gray-400 mb-1.5 ml-1">
                               {selectedRoom.otherUser.nickname}
                             </span>
                           )}
@@ -1348,7 +1348,7 @@ export const Chat: React.FC = () => {
 
                               {/* 시간 표시 (마지막 메시지인 경우에만) */}
                               {isLastInGroup && (
-                                <span className="text-[8px] text-gray-400 font-medium whitespace-nowrap">
+                                <span className="text-[8px] text-gray-400 font-normal whitespace-nowrap">
                                   {formatRelativeTime(msg.createdAt)}
                                 </span>
                               )}

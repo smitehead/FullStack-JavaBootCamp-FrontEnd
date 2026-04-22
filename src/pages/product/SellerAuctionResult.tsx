@@ -334,11 +334,22 @@ export const SellerAuctionResult: React.FC = () => {
                     </div>
                   )}
 
-                  {/* 판매자 취소 요청 후 구매자 응답 대기 */}
+                  {/* 판매자 취소 요청 후 구매자 응답 대기 — 흰색 칩 + 툴팁 스타일로 통일 */}
                   {isSellerCancelRequested && (
-                    <div className="bg-amber-50 border border-amber-100 p-5 rounded-2xl text-center space-y-1">
-                      <p className="text-sm font-bold text-amber-700">구매자 동의 대기 중</p>
-                      <p className="text-xs text-amber-600 font-medium">구매자가 취소에 동의하면 자동으로 처리됩니다.</p>
+                    <div className="flex items-center justify-center py-4">
+                      <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-full shadow-sm group relative cursor-help">
+                        <AlertCircle className="w-5 h-5 text-brand" />
+                        <span className="text-sm font-bold text-brand">구매자 동의 대기 중</span>
+                        
+                        {/* Tooltip */}
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 bg-gray-900/95 backdrop-blur-md text-white text-xs p-4 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl pointer-events-none border border-white/10 text-center">
+                          <p className="leading-relaxed font-medium">
+                            구매자가 취소요청을 검토 중입니다.<br />
+                            동의 완료 시 거래가 자동으로 취소됩니다.
+                          </p>
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-gray-900/95" />
+                        </div>
+                      </div>
                     </div>
                   )}
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BsLock, BsStars, BsExclamationCircle, BsEnvelope, BsPerson, BsChevronRight } from 'react-icons/bs';
+import { BsLock, BsExclamationCircle, BsEnvelope, BsPerson, BsChevronRight } from 'react-icons/bs';
+import mainLogo from '@/assets/images/main_logo.png';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
 
@@ -47,8 +48,8 @@ export const Login: React.FC = () => {
     <div className="min-h-[calc(100vh-64px)] bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-[32px] shadow-xl border border-gray-100">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-[#FF5A5A] rounded-2xl flex items-center justify-center shadow-lg shadow-red-100">
-            <BsStars className="h-10 w-10 text-white" />
+          <div className="mx-auto h-20 w-20 bg-white rounded-[24px] flex items-center justify-center shadow-xl shadow-red-500/5 p-2">
+            <img src={mainLogo} alt="JAVAJAVA Logo" className="w-full h-full object-contain" />
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900 tracking-tight">
             로그인

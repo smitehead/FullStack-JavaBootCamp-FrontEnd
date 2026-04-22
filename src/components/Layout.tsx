@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { BsStars } from 'react-icons/bs';
-
 import { BsArrowUpRight, BsPersonCircle, BsGear, BsBell, BsClock, BsList, BsChat, BsSearch, BsX } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
@@ -511,8 +509,8 @@ const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="md:col-span-5">
             <div className="flex items-center space-x-2 mb-6">
-              <div className="bg-gray-400 p-1.5 rounded-lg">
-                <BsStars className="w-5 h-5 text-white" />
+              <div className="bg-white p-1 rounded-lg">
+                <img src={mainLogo} alt="JAVAJAVA" className="w-6 h-6 object-contain" />
               </div>
               <span className="text-xl font-bold text-gray-700 tracking-tight">JAVAJAVA</span>
             </div>

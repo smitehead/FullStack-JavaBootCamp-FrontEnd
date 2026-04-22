@@ -407,17 +407,21 @@ export const WonProductDetail: React.FC = () => {
 
                 {/* Local Action Buttons */}
                 <div className="mt-8 space-y-3">
-                  {/* 판매자 취소 요청 수신: 구매자에게 동의/거절 UI */}
+                  {/* 판매자 취소 요청 수신: 구매자에게 동의/거절 UI — 판매자 페이지 스타일로 통일 */}
                   {isSellerCancelRequested && (
                     <div className="space-y-3">
-                      <div className="rounded-2xl bg-rose-50 border border-rose-200 p-4 flex items-start gap-3">
-                        <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-xs font-bold text-rose-700 mb-1">판매자가 거래 취소를 요청했습니다.</p>
-                          <p className="text-[11px] text-rose-600 leading-relaxed font-medium">
+                      <div className="flex items-center gap-2 mb-3 group relative">
+                        <AlertCircle className="w-[18px] h-[18px] text-brand" />
+                        <span className="text-sm font-bold text-brand cursor-help border-b border-dashed border-brand/30">
+                          판매자 취소 요청 수신
+                        </span>
+                        <div className="absolute bottom-full left-0 mb-2 w-64 bg-gray-900/95 backdrop-blur-md text-white text-xs p-4 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl pointer-events-none border border-white/10">
+                          <p className="leading-relaxed font-medium">
+                            판매자가 거래 취소를 요청했습니다.<br />
                             동의하면 낙찰 포인트가 전액 환불됩니다.<br />
                             동의하지 않으면 기존대로 거래가 진행됩니다.
                           </p>
+                          <div className="absolute top-full left-4 border-[6px] border-transparent border-t-gray-900/95" />
                         </div>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

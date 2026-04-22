@@ -60,27 +60,27 @@ export const showRebidToast = ({ productNo, title, price, image, navigate }: Reb
               </div>
               <h4 className="text-sm font-bold text-gray-900">자동 재입찰 알림</h4>
             </div>
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 toast.dismiss(t);
-              }} 
+              }}
               className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-lg transition-colors group"
             >
               <X className="w-4 h-4 group-hover:text-gray-600" />
             </button>
           </div>
-          
+
           {/* 메시지 */}
           <p className="text-xs text-gray-500 leading-relaxed font-bold mb-4 px-0.5">
-            상위입찰자의 취소로 인해 자동으로 재입찰 되었습니다.<br/>자세한 내용은 상품페이지를 확인해주세요.
+            상위입찰자의 취소로 인해 자동으로 재입찰 되었습니다.<br />자세한 내용은 상품페이지를 확인해주세요.
           </p>
 
           {/* 상품 정보 요약 카드 */}
           <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 flex gap-3 items-center">
-            <img 
-              src={image || "https://picsum.photos/seed/vintage/100/100"} 
-              alt={title} 
+            <img
+              src={image || "https://picsum.photos/seed/vintage/100/100"}
+              alt={title}
               className="w-12 h-12 rounded-lg object-cover shadow-sm bg-white"
             />
             <div className="flex-1 min-w-0">
@@ -94,8 +94,8 @@ export const showRebidToast = ({ productNo, title, price, image, navigate }: Reb
         </div>
       </motion.div>
     </AnimatePresence>
-  ), { 
-    position: 'bottom-right', 
+  ), {
+    position: 'bottom-right',
     duration: Infinity,
     style: {
       background: 'transparent',
