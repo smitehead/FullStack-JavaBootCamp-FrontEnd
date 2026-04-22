@@ -247,6 +247,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const token = sessionStorage.getItem('java_token');
     if (!token) return;
 
+    const memberNo = extractMemberNo(user.id);
     const eventSource = new EventSource(`/api/sse/subscribe?token=${encodeURIComponent(token)}`);
 
     // 최초 연결 및 재연결 감지 — 재연결 시 누락 이벤트를 보정하기 위해 window 이벤트 발행

@@ -77,28 +77,20 @@ export const ActivityLogManagement: React.FC = () => {
             const target = getTargetLabel(log.targetType);
             const TargetIcon = target.icon;
             return (
-              <div key={log.id} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-8 h-8 rounded-none bg-red-50 flex items-center justify-center shrink-0">
-                      <BsExclamationTriangle className="w-4 h-4 text-[#FF5A5A]" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                        <span className="text-sm font-bold text-gray-900">{log.adminNickname}</span>
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-bold ${target.color}`}>
-                          <TargetIcon className="w-3 h-3" />
-                          {target.label}
-                        </span>
-                      </div>
-                      <p className="text-sm font-bold text-gray-800">{log.action}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{log.details}</p>
-                    </div>
+              <div key={log.id} className="px-5 py-2.5 hover:bg-gray-50 transition-colors">
+                <div className="flex items-center min-w-0">
+                  <span className="w-[120px] shrink-0 text-[13px] font-bold text-gray-900 truncate" title={log.adminNickname}>{log.adminNickname}</span>
+                  <div className="w-[68px] shrink-0">
+                    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-none text-[10px] font-bold ${target.color}`}>
+                      <TargetIcon className="w-2.5 h-2.5" />{target.label}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400 shrink-0">
-                    <BsCalendar className="w-3 h-3" />
-                    {new Date(log.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
-                  </div>
+                  <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                  <span className="w-[160px] shrink-0 text-xs font-bold text-gray-800 truncate" title={log.action}>{log.action}</span>
+                  <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                  <span className="flex-1 min-w-0 text-xs text-gray-500 truncate" title={log.details}>{log.details}</span>
+                  <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                  <span className="w-[80px] shrink-0 text-[11px] text-gray-400">{new Date(log.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
                 </div>
               </div>
             );

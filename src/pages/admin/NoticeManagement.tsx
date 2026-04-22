@@ -191,58 +191,24 @@ export const NoticeManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {filteredNotices.slice(0, visibleCount).map((notice) => (
-            <div
-              key={notice.id}
-              className={`px-5 py-2 hover:bg-gray-50 transition-colors group ${notice.isDeleted ? 'opacity-40' : ''}`}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <span
-                      className={`px-2 py-0.5 rounded-none text-[10px] font-bold ${notice.category === "점검"
-                        ? "bg-orange-100 text-orange-700"
-                        : notice.category === "업데이트"
-                          ? "bg-blue-100 text-blue-700"
-                          : notice.category === "이벤트"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
-                    >
-                      {notice.category}
-                    </span>
-                    {notice.isImportant && (
-                      <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-none">
-                        중요
-                      </span>
-                    )}
-                    {notice.isDeleted === 1 && (
-                      <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-none">
-                        삭제됨
-                      </span>
-                    )}
-                    <span className="text-[10px] font-medium text-gray-400">
-                      {notice.createdAt?.split("T")[0]}
-                    </span>
-                  </div>
-                  <h3 className="text-sm font-bold text-gray-900">
-                    {notice.title}
-                  </h3>
+            <div key={notice.id} className={`px-5 py-2.5 hover:bg-gray-50 transition-colors group ${notice.isDeleted ? 'opacity-40' : ''}`}>
+              <div className="flex items-center min-w-0">
+                <div className="w-[64px] shrink-0">
+                  <span className={`px-1.5 py-0.5 rounded-none text-[11px] font-bold ${notice.category === "점검" ? "bg-orange-100 text-orange-700" : notice.category === "업데이트" ? "bg-blue-100 text-blue-700" : notice.category === "이벤트" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-700"}`}>
+                    {notice.category}
+                  </span>
                 </div>
-
+                <div className="w-[36px] shrink-0">
+                  {notice.isImportant && <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded-none">중요</span>}
+                </div>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <h3 className="flex-1 min-w-0 text-[13px] font-bold text-gray-900 truncate" title={notice.title}>{notice.title}</h3>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[88px] shrink-0 text-xs text-gray-400">{notice.createdAt?.split("T")[0]}</span>
                 {!notice.isDeleted && (
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                    <button
-                      onClick={() => handleOpenModal(notice)}
-                      className="p-2 hover:bg-gray-100 text-gray-600 rounded-none transition-colors"
-                    >
-                      <BsPen className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(notice.id)}
-                      className="p-2 hover:bg-red-100 text-red-600 rounded-none transition-colors"
-                    >
-                      <BsTrash3 className="w-4 h-4" />
-                    </button>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
+                    <button onClick={() => handleOpenModal(notice)} className="p-1.5 hover:bg-gray-100 text-gray-600 rounded-none transition-colors"><BsPen className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => handleDelete(notice.id)} className="p-1.5 hover:bg-red-100 text-red-600 rounded-none transition-colors"><BsTrash3 className="w-3.5 h-3.5" /></button>
                   </div>
                 )}
               </div>

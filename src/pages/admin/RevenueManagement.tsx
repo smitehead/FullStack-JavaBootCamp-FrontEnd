@@ -215,30 +215,20 @@ export const RevenueManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {items.map((item, idx) => (
-            <div key={item.revenueNo} className="px-5 py-2 hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-3">
-                <span className="w-6 text-[11px] font-bold text-gray-300 shrink-0">
-                  {(page - 1) * 20 + idx + 1}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                    <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-bold rounded-none border ${getReasonBadgeClass(item.reason)}`}>
-                      {item.reason}
-                    </span>
-                    <span className="text-sm font-bold text-[#FF5A5A]">{item.amount.toLocaleString()}P</span>
-                  </div>
-                  <div className="flex items-center gap-3 flex-wrap text-[10px] text-gray-400 font-medium">
-                    {item.sourceMemberNo && <span>회원 #{item.sourceMemberNo}</span>}
-                    {item.relatedProductNo && (
-                      <>
-                        {item.sourceMemberNo && <span className="text-gray-200">|</span>}
-                        <span>상품 #{item.relatedProductNo}</span>
-                      </>
-                    )}
-                    <span className="text-gray-200">|</span>
-                    <span>{formatDate(item.createdAt)}</span>
-                  </div>
+            <div key={item.revenueNo} className="px-5 py-2.5 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center min-w-0">
+                <span className="w-[28px] shrink-0 text-[11px] font-bold text-gray-300">{(page - 1) * 20 + idx + 1}</span>
+                <div className="w-[96px] shrink-0">
+                  <span className={`inline-flex items-center px-1.5 py-0.5 text-[11px] font-bold rounded-none border ${getReasonBadgeClass(item.reason)}`}>{item.reason}</span>
                 </div>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[96px] shrink-0 text-xs font-bold text-[#FF5A5A]">{item.amount.toLocaleString()}P</span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[88px] shrink-0 text-xs text-gray-400">{item.sourceMemberNo ? `회원 #${item.sourceMemberNo}` : '-'}</span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[88px] shrink-0 text-xs text-gray-400">{item.relatedProductNo ? `상품 #${item.relatedProductNo}` : '-'}</span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="flex-1 min-w-0 text-xs text-gray-400">{formatDate(item.createdAt)}</span>
                 <span className="text-[11px] font-bold text-gray-300 shrink-0">#{item.revenueNo}</span>
               </div>
             </div>

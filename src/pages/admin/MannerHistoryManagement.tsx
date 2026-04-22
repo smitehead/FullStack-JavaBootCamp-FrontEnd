@@ -70,33 +70,19 @@ export const MannerHistoryManagement: React.FC = () => {
           {filteredHistory.slice(0, visibleCount).map((history) => {
             const isIncrease = history.newTemp > history.previousTemp;
             return (
-              <div key={history.id} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-3 flex-wrap mb-1">
-                        <span className="text-sm font-bold text-gray-900">{getNickname(history.userId)}</span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-medium text-gray-400">{history.previousTemp.toFixed(1)}°C</span>
-                          <span className="text-xs text-gray-300">→</span>
-                          <div className={`flex items-center px-2 py-0.5 rounded-none text-xs font-bold ${isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
-                            }`}>
-                            {history.newTemp.toFixed(1)}°C
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-sm font-medium text-gray-600">{history.reason}</p>
-                    </div>
+              <div key={history.id} className="px-5 py-2.5 hover:bg-gray-50 transition-colors">
+                <div className="flex items-center min-w-0">
+                  <span className="w-[120px] shrink-0 text-[13px] font-bold text-gray-900 truncate" title={getNickname(history.userId)}>{getNickname(history.userId)}</span>
+                  <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                  <div className="w-[150px] shrink-0 inline-flex items-center gap-1.5">
+                    <span className="text-xs text-gray-400">{history.previousTemp.toFixed(1)}°C</span>
+                    <span className="text-xs text-gray-300">→</span>
+                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded-none ${isIncrease ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>{history.newTemp.toFixed(1)}°C</span>
                   </div>
-                  <div className="flex flex-col items-end shrink-0">
-                    <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400">
-                      <BsCalendarCheck className="w-3 h-3" />
-                      {new Date(history.createdAt).toLocaleDateString()}
-                    </div>
-                    <span className="text-[10px] text-gray-400 font-medium">
-                      {new Date(history.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
+                  <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                  <span className="flex-1 min-w-0 text-xs text-gray-600 truncate" title={history.reason}>{history.reason}</span>
+                  <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                  <span className="w-[120px] shrink-0 text-xs text-gray-400">{new Date(history.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
               </div>
             );

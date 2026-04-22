@@ -109,64 +109,34 @@ export const AuctionManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {filteredProducts.slice(0, visibleCount).map((product) => (
-            <div key={product.id} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <img
-                    src={resolveImageUrl(product.images[0]) || ''}
-                    alt={product.title}
-                    className="w-9 h-9 rounded-none object-cover bg-gray-100 shrink-0"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                      <Link
-                        to={`/products/${product.id.replace('prod_', '')}`}
-                        target="_blank"
-                        className="text-sm font-bold text-gray-900 truncate hover:text-[#FF5A5A] hover:underline transition-colors"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {product.title}
-                      </Link>
-                      <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-bold ${product.status === 'active' ? 'bg-green-50 text-green-600' :
-                        product.status === 'completed' ? 'bg-gray-100 text-gray-500' :
-                          'bg-red-50 text-red-600'
-                        }`}>
-                        {product.status === 'active' ? '진행중' :
-                          product.status === 'completed' ? '종료됨' : '취소됨'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 flex-wrap text-xs">
-                      <Link
-                        to={`/admin/users?nickname=${product.seller.nickname}`}
-                        className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
-                      >
-                        {product.seller.nickname}
-                      </Link>
-                      <span className="text-gray-300">|</span>
-                      <span className="font-bold text-gray-900">{product.currentPrice.toLocaleString()}원</span>
-                      <span className="text-[10px] text-gray-400">시작 {product.startPrice.toLocaleString()}원</span>
-                      <span className="text-gray-300">|</span>
-                      <span className="inline-flex items-center gap-1 text-blue-600 font-bold">
-                        <BsPeople className="w-3 h-3" /> {product.participantCount}명
-                      </span>
-                      <span className="text-gray-300">|</span>
-                      <span className="inline-flex items-center gap-1 text-gray-500 font-medium">
-                        <BsStopwatch className="w-3.5 h-3.5" /> {getRemainingTime(product)}
-                      </span>
-                    </div>
-                  </div>
+            <div key={product.id} className="px-5 py-2.5 hover:bg-gray-50 transition-colors group">
+              <div className="flex items-center min-w-0">
+                <img src={resolveImageUrl(product.images[0]) || ''} alt={product.title} className="w-8 h-8 rounded-none object-cover bg-gray-100 shrink-0 mr-3" referrerPolicy="no-referrer" />
+                <Link to={`/products/${product.id.replace('prod_', '')}`} target="_blank" title={product.title} className="w-[200px] shrink-0 text-[13px] font-bold text-gray-900 truncate hover:text-[#FF5A5A] transition-colors" onClick={(e) => e.stopPropagation()}>
+                  {product.title}
+                </Link>
+                <div className="w-[56px] shrink-0">
+                  <span className={`inline-flex px-1.5 py-0.5 rounded-none text-[11px] font-bold ${product.status === 'active' ? 'bg-green-50 text-green-600' : product.status === 'completed' ? 'bg-gray-100 text-gray-500' : 'bg-red-50 text-red-600'}`}>
+                    {product.status === 'active' ? '진행중' : product.status === 'completed' ? '종료됨' : '취소됨'}
+                  </span>
                 </div>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <Link to={`/admin/users?nickname=${product.seller.nickname}`} className="w-[100px] shrink-0 text-xs font-bold text-gray-500 hover:text-[#FF5A5A] truncate" title={product.seller.nickname}>
+                  {product.seller.nickname}
+                </Link>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[96px] shrink-0 text-xs font-bold text-gray-900 truncate" title={`${product.currentPrice.toLocaleString()}원`}>{product.currentPrice.toLocaleString()}원</span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[60px] shrink-0 inline-flex items-center gap-1 text-xs font-bold text-blue-600">
+                  <BsPeople className="w-3 h-3" />{product.participantCount}명
+                </span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[88px] shrink-0 inline-flex items-center gap-1 text-xs text-gray-500">
+                  <BsStopwatch className="w-3 h-3 shrink-0" />{getRemainingTime(product)}
+                </span>
                 {product.status === 'active' && (
-                  <button
-                    onClick={() => {
-                      setSelectedProduct(product);
-                      setShowCancelModal(true);
-                    }}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0"
-                    title="경매 강제 종료"
-                  >
-                    <BsBan className="w-4 h-4" />
+                  <button onClick={() => { setSelectedProduct(product); setShowCancelModal(true); }} className="ml-auto p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0" title="경매 강제 종료">
+                    <BsBan className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>

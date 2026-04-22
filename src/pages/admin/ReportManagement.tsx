@@ -211,54 +211,36 @@ export const ReportManagement: React.FC = () => {
               const TargetIcon = target.icon;
               const resolved = isResolved(report.status);
               return (
-                <div key={report.reportNo} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className={`w-8 h-8 rounded-none ${target.bgColor} flex items-center justify-center shrink-0`}>
-                        <TargetIcon className={`w-4 h-4 ${target.color}`} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                          <span className={`inline-flex px-2 py-0.5 rounded-none text-[10px] font-bold ${resolved ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
-                            {resolved ? '처리됨' : '대기중'}
-                          </span>
-                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">#{report.reportNo}</span>
-                        </div>
-                        <button
-                          onClick={() => handleViewDetail(report.reportNo)}
-                          className="text-sm font-bold text-gray-900 mb-0.5 text-left hover:text-[#FF5A5A] transition-colors cursor-pointer"
-                        >
-                          {report.type ? `[${report.type}] ` : ''}{(report.content || '').length > 40 ? (report.content || '').slice(0, 40) + '…' : (report.content || '')}
-                        </button>
-                        <div className="flex items-center gap-3 flex-wrap text-xs">
-                          <Link
-                            to={`/admin/users?nickname=${report.reporterNickname || ''}`}
-                            className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
-                          >
-                            신고자: {report.reporterNickname || `#${report.reporterNo}`}
-                          </Link>
-                          <span className="text-gray-300">|</span>
-                          <Link
-                            to={target.link}
-                            className="font-bold text-gray-500 hover:text-[#FF5A5A] transition-colors"
-                          >
-                            대상: {target.name}
-                          </Link>
-                          <span className="text-gray-300">|</span>
-                          <span className="text-[10px] font-medium text-gray-400">{report.createdAt ? new Date(report.createdAt).toLocaleString() : '-'}</span>
-                        </div>
-                      </div>
+                <div key={report.reportNo} className="px-5 py-2.5 hover:bg-gray-50 transition-colors group">
+                  <div className="flex items-center min-w-0">
+                    <div className="w-[60px] shrink-0">
+                      <span className={`inline-flex px-1.5 py-0.5 rounded-none text-[11px] font-bold ${resolved ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
+                        {resolved ? '처리됨' : '대기중'}
+                      </span>
                     </div>
+                    <span className="w-[40px] shrink-0 text-[11px] font-bold text-gray-400">#{report.reportNo}</span>
+                    <div className="w-[72px] shrink-0">
+                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-none text-[10px] font-bold ${target.bgColor} ${target.color}`}>
+                        <TargetIcon className="w-2.5 h-2.5" />{report.type || '-'}
+                      </span>
+                    </div>
+                    <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                    <button onClick={() => handleViewDetail(report.reportNo)} className="flex-1 min-w-0 text-xs font-bold text-gray-900 truncate text-left hover:text-[#FF5A5A] transition-colors" title={report.content}>
+                      {report.content || '-'}
+                    </button>
+                    <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                    <Link to={`/admin/users?nickname=${report.reporterNickname || ''}`} className="w-[96px] shrink-0 text-xs font-bold text-gray-500 hover:text-[#FF5A5A] truncate" title={report.reporterNickname || `#${report.reporterNo}`}>
+                      {report.reporterNickname || `#${report.reporterNo}`}
+                    </Link>
+                    <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                    <Link to={target.link} className="w-[96px] shrink-0 text-xs font-bold text-gray-500 hover:text-[#FF5A5A] truncate" title={target.name}>
+                      {target.name}
+                    </Link>
+                    <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                    <span className="w-[96px] shrink-0 text-[11px] text-gray-400">{report.createdAt ? new Date(report.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-'}</span>
                     {!resolved && (
-                      <button
-                        onClick={() => {
-                          setSelectedReport(report);
-                          setShowResolveModal(true);
-                        }}
-                        className="p-2 text-gray-400 hover:text-[#FF5A5A] hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0"
-                        title="신고 처리"
-                      >
-                        <BsShieldExclamation className="w-4 h-4" />
+                      <button onClick={() => { setSelectedReport(report); setShowResolveModal(true); }} className="ml-2 p-1.5 text-gray-400 hover:text-[#FF5A5A] hover:bg-red-50 rounded-none transition-all opacity-0 group-hover:opacity-100 shrink-0" title="신고 처리">
+                        <BsShieldExclamation className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>

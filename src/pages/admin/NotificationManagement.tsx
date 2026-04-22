@@ -195,28 +195,21 @@ export const NotificationManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {recentNotifications.slice(0, visibleCount).map((noti) => (
-            <div key={noti.notiNo} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div>
-                    <p className="text-sm font-bold text-gray-900 leading-relaxed">{noti.content}</p>
-                    <div className="flex items-center gap-3 mt-1 flex-wrap">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                        {noti.type}
-                      </span>
-                      {noti.linkUrl && (
-                        <>
-                          <span className="text-[10px] font-medium text-gray-300">|</span>
-                          <span className="text-[10px] font-medium text-gray-400 flex items-center gap-1">
-                            <BsLink className="w-2.5 h-2.5" /> {noti.linkUrl}
-                          </span>
-                        </>
-                      )}
-                      <span className="text-[10px] font-medium text-gray-300">|</span>
-                      <span className="text-[10px] font-medium text-gray-400">{new Date(noti.createdAt).toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
+            <div key={noti.notiNo} className="px-5 py-2.5 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center min-w-0">
+                <span className="w-[56px] shrink-0 text-[11px] font-bold uppercase tracking-widest text-gray-400">{noti.type}</span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="flex-1 min-w-0 text-xs font-bold text-gray-900 truncate" title={noti.content}>{noti.content}</span>
+                {noti.linkUrl && (
+                  <>
+                    <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                    <span className="w-[160px] shrink-0 text-[11px] text-gray-400 truncate inline-flex items-center gap-1" title={noti.linkUrl}>
+                      <BsLink className="w-2.5 h-2.5 shrink-0" />{noti.linkUrl}
+                    </span>
+                  </>
+                )}
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[120px] shrink-0 text-[11px] text-gray-400">{new Date(noti.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
               </div>
             </div>
           ))}

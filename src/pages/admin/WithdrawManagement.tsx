@@ -183,71 +183,42 @@ export const WithdrawManagement: React.FC = () => {
 
         <div className="divide-y divide-gray-50">
           {filteredWithdraws.map(item => (
-            <div key={item.withdrawNo} className="px-5 py-2 hover:bg-gray-50 transition-colors group">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-8 h-8 rounded-none bg-gray-100 flex items-center justify-center shrink-0">
-                    <BsWallet className="w-4 h-4 text-gray-400" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                      {getStatusBadge(item.status)}
-                      <span className="text-sm font-bold text-gray-900">{item.memberNickname}</span>
-                      <span className="text-[10px] text-gray-400 font-medium">#{item.memberNo}</span>
-                      <span className="text-sm font-bold text-[#FF5A5A]">{item.amount.toLocaleString()}원</span>
-                    </div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-none">{item.bankName}</span>
-                      <span className="text-xs font-bold text-gray-900">{item.accountNumber}</span>
-                      <span className="text-[10px] text-gray-400 font-medium">예금주: {item.accountHolder}</span>
-                    </div>
-                    <div className="flex items-center gap-3 flex-wrap text-xs">
-                      <span className="text-[10px] font-medium text-gray-400">신청 {formatDate(item.createdAt)}</span>
-                      {item.processedAt && (
-                        <>
-                          <span className="text-gray-300">|</span>
-                          <span className="text-[10px] font-medium text-gray-400">처리 {formatDate(item.processedAt)}</span>
-                        </>
-                      )}
-                      {item.adminNickname && (
-                        <>
-                          <span className="text-gray-300">|</span>
-                          <span className="text-[10px] font-bold text-gray-500">처리자: {item.adminNickname}</span>
-                        </>
-                      )}
-                      {item.rejectReason && (
-                        <>
-                          <span className="text-gray-300">|</span>
-                          <span className="text-[10px] font-medium text-rose-400" title={item.rejectReason}>사유: {item.rejectReason}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
+            <div key={item.withdrawNo} className="px-5 py-2.5 hover:bg-gray-50 transition-colors group">
+              <div className="flex items-center min-w-0">
+                <div className="w-[56px] shrink-0">{getStatusBadge(item.status)}</div>
+                <span className="w-[100px] shrink-0 text-[13px] font-bold text-gray-900 truncate" title={item.memberNickname}>{item.memberNickname}</span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[96px] shrink-0 text-xs font-bold text-[#FF5A5A]">{item.amount.toLocaleString()}원</span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[52px] shrink-0 text-[11px] font-bold px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-none">{item.bankName}</span>
+                <span className="w-[120px] shrink-0 text-xs font-bold text-gray-900 ml-1.5 truncate" title={item.accountNumber}>{item.accountNumber}</span>
+                <span className="w-[72px] shrink-0 text-[11px] text-gray-400 truncate" title={item.accountHolder}>{item.accountHolder}</span>
+                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                <span className="w-[88px] shrink-0 text-[11px] text-gray-400">신청 {formatDate(item.createdAt)}</span>
+                {item.processedAt && (
+                  <>
+                    <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                    <span className="w-[88px] shrink-0 text-[11px] text-gray-400">처리 {formatDate(item.processedAt)}</span>
+                  </>
+                )}
+                {item.rejectReason && (
+                  <>
+                    <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                    <span className="flex-1 min-w-0 text-[11px] text-rose-400 truncate" title={item.rejectReason}>사유: {item.rejectReason}</span>
+                  </>
+                )}
                 {(item.status === '신청' || item.status === '처리중') && (
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-auto">
                     {item.status === '신청' && (
-                      <button
-                        onClick={() => openConfirm(item, '처리중')}
-                        className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-none transition-all"
-                        title="처리중으로 변경"
-                      >
-                        <BsArrowRepeat className="w-4 h-4" />
+                      <button onClick={() => openConfirm(item, '처리중')} className="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-none transition-all" title="처리중으로 변경">
+                        <BsArrowRepeat className="w-3.5 h-3.5" />
                       </button>
                     )}
-                    <button
-                      onClick={() => openConfirm(item, '완료')}
-                      className="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-none transition-all"
-                      title="출금 완료"
-                    >
-                      <BsCheckCircle className="w-4 h-4" />
+                    <button onClick={() => openConfirm(item, '완료')} className="p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-none transition-all" title="출금 완료">
+                      <BsCheckCircle className="w-3.5 h-3.5" />
                     </button>
-                    <button
-                      onClick={() => openConfirm(item, '거절')}
-                      className="p-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-none transition-all"
-                      title="신청 거절"
-                    >
-                      <BsXCircle className="w-4 h-4" />
+                    <button onClick={() => openConfirm(item, '거절')} className="p-1.5 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-none transition-all" title="신청 거절">
+                      <BsXCircle className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 )}
