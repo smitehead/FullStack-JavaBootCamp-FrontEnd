@@ -50,6 +50,8 @@ function mapToProduct(item: any): Product & { bidStatus?: string } {
     auctionResultStatus: item.auctionResultStatus || null,
     resultNo: item.resultNo || null,
     hasReview: item.hasReview ?? null,
+    hasBuyerReview: item.hasBuyerReview ?? null,
+    hasSellerReview: item.hasSellerReview ?? null,
   };
 }
 
@@ -577,7 +579,7 @@ export const MyPage: React.FC = () => {
                         onWishlistToggle={handleWishlistToggle}
                       />
                       <div className="flex items-center justify-end px-1">
-                        {p.hasReview === false && isResultConfirmed && p.resultNo && (
+                        {(p.hasSellerReview === false || p.hasReview === false) && isResultConfirmed && p.resultNo ? (
                           <button
                             onClick={(e) => {
                               e.preventDefault();
@@ -588,7 +590,14 @@ export const MyPage: React.FC = () => {
                           >
                             후기 작성하기
                           </button>
-                        )}
+                        ) : (isResultConfirmed && p.resultNo && (
+                          <button
+                            disabled
+                            className="inline-flex items-center px-3 py-1 bg-gray-50 border border-gray-100 text-gray-400 rounded-full text-xs font-bold cursor-not-allowed font-sans"
+                          >
+                            거래 완료
+                          </button>
+                        ))}
                       </div>
                     </div>
                   );
@@ -616,7 +625,7 @@ export const MyPage: React.FC = () => {
                   <div key={p.id} className="flex flex-col gap-2">
                     <ProductCard product={p} hideOverlay onWishlistToggle={handleWishlistToggle} />
                     <div className="flex items-center justify-end px-1">
-                      {p.hasReview === false && p.resultNo && (
+                      {(p.hasBuyerReview === false || p.hasReview === false) && p.resultNo ? (
                         <button
                           onClick={(e) => {
                             e.preventDefault();
@@ -627,7 +636,14 @@ export const MyPage: React.FC = () => {
                         >
                           후기 작성하기
                         </button>
-                      )}
+                      ) : (p.resultNo && (
+                        <button
+                          disabled
+                          className="inline-flex items-center px-3 py-1 bg-gray-50 border border-gray-100 text-gray-400 rounded-full text-xs font-bold cursor-not-allowed font-sans"
+                        >
+                          거래 완료
+                        </button>
+                      ))}
                     </div>
                   </div>
                 ))}
@@ -799,7 +815,9 @@ export const MyPage: React.FC = () => {
           productImage={selectedProductForReview.images?.[0] || ''}
           role={activeTab === 'selling' ? 'seller' : 'buyer'}
           onSuccess={() => {
-            fetchPurchasedProducts();
+            if (activeTab === 'selling') fetchSellingProducts(sellingPage);
+            else if (activeTab === 'purchased') fetchPurchasedProducts(purchasedPage);
+            else if (activeTab === 'bidding') fetchBiddingProducts(biddingPage);
           }}
         />
       )}

@@ -68,6 +68,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
         resultNo,
         tags: selectedTags.length > 0 ? selectedTags : null,
         content: reviewContent.trim() || null,
+        role,
       });
       setShowSuccess(true);
       setTimeout(() => {
