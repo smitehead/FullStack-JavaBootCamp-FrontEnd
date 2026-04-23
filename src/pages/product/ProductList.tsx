@@ -119,14 +119,14 @@ export const ProductList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, district, neighborhood, delivery, faceToFace, sort, keyword]);
+  }, [searchParams, user]);
 
   // 필터 변경 시 초기화 + 첨 페이지 로드
   useEffect(() => {
     fetchedPageRef.current = 1;
     setPage(1);
     fetchProducts(1, true);
-  }, [largeCat, mediumCat, smallCat, minPrice, maxPrice, city, district, neighborhood, delivery, faceToFace, sort, keyword]);
+  }, [searchParams, fetchProducts]);
 
   // 페이지 변경 시(무한 스크롤) 추가 로드
   useEffect(() => {
