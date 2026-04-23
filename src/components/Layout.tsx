@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { BsStars } from 'react-icons/bs';
-
 import { BsArrowUpRight, BsPersonCircle, BsGear, BsBell, BsClock, BsList, BsChat, BsSearch, BsX } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
 import { getProfileImageUrl } from '@/utils/imageUtils';
-import { formatMessagePreview } from '@/utils/chatUtils';
+import { formatMessagePreview, formatRelativeTime } from '@/utils/chatUtils';
 import { SORRY_IMAGE_BASE64 } from '@/assets/images/sorry_base64';
 import mainLogo from '@/assets/images/main_logo.png';
 
@@ -296,19 +294,31 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                   setIsNotiOpen(false);
                                 }}
                               >
-                                {chat.unreadCount > 0 && (
-                                  <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-brand" />
-                                )}
                                 <div className="flex items-center gap-3">
-                                  <img src={getProfileImageUrl(chat.otherUser.profileImage)} alt="" className="w-8 h-8 rounded-full bg-gray-100 object-cover" />
+                                  <div className="relative flex-shrink-0">
+                                    <img
+                                      src={chat.productImage || '/images/default-product.png'}
+                                      alt={chat.productTitle}
+                                      className="w-10 h-10 rounded-xl object-cover border border-gray-100"
+                                    />
+                                    <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white overflow-hidden shadow-sm bg-gray-100">
+                                      <img
+                                        src={getProfileImageUrl(chat.otherUser.profileImage)}
+                                        alt={chat.otherUser.nickname}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                  </div>
                                   <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-center mb-1">
                                       <span className="font-bold text-gray-900 truncate">{chat.otherUser.nickname}</span>
                                       {chat.lastMessageAt && (
-                                        <span className="text-[10px] text-gray-400">{new Date(chat.lastMessageAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                                        <span className="text-[10px] text-gray-400">{formatRelativeTime(chat.lastMessageAt)}</span>
                                       )}
                                     </div>
-                                    <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>{formatMessagePreview(chat.lastMessage) || '첫 대화를 남겨보세요'}</p>
+                                    <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'text-brand font-bold' : 'text-gray-400'}`}>
+                                      {formatMessagePreview(chat.lastMessage) || '첫 대화를 남겨보세요'}
+                                    </p>
                                   </div>
                                 </div>
                               </Link>
@@ -499,9 +509,6 @@ const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="md:col-span-5">
             <div className="flex items-center space-x-2 mb-6">
-              <div className="bg-gray-400 p-1.5 rounded-lg">
-                <BsStars className="w-5 h-5 text-white" />
-              </div>
               <span className="text-xl font-bold text-gray-700 tracking-tight">JAVAJAVA</span>
             </div>
             <div className="space-y-2 text-sm text-gray-500 font-medium leading-relaxed">

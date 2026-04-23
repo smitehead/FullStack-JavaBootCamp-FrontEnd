@@ -429,6 +429,11 @@ export const BannerManagement: React.FC = () => {
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-medium text-sm"
                     value={sortOrder}
                     onChange={(e) => setSortOrder(Number(e.target.value))}
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                   />
                   <p className="text-[10px] text-gray-400 mt-1">숫자가 작을수록 먼저 노출</p>
                 </div>

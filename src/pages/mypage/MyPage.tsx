@@ -2,9 +2,11 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBag, BsBagFill, BsPencilSquare, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
-
-import { BsHeart, BsHeartFill, BsGear, BsWallet, BsBox2, BsShop, BsTrophy, BsChat, BsCheckCircle } from 'react-icons/bs';
+import { 
+  BsBag, BsBagFill, BsPencilSquare, BsChevronLeft, BsChevronRight,
+  BsHeart, BsHeartFill, BsGear, BsGearFill, BsWallet, BsBox2, BsShop, 
+  BsTrophy, BsChat, BsThreeDotsVertical, BsXCircleFill, BsEyeSlash
+} from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -48,6 +50,8 @@ function mapToProduct(item: any): Product & { bidStatus?: string } {
     auctionResultStatus: item.auctionResultStatus || null,
     resultNo: item.resultNo || null,
     hasReview: item.hasReview ?? null,
+    hasBuyerReview: item.hasBuyerReview ?? null,
+    hasSellerReview: item.hasSellerReview ?? null,
   };
 }
 
@@ -83,6 +87,15 @@ export const MyPage: React.FC = () => {
     createdAt: string;
   }
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [hideModalId, setHideModalId] = useState<number | null>(null);
+
+  // Close menu on click outside
+  useEffect(() => {
+    const handleOutsideClick = () => setOpenMenuId(null);
+    window.addEventListener('click', handleOutsideClick);
+    return () => window.removeEventListener('click', handleOutsideClick);
+  }, []);
 
   // 리뷰 탭 진입 시 API 호출
   useEffect(() => {
@@ -92,7 +105,7 @@ export const MyPage: React.FC = () => {
     api.get(`/reviews/target/${memberNo}`)
       .then(res => setReviews(res.data))
       .catch(() => setReviews([]));
-  }, [activeTab]);
+  }, [activeTab, user]);
 
   const [sellingProducts, setSellingProducts] = useState<Product[]>([]);
   const [biddingProducts, setBiddingProducts] = useState<(Product & { bidStatus?: string })[]>([]);
@@ -241,6 +254,17 @@ export const MyPage: React.FC = () => {
     setPurchasedProducts(updateList);
   }, [activeTab]);
 
+  const handleHideReview = async (reviewNo: number) => {
+    try {
+      await api.put(`/reviews/${reviewNo}/hide`);
+      setReviews(prev => prev.filter(r => r.reviewNo !== reviewNo));
+      showToast('후기가 숨김 처리되었습니다.', 'success');
+      setHideModalId(null);
+    } catch (err: any) {
+      showToast(err.response?.data?.message || '오류가 발생했습니다.', 'error');
+    }
+  };
+
   // 로그인 시 카운트 표시용 사전 로드
   useEffect(() => {
     if (!user) return;
@@ -321,14 +345,7 @@ export const MyPage: React.FC = () => {
   }, [activeTab, user, fetchBiddingProducts, biddingFilter, biddingPage]);
 
 
-  // 서버 사이드 필터링 사용으로 변경 (이전의 클라이언트 필터링 로직 제거)
-
-
   // 입찰 상태별 뱃지
-  // bidding  → 상위입찰자 (경매 진행 중, 내가 최고 입찰자)
-  // outbid   → 추월변동   (경매 진행 중, 다른 사람에게 추월당함) — SSE 오버라이드
-  // won      → 낙찰성공   (경매 종료 후 낙찰)
-  // lost     → 뱃지 없음  (낙찰 실패는 표시하지 않음)
   const getBidStatusBadge = (bidStatus?: string) => {
     switch (bidStatus) {
       case 'bidding':
@@ -375,10 +392,15 @@ export const MyPage: React.FC = () => {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-gray-100 hover:border-gray-200 transition-all duration-300 border border-gray-100 disabled:opacity-50">
+            <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-gray-100 hover:border-gray-200 transition-all duration-300 border border-gray-100 disabled:opacity-50 group">
               {uploadingProfile
                 ? <div className="w-5 h-5 border-2 border-brand/20 border-t-brand rounded-full animate-spin" />
-                : <BsGear className="w-5 h-5" />
+                : (
+                  <>
+                    <BsGear className="w-5 h-5 block group-hover:hidden" />
+                    <BsGearFill className="w-5 h-5 hidden group-hover:block" />
+                  </>
+                )
               }
             </button>
             <input type="file" ref={fileInputRef} onChange={handleProfileImageChange} accept="image/*" className="hidden" />
@@ -506,7 +528,10 @@ export const MyPage: React.FC = () => {
                     fetchSellingProducts(1, filter);
                   }}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {filter === 'all' ? '전체' : filter === 'active' ? '경매중' : filter === 'ended' ? '경매종료' : '판매완료'}
+                    {filter === 'all' ? '전체'
+                      : filter === 'active' ? '경매중'
+                      : filter === 'completed' ? '판매완료'
+                      : '경매종료'}
                   </button>
                 ))}
               </div>
@@ -530,7 +555,7 @@ export const MyPage: React.FC = () => {
 
           {loading ? (
             <div className="flex justify-center py-20">
-              <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+              <div className="spinner-border w-8 h-8" />
             </div>
           ) : (
             <>
@@ -538,23 +563,43 @@ export const MyPage: React.FC = () => {
                 {/* 판매 내역 */}
                 {activeTab === 'selling' && sellingProducts.map(p => {
                   const ars = p.auctionResultStatus;
-                  // 낙찰 후 구매 확정 대기 중: 배송대기 | 결제완료 | 취소요청
-                  const hasPendingResult = p.status === 'completed'
-                    && ars != null
-                    && !['유찰', '구매확정', '거래취소'].includes(String(ars));
-                  const isResultConfirmed = ars === '구매확정';
+                  const hasPendingResult = p.status === 'pending';
+                  const isResultConfirmed = p.status === 'completed';
+                  const isResultCanceled = p.status === 'canceled';
 
                   return (
-                    <ProductCard
-                      key={p.id}
-                      product={p}
-                      isSold={p.status === 'completed'}
-                      isConfirmed={isResultConfirmed}
-                      isSellerPending={hasPendingResult}
-                      sellerCancelRequested={ars === '취소요청'}
-                      customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
-                      onWishlistToggle={handleWishlistToggle}
-                    />
+                    <div key={p.id} className="flex flex-col gap-2">
+                      <ProductCard
+                        product={p}
+                        isSold={isResultConfirmed || isResultCanceled}
+                        isConfirmed={isResultConfirmed}
+                        isSellerPending={hasPendingResult}
+                        sellerCancelRequested={ars === '취소요청'}
+                        customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
+                        onWishlistToggle={handleWishlistToggle}
+                      />
+                      <div className="flex items-center justify-end px-1">
+                        {(p.hasSellerReview === false || p.hasReview === false) && isResultConfirmed && p.resultNo ? (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedProductForReview(p);
+                              setShowReviewModal(true);
+                            }}
+                            className="inline-flex items-center px-3 py-1 bg-white border border-gray-200 text-gray-700 rounded-full text-xs font-bold hover:bg-gray-50 transition-all font-sans"
+                          >
+                            후기 작성하기
+                          </button>
+                        ) : (isResultConfirmed && p.resultNo && (
+                          <button
+                            disabled
+                            className="inline-flex items-center px-3 py-1 bg-gray-50 border border-gray-100 text-gray-400 rounded-full text-xs font-bold cursor-not-allowed font-sans"
+                          >
+                            거래 완료
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   );
                 })}
 
@@ -580,7 +625,7 @@ export const MyPage: React.FC = () => {
                   <div key={p.id} className="flex flex-col gap-2">
                     <ProductCard product={p} hideOverlay onWishlistToggle={handleWishlistToggle} />
                     <div className="flex items-center justify-end px-1">
-                      {p.hasReview === false && p.resultNo && (
+                      {(p.hasBuyerReview === false || p.hasReview === false) && p.resultNo ? (
                         <button
                           onClick={(e) => {
                             e.preventDefault();
@@ -591,7 +636,14 @@ export const MyPage: React.FC = () => {
                         >
                           후기 작성하기
                         </button>
-                      )}
+                      ) : (p.resultNo && (
+                        <button
+                          disabled
+                          className="inline-flex items-center px-3 py-1 bg-gray-50 border border-gray-100 text-gray-400 rounded-full text-xs font-bold cursor-not-allowed font-sans"
+                        >
+                          거래 완료
+                        </button>
+                      ))}
                     </div>
                   </div>
                 ))}
@@ -636,7 +688,8 @@ export const MyPage: React.FC = () => {
                         {(() => {
                           const tagCounts: Record<string, number> = {};
                           reviews.forEach(r => r.tags?.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
-                          return Object.entries(tagCounts).map(([tag, count]) => (
+                          const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+                          return sortedTags.map(([tag, count]) => (
                             <div key={tag} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
                               <span className="text-sm font-medium text-gray-700">{tag}</span>
                               <span className="bg-indigo-100 text-indigo-600 text-xs font-bold px-2 py-0.5 rounded-full">{count}</span>
@@ -654,9 +707,36 @@ export const MyPage: React.FC = () => {
                       reviews.map(review => (
                         <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                           <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <p className="font-bold text-gray-900">{review.writerNickname}</p>
-                              <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</p>
+                            <div className="flex items-center gap-3">
+                              <span className="font-bold text-gray-900">{review.writerNickname}</span>
+                              <span className="text-xs text-gray-400 font-medium">{new Date(review.createdAt).toLocaleDateString()}</span>
+                            </div>
+
+                            <div className="relative">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenMenuId(openMenuId === review.reviewNo ? null : review.reviewNo);
+                                }}
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                              >
+                                <BsThreeDotsVertical className="w-5 h-5 text-gray-400" />
+                              </button>
+                              
+                              {openMenuId === review.reviewNo && (
+                                <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setHideModalId(review.reviewNo);
+                                      setOpenMenuId(null);
+                                    }}
+                                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                                  >
+                                    <BsEyeSlash className="w-4 h-4 mr-2.5" /> 후기 숨기기
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                           {review.tags && review.tags.length > 0 && (
@@ -690,6 +770,35 @@ export const MyPage: React.FC = () => {
               )}
             </>
           )}
+
+          {/* Hide Confirm Modal */}
+          {hideModalId && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setHideModalId(null)} />
+              <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+                <div className="p-8 text-left">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">후기를 숨기시겠습니까?</h3>
+                  <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                    후기 숨기기는 다시 되돌릴 수 없습니다.
+                  </p>
+                  <div className="flex gap-3 w-full">
+                    <button 
+                      onClick={() => setHideModalId(null)}
+                      className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+                    >
+                      취소
+                    </button>
+                    <button 
+                      onClick={() => handleHideReview(hideModalId)}
+                      className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
+                    >
+                      숨기기
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -701,11 +810,14 @@ export const MyPage: React.FC = () => {
             setSelectedProductForReview(null);
           }}
           resultNo={selectedProductForReview.resultNo!}
-          sellerNickname={selectedProductForReview.seller.nickname}
+          sellerNickname={activeTab === 'selling' ? '구매자' : (selectedProductForReview.seller?.nickname || '판매자')}
           productTitle={selectedProductForReview.title}
-          productImage={selectedProductForReview.images[0]}
+          productImage={selectedProductForReview.images?.[0] || ''}
+          role={activeTab === 'selling' ? 'seller' : 'buyer'}
           onSuccess={() => {
-            fetchPurchasedProducts();
+            if (activeTab === 'selling') fetchSellingProducts(sellingPage);
+            else if (activeTab === 'purchased') fetchPurchasedProducts(purchasedPage);
+            else if (activeTab === 'bidding') fetchBiddingProducts(biddingPage);
           }}
         />
       )}
@@ -743,7 +855,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: {
           onClick={() => onPageChange(p)}
           className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${p === currentPage
             ? 'bg-brand text-white'
-            : 'border border-gray-200 text-gray-500 hover:border-gray-900 hover:text-gray-900'
+            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
             }`}
         >
           {p}

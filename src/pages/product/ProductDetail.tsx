@@ -901,22 +901,22 @@ export const ProductDetail: React.FC = () => {
               <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[150] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
                 <button
                   onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
-                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors border-b border-gray-50"
+                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                 >
                   <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
                 </button>
                 {!isFinished && (
                   <button
                     onClick={() => { setShowMoreMenu(false); setShowCancelModal(true); }}
-                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors border-b border-gray-50"
+                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                   >
                     <BsHouseX className="w-4 h-4 mr-2.5" /> 경매 취소하기
                   </button>
                 )}
-                {isFinished && (product.participantCount === 0 || product.status === 'closed_failed') && (
+                {isFinished && product && (product.participantCount === 0 || product.status === 'closed_failed') && (
                   <button
                     onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
-                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                   >
                     <BsArrowRepeat className="w-4 h-4 mr-2.5" /> 재게시하기
                   </button>
@@ -957,7 +957,7 @@ export const ProductDetail: React.FC = () => {
             )}
 
             {/* 낙찰 성공 칩 */}
-            {isFinished && isHighestBidder && (product.status === 'completed' || product.status === 'pending_payment') && (
+            {isFinished && isHighestBidder && product && (product.status === 'completed' || product.status === 'pending_payment') && (
               <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
                 <div className="flex items-center px-3 py-1.5 rounded-full shadow-lg bg-white border border-gray-100">
                   <span className="text-xs font-medium text-gray-900 tracking-tight">
@@ -1175,8 +1175,8 @@ export const ProductDetail: React.FC = () => {
                     <button
                       onClick={() => openBidModal('auto')}
                       className={`flex-1 h-[56px] border-2 font-bold rounded-2xl transition-colors flex items-center justify-center ${activeAutoBid
-                          ? "border-[#191970] text-[#191970] hover:bg-[#191970]/10"
-                          : "border-brand text-brand hover:bg-brand/10"
+                        ? "border-[#191970] text-[#191970] hover:bg-[#191970]/10"
+                        : "border-brand text-brand hover:bg-brand/10"
                         }`}
                     >
                       {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}
@@ -1294,7 +1294,7 @@ export const ProductDetail: React.FC = () => {
                       <XAxis dataKey="label" tick={{ fontSize: 10 }} stroke="#9ca3af" />
                       <YAxis domain={['auto', 'auto']} tickFormatter={(value) => `${((value || 0) / 10000).toLocaleString()}만`} stroke="#9ca3af" tick={{ fontSize: 10 }} />
                       <Tooltip formatter={(value: number) => `${(value || 0).toLocaleString()}원`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
-                      <Line type="monotone" dataKey="amount" stroke="#FF5A5A" strokeWidth={3} dot={{ r: 4, fill: '#FF5A5A' }} activeDot={{ r: 6 }} />
+                      <Line name="입찰가" type="monotone" dataKey="amount" stroke="#FF5A5A" strokeWidth={3} dot={{ r: 4, fill: '#FF5A5A' }} activeDot={{ r: 6 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -1558,6 +1558,11 @@ export const ProductDetail: React.FC = () => {
                         value={bidAmount}
                         step={product.minBidIncrement}
                         onChange={(e) => setBidAmount(Number(e.target.value))}
+                        onKeyDown={(e) => {
+                          if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-brand focus:bg-white outline-none transition-all pr-12"
                       />
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
@@ -1582,6 +1587,11 @@ export const ProductDetail: React.FC = () => {
                         value={autoBidMaxAmount}
                         step={product.minBidIncrement}
                         onChange={(e) => setAutoBidMaxAmount(Number(e.target.value))}
+                        onKeyDown={(e) => {
+                          if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-brand focus:bg-white outline-none transition-all pr-12"
                       />
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>

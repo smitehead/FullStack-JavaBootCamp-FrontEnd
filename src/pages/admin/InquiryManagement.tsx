@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BsTrash3, BsSend, BsCheckCircle, BsPerson, BsChatLeftDots, BsSearch } from 'react-icons/bs';
+import { BsTrash3, BsSend, BsCheckCircle, BsPerson, BsChatLeftDots, BsSearch, BsFunnel } from 'react-icons/bs';
 import { Inquiry } from '@/types';
 import { showToast } from '@/components/toastService';
 import { ImageLightbox } from '@/components/ImageLightbox';
@@ -100,52 +100,8 @@ export const InquiryManagement: React.FC = () => {
           </div>
         </header>
 
-        <div className="flex flex-col space-y-3">
-          <div className="flex items-center space-x-6 border-b border-gray-200 w-full px-1">
-            {(['전체', '답변 대기중', '답변 완료'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => {
-                  setActiveTab(tab);
-                  setSelectedType('전체');
-                }}
-                className={`pb-3 text-xs font-bold transition-all relative ${activeTab === tab
-                  ? 'text-[#FF5A5A]'
-                  : 'text-gray-400 hover:text-gray-600'
-                  }`}
-              >
-                {tab}
-                {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF5A5A]" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {(activeTab === '답변 대기중' || activeTab === '답변 완료') && (
-            <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-hide">
-              {['전체', '버그 신고', '계정 문의', '기타'].map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedType(cat);
-                  }}
-                  className={`px-3 py-1.5 rounded-none text-[10px] font-bold whitespace-nowrap transition-all border ${selectedType === cat
-                    ? 'bg-[#FF5A5A] text-white border-[#FF5A5A] shadow-sm'
-                    : 'bg-white text-gray-500 border-gray-100 hover:border-gray-200'
-                    }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-end">
-          <div className="relative flex items-center h-10 w-64">
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative flex items-center h-10 flex-1 min-w-[160px]">
             <div className="absolute left-3 top-0 bottom-0 flex items-center pointer-events-none">
               <BsSearch className="text-gray-400 w-4 h-4" />
             </div>
@@ -156,6 +112,30 @@ export const InquiryManagement: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+          </div>
+          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-none px-4 py-2.5 shadow-sm">
+            <BsFunnel className="w-3.5 h-3.5 text-gray-400" />
+            <select
+              className="bg-transparent text-xs font-bold text-gray-600 focus:outline-none cursor-pointer"
+              value={activeTab}
+              onChange={(e) => { setActiveTab(e.target.value as typeof activeTab); setSelectedType('전체'); }}
+            >
+              <option value="전체">전체 상태</option>
+              <option value="답변 대기중">답변 대기중</option>
+              <option value="답변 완료">답변 완료</option>
+            </select>
+            <div className="w-px h-3 bg-gray-200 mx-1" />
+            <select
+              className="bg-transparent text-xs font-bold text-gray-600 focus:outline-none cursor-pointer"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+            >
+              <option value="전체">전체 유형</option>
+              <option value="버그 신고">버그 신고</option>
+              <option value="계정 문의">계정 문의</option>
+              <option value="포인트 문의">포인트 문의</option>
+              <option value="기타">기타</option>
+            </select>
           </div>
         </div>
 

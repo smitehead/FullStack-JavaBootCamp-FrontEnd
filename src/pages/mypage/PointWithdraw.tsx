@@ -293,6 +293,11 @@ export const PointWithdraw: React.FC = () => {
                       <input
                         type="text"
                         value={newAccount}
+                        onKeyDown={(e) => {
+                          if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         onChange={(e) => setNewAccount(e.target.value.replace(/\D/g, ''))}
                         placeholder="계좌번호 입력 (- 제외)"
                         className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-indigo-600 outline-none transition-all font-bold focus:bg-white"
@@ -314,6 +319,11 @@ export const PointWithdraw: React.FC = () => {
               <input
                 type="text"
                 value={amount}
+                onKeyDown={(e) => {
+                  if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ''))}
                 placeholder="0"
                 className="w-full text-4xl font-bold py-4 border-b-4 border-gray-100 focus:border-indigo-600 outline-none transition-all placeholder:text-gray-200 text-center pr-8"

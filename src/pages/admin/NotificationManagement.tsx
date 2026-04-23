@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BsSend, BsLink } from 'react-icons/bs';
 
-import { BsInfoCircle, BsBell, BsPlusLg, BsX } from 'react-icons/bs';
+import { BsInfoCircle, BsBell, BsPlusLg, BsX, BsFunnel } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
@@ -15,6 +15,8 @@ interface AdminNotification {
   createdAt: string;
 }
 
+type TypeFilter = 'all' | '시스템' | '활동' | '입찰';
+
 const ITEMS_PER_PAGE = 15;
 
 export const NotificationManagement: React.FC = () => {
@@ -22,16 +24,18 @@ export const NotificationManagement: React.FC = () => {
   const [message, setMessage] = useState('');
   const [link, setLink] = useState('');
   const [type, setType] = useState('시스템');
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const fetchRecentNotifications = async () => {
+  const fetchRecentNotifications = async (filter: TypeFilter = typeFilter) => {
     setIsLoading(true);
     try {
-      const res = await api.get('/admin/notifications/recent');
+      const params = filter !== 'all' ? { type: filter } : {};
+      const res = await api.get('/admin/notifications/recent', { params });
       setRecentNotifications(res.data);
     } catch (err) {
       console.error('알림 내역 조회 실패:', err);
@@ -41,8 +45,9 @@ export const NotificationManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchRecentNotifications();
-  }, []);
+    fetchRecentNotifications(typeFilter);
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [typeFilter]);
 
   const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
     if (entries[0].isIntersecting && visibleCount < recentNotifications.length) {
@@ -75,7 +80,7 @@ export const NotificationManagement: React.FC = () => {
       setType('시스템');
       setShowForm(false);
       showToast('알림이 성공적으로 전송되었습니다.', 'success');
-      await fetchRecentNotifications();
+      await fetchRecentNotifications(typeFilter);
     } catch (err) {
       console.error('알림 발송 실패:', err);
       showToast('알림 발송에 실패했습니다.', 'error');
@@ -103,13 +108,28 @@ export const NotificationManagement: React.FC = () => {
           <h1 className="text-lg font-bold text-gray-900 tracking-tight">알림 관리</h1>
           <p className="text-gray-500 mt-0.5 text-xs font-medium">사용자에게 새로운 알림을 발송하고 내역을 확인합니다.</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-xs"
-        >
-          {showForm ? <BsX className="w-4 h-4" /> : <BsPlusLg className="w-4 h-4" />}
-          {showForm ? '닫기' : '새 알림 등록'}
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-none px-4 py-2.5 shadow-sm">
+            <BsFunnel className="w-3.5 h-3.5 text-gray-400" />
+            <select
+              className="bg-transparent text-xs font-bold text-gray-600 focus:outline-none cursor-pointer"
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}
+            >
+              <option value="all">전체 유형</option>
+              <option value="시스템">시스템</option>
+              <option value="활동">활동</option>
+              <option value="입찰">입찰</option>
+            </select>
+          </div>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] text-white font-bold rounded-none hover:bg-[#E04848] transition-all shadow-lg shadow-red-500/20 active:scale-95 text-xs"
+          >
+            {showForm ? <BsX className="w-4 h-4" /> : <BsPlusLg className="w-4 h-4" />}
+            {showForm ? '닫기' : '새 알림 등록'}
+          </button>
+        </div>
       </header>
 
       <AnimatePresence>

@@ -113,7 +113,7 @@ export interface Product {
   images: string[];
   participantCount: number;
   bids: BidHistory[];
-  status: "active" | "completed" | "canceled" | "pending_payment" | "closed_failed";
+  status: "active" | "ended" | "pending" | "completed" | "canceled" | "failed" | "closed_failed" | "pending_payment";
   location: string;
   detailedAddress?: string;
   transactionMethod: TransactionMethod;
@@ -125,6 +125,8 @@ export interface Product {
   auctionResultStatus?: string;
   resultNo?: number;
   hasReview?: boolean;
+  hasBuyerReview?: boolean;
+  hasSellerReview?: boolean;
 }
 
 export type NotificationType = "bid" | "activity" | "제재" | "제재해제" | "QNA" | "QNA_ANSWER";

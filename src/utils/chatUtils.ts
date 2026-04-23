@@ -1,6 +1,7 @@
+import { format, isToday, differenceInCalendarDays, differenceInMonths, differenceInYears } from 'date-fns';
+
 /**
  * 채팅 및 알림 메시지 프리뷰를 사용자 친화적인 문자열로 변환합니다.
- * JSON 데이터나 HTML 태그가 포함된 경우 이를 적절한 텍스트로 대체합니다.
  */
 export const formatMessagePreview = (content: string | null | undefined): string => {
   if (!content) return '';
@@ -38,4 +39,35 @@ export const formatMessagePreview = (content: string | null | undefined): string
   }
 
   return stripped;
+};
+
+/**
+ * 날짜 문자열을 상대표기 방식(오늘: 시간, 그외: N일전/N개월전/N년전)으로 변환합니다.
+ */
+export const formatRelativeTime = (dateStr: string | null | undefined): string => {
+  if (!dateStr) return '';
+  try {
+    const date = new Date(dateStr);
+    const now = new Date();
+
+    if (isToday(date)) {
+      return format(date, 'HH:mm');
+    }
+
+    const diffDays = differenceInCalendarDays(now, date);
+    if (diffDays <= 30) {
+      return `${diffDays}일 전`;
+    }
+
+    const diffMonths = differenceInMonths(now, date);
+    if (diffMonths < 12) {
+      return `${diffMonths}개월 전`;
+    }
+
+    const diffYears = differenceInYears(now, date);
+    return `${diffYears}년 전`;
+  } catch (e) {
+    console.error('[formatRelativeTime] Error:', e);
+    return '';
+  }
 };

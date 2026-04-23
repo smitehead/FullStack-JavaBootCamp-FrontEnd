@@ -277,7 +277,6 @@ export const ReportManagement: React.FC = () => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-2 bg-[#FF5A5A]" />
               <div className="flex items-center justify-between px-8 pt-8 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-none bg-red-50 flex items-center justify-center shrink-0">
@@ -393,8 +392,6 @@ export const ReportManagement: React.FC = () => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="relative w-full max-w-md bg-white rounded-2xl p-8 shadow-2xl overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-2 bg-[#FF5A5A]" />
-
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 rounded-none bg-red-50 flex items-center justify-center shrink-0">
                   <BsShieldExclamation className="w-6 h-6 text-[#FF5A5A]" />

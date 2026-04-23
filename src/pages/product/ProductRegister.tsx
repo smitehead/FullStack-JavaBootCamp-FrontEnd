@@ -431,6 +431,11 @@ export const ProductRegister: React.FC = () => {
                   type="number"
                   value={startPrice || ''}
                   onChange={(e) => setStartPrice(Math.max(0, Number(e.target.value)))}
+                  onKeyDown={(e) => {
+                    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   placeholder="0"
                   step="1000"
                   min="0"
@@ -457,6 +462,11 @@ export const ProductRegister: React.FC = () => {
                   type="number"
                   value={isInstantPriceEnabled ? (instantPrice || '') : ''}
                   onChange={(e) => setInstantPrice(Math.max(0, Number(e.target.value)))}
+                  onKeyDown={(e) => {
+                    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   disabled={!isInstantPriceEnabled}
                   placeholder={isInstantPriceEnabled ? "0" : "-"}
                   step="1000"
@@ -476,6 +486,11 @@ export const ProductRegister: React.FC = () => {
                   type="number"
                   value={minBidIncrement || ''}
                   onChange={(e) => setMinBidIncrement(Math.max(0, Number(e.target.value)))}
+                  onKeyDown={(e) => {
+                    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   placeholder="예: 1000"
                   step="1000"
                   min="0"

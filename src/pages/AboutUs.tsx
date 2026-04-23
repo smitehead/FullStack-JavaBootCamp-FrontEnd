@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BsBag, BsEye, BsStars } from 'react-icons/bs';
-
+import mainLogo from '@/assets/images/main_logo.png';
 import { BsShieldCheck, BsCreditCard } from 'react-icons/bs';
 
 type AboutTab = 'intro' | 'privacy' | 'terms' | 'policy';
@@ -111,8 +111,8 @@ export const AboutUs: React.FC = () => {
           {activeTab === 'intro' && (
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="flex items-center gap-4 mb-10">
-                <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
-                  <BsStars className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-white border border-gray-100 rounded-xl flex items-center justify-center p-0.5 shadow-sm">
+                  <img src={mainLogo} alt="" className="w-full h-full object-contain" />
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900 tracking-tight">서비스 소개</h2>
               </div>

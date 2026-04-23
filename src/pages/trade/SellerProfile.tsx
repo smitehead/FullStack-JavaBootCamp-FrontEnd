@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsFlagFill, BsArrowLeft } from 'react-icons/bs';
+import { 
+  BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, 
+  BsShieldFill, BsFlagFill, BsArrowLeft, BsChevronLeft, BsChevronRight
+} from 'react-icons/bs';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -49,12 +52,15 @@ export const SellerProfile: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAppContext();
   const [activeTab, setActiveTab] = useState<'selling' | 'reviews'>('selling');
-  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'ended' | 'completed'>('all');
   const [seller, setSeller] = useState<SellerInfo | null>(null);
   const [sellerProducts, setSellerProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isBlocked, setIsBlocked] = useState(false);
   const [reviews, setReviews] = useState<any[]>([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     if (!id) return;
@@ -113,19 +119,24 @@ export const SellerProfile: React.FC = () => {
   };
 
 
-  const visibleProducts = sellerProducts.filter(p => p.status === 'active' || p.auctionResultStatus === '구매확정');
-
-  const filteredProducts = visibleProducts.filter(p => {
+  const filteredProducts = sellerProducts.filter(p => {
+    const isCompleted = p.status === 'completed';
+    const hasConfirm = p.auctionResultStatus === '구매확정';
+    
     if (sellingFilter === 'all') return true;
     if (sellingFilter === 'active') return p.status === 'active';
-    if (sellingFilter === 'completed') return p.auctionResultStatus === '구매확정';
+    if (sellingFilter === 'completed') return isCompleted && hasConfirm;
+    if (sellingFilter === 'ended') return p.status !== 'active' && !(isCompleted && hasConfirm);
     return true;
   });
 
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="spinner-border w-12 h-12" />
       </div>
     );
   }
@@ -158,7 +169,7 @@ export const SellerProfile: React.FC = () => {
                 <div className="flex items-center justify-center md:justify-start gap-3 text-sm text-gray-400 font-medium">
                   <span>가입일: {seller.joinedAt}</span>
                   <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
-                  <span>판매상품 {visibleProducts.length}개</span>
+                  <span>판매상품 {sellerProducts.length}개</span>
                   <div className="flex items-center gap-2 ml-2">
                     <button
                       onClick={handleBlockToggle}
@@ -198,7 +209,7 @@ export const SellerProfile: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">전체 판매</p>
-                  <p className="text-xl font-bold text-gray-900">{visibleProducts.length}<span className="text-sm font-medium ml-1">건</span></p>
+                  <p className="text-xl font-bold text-gray-900">{sellerProducts.length}<span className="text-sm font-medium ml-1">건</span></p>
                 </div>
               </div>
               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
@@ -244,10 +255,10 @@ export const SellerProfile: React.FC = () => {
 
             {activeTab === 'selling' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
-                {(['all', 'active', 'completed'] as const).map(f => (
-                  <button key={f} onClick={() => setSellingFilter(f)}
+                {(['all', 'active', 'ended', 'completed'] as const).map(f => (
+                  <button key={f} onClick={() => { setSellingFilter(f); setCurrentPage(1); }}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {f === 'all' ? '전체' : f === 'active' ? '경매중' : '판매완료'}
+                    {f === 'all' ? '전체' : f === 'active' ? '경매중' : f === 'completed' ? '판매완료' : '경매종료'}
                   </button>
                 ))}
               </div>
@@ -256,17 +267,15 @@ export const SellerProfile: React.FC = () => {
 
           {activeTab === 'selling' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map(p => {
-                  // 참여여부 확인 (본인 판매 상품이거나, 입찰/낙찰 내역이 있는 경우 관여됨)
+              {sellerProducts.length > 0 ? (
+                paginatedProducts.map(p => {
                   const isInvolved = (user && getMemberNo(user) === seller.sellerNo) || !!p.bidStatus;
-                  
                   return (
                     <ProductCard 
                       key={p.id} 
                       product={p} 
-                      isSold={p.status === 'completed' && isInvolved} 
-                      hideOverlay={p.status === 'completed' && !isInvolved}
+                      isSold={p.status !== 'active'} 
+                      hideOverlay={p.status !== 'active' && !isInvolved}
                     />
                   );
                 })
@@ -279,6 +288,10 @@ export const SellerProfile: React.FC = () => {
             </div>
           )}
 
+          {activeTab === 'selling' && totalPages > 1 && (
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+          )}
+
           {activeTab === 'reviews' && (
             reviews.length === 0 ? (
               <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
@@ -287,7 +300,6 @@ export const SellerProfile: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Tag Review Summary Section */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-6">
                   <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">받은 태그</h4>
                   <div className="flex flex-wrap gap-3">
@@ -295,7 +307,6 @@ export const SellerProfile: React.FC = () => {
                       const tagCounts: Record<string, number> = {};
                       reviews.forEach(r => r.tags?.forEach((t: string) => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
                       const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
-                      
                       return sortedTags.map(([tag, count]) => (
                         <div key={tag} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
                           <span className="text-sm font-medium text-gray-700">{tag}</span>
@@ -307,41 +318,87 @@ export const SellerProfile: React.FC = () => {
                 </div>
 
                 <div className="space-y-4">
-                {reviews.map((review: any) => (
-                  <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-bold text-gray-700">{review.writerNickname}</span>
-                      <span className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    {review.tags && review.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {review.tags.map((tag: string) => (
-                          <span key={tag} className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-xl">
-                            {tag}
-                          </span>
-                        ))}
+                  {reviews.map((review: any) => (
+                    <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold text-gray-700">{review.writerNickname}</span>
+                          <span className="text-xs text-gray-400 font-medium">{new Date(review.createdAt).toLocaleDateString()}</span>
+                        </div>
                       </div>
-                    )}
-                    {review.content && (
-                      <p className="text-sm text-gray-600 leading-relaxed mb-3">{review.content}</p>
-                    )}
-                    {review.productTitle && (
-                      <Link
-                        to={`/products/${review.productNo}`}
-                        className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
-                      >
-                        <BsBox2 className="w-3.5 h-3.5" />
-                        {review.productTitle}
-                      </Link>
-                    )}
-                  </div>
-                ))}
+
+                      {review.tags && review.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {review.tags.map((tag: string) => (
+                            <span key={tag} className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-xl">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {review.content && (
+                        <div className="bg-gray-50 rounded-xl p-4 mb-3">
+                          <p className="text-sm text-gray-700 leading-relaxed">{review.content}</p>
+                        </div>
+                      )}
+                      {review.productTitle && (
+                        <Link
+                          to={`/products/${review.productNo}`}
+                          className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
+                        >
+                          <BsBox2 className="w-3.5 h-3.5" />
+                          {review.productTitle}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          )
-        )}
+            )
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
+const Pagination = ({ currentPage, totalPages, onPageChange }: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) => {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex justify-center items-center space-x-2 pt-12">
+      <button
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage === 1}
+        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
+      >
+        <BsChevronLeft className="w-5 h-5" />
+      </button>
+
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+        <button
+          key={p}
+          onClick={() => onPageChange(p)}
+          className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${p === currentPage
+            ? 'bg-brand text-white'
+            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
+            }`}
+        >
+          {p}
+        </button>
+      ))}
+
+      <button
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage === totalPages}
+        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
+      >
+        <BsChevronRight className="w-5 h-5" />
+      </button>
+    </div>
+  );
 };

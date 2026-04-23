@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
-import { BsCheckCircle, BsX } from 'react-icons/bs';
+import { BsCheckCircle } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 
-const REVIEW_TAGS = [
+const BUYER_REVIEW_TAGS = [
   { id: 'tag_1', content: '응답이 빨라요' },
   { id: 'tag_2', content: '친절하고 매너가 좋아요' },
   { id: 'tag_3', content: '시간 약속을 잘 지켜요' },
   { id: 'tag_4', content: '상품 상태가 설명과 같아요' },
+  { id: 'tag_5', content: '집 근처로 와주었어요' },
+];
+
+const SELLER_REVIEW_TAGS = [
+  { id: 'tag_6', content: '응답이 빨라요' },
+  { id: 'tag_7', content: '친절하고 매너가 좋아요' },
+  { id: 'tag_8', content: '시간 약속을 잘 지켜요' },
+  { id: 'tag_9', content: '쿨거래 감사합니다' },
+  { id: 'tag_10', content: '연락이 잘 돼요' },
 ];
 
 interface ReviewModalProps {
@@ -17,6 +26,7 @@ interface ReviewModalProps {
   sellerNickname: string;
   productTitle: string;
   productImage: string;
+  role?: 'buyer' | 'seller'; // 역할에 따른 분기 (기본값: buyer)
   onSuccess?: () => void;
 }
 
@@ -27,8 +37,10 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
   sellerNickname,
   productTitle,
   productImage,
+  role = 'buyer',
   onSuccess
 }) => {
+  const REVIEW_TAGS = role === 'seller' ? SELLER_REVIEW_TAGS : BUYER_REVIEW_TAGS;
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [reviewContent, setReviewContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +68,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
         resultNo,
         tags: selectedTags.length > 0 ? selectedTags : null,
         content: reviewContent.trim() || null,
+        role,
       });
       setShowSuccess(true);
       setTimeout(() => {
@@ -75,10 +88,6 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
     <>
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto custom-scrollbar relative">
-          <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <BsX className="w-6 h-6 text-gray-400" />
-          </button>
-
           <div className="flex items-center gap-4 mb-8 pb-6 border-b border-gray-50">
             <div className="w-16 h-16 rounded-2xl overflow-hidden border border-gray-100 flex-shrink-0">
               <img src={productImage} alt={productTitle} className="w-full h-full object-cover" />
@@ -115,7 +124,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
               <textarea
                 value={reviewContent}
                 onChange={(e) => setReviewContent(e.target.value)}
-                placeholder="판매자에게 따뜻한 후기를 남겨주세요."
+                placeholder={`${role === 'seller' ? '구매자' : '판매자'}에게 따뜻한 후기를 남겨주세요.`}
                 className="w-full h-32 p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none resize-none font-medium text-gray-900"
               ></textarea>
             </div>
@@ -142,7 +151,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
       {showSuccess && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[210] flex items-center justify-center p-4">
           <div className="bg-white rounded-[40px] max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-300">
-            <div className="w-20 h-20 bg-emerald-50 rounded-[24px] flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-transparent rounded-[24px] flex items-center justify-center mx-auto mb-6">
               <BsCheckCircle className="w-10 h-10 text-emerald-500" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">후기 등록 완료!</h3>

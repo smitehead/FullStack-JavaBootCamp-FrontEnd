@@ -165,8 +165,8 @@ export const Home: React.FC = () => {
   };
 
   if (isLoading) return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="spinner-border w-10 h-10" />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="spinner-border w-12 h-12" />
     </div>
   );
 

@@ -176,6 +176,11 @@ export const AccountRegistration: React.FC = () => {
                     <input
                       type="text"
                       value={accountNumber}
+                      onKeyDown={(e) => {
+                        if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
                       onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ''))}
                       placeholder="계좌번호를 입력하세요 (- 제외)"
                       className="w-full px-4 py-4 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 font-bold focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all focus:bg-white"
