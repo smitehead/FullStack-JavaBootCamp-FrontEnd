@@ -591,13 +591,13 @@ export const WonProductDetail: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowPurchaseConfirm(false)}
-                className="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+                className="flex-1 h-[56px] bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all flex items-center justify-center active:scale-[0.98]"
               >
                 취소
               </button>
               <button
                 onClick={executeConfirmPurchase}
-                className="flex-1 py-4 bg-emerald-500 text-white font-bold rounded-2xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
+                className="flex-1 h-[56px] bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 active:scale-[0.98] flex items-center justify-center"
               >
                 확정하기
               </button>

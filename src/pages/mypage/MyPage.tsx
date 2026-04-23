@@ -566,16 +566,31 @@ export const MyPage: React.FC = () => {
                   const isResultCanceled = p.status === 'canceled';
 
                   return (
-                    <ProductCard
-                      key={p.id}
-                      product={p}
-                      isSold={isResultConfirmed || isResultCanceled}
-                      isConfirmed={isResultConfirmed}
-                      isSellerPending={hasPendingResult}
-                      sellerCancelRequested={ars === '취소요청'}
-                      customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
-                      onWishlistToggle={handleWishlistToggle}
-                    />
+                    <div key={p.id} className="flex flex-col gap-2">
+                      <ProductCard
+                        product={p}
+                        isSold={isResultConfirmed || isResultCanceled}
+                        isConfirmed={isResultConfirmed}
+                        isSellerPending={hasPendingResult}
+                        sellerCancelRequested={ars === '취소요청'}
+                        customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
+                        onWishlistToggle={handleWishlistToggle}
+                      />
+                      <div className="flex items-center justify-end px-1">
+                        {p.hasReview === false && isResultConfirmed && p.resultNo && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedProductForReview(p);
+                              setShowReviewModal(true);
+                            }}
+                            className="inline-flex items-center px-3 py-1 bg-white border border-gray-200 text-gray-700 rounded-full text-xs font-bold hover:bg-gray-50 transition-all font-sans"
+                          >
+                            후기 작성하기
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   );
                 })}
 
@@ -779,9 +794,10 @@ export const MyPage: React.FC = () => {
             setSelectedProductForReview(null);
           }}
           resultNo={selectedProductForReview.resultNo!}
-          sellerNickname={selectedProductForReview.seller.nickname}
+          sellerNickname={activeTab === 'selling' ? '구매자' : (selectedProductForReview.seller?.nickname || '판매자')}
           productTitle={selectedProductForReview.title}
-          productImage={selectedProductForReview.images[0]}
+          productImage={selectedProductForReview.images?.[0] || ''}
+          role={activeTab === 'selling' ? 'seller' : 'buyer'}
           onSuccess={() => {
             fetchPurchasedProducts();
           }}
@@ -821,7 +837,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: {
           onClick={() => onPageChange(p)}
           className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${p === currentPage
             ? 'bg-brand text-white'
-            : 'border border-gray-200 text-gray-500 hover:border-gray-900 hover:text-gray-900'
+            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
             }`}
         >
           {p}

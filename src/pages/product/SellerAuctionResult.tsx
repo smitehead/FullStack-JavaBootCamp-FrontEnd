@@ -7,6 +7,7 @@ import { getMemberNo } from '@/utils/memberUtils';
 import { AlertCircle } from 'lucide-react';
 import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill, BsPerson } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
+import { ReviewModal } from '@/components/ReviewModal';
 
 interface SellerResultDetail {
   resultNo: number;
@@ -27,6 +28,7 @@ interface SellerResultDetail {
   };
   deliveryAddrRoad: string | null;
   deliveryAddrDetail: string | null;
+  hasReview?: boolean;
 }
 
 export const SellerAuctionResult: React.FC = () => {
@@ -39,6 +41,7 @@ export const SellerAuctionResult: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const [activeTransactionTab, setActiveTransactionTab] = useState<'delivery' | 'face-to-face'>('delivery');
 
   useEffect(() => {
@@ -354,13 +357,22 @@ export const SellerAuctionResult: React.FC = () => {
                   )}
 
                   {isCompleted && (
-                    <div className="grid grid-cols-1 gap-3">
-                      <button
-                        disabled
-                        className="w-full h-[56px] flex items-center justify-center bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
-                      >
-                        거래 완료
-                      </button>
+                    <div className="mt-8 space-y-3">
+                      {!result.hasReview ? (
+                        <button
+                          onClick={() => setShowReviewModal(true)}
+                          className="w-full h-[56px] bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 flex items-center justify-center"
+                        >
+                          후기 남기기
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="w-full h-[56px] flex items-center justify-center bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed border border-gray-200"
+                        >
+                          거래 완료
+                        </button>
+                      )}
                     </div>
                   )}
 
@@ -447,6 +459,21 @@ export const SellerAuctionResult: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ReviewModal
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        onSuccess={() => {
+          setShowReviewModal(false);
+          setResult(prev => prev ? { ...prev, hasReview: true } : null);
+          showToast('후기가 등록되었습니다.', 'success');
+        }}
+        resultNo={result.resultNo}
+        sellerNickname={result.buyer.nickname}
+        productTitle={result.title}
+        productImage={images[0]}
+        role="seller"
+      />
     </div>
   );
 };

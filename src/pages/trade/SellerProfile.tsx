@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
 import { 
   BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, 
-  BsShieldFill, BsFlagFill, BsArrowLeft
+  BsShieldFill, BsFlagFill, BsArrowLeft, BsChevronLeft, BsChevronRight
 } from 'react-icons/bs';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
@@ -58,6 +58,9 @@ export const SellerProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isBlocked, setIsBlocked] = useState(false);
   const [reviews, setReviews] = useState<any[]>([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     if (!id) return;
@@ -126,6 +129,9 @@ export const SellerProfile: React.FC = () => {
     if (sellingFilter === 'ended') return p.status !== 'active' && !(isCompleted && hasConfirm);
     return true;
   });
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (loading) {
     return (
@@ -250,7 +256,7 @@ export const SellerProfile: React.FC = () => {
             {activeTab === 'selling' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 {(['all', 'active', 'ended', 'completed'] as const).map(f => (
-                  <button key={f} onClick={() => setSellingFilter(f)}
+                  <button key={f} onClick={() => { setSellingFilter(f); setCurrentPage(1); }}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {f === 'all' ? '전체' : f === 'active' ? '경매중' : f === 'completed' ? '판매완료' : '경매종료'}
                   </button>
@@ -262,7 +268,7 @@ export const SellerProfile: React.FC = () => {
           {activeTab === 'selling' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {sellerProducts.length > 0 ? (
-                filteredProducts.map(p => {
+                paginatedProducts.map(p => {
                   const isInvolved = (user && getMemberNo(user) === seller.sellerNo) || !!p.bidStatus;
                   return (
                     <ProductCard 
@@ -280,6 +286,10 @@ export const SellerProfile: React.FC = () => {
                 </div>
               )}
             </div>
+          )}
+
+          {activeTab === 'selling' && totalPages > 1 && (
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
           )}
 
           {activeTab === 'reviews' && (
@@ -327,7 +337,9 @@ export const SellerProfile: React.FC = () => {
                         </div>
                       )}
                       {review.content && (
-                        <p className="text-sm text-gray-600 leading-relaxed mb-3">{review.content}</p>
+                        <div className="bg-gray-50 rounded-xl p-4 mb-3">
+                          <p className="text-sm text-gray-700 leading-relaxed">{review.content}</p>
+                        </div>
                       )}
                       {review.productTitle && (
                         <Link
@@ -346,6 +358,47 @@ export const SellerProfile: React.FC = () => {
           )}
         </div>
       </div>
+    </div>
+  );
+};
+
+const Pagination = ({ currentPage, totalPages, onPageChange }: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) => {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex justify-center items-center space-x-2 pt-12">
+      <button
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage === 1}
+        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
+      >
+        <BsChevronLeft className="w-5 h-5" />
+      </button>
+
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+        <button
+          key={p}
+          onClick={() => onPageChange(p)}
+          className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${p === currentPage
+            ? 'bg-brand text-white'
+            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
+            }`}
+        >
+          {p}
+        </button>
+      ))}
+
+      <button
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage === totalPages}
+        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
+      >
+        <BsChevronRight className="w-5 h-5" />
+      </button>
     </div>
   );
 };
