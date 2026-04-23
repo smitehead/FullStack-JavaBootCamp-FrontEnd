@@ -88,6 +88,13 @@ export const MyPage: React.FC = () => {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [hideModalId, setHideModalId] = useState<number | null>(null);
 
+  // Close menu on click outside
+  useEffect(() => {
+    const handleOutsideClick = () => setOpenMenuId(null);
+    window.addEventListener('click', handleOutsideClick);
+    return () => window.removeEventListener('click', handleOutsideClick);
+  }, []);
+
   // 리뷰 탭 진입 시 API 호출
   useEffect(() => {
     if (activeTab !== 'reviews') return;
@@ -97,13 +104,6 @@ export const MyPage: React.FC = () => {
       .then(res => setReviews(res.data))
       .catch(() => setReviews([]));
   }, [activeTab, user]);
-
-  // Close menu on click outside
-  useEffect(() => {
-    const handleOutsideClick = () => setOpenMenuId(null);
-    window.addEventListener('click', handleOutsideClick);
-    return () => window.removeEventListener('click', handleOutsideClick);
-  }, []);
 
   const [sellingProducts, setSellingProducts] = useState<Product[]>([]);
   const [biddingProducts, setBiddingProducts] = useState<(Product & { bidStatus?: string })[]>([]);
@@ -689,21 +689,22 @@ export const MyPage: React.FC = () => {
                                   e.stopPropagation();
                                   setOpenMenuId(openMenuId === review.reviewNo ? null : review.reviewNo);
                                 }}
-                                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                               >
-                                <BsThreeDotsVertical className="w-4 h-4 text-gray-400" />
+                                <BsThreeDotsVertical className="w-5 h-5 text-gray-400" />
                               </button>
                               
                               {openMenuId === review.reviewNo && (
-                                <div className="absolute right-0 mt-1 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 animate-in fade-in zoom-in-95 duration-100 origin-top-right">
+                                <div className="absolute right-0 mt-1 w-36 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right">
                                   <button
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.stopPropagation();
                                       setHideModalId(review.reviewNo);
                                       setOpenMenuId(null);
                                     }}
-                                    className="w-full text-left px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
+                                    className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
                                   >
-                                    거래 후기 숨기기
+                                    <BsXCircleFill className="w-4 h-4 mr-2.5" /> 후기 숨기기
                                   </button>
                                 </div>
                               )}
@@ -743,30 +744,28 @@ export const MyPage: React.FC = () => {
 
           {/* Hide Confirm Modal */}
           {hideModalId && (
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-              <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-                <div className="p-8 text-center">
-                    <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                      <BsXCircleFill className="w-8 h-8 text-red-500" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">후기를 숨기시겠습니까?</h3>
-                    <p className="text-sm text-gray-500 font-medium leading-relaxed">
-                      후기 숨기기는 다시 되돌릴 수 없습니다.
-                    </p>
-                </div>
-                <div className="flex border-t border-gray-100">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setHideModalId(null)} />
+              <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+                <div className="p-8 text-left">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">후기를 숨기시겠습니까?</h3>
+                  <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                    후기 숨기기는 다시 되돌릴 수 없습니다.
+                  </p>
+                  <div className="flex gap-3 w-full">
                     <button 
                       onClick={() => setHideModalId(null)}
-                      className="flex-1 py-4 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors border-r border-gray-100"
+                      className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
                     >
                       취소
                     </button>
                     <button 
                       onClick={() => handleHideReview(hideModalId)}
-                      className="flex-1 py-4 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
+                      className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
                     >
-                      거래 후기 숨기기
+                      숨기기
                     </button>
+                  </div>
                 </div>
               </div>
             </div>
