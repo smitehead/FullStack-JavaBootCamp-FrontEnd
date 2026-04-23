@@ -113,7 +113,7 @@ export interface Product {
   images: string[];
   participantCount: number;
   bids: BidHistory[];
-  status: "active" | "ended" | "pending" | "completed" | "canceled" | "failed";
+  status: "active" | "ended" | "pending" | "completed" | "canceled" | "failed" | "closed_failed" | "pending_payment";
   location: string;
   detailedAddress?: string;
   transactionMethod: TransactionMethod;

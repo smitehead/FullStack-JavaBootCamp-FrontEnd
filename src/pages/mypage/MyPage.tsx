@@ -5,7 +5,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { 
   BsBag, BsBagFill, BsPencilSquare, BsChevronLeft, BsChevronRight,
   BsHeart, BsHeartFill, BsGear, BsGearFill, BsWallet, BsBox2, BsShop, 
-  BsTrophy, BsChat, BsThreeDotsVertical, BsXCircleFill
+  BsTrophy, BsChat, BsThreeDotsVertical, BsXCircleFill, BsEyeSlash
 } from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
@@ -69,7 +69,7 @@ export const MyPage: React.FC = () => {
   useEffect(() => {
     setSearchParams({ tab: activeTab }, { replace: true });
   }, [activeTab, setSearchParams]);
-  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'ended' | 'pending' | 'completed' | 'canceled' | 'failed'>('all');
+  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'ended' | 'completed'>('all');
   const [biddingFilter, setBiddingFilter] = useState<'all' | 'leader' | 'outbid' | 'lost'>('all');
 
   interface ReviewItem {
@@ -519,7 +519,7 @@ export const MyPage: React.FC = () => {
 
             {activeTab === 'selling' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
-                {(['all', 'active', 'pending', 'completed', 'canceled', 'failed'] as const).map(filter => (
+                {(['all', 'active', 'ended', 'completed'] as const).map(filter => (
                   <button key={filter} onClick={() => {
                     setSellingFilter(filter);
                     setSellingPage(1);
@@ -528,10 +528,8 @@ export const MyPage: React.FC = () => {
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {filter === 'all' ? '전체'
                       : filter === 'active' ? '경매중'
-                      : filter === 'pending' ? '확정대기'
                       : filter === 'completed' ? '판매완료'
-                      : filter === 'canceled' ? '거래취소'
-                      : '유찰'}
+                      : '경매종료'}
                   </button>
                 ))}
               </div>
@@ -695,16 +693,16 @@ export const MyPage: React.FC = () => {
                               </button>
                               
                               {openMenuId === review.reviewNo && (
-                                <div className="absolute right-0 mt-1 w-36 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right">
+                                <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setHideModalId(review.reviewNo);
                                       setOpenMenuId(null);
                                     }}
-                                    className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
+                                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                                   >
-                                    <BsXCircleFill className="w-4 h-4 mr-2.5" /> 후기 숨기기
+                                    <BsEyeSlash className="w-4 h-4 mr-2.5" /> 후기 숨기기
                                   </button>
                                 </div>
                               )}

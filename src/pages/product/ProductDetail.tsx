@@ -901,22 +901,22 @@ export const ProductDetail: React.FC = () => {
               <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[150] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
                 <button
                   onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
-                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors border-b border-gray-50"
+                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                 >
                   <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
                 </button>
                 {!isFinished && (
                   <button
                     onClick={() => { setShowMoreMenu(false); setShowCancelModal(true); }}
-                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors border-b border-gray-50"
+                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                   >
                     <BsHouseX className="w-4 h-4 mr-2.5" /> 경매 취소하기
                   </button>
                 )}
-                {isFinished && (product.participantCount === 0 || product.status === 'closed_failed') && (
+                {isFinished && product && (product.participantCount === 0 || product.status === 'closed_failed') && (
                   <button
                     onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
-                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#FF5A5A] transition-colors"
+                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                   >
                     <BsArrowRepeat className="w-4 h-4 mr-2.5" /> 재게시하기
                   </button>
@@ -957,7 +957,7 @@ export const ProductDetail: React.FC = () => {
             )}
 
             {/* 낙찰 성공 칩 */}
-            {isFinished && isHighestBidder && (product.status === 'completed' || product.status === 'pending_payment') && (
+            {isFinished && isHighestBidder && product && (product.status === 'completed' || product.status === 'pending_payment') && (
               <div className="absolute top-6 left-6 z-10 animate-in zoom-in duration-500">
                 <div className="flex items-center px-3 py-1.5 rounded-full shadow-lg bg-white border border-gray-100">
                   <span className="text-xs font-medium text-gray-900 tracking-tight">
@@ -1175,8 +1175,8 @@ export const ProductDetail: React.FC = () => {
                     <button
                       onClick={() => openBidModal('auto')}
                       className={`flex-1 h-[56px] border-2 font-bold rounded-2xl transition-colors flex items-center justify-center ${activeAutoBid
-                          ? "border-[#191970] text-[#191970] hover:bg-[#191970]/10"
-                          : "border-brand text-brand hover:bg-brand/10"
+                        ? "border-[#191970] text-[#191970] hover:bg-[#191970]/10"
+                        : "border-brand text-brand hover:bg-brand/10"
                         }`}
                     >
                       {activeAutoBid ? '자동입찰 수정' : '자동 입찰'}

@@ -52,7 +52,7 @@ export const SellerProfile: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAppContext();
   const [activeTab, setActiveTab] = useState<'selling' | 'reviews'>('selling');
-  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'ended' | 'completed'>('all');
   const [seller, setSeller] = useState<SellerInfo | null>(null);
   const [sellerProducts, setSellerProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,12 +116,14 @@ export const SellerProfile: React.FC = () => {
   };
 
 
-  const visibleProducts = sellerProducts.filter(p => p.status === 'active' || p.auctionResultStatus === '구매확정');
-
-  const filteredProducts = visibleProducts.filter(p => {
+  const filteredProducts = sellerProducts.filter(p => {
+    const isCompleted = p.status === 'completed';
+    const hasConfirm = p.auctionResultStatus === '구매확정';
+    
     if (sellingFilter === 'all') return true;
     if (sellingFilter === 'active') return p.status === 'active';
-    if (sellingFilter === 'completed') return p.auctionResultStatus === '구매확정';
+    if (sellingFilter === 'completed') return isCompleted && hasConfirm;
+    if (sellingFilter === 'ended') return p.status !== 'active' && !(isCompleted && hasConfirm);
     return true;
   });
 
@@ -201,7 +203,7 @@ export const SellerProfile: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">전체 판매</p>
-                  <p className="text-xl font-bold text-gray-900">{visibleProducts.length}<span className="text-sm font-medium ml-1">건</span></p>
+                  <p className="text-xl font-bold text-gray-900">{sellerProducts.length}<span className="text-sm font-medium ml-1">건</span></p>
                 </div>
               </div>
               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
@@ -247,10 +249,10 @@ export const SellerProfile: React.FC = () => {
 
             {activeTab === 'selling' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
-                {(['all', 'active', 'completed'] as const).map(f => (
+                {(['all', 'active', 'ended', 'completed'] as const).map(f => (
                   <button key={f} onClick={() => setSellingFilter(f)}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {f === 'all' ? '전체' : f === 'active' ? '경매중' : '판매완료'}
+                    {f === 'all' ? '전체' : f === 'active' ? '경매중' : f === 'completed' ? '판매완료' : '경매종료'}
                   </button>
                 ))}
               </div>
@@ -259,15 +261,15 @@ export const SellerProfile: React.FC = () => {
 
           {activeTab === 'selling' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {visibleProducts.length > 0 ? (
+              {sellerProducts.length > 0 ? (
                 filteredProducts.map(p => {
                   const isInvolved = (user && getMemberNo(user) === seller.sellerNo) || !!p.bidStatus;
                   return (
                     <ProductCard 
                       key={p.id} 
                       product={p} 
-                      isSold={p.status === 'completed' && isInvolved} 
-                      hideOverlay={p.status === 'completed' && !isInvolved}
+                      isSold={p.status !== 'active'} 
+                      hideOverlay={p.status !== 'active' && !isInvolved}
                     />
                   );
                 })
