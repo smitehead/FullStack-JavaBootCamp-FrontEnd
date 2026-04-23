@@ -111,7 +111,7 @@ export const AboutUs: React.FC = () => {
           {activeTab === 'intro' && (
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="flex items-center gap-4 mb-10">
-                <div className="w-10 h-10 bg-white border border-gray-100 rounded-xl flex items-center justify-center p-1 shadow-sm">
+                <div className="w-10 h-10 bg-white border border-gray-100 rounded-xl flex items-center justify-center p-0.5 shadow-sm">
                   <img src={mainLogo} alt="" className="w-full h-full object-contain" />
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900 tracking-tight">서비스 소개</h2>

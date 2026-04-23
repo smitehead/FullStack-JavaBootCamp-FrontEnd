@@ -48,8 +48,8 @@ export const Login: React.FC = () => {
     <div className="min-h-[calc(100vh-64px)] bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-[32px] shadow-xl border border-gray-100">
         <div className="text-center">
-          <div className="mx-auto h-20 w-20 bg-white rounded-[24px] flex items-center justify-center shadow-xl shadow-red-500/5 p-2">
-            <img src={mainLogo} alt="JAVAJAVA Logo" className="w-full h-full object-contain" />
+          <div className="mx-auto h-20 w-20 bg-white rounded-[24px] flex items-center justify-center shadow-xl shadow-red-500/5 p-0.5">
+            <img src={mainLogo} alt="JAVAJAVA Logo" className="w-full h-full object-contain drop-shadow-sm" />
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900 tracking-tight">
             로그인

@@ -150,7 +150,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
       {showSuccess && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[210] flex items-center justify-center p-4">
           <div className="bg-white rounded-[40px] max-w-sm w-full p-10 text-center shadow-2xl animate-in zoom-in-95 duration-300">
-            <div className="w-20 h-20 bg-emerald-50 rounded-[24px] flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-transparent rounded-[24px] flex items-center justify-center mx-auto mb-6">
               <BsCheckCircle className="w-10 h-10 text-emerald-500" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">후기 등록 완료!</h3>
