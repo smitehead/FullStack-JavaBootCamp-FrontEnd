@@ -1294,7 +1294,7 @@ export const ProductDetail: React.FC = () => {
                       <XAxis dataKey="label" tick={{ fontSize: 10 }} stroke="#9ca3af" />
                       <YAxis domain={['auto', 'auto']} tickFormatter={(value) => `${((value || 0) / 10000).toLocaleString()}만`} stroke="#9ca3af" tick={{ fontSize: 10 }} />
                       <Tooltip formatter={(value: number) => `${(value || 0).toLocaleString()}원`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
-                      <Line type="monotone" dataKey="amount" stroke="#FF5A5A" strokeWidth={3} dot={{ r: 4, fill: '#FF5A5A' }} activeDot={{ r: 6 }} />
+                      <Line name="입찰가" type="monotone" dataKey="amount" stroke="#FF5A5A" strokeWidth={3} dot={{ r: 4, fill: '#FF5A5A' }} activeDot={{ r: 6 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

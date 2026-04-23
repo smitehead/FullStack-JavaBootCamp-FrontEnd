@@ -509,9 +509,6 @@ const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="md:col-span-5">
             <div className="flex items-center space-x-2 mb-6">
-              <div className="bg-white p-0.5 rounded-lg flex items-center justify-center">
-                <img src={mainLogo} alt="JAVAJAVA" className="w-7 h-7 object-contain" />
-              </div>
               <span className="text-xl font-bold text-gray-700 tracking-tight">JAVAJAVA</span>
             </div>
             <div className="space-y-2 text-sm text-gray-500 font-medium leading-relaxed">
