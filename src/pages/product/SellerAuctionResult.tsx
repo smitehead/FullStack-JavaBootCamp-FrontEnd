@@ -29,6 +29,8 @@ interface SellerResultDetail {
   deliveryAddrRoad: string | null;
   deliveryAddrDetail: string | null;
   hasReview?: boolean;
+  hasBuyerReview?: boolean;
+  hasSellerReview?: boolean;
 }
 
 export const SellerAuctionResult: React.FC = () => {
@@ -358,7 +360,7 @@ export const SellerAuctionResult: React.FC = () => {
 
                   {isCompleted && (
                     <div className="mt-8 space-y-3">
-                      {!result.hasReview ? (
+                      {(!result.hasSellerReview && !result.hasReview) ? (
                         <button
                           onClick={() => setShowReviewModal(true)}
                           className="w-full h-[56px] bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 flex items-center justify-center"
@@ -465,7 +467,7 @@ export const SellerAuctionResult: React.FC = () => {
         onClose={() => setShowReviewModal(false)}
         onSuccess={() => {
           setShowReviewModal(false);
-          setResult(prev => prev ? { ...prev, hasReview: true } : null);
+          setResult(prev => prev ? { ...prev, hasSellerReview: true } : null);
           showToast('후기가 등록되었습니다.', 'success');
         }}
         resultNo={result.resultNo}

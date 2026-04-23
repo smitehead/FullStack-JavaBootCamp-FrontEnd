@@ -477,8 +477,8 @@ export const Chat: React.FC = () => {
       client.publish({
         destination: '/pub/chat/message',
         body: JSON.stringify({
-          roomId: selectedRoom.roomNo,
-          senderId: memberNo,
+          roomNo: selectedRoom.roomNo,
+          senderNo: memberNo,
           content: imageUrls.length > 1 ? '사진들' : '사진',
           msgType: 'IMAGE',
           imageUrls,
@@ -557,8 +557,8 @@ export const Chat: React.FC = () => {
         client.publish({
           destination: '/pub/chat/message',
           body: JSON.stringify({
-            roomId: selectedRoom.roomNo,
-            senderId: memberNo,
+            roomNo: selectedRoom.roomNo,
+            senderNo: memberNo,
             content: addrRoad || '',
             msgType: 'ADDRESS',
             addrRoad,
@@ -660,9 +660,10 @@ export const Chat: React.FC = () => {
       client.publish({
         destination: '/pub/chat/message',
         body: JSON.stringify({
-          roomId: selectedRoom.roomNo,
-          senderId: memberNo,
+          roomNo: selectedRoom.roomNo,
+          senderNo: memberNo,
           content,
+          msgType: 'TEXT',
           clientUuid,
         }),
       });
@@ -777,8 +778,8 @@ export const Chat: React.FC = () => {
       client.publish({
         destination: '/pub/chat/message',
         body: JSON.stringify({
-          roomId: selectedRoom.roomNo,
-          senderId: memberNo,
+          roomNo: selectedRoom.roomNo,
+          senderNo: memberNo,
           content,
           msgType: 'ADDRESS',
           addrRoad: locationAddrRoad,
@@ -861,7 +862,7 @@ export const Chat: React.FC = () => {
     if (client && client.connected) {
       client.publish({
         destination: '/pub/chat/message',
-        body: JSON.stringify({ roomId: selectedRoom.roomNo, senderId: memberNo, content, msgType: 'APPOINTMENT', clientUuid }),
+        body: JSON.stringify({ roomNo: selectedRoom.roomNo, senderNo: memberNo, content, msgType: 'APPOINTMENT', clientUuid }),
       });
       const timeout = setTimeout(() => {
         setMessages(prev => prev.map(m => m.clientUuid === clientUuid && m.status === 'SENDING' ? { ...m, status: 'FAILED' } : m));
@@ -899,9 +900,10 @@ export const Chat: React.FC = () => {
       client.publish({
         destination: '/pub/chat/message',
         body: JSON.stringify({
-          roomId: selectedRoom.roomNo,
-          senderId: memberNo,
+          roomNo: selectedRoom.roomNo,
+          senderNo: memberNo,
           content: msg.content,
+          msgType: msg.msgType || 'TEXT',
           clientUuid: msg.clientUuid,
         }),
       });

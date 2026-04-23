@@ -36,6 +36,8 @@ interface AuctionResultDetail {
   deliveryAddrDetail: string | null;
   isForcePromoted: number; // 1 = 강제 승계 낙찰자
   hasReview: boolean;
+  hasBuyerReview?: boolean;
+  hasSellerReview?: boolean;
 }
 
 
@@ -496,7 +498,7 @@ export const WonProductDetail: React.FC = () => {
 
                   {isCompleted && (
                     <div className="mt-8 space-y-3">
-                      {!result.hasReview ? (
+                      {(!result.hasBuyerReview && !result.hasReview) ? (
                         <button
                           onClick={() => setShowReviewModal(true)}
                           className="w-full h-[56px] bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 flex items-center justify-center"
@@ -682,13 +684,14 @@ export const WonProductDetail: React.FC = () => {
         onClose={() => setShowReviewModal(false)}
         onSuccess={() => {
           setShowReviewModal(false);
-          setResult(prev => prev ? { ...prev, hasReview: true } : null);
+          setResult(prev => prev ? { ...prev, hasBuyerReview: true } : null);
           showToast('후기가 등록되었습니다.', 'success');
         }}
         resultNo={result.resultNo}
         sellerNickname={result.seller.nickname}
         productTitle={result.title}
         productImage={images[0]}
+        role="buyer"
       />
     </div>
   );
