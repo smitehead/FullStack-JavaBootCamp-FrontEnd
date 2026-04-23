@@ -123,12 +123,14 @@ export const SellerProfile: React.FC = () => {
     const isCompleted = p.status === 'completed';
     const hasConfirm = p.auctionResultStatus === '구매확정';
     
-    if (sellingFilter === 'all') return true;
+    // 전체: 경매중 또는 판매종료(구매확정)인 상품만 노출 (유찰/취소 제외)
+    if (sellingFilter === 'all') {
+      return p.status === 'active' || (isCompleted && hasConfirm);
+    }
+    
     if (sellingFilter === 'active') return p.status === 'active';
     if (sellingFilter === 'completed') return isCompleted && hasConfirm;
-    if (sellingFilter === 'ended') {
-      return p.status === 'failed' || p.status === 'canceled' || p.status === 'ended';
-    }
+    
     return true;
   });
 
@@ -257,10 +259,10 @@ export const SellerProfile: React.FC = () => {
 
             {activeTab === 'selling' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
-                {(['all', 'active', 'ended', 'completed'] as const).map(f => (
+                {(['all', 'active', 'completed'] as const).map(f => (
                   <button key={f} onClick={() => { setSellingFilter(f); setCurrentPage(1); }}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${sellingFilter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {f === 'all' ? '전체' : f === 'active' ? '경매중' : f === 'completed' ? '판매완료' : '경매종료'}
+                    {f === 'all' ? '전체' : f === 'active' ? '경매중' : '판매완료'}
                   </button>
                 ))}
               </div>
