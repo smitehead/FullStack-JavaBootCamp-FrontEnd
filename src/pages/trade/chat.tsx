@@ -138,7 +138,12 @@ export const Chat: React.FC = () => {
         unreadCount: r.unreadCount || 0,
         productPrice: r.productPrice || r.currentPrice || 0,
       }));
-      setChatRooms(rooms);
+      const sortedRooms = (rooms || []).sort((a: any, b: any) => {
+        const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
+        const timeB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
+        return timeB - timeA;
+      });
+      setChatRooms(sortedRooms);
     } catch (err) {
       console.error('[Chat] 채팅방 목록 로딩 실패', err);
     } finally {
@@ -257,7 +262,12 @@ export const Chat: React.FC = () => {
         setIsConnected(false);
       },
       onStompError: (frame) => {
-        console.error('[STOMP] 에러', frame.headers.message);
+        const msg = frame.headers['message'] || '';
+        console.error('[STOMP] 에러', msg);
+        // 인증 오류(토큰 만료 등)는 재연결해도 동일하게 실패 → 루프 방지
+        if (msg.includes('JWT') || msg.includes('인증') || msg.includes('Authorization')) {
+          client.deactivate();
+        }
       },
       onWebSocketClose: () => {
         setIsConnected(false);

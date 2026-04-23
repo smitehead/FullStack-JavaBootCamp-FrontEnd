@@ -579,7 +579,7 @@ export const MyPage: React.FC = () => {
                         onWishlistToggle={handleWishlistToggle}
                       />
                       <div className="flex items-center justify-end px-1">
-                        {(p.hasSellerReview === false || p.hasReview === false) && isResultConfirmed && p.resultNo ? (
+                        {((p.hasSellerReview === false || p.hasReview === false) && p.resultNo) ? (
                           <button
                             onClick={(e) => {
                               e.preventDefault();
@@ -590,7 +590,7 @@ export const MyPage: React.FC = () => {
                           >
                             후기 작성하기
                           </button>
-                        ) : (isResultConfirmed && p.resultNo && (
+                        ) : (p.resultNo && (
                           <button
                             disabled
                             className="inline-flex items-center px-3 py-1 bg-gray-50 border border-gray-100 text-gray-400 rounded-full text-xs font-bold cursor-not-allowed font-sans"
@@ -625,7 +625,7 @@ export const MyPage: React.FC = () => {
                   <div key={p.id} className="flex flex-col gap-2">
                     <ProductCard product={p} hideOverlay onWishlistToggle={handleWishlistToggle} />
                     <div className="flex items-center justify-end px-1">
-                      {(p.hasBuyerReview === false || p.hasReview === false) && p.resultNo ? (
+                      {(p.hasBuyerReview === false || p.hasReview === false) && p.resultNo && (
                         <button
                           onClick={(e) => {
                             e.preventDefault();
@@ -636,14 +636,7 @@ export const MyPage: React.FC = () => {
                         >
                           후기 작성하기
                         </button>
-                      ) : (p.resultNo && (
-                        <button
-                          disabled
-                          className="inline-flex items-center px-3 py-1 bg-gray-50 border border-gray-100 text-gray-400 rounded-full text-xs font-bold cursor-not-allowed font-sans"
-                        >
-                          거래 완료
-                        </button>
-                      ))}
+                      )}
                     </div>
                   </div>
                 ))}

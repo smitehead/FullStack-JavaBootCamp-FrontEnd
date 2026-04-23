@@ -832,6 +832,56 @@ export const ProductDetail: React.FC = () => {
     setShowBidTermsModal(false);
   };
 
+  const handleGoToChat = async () => {
+    if (!user || !product) {
+      showToast('로그인이 필요한 서비스입니다.', 'error');
+      navigate('/login');
+      return;
+    }
+
+    const currentMemberNo = getMemberNo(user);
+    if (!currentMemberNo) return;
+
+    try {
+      let buyerNo: number | undefined;
+      let sellerNo: number | undefined;
+
+      if (isSeller) {
+        // 내가 판매자 -> 구매자(낙찰자) 찾기
+        sellerNo = currentMemberNo;
+        // status가 낙찰 이후인 경우 낙찰 결과 API로 구매자 조회
+        try {
+          const res = await api.get(`/auction-results/product/${product.id}`);
+          buyerNo = res.data?.buyer?.buyerNo;
+        } catch {
+          // 낙찰 정보 없으면 대화 상대 없음
+        }
+      } else {
+        // 내가 입찰자/구매자 -> 판매자와 대화
+        buyerNo = currentMemberNo;
+        sellerNo = (product.seller as any).memberNo || getMemberNo(product.seller);
+      }
+
+      if (!buyerNo || !sellerNo) {
+        showToast('채팅 상대 정보를 찾을 수 없습니다.', 'error');
+        return;
+      }
+
+      const res = await api.post('/chat/rooms', {
+        buyerNo: Number(buyerNo),
+        sellerNo: Number(sellerNo),
+        productNo: Number(product.id),
+      });
+
+      if (res.data?.roomNo) {
+        navigate(`/chat?roomNo=${res.data.roomNo}`);
+      }
+    } catch (error) {
+      console.error('[Chat] 채팅방 연결 실패', error);
+      showToast('채팅방으로 이동 중 오류가 발생했습니다.', 'error');
+    }
+  };
+
   const chartData = [
     { label: '시작가', amount: product.startPrice },
     ...[...product.bids]
@@ -902,7 +952,7 @@ export const ProductDetail: React.FC = () => {
                 {(isSeller && (product.status === 'completed' || product.status === 'pending_payment')) && (
                   <button
                     onClick={() => { setShowMoreMenu(false); navigate(`/seller-result/${product.id}`); }}
-                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition-colors border-b border-gray-50"
+                    className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                   >
                     <BsInfoCircle className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                   </button>
@@ -910,23 +960,29 @@ export const ProductDetail: React.FC = () => {
                 {(!isSeller && isHighestBidder && (product.status === 'completed' || product.status === 'pending_payment')) && (
                   <button
                     onClick={() => { setShowMoreMenu(false); navigate(`/won/${product.id}`); }}
-                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition-colors border-b border-gray-50"
+                    className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                   >
                     <BsInfoCircle className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                   </button>
                 )}
+                <button
+                  onClick={() => { setShowMoreMenu(false); handleGoToChat(); }}
+                  className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                >
+                  <BsChat className="w-4 h-4 mr-2.5" /> 채팅방 가기
+                </button>
                 {isSeller && (
                   <>
                     <button
                       onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
-                      className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                      className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                     >
                       <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
                     </button>
                     {!isFinished && (
                       <button
                         onClick={() => { setShowMoreMenu(false); setShowCancelModal(true); }}
-                        className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                        className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                       >
                         <BsHouseX className="w-4 h-4 mr-2.5" /> 경매 취소하기
                       </button>
@@ -934,7 +990,7 @@ export const ProductDetail: React.FC = () => {
                     {isFinished && product && (product.participantCount === 0 || product.status === 'closed_failed') && (
                       <button
                         onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
-                        className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                        className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                       >
                         <BsArrowRepeat className="w-4 h-4 mr-2.5" /> 재게시하기
                       </button>
