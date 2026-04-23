@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, BsShieldFill, BsFlagFill, BsArrowLeft } from 'react-icons/bs';
+import { 
+  BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, 
+  BsShieldFill, BsFlagFill, BsArrowLeft
+} from 'react-icons/bs';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -256,11 +259,9 @@ export const SellerProfile: React.FC = () => {
 
           {activeTab === 'selling' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.length > 0 ? (
+              {visibleProducts.length > 0 ? (
                 filteredProducts.map(p => {
-                  // 참여여부 확인 (본인 판매 상품이거나, 입찰/낙찰 내역이 있는 경우 관여됨)
                   const isInvolved = (user && getMemberNo(user) === seller.sellerNo) || !!p.bidStatus;
-                  
                   return (
                     <ProductCard 
                       key={p.id} 
@@ -287,7 +288,6 @@ export const SellerProfile: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Tag Review Summary Section */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-6">
                   <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">받은 태그</h4>
                   <div className="flex flex-wrap gap-3">
@@ -295,7 +295,6 @@ export const SellerProfile: React.FC = () => {
                       const tagCounts: Record<string, number> = {};
                       reviews.forEach(r => r.tags?.forEach((t: string) => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
                       const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
-                      
                       return sortedTags.map(([tag, count]) => (
                         <div key={tag} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
                           <span className="text-sm font-medium text-gray-700">{tag}</span>
@@ -307,41 +306,44 @@ export const SellerProfile: React.FC = () => {
                 </div>
 
                 <div className="space-y-4">
-                {reviews.map((review: any) => (
-                  <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-bold text-gray-700">{review.writerNickname}</span>
-                      <span className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    {review.tags && review.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {review.tags.map((tag: string) => (
-                          <span key={tag} className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-xl">
-                            {tag}
-                          </span>
-                        ))}
+                  {reviews.map((review: any) => (
+                    <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold text-gray-700">{review.writerNickname}</span>
+                          <span className="text-xs text-gray-400 font-medium">{new Date(review.createdAt).toLocaleDateString()}</span>
+                        </div>
                       </div>
-                    )}
-                    {review.content && (
-                      <p className="text-sm text-gray-600 leading-relaxed mb-3">{review.content}</p>
-                    )}
-                    {review.productTitle && (
-                      <Link
-                        to={`/products/${review.productNo}`}
-                        className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
-                      >
-                        <BsBox2 className="w-3.5 h-3.5" />
-                        {review.productTitle}
-                      </Link>
-                    )}
-                  </div>
-                ))}
+
+                      {review.tags && review.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {review.tags.map((tag: string) => (
+                            <span key={tag} className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-xl">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {review.content && (
+                        <p className="text-sm text-gray-600 leading-relaxed mb-3">{review.content}</p>
+                      )}
+                      {review.productTitle && (
+                        <Link
+                          to={`/products/${review.productNo}`}
+                          className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
+                        >
+                          <BsBox2 className="w-3.5 h-3.5" />
+                          {review.productTitle}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          )
-        )}
+            )
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 };

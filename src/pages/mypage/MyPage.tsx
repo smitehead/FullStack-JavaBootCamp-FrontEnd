@@ -2,9 +2,11 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
-import { BsBag, BsBagFill, BsPencilSquare, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
-
-import { BsHeart, BsHeartFill, BsGear, BsGearFill, BsWallet, BsBox2, BsShop, BsTrophy, BsChat, BsCheckCircle } from 'react-icons/bs';
+import { 
+  BsBag, BsBagFill, BsPencilSquare, BsChevronLeft, BsChevronRight,
+  BsHeart, BsHeartFill, BsGear, BsGearFill, BsWallet, BsBox2, BsShop, 
+  BsTrophy, BsChat, BsThreeDotsVertical, BsXCircleFill
+} from 'react-icons/bs';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -83,6 +85,8 @@ export const MyPage: React.FC = () => {
     createdAt: string;
   }
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [hideModalId, setHideModalId] = useState<number | null>(null);
 
   // 리뷰 탭 진입 시 API 호출
   useEffect(() => {
@@ -92,7 +96,14 @@ export const MyPage: React.FC = () => {
     api.get(`/reviews/target/${memberNo}`)
       .then(res => setReviews(res.data))
       .catch(() => setReviews([]));
-  }, [activeTab]);
+  }, [activeTab, user]);
+
+  // Close menu on click outside
+  useEffect(() => {
+    const handleOutsideClick = () => setOpenMenuId(null);
+    window.addEventListener('click', handleOutsideClick);
+    return () => window.removeEventListener('click', handleOutsideClick);
+  }, []);
 
   const [sellingProducts, setSellingProducts] = useState<Product[]>([]);
   const [biddingProducts, setBiddingProducts] = useState<(Product & { bidStatus?: string })[]>([]);
@@ -241,6 +252,17 @@ export const MyPage: React.FC = () => {
     setPurchasedProducts(updateList);
   }, [activeTab]);
 
+  const handleHideReview = async (reviewNo: number) => {
+    try {
+      await api.put(`/reviews/${reviewNo}/hide`);
+      setReviews(prev => prev.filter(r => r.reviewNo !== reviewNo));
+      showToast('후기가 숨김 처리되었습니다.', 'success');
+      setHideModalId(null);
+    } catch (err: any) {
+      showToast(err.response?.data?.message || '오류가 발생했습니다.', 'error');
+    }
+  };
+
   // 로그인 시 카운트 표시용 사전 로드
   useEffect(() => {
     if (!user) return;
@@ -321,14 +343,7 @@ export const MyPage: React.FC = () => {
   }, [activeTab, user, fetchBiddingProducts, biddingFilter, biddingPage]);
 
 
-  // 서버 사이드 필터링 사용으로 변경 (이전의 클라이언트 필터링 로직 제거)
-
-
   // 입찰 상태별 뱃지
-  // bidding  → 상위입찰자 (경매 진행 중, 내가 최고 입찰자)
-  // outbid   → 추월변동   (경매 진행 중, 다른 사람에게 추월당함) — SSE 오버라이드
-  // won      → 낙찰성공   (경매 종료 후 낙찰)
-  // lost     → 뱃지 없음  (낙찰 실패는 표시하지 않음)
   const getBidStatusBadge = (bidStatus?: string) => {
     switch (bidStatus) {
       case 'bidding':
@@ -548,7 +563,6 @@ export const MyPage: React.FC = () => {
                 {/* 판매 내역 */}
                 {activeTab === 'selling' && sellingProducts.map(p => {
                   const ars = p.auctionResultStatus;
-                  // pending = 낙찰 후 구매 확정 대기 (배송대기 | 취소요청 | 판매자취소요청)
                   const hasPendingResult = p.status === 'pending';
                   const isResultConfirmed = p.status === 'completed';
                   const isResultCanceled = p.status === 'canceled';
@@ -645,7 +659,8 @@ export const MyPage: React.FC = () => {
                         {(() => {
                           const tagCounts: Record<string, number> = {};
                           reviews.forEach(r => r.tags?.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
-                          return Object.entries(tagCounts).map(([tag, count]) => (
+                          const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+                          return sortedTags.map(([tag, count]) => (
                             <div key={tag} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
                               <span className="text-sm font-medium text-gray-700">{tag}</span>
                               <span className="bg-indigo-100 text-indigo-600 text-xs font-bold px-2 py-0.5 rounded-full">{count}</span>
@@ -663,9 +678,35 @@ export const MyPage: React.FC = () => {
                       reviews.map(review => (
                         <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                           <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <p className="font-bold text-gray-900">{review.writerNickname}</p>
-                              <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</p>
+                            <div className="flex items-center gap-3">
+                              <span className="font-bold text-gray-900">{review.writerNickname}</span>
+                              <span className="text-xs text-gray-400 font-medium">{new Date(review.createdAt).toLocaleDateString()}</span>
+                            </div>
+
+                            <div className="relative">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenMenuId(openMenuId === review.reviewNo ? null : review.reviewNo);
+                                }}
+                                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                              >
+                                <BsThreeDotsVertical className="w-4 h-4 text-gray-400" />
+                              </button>
+                              
+                              {openMenuId === review.reviewNo && (
+                                <div className="absolute right-0 mt-1 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 animate-in fade-in zoom-in-95 duration-100 origin-top-right">
+                                  <button
+                                    onClick={() => {
+                                      setHideModalId(review.reviewNo);
+                                      setOpenMenuId(null);
+                                    }}
+                                    className="w-full text-left px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
+                                  >
+                                    거래 후기 숨기기
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                           {review.tags && review.tags.length > 0 && (
@@ -698,6 +739,37 @@ export const MyPage: React.FC = () => {
                 </div>
               )}
             </>
+          )}
+
+          {/* Hide Confirm Modal */}
+          {hideModalId && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+              <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+                <div className="p-8 text-center">
+                    <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                      <BsXCircleFill className="w-8 h-8 text-red-500" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">후기를 숨기시겠습니까?</h3>
+                    <p className="text-sm text-gray-500 font-medium leading-relaxed">
+                      후기 숨기기는 다시 되돌릴 수 없습니다.
+                    </p>
+                </div>
+                <div className="flex border-t border-gray-100">
+                    <button 
+                      onClick={() => setHideModalId(null)}
+                      className="flex-1 py-4 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors border-r border-gray-100"
+                    >
+                      취소
+                    </button>
+                    <button 
+                      onClick={() => handleHideReview(hideModalId)}
+                      className="flex-1 py-4 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      거래 후기 숨기기
+                    </button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>
