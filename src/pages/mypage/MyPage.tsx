@@ -34,6 +34,7 @@ function mapToProduct(item: any): Product & { bidStatus?: string } {
     },
     // 낙찰자 정보 보존
     winnerMemberNo: item.winnerNo || item.winnerMemberNo || item.buyerNo || item.buyerMemberNo,
+    winnerNickname: item.winnerNickname || null,
     startPrice: item.startPrice || item.currentPrice || 0,
     currentPrice: item.currentPrice || 0,
     minBidIncrement: item.minBidUnit || 1000,

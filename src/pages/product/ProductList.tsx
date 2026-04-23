@@ -73,23 +73,37 @@ export const ProductList: React.FC = () => {
 
     try {
       const memberNo = getMemberNo(user) ?? undefined;
+      
+      // searchParams에서 직접 값 추출 (Race Condition 방지)
+      const curLarge = searchParams.get('large');
+      const curMedium = searchParams.get('medium');
+      const curSmall = searchParams.get('small');
+      const curMinP = searchParams.get('minPrice');
+      const curMaxP = searchParams.get('maxPrice');
+      const curCity = searchParams.get('city');
+      const curDistrict = searchParams.get('district');
+      const curNeighborhood = searchParams.get('neighborhood');
+      const curDel = searchParams.get('delivery');
+      const curFace = searchParams.get('face');
+      const curSort = searchParams.get('sort') || 'all';
+      const curKeyword = searchParams.get('q');
 
       const params = {
         page: pageToFetch,
         size: 16,
-        large: largeCat ? parseInt(largeCat, 10) : undefined,
-        medium: mediumCat ? parseInt(mediumCat, 10) : undefined,
-        small: smallCat ? parseInt(smallCat, 10) : undefined,
-        minPrice: minPrice ? parseInt(minPrice) : undefined,
-        maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-        city: city || undefined,
-        district: district || undefined,
-        neighborhood: neighborhood || undefined,
-        delivery: delivery || undefined,
-        face: faceToFace || undefined,
-        sort: sort,        // 'all' 포함 그대로 전송 → 백엔드 default 분기에서 처리
-        keyword: keyword || undefined,
-        memberNo: memberNo || undefined, // 찜 여부 확인용
+        large: curLarge ? parseInt(curLarge, 10) : undefined,
+        medium: curMedium ? parseInt(curMedium, 10) : undefined,
+        small: curSmall ? parseInt(curSmall, 10) : undefined,
+        minPrice: curMinP ? parseInt(curMinP) : undefined,
+        maxPrice: curMaxP ? parseInt(curMaxP) : undefined,
+        city: curCity || undefined,
+        district: curDistrict || undefined,
+        neighborhood: curNeighborhood || undefined,
+        delivery: curDel === 'true' || undefined,
+        face: curFace === 'true' || undefined,
+        sort: curSort,
+        keyword: curKeyword || undefined,
+        memberNo: memberNo || undefined,
       };
 
       const response = await api.get('/products', { params });
@@ -121,7 +135,7 @@ export const ProductList: React.FC = () => {
     }
   }, [searchParams, user]);
 
-  // 필터 변경 시 초기화 + 첨 페이지 로드
+  // 필터 변경 시 초기화 + 첫 페이지 로드
   useEffect(() => {
     fetchedPageRef.current = 1;
     setPage(1);
@@ -130,7 +144,6 @@ export const ProductList: React.FC = () => {
 
   // 페이지 변경 시(무한 스크롤) 추가 로드
   useEffect(() => {
-    // 페이지 1를 먼저 패치한 경우 다시 요청 안 함 (위 useEffect와 중복 방지)
     if (page <= 1 || page <= fetchedPageRef.current) return;
     fetchedPageRef.current = page;
     fetchProducts(page, false);
@@ -180,6 +193,9 @@ export const ProductList: React.FC = () => {
   };
 
   const handleLargeClick = (id: string) => {
+    setLargeCat(id);
+    setMediumCat('');
+    setSmallCat('');
     if (id === '') {
       updateParams({ large: '', medium: '', small: '' });
       setExpandedLarge(null);
@@ -192,11 +208,14 @@ export const ProductList: React.FC = () => {
   };
 
   const handleMediumClick = (id: string) => {
+    setMediumCat(id);
+    setSmallCat('');
     updateParams({ medium: id, small: '' });
     setExpandedMedium(id);
   };
 
   const handleSmallClick = (id: string) => {
+    setSmallCat(id);
     updateParams({ small: id });
   };
 
@@ -206,7 +225,20 @@ export const ProductList: React.FC = () => {
 
   const resetAll = () => {
     setSearchParams({});
+    setLargeCat('');
+    setMediumCat('');
+    setSmallCat('');
+    setExpandedLarge(null);
     setExpandedMedium(null);
+    setMinPrice('');
+    setMaxPrice('');
+    setCity('');
+    setDistrict('');
+    setNeighborhood('');
+    setDelivery(false);
+    setFaceToFace(false);
+    setSort('all');
+    setKeyword('');
   };
 
   const handleCurrentLocationFilter = () => {

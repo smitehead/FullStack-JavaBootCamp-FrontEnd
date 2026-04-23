@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Product, ProductQna } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { BsBox2, BsExclamationCircle, BsReply, BsShieldFillCheck, BsFlagFill, BsInfoCircle, BsInfoCircleFill, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsStopwatch, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShareFill, BsArrowRepeat, BsTrash3, BsHouseX } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsReply, BsShieldFillCheck, BsFlagFill, BsInfoCircle, BsInfoCircleFill, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsStopwatch, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShareFill, BsArrowRepeat, BsTrash3, BsHouseX, BsLayoutTextSidebar } from 'react-icons/bs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -851,7 +851,7 @@ export const ProductDetail: React.FC = () => {
         sellerNo = currentMemberNo;
         // status가 낙찰 이후인 경우 낙찰 결과 API로 구매자 조회
         try {
-          const res = await api.get(`/auction-results/product/${product.id}`);
+          const res = await api.get(`/auction-results/seller/product/${product.id}`);
           buyerNo = res.data?.buyer?.buyerNo;
         } catch {
           // 낙찰 정보 없으면 대화 상대 없음
@@ -954,7 +954,7 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => { setShowMoreMenu(false); navigate(`/seller-result/${product.id}`); }}
                     className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                   >
-                    <BsInfoCircle className="w-4 h-4 mr-2.5" /> 거래 정보 보기
+                    <BsLayoutTextSidebar className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                   </button>
                 )}
                 {(!isSeller && isHighestBidder && (product.status === 'completed' || product.status === 'pending_payment')) && (
@@ -962,7 +962,7 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => { setShowMoreMenu(false); navigate(`/won/${product.id}`); }}
                     className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                   >
-                    <BsInfoCircle className="w-4 h-4 mr-2.5" /> 거래 정보 보기
+                    <BsLayoutTextSidebar className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                   </button>
                 )}
                 <button
@@ -2280,7 +2280,7 @@ export const ProductDetail: React.FC = () => {
                 <button
                   onClick={executeBuyout}
                   disabled={isBuyoutProcessing}
-                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-2"
+                  className="flex-1 py-3.5 bg-[#1a1a3a] text-white rounded-2xl font-bold hover:bg-[#2a2a4a] transition-all shadow-lg shadow-blue-500/10 text-sm flex items-center justify-center gap-2"
                 >
                   {isBuyoutProcessing ? <div className="spinner-border w-4 h-4" style={{ borderTopColor: '#fff', borderLeftColor: 'rgba(255,255,255,0.2)', borderBottomColor: 'rgba(255,255,255,0.2)', borderRightColor: 'rgba(255,255,255,0.2)' }} /> : '구매하기'}
                 </button>
