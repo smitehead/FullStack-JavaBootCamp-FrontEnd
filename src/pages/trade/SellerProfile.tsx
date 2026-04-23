@@ -126,7 +126,9 @@ export const SellerProfile: React.FC = () => {
     if (sellingFilter === 'all') return true;
     if (sellingFilter === 'active') return p.status === 'active';
     if (sellingFilter === 'completed') return isCompleted && hasConfirm;
-    if (sellingFilter === 'ended') return p.status !== 'active' && !(isCompleted && hasConfirm);
+    if (sellingFilter === 'ended') {
+      return p.status === 'failed' || p.status === 'canceled' || p.status === 'ended';
+    }
     return true;
   });
 
@@ -275,6 +277,7 @@ export const SellerProfile: React.FC = () => {
                       key={p.id} 
                       product={p} 
                       isSold={p.status !== 'active'} 
+                      isConfirmed={p.status === 'completed' && p.auctionResultStatus === '구매확정'}
                       hideOverlay={p.status !== 'active' && !isInvolved}
                     />
                   );
@@ -322,7 +325,12 @@ export const SellerProfile: React.FC = () => {
                     <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 p-6">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <span className="text-sm font-bold text-gray-700">{review.writerNickname}</span>
+                          <Link 
+                            to={`/seller/${review.writerNo}`}
+                            className="text-sm font-bold text-gray-700 hover:text-gray-900 transition-colors"
+                          >
+                            {review.writerNickname}
+                          </Link>
                           <span className="text-xs text-gray-400 font-medium">{new Date(review.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>

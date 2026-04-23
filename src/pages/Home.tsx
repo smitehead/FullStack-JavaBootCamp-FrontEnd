@@ -290,6 +290,15 @@ export const Home: React.FC = () => {
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
+
+          <div className="flex justify-center mt-10">
+            <Link
+              to="/search?sort=popular"
+              className="px-8 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:border-gray-900 transition-all shadow-sm"
+            >
+              인기 상품 더보기
+            </Link>
+          </div>
         </section>
 
         {/* Banner Ad */}
