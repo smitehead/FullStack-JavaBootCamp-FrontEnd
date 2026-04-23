@@ -129,8 +129,8 @@ export const SellerProfile: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="spinner-border w-12 h-12" />
       </div>
     );
   }
@@ -163,7 +163,7 @@ export const SellerProfile: React.FC = () => {
                 <div className="flex items-center justify-center md:justify-start gap-3 text-sm text-gray-400 font-medium">
                   <span>가입일: {seller.joinedAt}</span>
                   <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
-                  <span>판매상품 {visibleProducts.length}개</span>
+                  <span>판매상품 {sellerProducts.length}개</span>
                   <div className="flex items-center gap-2 ml-2">
                     <button
                       onClick={handleBlockToggle}

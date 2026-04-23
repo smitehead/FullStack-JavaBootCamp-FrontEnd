@@ -383,6 +383,11 @@ export const UserManagement: React.FC = () => {
                           const val = parseFloat(e.target.value);
                           if (!isNaN(val)) setMannerValue(val);
                         }}
+                        onKeyDown={(e) => {
+                          if (['e', 'E', '+', '-'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                       />
                     </div>
                     <div>
@@ -465,6 +470,11 @@ export const UserManagement: React.FC = () => {
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-lg"
                     value={pointAmount}
                     onChange={(e) => setPointAmount(e.target.value === '' ? 0 : parseInt(e.target.value, 10))}
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '.'].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                   />
                 </div>
               )}

@@ -604,6 +604,11 @@ export const Signup: React.FC = () => {
                               className="block w-full bg-transparent text-xl font-bold placeholder:text-gray-200 outline-none tracking-[0.3em] text-center"
                               placeholder="000000"
                               value={emailCode}
+                              onKeyDown={(e) => {
+                                if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                                  e.preventDefault();
+                                }
+                              }}
                               onChange={(e) => {
                                 const val = e.target.value.replace(/[^0-9]/g, '');
                                 setEmailCode(val);
@@ -695,6 +700,11 @@ export const Signup: React.FC = () => {
                         className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
                         placeholder="010-0000-0000"
                         value={formData.phoneNum}
+                        onKeyDown={(e) => {
+                          if (['e', 'E', '+', '.'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         onChange={(e) => {
                           // 숫자만 추출 후 010-0000-0000 형식으로 자동 포맷
                           const digits = e.target.value.replace(/[^0-9]/g, '');
@@ -721,6 +731,11 @@ export const Signup: React.FC = () => {
                         className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
                         placeholder="YYMMDD"
                         value={formData.birthDate}
+                        onKeyDown={(e) => {
+                          if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         onChange={(e) => {
                           const val = e.target.value.replace(/[^0-9]/g, '');
                           if (val.length <= 6) {

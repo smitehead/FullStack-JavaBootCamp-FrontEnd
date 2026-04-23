@@ -107,8 +107,8 @@ export const WonProductDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="spinner-border w-12 h-12" />
       </div>
     );
   }
@@ -428,14 +428,14 @@ export const WonProductDetail: React.FC = () => {
                         <button
                           onClick={() => setShowSellerCancelApproveConfirm(true)}
                           disabled={isProcessing}
-                          className="w-full py-5 border-2 border-rose-200 text-rose-600 font-bold rounded-2xl hover:bg-rose-50 transition-all active:scale-95 disabled:opacity-50"
+                          className="w-full h-[56px] flex items-center justify-center border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
                         >
                           취소 동의
                         </button>
                         <button
                           onClick={handleConfirmClick}
                           disabled={isProcessing}
-                          className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/10 active:scale-95 disabled:opacity-50"
+                          className="w-full h-[56px] bg-brand hover:bg-brand-dark text-white font-bold rounded-2xl transition-all shadow-lg shadow-brand/10 active:scale-95 disabled:opacity-50 flex items-center justify-center"
                         >
                           {isProcessing ? '처리 중...' : '상품 수령 확인 (구매 확정)'}
                         </button>
@@ -487,7 +487,7 @@ export const WonProductDetail: React.FC = () => {
                       <button
                         onClick={handleConfirmClick}
                         disabled={isProcessing}
-                        className="w-full h-[56px] bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-500/10 active:scale-95 disabled:opacity-50 flex items-center justify-center"
+                        className="w-full h-[56px] bg-brand hover:bg-brand-dark text-white font-bold rounded-2xl transition-all shadow-lg shadow-brand/10 active:scale-95 disabled:opacity-50 flex items-center justify-center"
                       >
                         {isProcessing ? '처리 중...' : '상품 수령 확인 (구매 확정)'}
                       </button>
@@ -549,10 +549,10 @@ export const WonProductDetail: React.FC = () => {
 
                 <div className="pt-8 border-t border-white/10">
                   <div className="space-y-3">
-                    <button
-                      onClick={handleChatWithSeller}
+                      <button
+                        onClick={handleChatWithSeller}
                       className="w-full py-5 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
-                    >
+                      >
                       <BsChat className="w-5 h-5 text-gray-900" />
                       판매자와 채팅하기
                     </button>

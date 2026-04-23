@@ -553,7 +553,7 @@ export const MyPage: React.FC = () => {
 
           {loading ? (
             <div className="flex justify-center py-20">
-              <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+              <div className="spinner-border w-8 h-8" />
             </div>
           ) : (
             <>

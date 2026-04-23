@@ -1666,6 +1666,11 @@ export const Chat: React.FC = () => {
                             if (!isNaN(val) && val >= 1 && val <= 12) setApptHour(val);
                             else if (e.target.value === '') setApptHour(0);
                           }}
+                          onKeyDown={(e) => {
+                            if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                              e.preventDefault();
+                            }
+                          }}
                           className="w-full h-[52px] bg-gray-50 border border-gray-100 rounded-2xl text-center text-sm font-bold text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#FF5A5A]/20 transition-all outline-none"
                         />
                       </div>
@@ -1681,6 +1686,11 @@ export const Chat: React.FC = () => {
                             const val = parseInt(e.target.value);
                             if (!isNaN(val) && val >= 0 && val <= 59) setApptMinute(val);
                             else if (e.target.value === '') setApptMinute(0);
+                          }}
+                          onKeyDown={(e) => {
+                            if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                              e.preventDefault();
+                            }
                           }}
                           className="w-full h-[52px] bg-gray-50 border border-gray-100 rounded-2xl text-center text-sm font-bold text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#FF5A5A]/20 transition-all outline-none"
                         />

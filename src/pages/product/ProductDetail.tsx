@@ -1558,6 +1558,11 @@ export const ProductDetail: React.FC = () => {
                         value={bidAmount}
                         step={product.minBidIncrement}
                         onChange={(e) => setBidAmount(Number(e.target.value))}
+                        onKeyDown={(e) => {
+                          if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-brand focus:bg-white outline-none transition-all pr-12"
                       />
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
@@ -1582,6 +1587,11 @@ export const ProductDetail: React.FC = () => {
                         value={autoBidMaxAmount}
                         step={product.minBidIncrement}
                         onChange={(e) => setAutoBidMaxAmount(Number(e.target.value))}
+                        onKeyDown={(e) => {
+                          if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-6 py-4 text-xl font-bold focus:border-brand focus:bg-white outline-none transition-all pr-12"
                       />
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>

@@ -294,8 +294,8 @@ export const ProductList: React.FC = () => {
   };
 
   if (loading && products.length === 0) return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="spinner-border w-12 h-12" />
     </div>
   );
 
@@ -680,7 +680,7 @@ export const ProductList: React.FC = () => {
       {/* Loading & No Results */}
       {loading && (
         <div className="flex justify-center py-10">
-          <div className="spinner-border w-8 h-8" />
+          <div className="spinner-border w-6 h-6" />
         </div>
       )}
 

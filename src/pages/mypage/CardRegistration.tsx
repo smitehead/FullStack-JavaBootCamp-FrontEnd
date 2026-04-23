@@ -182,6 +182,11 @@ export const CardRegistration: React.FC = () => {
                     type="text"
                     inputMode="numeric"
                     value={field.val}
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     onChange={(e) => field.onChange(e.target.value)}
                     placeholder={field.placeholder}
                     className="w-full px-2 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 outline-none transition-all text-center text-sm"
@@ -202,6 +207,11 @@ export const CardRegistration: React.FC = () => {
                   ref={monthRef}
                   inputMode="numeric"
                   value={expiryMonth}
+                  onKeyDown={(e) => {
+                    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   onChange={handleExpiryMonthChange}
                   placeholder="MM"
                   className="w-full px-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 outline-none transition-all text-center text-sm"
@@ -217,6 +227,11 @@ export const CardRegistration: React.FC = () => {
                   ref={yearRef}
                   inputMode="numeric"
                   value={expiryYear}
+                  onKeyDown={(e) => {
+                    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   onChange={handleExpiryYearChange}
                   placeholder="YY"
                   className="w-full px-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 outline-none transition-all text-center text-sm"
@@ -236,6 +251,11 @@ export const CardRegistration: React.FC = () => {
                   ref={birthRef}
                   inputMode="numeric"
                   value={birthDate}
+                  onKeyDown={(e) => {
+                    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   onChange={handleBirthDateChange}
                   placeholder="YYMMDD"
                   className="w-full px-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 outline-none transition-all text-center text-sm"
@@ -251,6 +271,11 @@ export const CardRegistration: React.FC = () => {
                   ref={passRef}
                   inputMode="numeric"
                   value={pwd2digit}
+                  onKeyDown={(e) => {
+                    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   onChange={handlePasswordChange}
                   placeholder="••"
                   className="w-full px-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 outline-none transition-all text-center text-sm"
