@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
 import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -61,42 +61,42 @@ export const WonProductDetail: React.FC = () => {
   const [detailAddress, setDetailAddress] = useState('');
   const [activeTransactionTab, setActiveTransactionTab] = useState<'delivery' | 'face-to-face'>('delivery');
 
+  const fetchDetail = useCallback(async () => {
+    if (!id) return;
+    try {
+      const res = await api.get(`/auction-results/product/${id}`);
+      const data: AuctionResultDetail = res.data;
+      setResult(data);
+
+      if (data.deliveryAddrRoad) {
+        setAddress(data.deliveryAddrRoad);
+        setDetailAddress(data.deliveryAddrDetail || '');
+      } else if (data.deliveryAddrDetail) {
+        setAddress(data.deliveryAddrDetail);
+      } else {
+        try {
+          const memberRes = await api.get('/members/me');
+          if (memberRes.data.addrRoad) setAddress(memberRes.data.addrRoad);
+          if (memberRes.data.addrDetail) setDetailAddress(memberRes.data.addrDetail);
+        } catch { /* 무시 */ }
+      }
+
+      if (data.tradeType === '직거래') {
+        setActiveTransactionTab('face-to-face');
+      } else {
+        setActiveTransactionTab('delivery');
+      }
+    } catch {
+      showToast('낙찰 정보를 불러올 수 없습니다.', 'error');
+      navigate(-1);
+    } finally {
+      setLoading(false);
+    }
+  }, [id, navigate]);
 
   useEffect(() => {
-    if (!id) return;
-    api.get(`/auction-results/product/${id}`)
-      .then(async res => {
-        const data: AuctionResultDetail = res.data;
-        setResult(data);
-
-        if (data.deliveryAddrRoad) {
-          // 저장된 배송지(도로명/상세 분리) 불러오기
-          setAddress(data.deliveryAddrRoad);
-          setDetailAddress(data.deliveryAddrDetail || '');
-        } else if (data.deliveryAddrDetail) {
-          // 레거시: 구버전 통합 저장 포맷
-          setAddress(data.deliveryAddrDetail);
-        } else {
-          // 배송지 미입력 → 회원 기본 주소 자동 채우기
-          try {
-            const memberRes = await api.get('/members/me');
-            if (memberRes.data.addrRoad) setAddress(memberRes.data.addrRoad);
-            if (memberRes.data.addrDetail) setDetailAddress(memberRes.data.addrDetail);
-          } catch { /* 무시 */ }
-        }
-
-        if (data.tradeType === '직거래') {
-          setActiveTransactionTab('face-to-face');
-        } else {
-          setActiveTransactionTab('delivery');
-        }
-      })
-      .catch(() => {
-        showToast('낙찰 정보를 불러올 수 없습니다.', 'error');
-        navigate(-1);
-      })
-      .finally(() => setLoading(false));
-  }, [id, navigate]);
+    fetchDetail();
+  }, [fetchDetail]);
 
   const openPostcode = () => {
     new window.daum.Postcode({
@@ -686,6 +686,8 @@ export const WonProductDetail: React.FC = () => {
           setShowReviewModal(false);
           setResult(prev => prev ? { ...prev, hasBuyerReview: true } : null);
           showToast('후기가 등록되었습니다.', 'success');
+          // 서버 데이터 동기화를 위해 재조회
+          setTimeout(fetchDetail, 500);
         }}
         resultNo={result.resultNo}
         sellerNickname={result.seller.nickname}

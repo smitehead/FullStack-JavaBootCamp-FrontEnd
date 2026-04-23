@@ -77,7 +77,12 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
         if (onSuccess) onSuccess();
       }, 2000);
     } catch (err: any) {
-      const msg = err.response?.data?.message || '리뷰 등록에 실패했습니다.';
+      if (err.response?.status === 409) {
+        showToast('이미 작성된 후기입니다.', 'error');
+        onClose();
+        return;
+      }
+      const msg = err.response?.data?.error || err.response?.data?.message || '리뷰 등록에 실패했습니다.';
       showToast(msg, 'error');
     } finally {
       setIsSubmitting(false);

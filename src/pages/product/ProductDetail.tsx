@@ -889,7 +889,7 @@ export const ProductDetail: React.FC = () => {
           <BsArrowLeft className="w-6 h-6 text-gray-900" />
         </button>
 
-        {isSeller && (
+        {(isSeller || (isFinished && isHighestBidder && (product.status === 'completed' || product.status === 'pending_payment'))) && (
           <div className="relative">
             <button
               onClick={() => setShowMoreMenu(!showMoreMenu)}
@@ -898,28 +898,48 @@ export const ProductDetail: React.FC = () => {
               <BsThreeDotsVertical className="w-6 h-6 text-gray-900" />
             </button>
             {showMoreMenu && (
-              <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[150] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
-                <button
-                  onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
-                  className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
-                >
-                  <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
-                </button>
-                {!isFinished && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[150] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
+                {(isSeller && (product.status === 'completed' || product.status === 'pending_payment')) && (
                   <button
-                    onClick={() => { setShowMoreMenu(false); setShowCancelModal(true); }}
-                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                    onClick={() => { setShowMoreMenu(false); navigate(`/seller-result/${product.id}`); }}
+                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition-colors border-b border-gray-50"
                   >
-                    <BsHouseX className="w-4 h-4 mr-2.5" /> 경매 취소하기
+                    <BsInfoCircle className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                   </button>
                 )}
-                {isFinished && product && (product.participantCount === 0 || product.status === 'closed_failed') && (
+                {(!isSeller && isHighestBidder && (product.status === 'completed' || product.status === 'pending_payment')) && (
                   <button
-                    onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
-                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                    onClick={() => { setShowMoreMenu(false); navigate(`/won/${product.id}`); }}
+                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition-colors border-b border-gray-50"
                   >
-                    <BsArrowRepeat className="w-4 h-4 mr-2.5" /> 재게시하기
+                    <BsInfoCircle className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                   </button>
+                )}
+                {isSeller && (
+                  <>
+                    <button
+                      onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
+                      className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                    >
+                      <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
+                    </button>
+                    {!isFinished && (
+                      <button
+                        onClick={() => { setShowMoreMenu(false); setShowCancelModal(true); }}
+                        className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                      >
+                        <BsHouseX className="w-4 h-4 mr-2.5" /> 경매 취소하기
+                      </button>
+                    )}
+                    {isFinished && product && (product.participantCount === 0 || product.status === 'closed_failed') && (
+                      <button
+                        onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
+                        className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                      >
+                        <BsArrowRepeat className="w-4 h-4 mr-2.5" /> 재게시하기
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             )}

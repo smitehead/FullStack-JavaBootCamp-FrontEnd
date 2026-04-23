@@ -24,6 +24,19 @@ export const ReviewCreate: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // 이미 작성된 후기인지 진입 시 확인
+  useEffect(() => {
+    if (!resultNo) return;
+    api.get(`/reviews/exists/${resultNo}`)
+      .then(res => {
+        if (res.data?.exists) {
+          showToast('이미 작성된 후기입니다.', 'error');
+          navigate(-1);
+        }
+      })
+      .catch(() => { /* 확인 실패 시 그냥 진행 */ });
+  }, [resultNo, navigate]);
+
   const toggleTag = (tagContent: string) => {
     setSelectedTags(prev =>
       prev.includes(tagContent)
@@ -48,7 +61,12 @@ export const ReviewCreate: React.FC = () => {
       setShowSuccess(true);
       setTimeout(() => navigate('/mypage'), 2000);
     } catch (err: any) {
-      const msg = err.response?.data?.message || '리뷰 등록에 실패했습니다.';
+      if (err.response?.status === 409) {
+        showToast('이미 작성된 후기입니다.', 'error');
+        navigate(-1);
+        return;
+      }
+      const msg = err.response?.data?.error || err.response?.data?.message || '리뷰 등록에 실패했습니다.';
       showToast(msg, 'error');
     } finally {
       setIsSubmitting(false);

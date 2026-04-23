@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '@/services/api';
 import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -46,24 +46,28 @@ export const SellerAuctionResult: React.FC = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [activeTransactionTab, setActiveTransactionTab] = useState<'delivery' | 'face-to-face'>('delivery');
 
-  useEffect(() => {
+  const fetchDetail = useCallback(async () => {
     if (!id) return;
-    api.get(`/auction-results/seller/product/${id}`)
-      .then(res => {
-        const data = res.data;
-        setResult(data);
-        if (data.tradeType === '직거래') {
-          setActiveTransactionTab('face-to-face');
-        } else {
-          setActiveTransactionTab('delivery');
-        }
-      })
-      .catch(() => {
-        showToast('낙찰 정보를 불러올 수 없습니다.', 'error');
-        navigate(-1);
-      })
-      .finally(() => setLoading(false));
+    try {
+      const res = await api.get(`/auction-results/seller/product/${id}`);
+      const data = res.data;
+      setResult(data);
+      if (data.tradeType === '직거래') {
+        setActiveTransactionTab('face-to-face');
+      } else {
+        setActiveTransactionTab('delivery');
+      }
+    } catch {
+      showToast('낙찰 정보를 불러올 수 없습니다.', 'error');
+      navigate(-1);
+    } finally {
+      setLoading(false);
+    }
   }, [id, navigate]);
+
+  useEffect(() => {
+    fetchDetail();
+  }, [fetchDetail]);
 
   if (loading) {
     return (
@@ -469,6 +473,8 @@ export const SellerAuctionResult: React.FC = () => {
           setShowReviewModal(false);
           setResult(prev => prev ? { ...prev, hasSellerReview: true } : null);
           showToast('후기가 등록되었습니다.', 'success');
+          // 서버 데이터 동기화를 위해 재조회
+          setTimeout(fetchDetail, 500);
         }}
         resultNo={result.resultNo}
         sellerNickname={result.buyer.nickname}
