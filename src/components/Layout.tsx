@@ -278,8 +278,9 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                 {!noti.read && (
                                   <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-brand" />
                                 )}
+                                <p className="text-[10px] font-bold text-[#FF5A5A] mb-0.5">{({ bid: '낙찰', activity: '거래', '제재': '제재', QNA: '문의', QNA_ANSWER: '답변', '시스템': '시스템', '이벤트': '이벤트' } as Record<string, string>)[noti.type] ?? noti.type}</p>
                                 <p className={`leading-snug line-clamp-2 ${!noti.read ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>
-                                  <span className="text-[#FF5A5A] text-[10px] font-bold mr-1">{({ bid: '[낙찰]', activity: '[거래]', '제재': '[제재]', QNA: '[문의]', QNA_ANSWER: '[답변]', '시스템': '[시스템]', '이벤트': '[이벤트]' } as Record<string, string>)[noti.type] ?? `[${noti.type}]`}</span>{formatMessagePreview(noti.message)}
+                                  {formatMessagePreview(noti.message).replace(/^\[.+?\]\s*/, '')}
                                 </p>
                                 <span className="text-[10px] text-gray-300 mt-1 block">{new Date(noti.createdAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
                               </Link>
