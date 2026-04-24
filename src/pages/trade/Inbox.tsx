@@ -213,16 +213,17 @@ export const Inbox: React.FC = () => {
                   className={`flex items-start gap-4 p-5 rounded-3xl border transition-all hover:shadow-md ${noti.read ? 'bg-white border-gray-100' : 'bg-brand/5 border-brand/20'
                     }`}
                 >
-                  <div className={`p-3 rounded-2xl ${noti.type === 'bid' ? 'bg-brand/10 text-brand' :
+                  <div className={`shrink-0 px-3 py-1.5 rounded-2xl text-xs font-bold ${
+                    noti.type === 'bid' ? 'bg-brand/10 text-brand' :
                     noti.type === 'activity' ? 'bg-indigo-50 text-indigo-600' :
-                      'bg-gray-50 text-gray-600'
+                    noti.type === '제재' ? 'bg-red-50 text-red-500' :
+                    noti.type === 'QNA' || noti.type === 'QNA_ANSWER' ? 'bg-violet-50 text-violet-600' :
+                    'bg-gray-100 text-gray-600'
                   }`}>
-                  <BsBell className="w-6 h-6" />
-                </div>
+                    {({ bid: '낙찰', activity: '거래', '제재': '제재', QNA: '문의', QNA_ANSWER: '답변', '시스템': '시스템', '이벤트': '이벤트' } as Record<string, string>)[noti.type] ?? noti.type}
+                  </div>
                 <div className="flex-1">
-                  <p className="text-gray-900 font-bold leading-snug mb-2">
-                    <span className="text-[#FF5A5A] text-xs font-bold mr-1">{({ bid: '[낙찰]', activity: '[거래]', '제재': '[제재]', QNA: '[문의]', QNA_ANSWER: '[답변]', '시스템': '[시스템]', '이벤트': '[이벤트]' } as Record<string, string>)[noti.type] ?? `[${noti.type}]`}</span>{formatMessagePreview(noti.message)}
-                  </p>
+                  <p className="text-gray-900 font-bold leading-snug mb-2">{formatMessagePreview(noti.message)}</p>
                   <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                     {formatDate(noti.createdAt)}
                   </div>

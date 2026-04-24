@@ -141,22 +141,21 @@ export const InquiryManagement: React.FC = () => {
 
         <div className="flex-1 overflow-y-auto space-y-2 pr-2">
           {filteredInquiries.map((inquiry) => (
-            <button
+            <div
               key={inquiry.inquiryNo}
               onClick={() => handleSelectInquiry(inquiry)}
-              className={`w-full text-left p-3 rounded-none border-2 transition-all ${selectedInquiry?.inquiryNo === inquiry.inquiryNo
+              className={`cursor-pointer w-full text-left p-3 rounded-none border-2 transition-all ${selectedInquiry?.inquiryNo === inquiry.inquiryNo
                 ? 'bg-white border-[#FF5A5A] shadow-lg shadow-red-900/5'
                 : 'bg-white border-gray-100 shadow-sm hover:shadow-md'
                 }`}
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="mb-2">
                 <span className={`px-2 py-0.5 rounded-none text-[10px] font-bold ${inquiry.status === 1 ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                   }`}>
                   {inquiry.status === 1 ? '답변 완료' : '답변 대기중'}
                 </span>
-                <span className="text-[10px] font-medium text-gray-400">{inquiry.inquiryNo}</span>
               </div>
-              <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-1">{inquiry.title}</h3>
+              <p className="text-sm font-bold text-gray-900 mb-1 truncate">{inquiry.title}</p>
               <div className="flex items-center gap-3 flex-wrap text-xs">
                 <Link
                   to={`/admin/users?nickname=${getUserNickname(inquiry)}`}
@@ -170,7 +169,7 @@ export const InquiryManagement: React.FC = () => {
                 <span className="text-gray-300">|</span>
                 <span className="text-[10px] font-medium text-gray-400">{formatDate(inquiry.createdAt)}</span>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>
