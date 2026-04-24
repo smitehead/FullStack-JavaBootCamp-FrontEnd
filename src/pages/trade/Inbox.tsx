@@ -22,7 +22,7 @@ const formatDate = (date: Date | string | null | undefined) => {
 };
 
 export const Inbox: React.FC = () => {
-  const { user, notifications, chats, markNotificationAsRead, deleteNotification, markChatAsRead, fetchChats, deleteAllNotifications } = useAppContext();
+  const { user, notifications, chats, markNotificationAsRead, deleteNotification, markChatAsRead, fetchChats, deleteAllNotifications, hideChatRoom, hideAllChatRooms } = useAppContext();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'noti' | 'chat'>('noti');
   const [notiFilter, setNotiFilter] = useState<'all' | 'bid' | 'activity'>('all');
@@ -30,7 +30,7 @@ export const Inbox: React.FC = () => {
   const [visibleNotisCount, setVisibleNotisCount] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [activeNotiMenu, setActiveNotiMenu] = useState<string | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<'noti' | 'chat' | null>(null);
 
   // Close menu on outside click
   useEffect(() => {
@@ -89,7 +89,18 @@ export const Inbox: React.FC = () => {
   const handleDeleteAllNotis = async () => {
     if (notifications.length === 0) return;
     await deleteAllNotifications();
-    setShowDeleteConfirm(false);
+    setShowDeleteConfirm(null);
+  };
+
+  const handleDeleteAllChats = async () => {
+    if (chats.length === 0) return;
+    hideAllChatRooms();
+    setShowDeleteConfirm(null);
+  };
+
+  const handleDeleteChat = async (roomNo: number) => {
+    hideChatRoom(roomNo);
+    setActiveNotiMenu(null);
   };
 
   return (
@@ -175,16 +186,14 @@ export const Inbox: React.FC = () => {
         )}
         
         {/* Delete All Button */}
-        {activeTab === 'noti' && (
-          <div className="ml-auto">
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-gray-900 transition-all whitespace-nowrap"
-            >
-              모두 지우기
-            </button>
-          </div>
-        )}
+        <div className="ml-auto">
+          <button
+            onClick={() => setShowDeleteConfirm(activeTab === 'noti' ? 'noti' : 'chat')}
+            className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-gray-900 transition-all whitespace-nowrap"
+          >
+            모두 지우기
+          </button>
+        </div>
       </div>
 
       {/* List Content */}
@@ -261,17 +270,19 @@ export const Inbox: React.FC = () => {
                 onClick={() => markChatAsRead(chat.id)}
                 className="flex items-center gap-4 p-5 bg-white rounded-3xl border border-gray-100 transition-all hover:shadow-md"
               >
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   <img
-                    src={getProfileImageUrl(chat.otherUser.profileImage)}
-                    alt={chat.otherUser.nickname}
+                    src={chat.productImage || '/images/default-product.png'}
+                    alt={chat.productTitle}
                     className="w-14 h-14 rounded-2xl object-cover border border-gray-100"
                   />
-                  {chat.unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-[#FF5A5A] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
-                      {chat.unreadCount}
-                    </span>
-                  )}
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white overflow-hidden shadow-sm bg-gray-100">
+                    <img
+                      src={getProfileImageUrl(chat.otherUser.profileImage)}
+                      alt={chat.otherUser.nickname}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
@@ -293,7 +304,35 @@ export const Inbox: React.FC = () => {
                   </div>
                   <p className="text-sm text-gray-900 truncate font-semibold">{formatMessagePreview(chat.lastMessage) || '첫 대화를 남겨보세요'}</p>
                 </div>
-                <BsChevronRight className="w-5 h-5 text-gray-300" />
+                {/* Deletion Menu (Dropdown) for Chats */}
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveNotiMenu(activeNotiMenu === chat.id ? null : chat.id);
+                    }}
+                    className={`p-2 rounded-full transition-all ${activeNotiMenu === chat.id ? 'bg-gray-100 text-gray-900' : 'text-gray-300 hover:text-gray-600 hover:bg-gray-50'}`}
+                  >
+                    <BsThreeDotsVertical className="w-5 h-5" />
+                  </button>
+                  
+                  {activeNotiMenu === chat.id && (
+                    <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDeleteChat(chat.roomNo);
+                        }}
+                        className="w-full flex items-center justify-start px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                      >
+                        <BsBellSlash className="w-4 h-4 mr-2.5" />
+                        알림 지우기
+                      </button>
+                    </div>
+                  )}
+                </div>
               </Link>
             ))
           ) : (
@@ -314,22 +353,26 @@ export const Inbox: React.FC = () => {
       {/* Delete All Confirm Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteConfirm(false)} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteConfirm(null)} />
           <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">알림을 모두 지우시겠습니까?</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                {showDeleteConfirm === 'noti' ? '알림을 모두 지우시겠습니까?' : '대화 내역을 모두 지우시겠습니까?'}
+              </h3>
               <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                모든 알림을 삭제하면 다시 되돌릴 수 없습니다.
+                {showDeleteConfirm === 'noti' 
+                  ? '모든 알림을 삭제하면 다시 되돌릴 수 없습니다.' 
+                  : '모든 대화 내역을 삭제하면 다시 되돌릴 수 없습니다.'}
               </p>
               <div className="flex gap-3 w-full">
                 <button 
-                  onClick={() => setShowDeleteConfirm(false)}
+                  onClick={() => setShowDeleteConfirm(null)}
                   className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
                 >
                   취소
                 </button>
                 <button 
-                  onClick={handleDeleteAllNotis}
+                  onClick={showDeleteConfirm === 'noti' ? handleDeleteAllNotis : handleDeleteAllChats}
                   className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
                 >
                   전체 삭제
