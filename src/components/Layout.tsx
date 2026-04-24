@@ -461,7 +461,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                       navigate(`/search?large=${activeCategory}&medium=${sub.id}&small=${item.id}`);
                                       setIsCategoryOpen(false);
                                     }}
-                                    className="text-sm font-semibold text-gray-400 hover:text-[#FF5A5A] transition-colors text-left"
+                                    className="text-sm font-semibold text-gray-400 hover:text-[#FF5A5A] transition-colors text-left w-full flex items-center justify-start"
                                   >
                                     {item.name}
                                   </button>

@@ -198,7 +198,7 @@ export const InquiryDetail: React.FC = () => {
           <div className="p-6 flex items-center justify-center bg-gray-50/30">
             <Link
               to="/inquiry"
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all"
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:border-gray-400 hover:shadow-md transition-all"
             >
               <BsList className="w-4 h-4" />
               목록으로
