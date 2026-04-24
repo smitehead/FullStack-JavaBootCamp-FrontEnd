@@ -61,7 +61,7 @@ type TabType = 'selling' | 'bidding' | 'purchased' | 'wishlist' | 'reviews';
 export const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, updateCurrentUserProfileImage } = useAppContext();
+  const { user, isInitialized, updateCurrentUserProfileImage } = useAppContext();
   const [activeTab, setActiveTab] = useState<TabType>(() => {
     const tab = searchParams.get('tab');
     return (tab && ['selling', 'bidding', 'purchased', 'wishlist', 'reviews'].includes(tab))
@@ -373,10 +373,12 @@ export const MyPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!user) navigate('/login');
-  }, [user, navigate]);
+    if (isInitialized && !user) {
+      navigate('/login');
+    }
+  }, [isInitialized, user, navigate]);
 
-  if (!user) return null;
+  if (!isInitialized || !user) return null;
 
   return (
     <div className="max-w-[1200px] mx-auto px-10 py-8">

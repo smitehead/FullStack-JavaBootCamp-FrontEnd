@@ -36,7 +36,7 @@ interface SellerResultDetail {
 export const SellerAuctionResult: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAppContext();
+  const { user, isInitialized } = useAppContext();
 
   const [result, setResult] = useState<SellerResultDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,10 +66,12 @@ export const SellerAuctionResult: React.FC = () => {
   }, [id, navigate]);
 
   useEffect(() => {
-    fetchDetail();
-  }, [fetchDetail]);
+    if (isInitialized && user) {
+      fetchDetail();
+    }
+  }, [fetchDetail, isInitialized, user]);
 
-  if (loading) {
+  if (!isInitialized || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="spinner-border w-12 h-12" />

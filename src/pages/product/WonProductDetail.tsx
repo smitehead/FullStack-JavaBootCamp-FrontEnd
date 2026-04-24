@@ -44,7 +44,7 @@ interface AuctionResultDetail {
 export const WonProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAppContext();
+  const { user, isInitialized } = useAppContext();
 
   const [result, setResult] = useState<AuctionResultDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -97,6 +97,14 @@ export const WonProductDetail: React.FC = () => {
   useEffect(() => {
     fetchDetail();
   }, [fetchDetail]);
+
+  useEffect(() => {
+    if (isInitialized && !user) {
+      navigate('/login');
+    }
+  }, [isInitialized, user, navigate]);
+
+  if (!isInitialized || !user) return null;
 
   const openPostcode = () => {
     new window.daum.Postcode({
