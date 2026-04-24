@@ -264,76 +264,80 @@ export const Inbox: React.FC = () => {
         ) : (
           filteredChats.length > 0 ? (
             filteredChats.map(chat => (
-              <Link
-                key={chat.id}
-                to={`/chat?id=${chat.id}`}
-                onClick={() => markChatAsRead(chat.id)}
-                className="flex items-center gap-4 p-5 bg-white rounded-3xl border border-gray-100 transition-all hover:shadow-md"
-              >
-                <div className="relative flex-shrink-0">
-                  <img
-                    src={chat.productImage || '/images/default-product.png'}
-                    alt={chat.productTitle}
-                    className="w-14 h-14 rounded-2xl object-cover border border-gray-100"
-                  />
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white overflow-hidden shadow-sm bg-gray-100">
+              <div key={chat.id} className="relative group">
+                <Link
+                  to={`/chat?id=${chat.id}`}
+                  onClick={() => markChatAsRead(chat.id)}
+                  className="flex items-center gap-4 p-5 bg-white rounded-3xl border border-gray-100 transition-all hover:shadow-md"
+                >
+                  <div className="relative flex-shrink-0">
                     <img
-                      src={getProfileImageUrl(chat.otherUser.profileImage)}
-                      alt={chat.otherUser.nickname}
-                      className="w-full h-full object-cover"
+                      src={chat.productImage || '/images/default-product.png'}
+                      alt={chat.productTitle}
+                      className="w-14 h-14 rounded-2xl object-cover border border-gray-100"
                     />
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white overflow-hidden shadow-sm bg-gray-100">
+                      <img
+                        src={getProfileImageUrl(chat.otherUser.profileImage)}
+                        alt={chat.otherUser.nickname}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-gray-900 truncate">{chat.otherUser.nickname}</span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${chat.otherUser.role === 'seller' ? 'bg-indigo-100 text-indigo-600' : 'bg-brand/10 text-brand'
-                      }`}>
-                      {chat.otherUser.role === 'seller' ? '판매자' : '구매자'}
-                    </span>
-                    {chat.lastMessageAt && (
-                      <>
-                        <span className="text-gray-300 mx-1">•</span>
-                        <span className="text-xs text-gray-400 font-medium">{formatDate(chat.lastMessageAt)}</span>
-                      </>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-gray-900 truncate">{chat.otherUser.nickname}</span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${chat.otherUser.role === 'seller' ? 'bg-indigo-100 text-indigo-600' : 'bg-brand/10 text-brand'
+                        }`}>
+                        {chat.otherUser.role === 'seller' ? '판매자' : '구매자'}
+                      </span>
+                      {chat.lastMessageAt && (
+                        <>
+                          <span className="text-gray-300 mx-1">•</span>
+                          <span className="text-xs text-gray-400 font-medium">{formatDate(chat.lastMessageAt)}</span>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <BsBox2 className="w-3 h-3 text-gray-400" />
+                      <span className="text-xs text-gray-500 font-bold truncate">{chat.productTitle}</span>
+                    </div>
+                    <p className="text-sm text-gray-900 truncate font-semibold">{formatMessagePreview(chat.lastMessage) || '첫 대화를 남겨보세요'}</p>
+                  </div>
+                </Link>
+
+                {/* Deletion Menu (Dropdown) for Chats */}
+                <div className="absolute top-5 right-5">
+                  <div className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setActiveNotiMenu(activeNotiMenu === chat.id ? null : chat.id);
+                      }}
+                      className={`p-2 rounded-full transition-all ${activeNotiMenu === chat.id ? 'bg-gray-100 text-gray-900' : 'text-gray-300 hover:text-gray-600 hover:bg-gray-50'}`}
+                    >
+                      <BsThreeDotsVertical className="w-5 h-5" />
+                    </button>
+
+                    {activeNotiMenu === chat.id && (
+                      <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDeleteChat(chat.roomNo);
+                          }}
+                          className="w-full flex items-center justify-start px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                        >
+                          <BsBellSlash className="w-4 h-4 mr-2.5" />
+                          알림 지우기
+                        </button>
+                      </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <BsBox2 className="w-3 h-3 text-gray-400" />
-                    <span className="text-xs text-gray-500 font-bold truncate">{chat.productTitle}</span>
-                  </div>
-                  <p className="text-sm text-gray-900 truncate font-semibold">{formatMessagePreview(chat.lastMessage) || '첫 대화를 남겨보세요'}</p>
                 </div>
-                {/* Deletion Menu (Dropdown) for Chats */}
-                <div className="relative">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setActiveNotiMenu(activeNotiMenu === chat.id ? null : chat.id);
-                    }}
-                    className={`p-2 rounded-full transition-all ${activeNotiMenu === chat.id ? 'bg-gray-100 text-gray-900' : 'text-gray-300 hover:text-gray-600 hover:bg-gray-50'}`}
-                  >
-                    <BsThreeDotsVertical className="w-5 h-5" />
-                  </button>
-                  
-                  {activeNotiMenu === chat.id && (
-                    <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleDeleteChat(chat.roomNo);
-                        }}
-                        className="w-full flex items-center justify-start px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
-                      >
-                        <BsBellSlash className="w-4 h-4 mr-2.5" />
-                        알림 지우기
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </Link>
+              </div>
             ))
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
