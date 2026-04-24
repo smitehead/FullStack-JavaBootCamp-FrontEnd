@@ -219,15 +219,15 @@ export const ReportManagement: React.FC = () => {
                       </span>
                     </div>
                     <span className="w-[40px] shrink-0 text-[11px] font-bold text-gray-400">#{report.reportNo}</span>
-                    <div className="w-[180px] shrink-0 overflow-hidden">
+                    <button onClick={() => handleViewDetail(report.reportNo)} className="flex-1 min-w-0 text-xs font-bold text-gray-900 truncate text-left hover:text-[#FF5A5A] transition-colors" title={report.content}>
+                      {report.content || '-'}
+                    </button>
+                    <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
+                    <div className="w-[140px] shrink-0 overflow-hidden">
                       <span title={report.type || '-'} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-none text-[10px] font-bold max-w-full truncate ${target.bgColor} ${target.color}`}>
                         <TargetIcon className="w-2.5 h-2.5 shrink-0" />{report.type || '-'}
                       </span>
                     </div>
-                    <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
-                    <button onClick={() => handleViewDetail(report.reportNo)} className="flex-1 min-w-0 text-xs font-bold text-gray-900 truncate text-left hover:text-[#FF5A5A] transition-colors" title={report.content}>
-                      {report.content || '-'}
-                    </button>
                     <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
                     <Link to={`/admin/users?nickname=${report.reporterNickname || ''}`} className="w-[96px] shrink-0 text-xs font-bold text-gray-500 hover:text-[#FF5A5A] truncate" title={report.reporterNickname || `#${report.reporterNo}`}>
                       {report.reporterNickname || `#${report.reporterNo}`}
