@@ -6,6 +6,8 @@ import { getProfileImageUrl } from '@/utils/imageUtils';
 import { formatMessagePreview } from '@/utils/chatUtils';
 import api from '@/services/api';
 
+const stripTypePrefix = (message: string) => message.replace(/^\[.+?\]\s*/, '');
+
 const formatDate = (date: Date | string | null | undefined) => {
   if (!date) return '';
   const d = new Date(date);
@@ -222,7 +224,7 @@ export const Inbox: React.FC = () => {
                     {({ bid: '낙찰', activity: '거래', '제재': '제재', QNA: '문의', QNA_ANSWER: '답변', '시스템': '시스템', '이벤트': '이벤트' } as Record<string, string>)[noti.type] ?? noti.type}
                   </div>
                 <div className="flex-1">
-                  <p className="text-gray-900 font-bold leading-snug mb-2">{formatMessagePreview(noti.message)}</p>
+                  <p className="text-gray-900 font-bold leading-snug mb-2">{stripTypePrefix(formatMessagePreview(noti.message))}</p>
                   <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                     {formatDate(noti.createdAt)}
                   </div>
