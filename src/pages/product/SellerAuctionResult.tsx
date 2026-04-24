@@ -146,9 +146,47 @@ export const SellerAuctionResult: React.FC = () => {
       showToast('복사할 배송지 정보가 없습니다.', 'error');
       return;
     }
-    navigator.clipboard.writeText(fullAddress).then(() => {
-      showToast('배송지가 복사되었습니다.', 'success');
-    });
+
+    // 최신 Clipboard API 시도
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(fullAddress).then(() => {
+        showToast('배송지가 복사되었습니다.', 'success');
+      }).catch(() => {
+        // 실패 시 Fallback으로 전환
+        copyFallback(fullAddress);
+      });
+    } else {
+      // API를 사용할 수 없는 경우 Fallback 실행
+      copyFallback(fullAddress);
+    }
+  };
+
+  // 구형 브라우저 및 비보안 환경(HTTP)을 위한 복사 로직
+  const copyFallback = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    
+    // 화면에 보이지 않도록 설정
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        showToast('배송지가 복사되었습니다.', 'success');
+      } else {
+        showToast('복사에 실패했습니다.', 'error');
+      }
+    } catch (err) {
+      showToast('복사 기능을 사용할 수 없는 브라우저입니다.', 'error');
+    }
+    
+    document.body.removeChild(textArea);
   };
 
   const cancelModalTitle = isCancelRequested
