@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { BsBarChart, BsCurrencyDollar, BsCalendar3, BsSearch, BsFilter } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
+import { Pagination } from '@/components/Pagination';
 
 interface RevenueItem {
   revenueNo: number;
@@ -94,7 +95,6 @@ export const RevenueManagement: React.FC = () => {
     return 'bg-gray-50 text-gray-600 border-gray-100';
   };
 
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
     <div className="space-y-4">
@@ -247,24 +247,11 @@ export const RevenueManagement: React.FC = () => {
           )}
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="px-5 py-3 border-t border-gray-50 flex items-center justify-center gap-1">
-            {pageNumbers.map((p) => (
-              <button
-                key={p}
-                onClick={() => handlePageChange(p)}
-                className={`w-8 h-8 text-xs font-bold rounded-none transition-colors ${
-                  p === page
-                    ? 'bg-[#FF5A5A] text-white'
-                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                }`}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        )}
+        <Pagination 
+          currentPage={page} 
+          totalPages={totalPages} 
+          onPageChange={handlePageChange} 
+        />
       </div>
     </div>
   );

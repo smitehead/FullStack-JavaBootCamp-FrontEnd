@@ -264,11 +264,8 @@ export const Home: React.FC = () => {
                 <button
                   key={cat.id}
                   onClick={() => handleCategoryClick(cat.id)}
-                  className="flex-none w-[calc(100%/2-12px)] sm:w-[calc(100%/3-12px)] md:w-[calc(100%/4-12px)] lg:w-[calc(100%/6-14px)] flex flex-col items-center p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:border-gray-200 transition-all group pointer-events-auto"
+                  className="flex-none w-[calc(100%/2-12px)] sm:w-[calc(100%/3-12px)] md:w-[calc(100%/4-12px)] lg:w-[calc(100%/6-14px)] h-[124px] flex items-center justify-center bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:border-gray-200 transition-all group pointer-events-auto"
                 >
-                  <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-3 group-hover:bg-gray-100 transition-colors">
-                    <span className="text-2xl">📦</span>
-                  </div>
                   <span className="font-bold text-gray-700 group-hover:text-gray-900 transition-colors whitespace-nowrap">{cat.name}</span>
                 </button>
               ))}
@@ -294,7 +291,7 @@ export const Home: React.FC = () => {
           <div className="flex justify-center mt-10">
             <Link
               to="/search?sort=popular"
-              className="px-8 py-3 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-all shadow-sm"
+              className="px-8 py-3 bg-white border border-gray-100 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:border-gray-200 hover:shadow-md transition-all shadow-sm"
             >
               인기 상품 더보기
             </Link>
