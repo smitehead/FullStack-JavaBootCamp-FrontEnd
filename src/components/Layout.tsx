@@ -353,19 +353,19 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100">
                     <Link
                       to="/mypage"
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                      className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                     >
                       <BsPersonCircle className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </Link>
                     <Link
                       to="/chat"
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                      className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                     >
                       <BsChat className="w-4 h-4 mr-2.5" /> 채팅방 가기
                     </Link>
                     <Link
                       to="/settings"
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                      className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                     >
                       <BsGear className="w-4 h-4 mr-2.5" /> 계정 설정
                     </Link>
@@ -448,7 +448,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                 navigate(`/search?large=${activeCategory}&medium=${sub.id}`);
                                 setIsCategoryOpen(false);
                               }}
-                              className="text-base font-semibold text-gray-900 hover:text-[#FF5A5A] transition-colors border-b-2 border-transparent hover:border-[#FF5A5A] pb-1 inline-block"
+                              className="text-base font-semibold text-gray-900 hover:text-[#FF5A5A] transition-colors border-b-2 border-transparent hover:border-[#FF5A5A] pb-1 inline-block text-left"
                             >
                               {sub.name}
                             </button>

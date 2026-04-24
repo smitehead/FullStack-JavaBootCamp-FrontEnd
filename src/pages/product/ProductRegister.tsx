@@ -569,7 +569,7 @@ export const ProductRegister: React.FC = () => {
             <button
               type="button"
               onClick={() => toggleMethod('face')}
-              className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${methods.face ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+              className={`flex-1 p-6 rounded-3xl border-2 transition-all flex flex-col items-start text-left outline-none ${methods.face ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.face ? 'bg-brand text-white' : 'bg-gray-100 text-gray-400'}`}>
                 <BsGeoAltFill className="w-5 h-5" />
@@ -580,7 +580,7 @@ export const ProductRegister: React.FC = () => {
             <button
               type="button"
               onClick={() => toggleMethod('delivery')}
-              className={`flex-1 p-6 rounded-3xl border-2 transition-all text-left outline-none ${methods.delivery ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+              className={`flex-1 p-6 rounded-3xl border-2 transition-all flex flex-col items-start text-left outline-none ${methods.delivery ? 'border-brand bg-brand/5 shadow-none' : 'border-gray-100 bg-white hover:border-gray-200'}`}
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${methods.delivery ? 'bg-brand text-white' : 'bg-gray-100 text-gray-400'}`}>
                 <BsTruck className="w-5 h-5" />

@@ -432,7 +432,7 @@ export const MyPage: React.FC = () => {
 
               {/* Quick Stats */}
               <div className="grid grid-cols-2 gap-4">
-                <button onClick={() => setActiveTab('bidding')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group text-left">
+                <button onClick={() => setActiveTab('bidding')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-start gap-3 group text-left">
                   <div className="bg-blue-50 p-2.5 rounded-xl group-hover:bg-blue-100 transition-colors">
                     <BsBagFill className="w-5 h-5 text-blue-500" />
                   </div>
@@ -441,7 +441,7 @@ export const MyPage: React.FC = () => {
                     <p className="text-lg font-bold text-gray-900">{biddingTotal}<span className="text-xs font-medium ml-0.5">건</span></p>
                   </div>
                 </button>
-                <button onClick={() => setActiveTab('wishlist')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group text-left">
+                <button onClick={() => setActiveTab('wishlist')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-start gap-3 group text-left">
                   <div className="bg-pink-50 p-2.5 rounded-xl group-hover:bg-pink-100 transition-colors">
                     <BsHeartFill className="w-5 h-5 text-pink-500" />
                   </div>
@@ -485,24 +485,24 @@ export const MyPage: React.FC = () => {
         {/* Sidebar */}
         <div className="w-full md:w-64 flex-shrink-0">
           <nav className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <button onClick={() => setActiveTab('selling')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+            <button onClick={() => setActiveTab('selling')} className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
               <BsShop className="w-5 h-5 mr-3" /> 판매 내역
             </button>
-            <button onClick={() => setActiveTab('bidding')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'bidding' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+            <button onClick={() => setActiveTab('bidding')} className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'bidding' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
               <BsBag className="w-5 h-5 mr-3" /> 입찰 내역
             </button>
-            <button onClick={() => setActiveTab('purchased')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'purchased' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+            <button onClick={() => setActiveTab('purchased')} className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'purchased' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
               <BsTrophy className="w-5 h-5 mr-3" /> 구매 내역
             </button>
-            <button onClick={() => setActiveTab('wishlist')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'wishlist' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+            <button onClick={() => setActiveTab('wishlist')} className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'wishlist' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
               <BsHeart className="w-5 h-5 mr-3" /> 찜 목록
             </button>
-            <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+            <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
               <BsPencilSquare className="w-5 h-5 mr-3" /> 리뷰 관리
             </button>
             <Link
               to="/chat"
-              className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
+              className="w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors border-t border-gray-100"
             >
               <BsChat className="w-5 h-5 mr-3 text-brand" /> 채팅방
             </Link>
@@ -617,7 +617,7 @@ export const MyPage: React.FC = () => {
                 {/* 구매 내역 */}
                 {activeTab === 'purchased' && purchasedProducts.map(p => (
                   <div key={p.id} className="flex flex-col gap-2">
-                    <ProductCard product={p} hideOverlay onWishlistToggle={handleWishlistToggle} />
+                    <ProductCard product={p} isPurchased hideOverlay onWishlistToggle={handleWishlistToggle} />
                     <div className="flex items-center justify-end px-1">
                       {(p.hasBuyerReview === false || p.hasReview === false) && p.resultNo && (
                         <button

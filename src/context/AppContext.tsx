@@ -131,6 +131,7 @@ interface AppContextType {
   cancelAuction: (productId: string, reason: string) => Promise<void>;
   resolveReport: (reportId: string, action: string) => void;
   markNotificationAsRead: (id: string) => void;
+  deleteNotification: (id: string) => Promise<void>;
   markAllNotificationsAsRead: () => void;
   markChatAsRead: (id: string) => void;
   addNotification: (message: string, link: string, type?: NotificationType) => void;
@@ -580,6 +581,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const deleteNotification = async (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+    try {
+      await api.delete(`/notifications/${id}`);
+    } catch (err) {
+      console.error('[알림] 삭제 실패:', err);
+    }
+  };
+
   const markAllNotificationsAsRead = async () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     try {
@@ -722,6 +732,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       cancelAuction,
       resolveReport,
       markNotificationAsRead,
+      deleteNotification,
       markAllNotificationsAsRead,
       markChatAsRead,
       addNotification,

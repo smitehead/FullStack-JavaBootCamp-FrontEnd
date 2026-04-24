@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BsBox2, BsChat, BsChevronRight, BsBell } from 'react-icons/bs';
+import { BsBox2, BsChat, BsChevronRight, BsBell, BsThreeDotsVertical, BsTrash } from 'react-icons/bs';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { getProfileImageUrl } from '@/utils/imageUtils';
@@ -19,7 +19,7 @@ const formatDate = (date: Date | string | null | undefined) => {
 };
 
 export const Inbox: React.FC = () => {
-  const { user, notifications, chats, markNotificationAsRead, markChatAsRead } = useAppContext();
+  const { user, notifications, chats, markNotificationAsRead, deleteNotification, markChatAsRead } = useAppContext();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'noti' | 'chat'>('noti');
   const [notiFilter, setNotiFilter] = useState<'all' | 'bid' | 'activity'>('all');
@@ -75,7 +75,7 @@ export const Inbox: React.FC = () => {
   });
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-12">
+    <div className="max-w-3xl mx-auto px-6 py-12">
       <div className="flex items-center justify-center mb-10">
         <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">알림함</h2>
       </div>
@@ -162,14 +162,14 @@ export const Inbox: React.FC = () => {
         {activeTab === 'noti' ? (
           filteredNotis.length > 0 ? (
             filteredNotis.map(noti => (
-              <Link
-                key={noti.id}
-                to={noti.link}
-                onClick={() => markNotificationAsRead(noti.id)}
-                className={`flex items-start gap-4 p-5 rounded-3xl border transition-all hover:shadow-md ${noti.read ? 'bg-white border-gray-100' : 'bg-brand/5 border-brand/20'
-                  }`}
-              >
-                <div className={`p-3 rounded-2xl ${noti.type === 'bid' ? 'bg-brand/10 text-brand' :
+              <div key={noti.id} className="relative group">
+                <Link
+                  to={noti.link}
+                  onClick={() => markNotificationAsRead(noti.id)}
+                  className={`flex items-start gap-4 p-5 rounded-3xl border transition-all hover:shadow-md ${noti.read ? 'bg-white border-gray-100' : 'bg-brand/5 border-brand/20'
+                    }`}
+                >
+                  <div className={`p-3 rounded-2xl ${noti.type === 'bid' ? 'bg-brand/10 text-brand' :
                     noti.type === 'activity' ? 'bg-indigo-50 text-indigo-600' :
                       'bg-gray-50 text-gray-600'
                   }`}>
@@ -182,9 +182,26 @@ export const Inbox: React.FC = () => {
                   <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                     {formatDate(noti.createdAt)}
                   </div>
+                  </div>
+                </Link>
+                
+                {/* Deletion Menu */}
+                <div className="absolute top-4 right-4">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (window.confirm('이 알림을 삭제하시겠습니까?')) {
+                        deleteNotification(noti.id);
+                      }
+                    }}
+                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                    title="알림 삭제"
+                  >
+                    <BsThreeDotsVertical className="w-5 h-5" />
+                  </button>
                 </div>
-                <BsChevronRight className="w-5 h-5 text-gray-300 self-center" />
-              </Link>
+              </div>
             ))
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-[40px] border border-dashed border-gray-200">

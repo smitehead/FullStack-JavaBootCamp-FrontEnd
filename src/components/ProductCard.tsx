@@ -21,6 +21,8 @@ interface ProductCardProps {
   customLink?: string;
   /** 이미지 위 오버레이(낙찰성공, 판매완료, 경매종료 등)를 모두 숨김 */
   hideOverlay?: boolean;
+  /** 구매자 시점: 구매 완료 상태 표시 */
+  isPurchased?: boolean;
   /** 찜 상태 변경 시 콜백 */
   onWishlistToggle?: (productId: string, isWishlisted: boolean) => void;
 }
@@ -34,6 +36,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   sellerCancelRequested = false,
   customLink,
   hideOverlay = false,
+  isPurchased = false,
   onWishlistToggle
 }) => {
   const [timeLeft, setTimeLeft] = useState<string>('');
@@ -265,7 +268,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
 
           {/* Timer pill */}
-          <div className={`flex items-center h-6 px-2.5 rounded-lg text-[11px] font-bold leading-none ${isConfirmed
+          <div className={`flex items-center h-6 px-2.5 rounded-lg text-[11px] font-bold leading-none ${ (isConfirmed || isPurchased)
             ? 'bg-gray-900 text-white'
             : isFinished
               ? 'bg-gray-100 text-gray-500'
@@ -273,6 +276,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             }`}>
             {isConfirmed ? (
               <span>판매완료</span>
+            ) : isPurchased ? (
+              <span>구매완료</span>
             ) : isFinished ? (
               <span>종료</span>
             ) : (

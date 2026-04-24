@@ -430,37 +430,37 @@ export const Settings: React.FC = () => {
             <div className="">
               <button
                 onClick={() => setActiveTab('notification')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'notification' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'notification' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 <BsBell className="w-5 h-5 mr-3" /> 알림 설정
               </button>
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'profile' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'profile' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 <BsPersonFillGear className="w-5 h-5 mr-3" /> 프로필 수정
               </button>
               <button
                 onClick={() => setActiveTab('block')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'block' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'block' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 <BsShield className="w-5 h-5 mr-3" /> 차단 사용자 관리
               </button>
               <button
                 onClick={() => setActiveTab('card')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'card' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'card' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 <BsCreditCard className="w-5 h-5 mr-3" /> 카드 관리
               </button>
               <button
                 onClick={() => setActiveTab('account')}
-                className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'account' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
+                className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'account' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 <BsBank className="w-5 h-5 mr-3" /> 계좌 관리
               </button>
               <button
                 onClick={openWithdrawModal}
-                className="w-full flex items-center px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 <BsPersonDash className="w-5 h-5 mr-3" /> 회원 탈퇴
               </button>
