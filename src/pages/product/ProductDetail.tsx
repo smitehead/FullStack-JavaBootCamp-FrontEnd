@@ -363,6 +363,7 @@ export const ProductDetail: React.FC = () => {
       bidderNo?: number | null;
       auctionEnded?: boolean;
       bidCancelled?: boolean;
+      participantCount?: number;
     }) => {
       if (String(detail.productNo) !== String(product.id)) return;
 
@@ -419,7 +420,11 @@ export const ProductDetail: React.FC = () => {
         return;
       }
 
-      setProduct(prev => prev ? ({ ...prev, currentPrice: detail.currentPrice }) : prev);
+      setProduct(prev => prev ? ({
+        ...prev,
+        currentPrice: detail.currentPrice,
+        participantCount: detail.participantCount ?? prev.participantCount,
+      }) : prev);
 
       // bidderNo로 입찰자 식별 → justBidRef와 관계없이 정확한 뱃지 업데이트
       if (isMyBid) {
