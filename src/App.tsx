@@ -6,8 +6,16 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, [pathname]);
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  useEffect(() => {
+    const handleLoad = () => window.scrollTo(0, 0);
+    window.addEventListener('load', handleLoad);
+    return () => window.removeEventListener('load', handleLoad);
+  }, []);
+
   return null;
 };
 

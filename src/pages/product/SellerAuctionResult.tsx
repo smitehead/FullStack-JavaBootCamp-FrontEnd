@@ -36,7 +36,7 @@ interface SellerResultDetail {
 export const SellerAuctionResult: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAppContext();
+  const { user, isInitialized } = useAppContext();
 
   const [result, setResult] = useState<SellerResultDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,10 +66,12 @@ export const SellerAuctionResult: React.FC = () => {
   }, [id, navigate]);
 
   useEffect(() => {
-    fetchDetail();
-  }, [fetchDetail]);
+    if (isInitialized && user) {
+      fetchDetail();
+    }
+  }, [fetchDetail, isInitialized, user]);
 
-  if (loading) {
+  if (!isInitialized || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="spinner-border w-12 h-12" />
@@ -227,10 +229,10 @@ export const SellerAuctionResult: React.FC = () => {
                     <h3 className="text-lg font-bold text-gray-900">
                       {activeTransactionTab === 'face-to-face' ? '거래 방식 및 장소' : '배송지 정보'}
                     </h3>
-                    {activeTransactionTab === 'delivery' && (result.deliveryAddrRoad || result.deliveryAddrDetail) && (
+                    {activeTransactionTab === 'delivery' && (
                       <button
                         onClick={handleCopyAddress}
-                        className="text-xs font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1 transition-colors"
+                        className="text-xs font-bold text-gray-400 hover:text-gray-900 flex items-center gap-1 transition-colors"
                       >
                         <BsCopy className="w-3.5 h-3.5" />
                         복사하기
