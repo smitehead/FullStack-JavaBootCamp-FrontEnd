@@ -81,7 +81,7 @@ export const AdminDashboard: React.FC = () => {
             <button
               key={stat.label}
               onClick={() => navigate(stat.path)}
-              className="bg-white p-4 rounded-none shadow-sm border border-gray-200 flex items-center space-x-3 hover:shadow-md transition-all text-left group"
+              className="bg-white p-4 rounded-none shadow-sm border border-gray-200 flex items-center justify-start space-x-3 hover:shadow-md transition-all text-left group"
             >
               <div className={`${stat.color} p-2.5 rounded-none text-white shadow-lg group-hover:scale-110 transition-transform`}>
                 <Icon className="w-5 h-5" />

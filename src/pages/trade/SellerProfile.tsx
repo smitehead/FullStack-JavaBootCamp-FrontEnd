@@ -207,20 +207,20 @@ export const SellerProfile: React.FC = () => {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
+              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center justify-start gap-4">
                 <div className="bg-emerald-100 p-3 rounded-xl">
                   <BsBox2Fill className="w-6 h-6 text-emerald-600" />
                 </div>
-                <div>
+                <div className="text-left">
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">전체 판매</p>
                   <p className="text-xl font-bold text-gray-900">{sellerProducts.length}<span className="text-sm font-medium ml-1">건</span></p>
                 </div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
+              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center justify-start gap-4">
                 <div className="bg-indigo-100 p-3 rounded-xl">
                   <BsChatLeftFill className="w-6 h-6 text-indigo-600" />
                 </div>
-                <div>
+                <div className="text-left">
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">받은 후기</p>
                   <p className="text-xl font-bold text-gray-900">{reviews.length}<span className="text-sm font-medium ml-1">건</span></p>
                 </div>
@@ -237,13 +237,13 @@ export const SellerProfile: React.FC = () => {
           <nav className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
             <button
               onClick={() => setActiveTab('selling')}
-              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'selling' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
             >
               <BsBox2 className="w-5 h-5 mr-3" /> 판매 상품
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`w-full flex items-center px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}
             >
               <BsChatLeft className="w-5 h-5 mr-3" /> 거래 후기
             </button>

@@ -952,7 +952,7 @@ export const ProductDetail: React.FC = () => {
                 {(isSeller && (product.status === 'completed' || product.status === 'pending_payment')) && (
                   <button
                     onClick={() => { setShowMoreMenu(false); navigate(`/seller-result/${product.id}`); }}
-                    className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                    className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                   >
                     <BsLayoutTextSidebar className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                   </button>
@@ -960,14 +960,14 @@ export const ProductDetail: React.FC = () => {
                 {(!isSeller && isHighestBidder && (product.status === 'completed' || product.status === 'pending_payment')) && (
                   <button
                     onClick={() => { setShowMoreMenu(false); navigate(`/won/${product.id}`); }}
-                    className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                    className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                   >
                     <BsLayoutTextSidebar className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                   </button>
                 )}
                 <button
                   onClick={() => { setShowMoreMenu(false); handleGoToChat(); }}
-                  className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                  className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                 >
                   <BsChat className="w-4 h-4 mr-2.5" /> 채팅방 가기
                 </button>
@@ -975,14 +975,14 @@ export const ProductDetail: React.FC = () => {
                   <>
                     <button
                       onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
-                      className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                      className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                     >
                       <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
                     </button>
                     {!isFinished && (
                       <button
                         onClick={() => { setShowMoreMenu(false); setShowCancelModal(true); }}
-                        className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                        className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
                       >
                         <BsHouseX className="w-4 h-4 mr-2.5" /> 경매 취소하기
                       </button>
@@ -990,7 +990,7 @@ export const ProductDetail: React.FC = () => {
                     {isFinished && product && (product.participantCount === 0 || product.status === 'closed_failed') && (
                       <button
                         onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
-                        className="w-full flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                        className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                       >
                         <BsArrowRepeat className="w-4 h-4 mr-2.5" /> 재게시하기
                       </button>
