@@ -5,7 +5,7 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { AlertCircle } from 'lucide-react';
-import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill, BsPerson } from 'react-icons/bs';
+import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill, BsPerson, BsCopy } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import { ReviewModal } from '@/components/ReviewModal';
 
@@ -137,6 +137,18 @@ export const SellerAuctionResult: React.FC = () => {
     }
   };
 
+  const handleCopyAddress = () => {
+    if (!result) return;
+    const fullAddress = `${result.deliveryAddrRoad || ''} ${result.deliveryAddrDetail || ''}`.trim();
+    if (!fullAddress) {
+      showToast('복사할 배송지 정보가 없습니다.', 'error');
+      return;
+    }
+    navigator.clipboard.writeText(fullAddress).then(() => {
+      showToast('배송지가 복사되었습니다.', 'success');
+    });
+  };
+
   const cancelModalTitle = isCancelRequested
     ? '구매자의 취소 요청을 승인하시겠습니까?'
     : '구매자에게 취소를 요청하시겠습니까?';
@@ -211,10 +223,19 @@ export const SellerAuctionResult: React.FC = () => {
                 )}
 
                 <div className="bg-gray-50/50 rounded-2xl border border-gray-100 p-6">
-                  <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center justify-between mb-6">
                     <h3 className="text-lg font-bold text-gray-900">
                       {activeTransactionTab === 'face-to-face' ? '거래 방식 및 장소' : '배송지 정보'}
                     </h3>
+                    {activeTransactionTab === 'delivery' && (result.deliveryAddrRoad || result.deliveryAddrDetail) && (
+                      <button
+                        onClick={handleCopyAddress}
+                        className="text-xs font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1 transition-colors"
+                      >
+                        <BsCopy className="w-3.5 h-3.5" />
+                        복사하기
+                      </button>
+                    )}
                   </div>
 
                   {activeTransactionTab === 'face-to-face' ? (

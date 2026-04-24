@@ -498,7 +498,7 @@ export const MyPage: React.FC = () => {
               <BsHeart className="w-5 h-5 mr-3" /> 찜 목록
             </button>
             <button onClick={() => setActiveTab('reviews')} className={`w-full flex items-center justify-start text-left px-6 py-4 font-bold text-sm transition-colors ${activeTab === 'reviews' ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'}`}>
-              <BsPencilSquare className="w-5 h-5 mr-3" /> 리뷰 관리
+              <BsPencilSquare className="w-5 h-5 mr-3" /> 후기 관리
             </button>
             <Link
               to="/chat"
@@ -517,7 +517,7 @@ export const MyPage: React.FC = () => {
               {activeTab === 'bidding' && '입찰 내역'}
               {activeTab === 'purchased' && '구매 내역'}
               {activeTab === 'wishlist' && '찜한 목록'}
-              {activeTab === 'reviews' && '리뷰 관리'}
+              {activeTab === 'reviews' && '후기 관리'}
             </h3>
 
             {activeTab === 'selling' && (
@@ -723,7 +723,7 @@ export const MyPage: React.FC = () => {
                                       setHideModalId(review.reviewNo);
                                       setOpenMenuId(null);
                                     }}
-                                    className="w-full flex items-center px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                                    className="w-full flex items-center justify-start px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                                   >
                                     <BsEyeSlash className="w-4 h-4 mr-2.5" /> 후기 숨기기
                                   </button>
