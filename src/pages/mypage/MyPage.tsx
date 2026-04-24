@@ -34,6 +34,7 @@ function mapToProduct(item: any): Product & { bidStatus?: string } {
     },
     // 낙찰자 정보 보존
     winnerMemberNo: item.winnerNo || item.winnerMemberNo || item.buyerNo || item.buyerMemberNo,
+    winnerNickname: item.winnerNickname || null,
     startPrice: item.startPrice || item.currentPrice || 0,
     currentPrice: item.currentPrice || 0,
     minBidIncrement: item.minBidUnit || 1000,
@@ -564,14 +565,14 @@ export const MyPage: React.FC = () => {
                 {activeTab === 'selling' && sellingProducts.map(p => {
                   const ars = p.auctionResultStatus;
                   const hasPendingResult = p.status === 'pending';
-                  const isResultConfirmed = p.status === 'completed';
+                  const isResultConfirmed = p.status === 'completed' && ars === '구매확정';
                   const isResultCanceled = p.status === 'canceled';
 
                   return (
                     <div key={p.id} className="flex flex-col gap-2">
                       <ProductCard
                         product={p}
-                        isSold={isResultConfirmed || isResultCanceled}
+                        isSold={p.status === 'completed' || isResultCanceled}
                         isConfirmed={isResultConfirmed}
                         isSellerPending={hasPendingResult}
                         sellerCancelRequested={ars === '취소요청'}
@@ -579,7 +580,7 @@ export const MyPage: React.FC = () => {
                         onWishlistToggle={handleWishlistToggle}
                       />
                       <div className="flex items-center justify-end px-1">
-                        {((p.hasSellerReview === false || p.hasReview === false) && p.resultNo) ? (
+                        {((p.hasSellerReview === false || p.hasReview === false) && p.resultNo) && (
                           <button
                             onClick={(e) => {
                               e.preventDefault();
@@ -590,14 +591,7 @@ export const MyPage: React.FC = () => {
                           >
                             후기 작성하기
                           </button>
-                        ) : (p.resultNo && (
-                          <button
-                            disabled
-                            className="inline-flex items-center px-3 py-1 bg-gray-50 border border-gray-100 text-gray-400 rounded-full text-xs font-bold cursor-not-allowed font-sans"
-                          >
-                            거래 완료
-                          </button>
-                        ))}
+                        )}
                       </div>
                     </div>
                   );
@@ -701,7 +695,12 @@ export const MyPage: React.FC = () => {
                         <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                           <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-3">
-                              <span className="font-bold text-gray-900">{review.writerNickname}</span>
+                              <Link 
+                                to={`/seller/${review.writerNo}`}
+                                className="font-bold text-gray-900 hover:text-gray-600 transition-colors"
+                              >
+                                {review.writerNickname}
+                              </Link>
                               <span className="text-xs text-gray-400 font-medium">{new Date(review.createdAt).toLocaleDateString()}</span>
                             </div>
 

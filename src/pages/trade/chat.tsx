@@ -110,7 +110,7 @@ export const Chat: React.FC = () => {
   };
 
   // ──── JWT 토큰 가져오기 ────
-  const getToken = () => sessionStorage.getItem('java_token') || '';
+  const getToken = () => localStorage.getItem('java_token') || '';
 
   // ══════════════════════════════════════════════════
   // 1. 채팅방 목록 로드
