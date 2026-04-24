@@ -133,6 +133,7 @@ interface AppContextType {
   markNotificationAsRead: (id: string) => void;
   deleteNotification: (id: string) => Promise<void>;
   markAllNotificationsAsRead: () => void;
+  deleteAllNotifications: () => Promise<void>;
   markChatAsRead: (id: string) => void;
   addNotification: (message: string, link: string, type?: NotificationType) => void;
   updateUserRole: (userId: string, isAdmin: boolean) => void;
@@ -599,6 +600,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const deleteAllNotifications = async () => {
+    setNotifications([]);
+    try {
+      // 백엔드에 전체 삭제 API가 구현되어 있다고 가정 (/notifications)
+      // 만약 구현되어 있지 않다면 개별 삭제 로직으로 대체 가능하지만, 
+      // 인터페이스 상으로는 깔끔하게 제공합니다.
+      await api.delete('/notifications');
+    } catch (err) {
+      console.error('[알림] 전체 삭제 실패:', err);
+    }
+  };
+
   const markChatAsRead = (id: string) => {
     setChats(prev =>
       prev.map(chat => chat.id === id ? { ...chat, unreadCount: 0 } : chat)
@@ -734,6 +747,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       markNotificationAsRead,
       deleteNotification,
       markAllNotificationsAsRead,
+      deleteAllNotifications,
       markChatAsRead,
       addNotification,
       updateUserRole,

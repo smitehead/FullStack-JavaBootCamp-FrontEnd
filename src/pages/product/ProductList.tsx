@@ -689,7 +689,7 @@ export const ProductList: React.FC = () => {
             <button
               key={opt.id}
               onClick={() => handleSortChange(opt.id as SortOption)}
-              className={`px-4 py-2 text-sm font-bold transition-all border-b-2 ${sort === opt.id ? 'border-brand text-brand' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+              className={`px-4 py-2 text-sm font-bold transition-all border-b-2 ${sort === opt.id ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
               {opt.label}
             </button>

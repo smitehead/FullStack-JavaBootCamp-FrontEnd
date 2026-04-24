@@ -22,7 +22,7 @@ const formatDate = (date: Date | string | null | undefined) => {
 };
 
 export const Inbox: React.FC = () => {
-  const { user, notifications, chats, markNotificationAsRead, deleteNotification, markChatAsRead, fetchChats } = useAppContext();
+  const { user, notifications, chats, markNotificationAsRead, deleteNotification, markChatAsRead, fetchChats, deleteAllNotifications } = useAppContext();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'noti' | 'chat'>('noti');
   const [notiFilter, setNotiFilter] = useState<'all' | 'bid' | 'activity'>('all');
@@ -30,6 +30,7 @@ export const Inbox: React.FC = () => {
   const [visibleNotisCount, setVisibleNotisCount] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [activeNotiMenu, setActiveNotiMenu] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Close menu on outside click
   useEffect(() => {
@@ -86,27 +87,9 @@ export const Inbox: React.FC = () => {
   });
 
   const handleDeleteAllNotis = async () => {
-    if (filteredNotis.length === 0) return;
-    if (window.confirm('현재 필터링된 모든 알림을 삭제하시겠습니까?')) {
-      for (const noti of filteredNotis) {
-        await deleteNotification(noti.id);
-      }
-    }
-  };
-
-  const handleDeleteAllChats = async () => {
-    if (filteredChats.length === 0) return;
-    if (window.confirm('현재 필터링된 모든 대화방을 나가시겠습니까?')) {
-      for (const chat of filteredChats) {
-        try {
-          await api.delete(`/chat/rooms/${chat.roomNo}`);
-        } catch (err) {
-          console.error(`채팅방 ${chat.roomNo} 삭제 실패:`, err);
-        }
-      }
-      // Re-fetch chats to sync UI
-      fetchChats();
-    }
+    if (notifications.length === 0) return;
+    await deleteAllNotifications();
+    setShowDeleteConfirm(false);
   };
 
   return (
@@ -192,14 +175,16 @@ export const Inbox: React.FC = () => {
         )}
         
         {/* Delete All Button */}
-        <div className="ml-auto">
-          <button
-            onClick={activeTab === 'noti' ? handleDeleteAllNotis : handleDeleteAllChats}
-            className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-gray-900 transition-all whitespace-nowrap"
-          >
-            모두 지우기
-          </button>
-        </div>
+        {activeTab === 'noti' && (
+          <div className="ml-auto">
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-gray-900 transition-all whitespace-nowrap"
+            >
+              모두 지우기
+            </button>
+          </div>
+        )}
       </div>
 
       {/* List Content */}
@@ -323,6 +308,35 @@ export const Inbox: React.FC = () => {
       {isLoading && (
         <div className="flex justify-center py-8">
           <div className="w-8 h-8 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+        </div>
+      )}
+
+      {/* Delete All Confirm Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteConfirm(false)} />
+          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-left">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">알림을 모두 지우시겠습니까?</h3>
+              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
+                모든 알림을 삭제하면 다시 되돌릴 수 없습니다.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button 
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
+                >
+                  취소
+                </button>
+                <button 
+                  onClick={handleDeleteAllNotis}
+                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
+                >
+                  전체 삭제
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
