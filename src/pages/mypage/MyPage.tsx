@@ -74,7 +74,7 @@ export const MyPage: React.FC = () => {
     setSearchParams({ tab: activeTab }, { replace: true });
   }, [activeTab, setSearchParams]);
   const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'ended' | 'completed'>('all');
-  const [biddingFilter, setBiddingFilter] = useState<'all' | 'leader' | 'outbid' | 'lost'>('all');
+  const [biddingFilter, setBiddingFilter] = useState<'all' | 'leader' | 'trading' | 'outbid' | 'lost'>('all');
 
   interface ReviewItem {
     reviewNo: number;
@@ -543,14 +543,14 @@ export const MyPage: React.FC = () => {
 
             {activeTab === 'bidding' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
-                {(['all', 'leader', 'outbid', 'lost'] as const).map(filter => (
+                {(['all', 'trading', 'leader', 'outbid', 'lost'] as const).map(filter => (
                   <button key={filter} onClick={() => {
                     setBiddingFilter(filter);
                     setBiddingPage(1);
                     fetchBiddingProducts(1, filter);
                   }}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${biddingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {filter === 'all' ? '전체' : filter === 'leader' ? '상위입찰' : filter === 'outbid' ? '추월변동' : '낙찰실패'}
+                    {filter === 'all' ? '전체' : filter === 'trading' ? '거래중' : filter === 'leader' ? '상위입찰' : filter === 'outbid' ? '추월변동' : '낙찰실패'}
                   </button>
                 ))}
               </div>
