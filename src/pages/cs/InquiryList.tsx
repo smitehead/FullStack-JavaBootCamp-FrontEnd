@@ -32,7 +32,10 @@ export const InquiryList: React.FC = () => {
       if (searchTerm.trim()) params.keyword = searchTerm.trim();
 
       const res = await api.get('/inquiries/my', { params });
-      setInquiries(res.data.content || []);
+      
+      // 데이터가 배열로 바로 오는지, content 안에 오는지 확인
+      const data = Array.isArray(res.data) ? res.data : (res.data.content || []);
+      setInquiries(data);
       setTotalPages(res.data.totalPages || 1);
     } catch (err) {
       console.error('문의 내역 조회 실패', err);
