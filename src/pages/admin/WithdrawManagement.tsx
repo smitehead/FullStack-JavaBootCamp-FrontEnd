@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BsArrowRepeat } from 'react-icons/bs';
 
-import { BsWallet, BsExclamationTriangle, BsCheckCircle, BsFilter, BsSearch, BsXCircle } from 'react-icons/bs';
+import { BsWallet, BsExclamationTriangle, BsCheckCircle, BsFunnel, BsSearch, BsXCircle } from 'react-icons/bs';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
@@ -157,13 +157,13 @@ export const WithdrawManagement: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-none px-4 py-2.5 shadow-sm">
-            <BsFilter className="w-3.5 h-3.5 text-gray-400" />
+            <BsFunnel className="w-3.5 h-3.5 text-gray-400" />
             <select
               className="bg-transparent text-xs font-bold text-gray-600 focus:outline-none cursor-pointer"
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             >
-              <option value="전체">모든 상태</option>
+              <option value="전체">전체 상태</option>
               <option value="신청">신청</option>
               <option value="처리중">처리중</option>
               <option value="완료">완료</option>

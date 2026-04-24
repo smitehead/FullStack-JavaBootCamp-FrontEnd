@@ -176,7 +176,9 @@ export const Inbox: React.FC = () => {
                   <BsBell className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-gray-900 font-bold leading-snug mb-2">{formatMessagePreview(noti.message)}</p>
+                  <p className="text-gray-900 font-bold leading-snug mb-2">
+                    <span className="text-[#FF5A5A] text-xs font-bold mr-1">{({ bid: '[낙찰]', activity: '[거래]', '제재': '[제재]', QNA: '[문의]', QNA_ANSWER: '[답변]', '시스템': '[시스템]', '이벤트': '[이벤트]' } as Record<string, string>)[noti.type] ?? `[${noti.type}]`}</span>{formatMessagePreview(noti.message)}
+                  </p>
                   <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                     {formatDate(noti.createdAt)}
                   </div>

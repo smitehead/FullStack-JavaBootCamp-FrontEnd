@@ -14,7 +14,7 @@ const ITEMS_PER_PAGE = 15;
 export const AuctionManagement: React.FC = () => {
   const { products, cancelAuction, isAdminLoading } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'ended' | 'pending' | 'completed' | 'canceled' | 'failed'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending' | 'completed' | 'canceled' | 'failed'>('all');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
@@ -95,7 +95,6 @@ export const AuctionManagement: React.FC = () => {
               <option value="completed">거래 완료</option>
               <option value="canceled">거래 취소</option>
               <option value="failed">유찰</option>
-              <option value="ended">종료(미처리)</option>
             </select>
           </div>
         </div>
@@ -129,15 +128,13 @@ export const AuctionManagement: React.FC = () => {
                     product.status === 'pending'   ? 'bg-blue-50 text-blue-600' :
                     product.status === 'completed' ? 'bg-gray-100 text-gray-500' :
                     product.status === 'canceled'  ? 'bg-red-50 text-red-600' :
-                    product.status === 'failed'    ? 'bg-orange-50 text-orange-500' :
-                                                     'bg-yellow-50 text-yellow-600'
+                                                     'bg-orange-50 text-orange-500'
                   }`}>
                     {product.status === 'active'    ? '진행중' :
                      product.status === 'pending'   ? '정산대기' :
                      product.status === 'completed' ? '거래완료' :
                      product.status === 'canceled'  ? '거래취소' :
-                     product.status === 'failed'    ? '유찰' :
-                                                      '종료(미처리)'}
+                                                      '유찰'}
                   </span>
                 </div>
                 <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>

@@ -15,7 +15,17 @@ interface AdminNotification {
   createdAt: string;
 }
 
-type TypeFilter = 'all' | '시스템' | '활동' | '입찰';
+type TypeFilter = 'all' | '시스템' | '이벤트';
+
+const NOTI_TYPE_PREFIX: Record<string, string> = {
+  bid: '[낙찰]',
+  activity: '[거래]',
+  '제재': '[제재]',
+  QNA: '[문의]',
+  QNA_ANSWER: '[답변]',
+  '시스템': '[시스템]',
+  '이벤트': '[이벤트]',
+};
 
 const ITEMS_PER_PAGE = 15;
 
@@ -91,8 +101,7 @@ export const NotificationManagement: React.FC = () => {
 
   const typeOptions = [
     { value: '시스템', label: '시스템' },
-    { value: '활동', label: '활동' },
-    { value: '입찰', label: '입찰' },
+    { value: '이벤트', label: '이벤트' },
   ];
 
   if (isLoading) return (
@@ -118,8 +127,7 @@ export const NotificationManagement: React.FC = () => {
             >
               <option value="all">전체 유형</option>
               <option value="시스템">시스템</option>
-              <option value="활동">활동</option>
-              <option value="입찰">입찰</option>
+              <option value="이벤트">이벤트</option>
             </select>
           </div>
           <button
@@ -217,9 +225,9 @@ export const NotificationManagement: React.FC = () => {
           {recentNotifications.slice(0, visibleCount).map((noti) => (
             <div key={noti.notiNo} className="px-5 py-2.5 hover:bg-gray-50 transition-colors">
               <div className="flex items-center min-w-0">
-                <span className="w-[56px] shrink-0 text-[11px] font-bold uppercase tracking-widest text-gray-400">{noti.type}</span>
-                <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
-                <span className="flex-1 min-w-0 text-xs font-bold text-gray-900 truncate" title={noti.content}>{noti.content}</span>
+                <span className="flex-1 min-w-0 text-xs font-bold text-gray-900 truncate" title={noti.content}>
+                  <span className="text-[#FF5A5A] mr-1">{NOTI_TYPE_PREFIX[noti.type] ?? `[${noti.type}]`}</span>{noti.content}
+                </span>
                 {noti.linkUrl && (
                   <>
                     <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>

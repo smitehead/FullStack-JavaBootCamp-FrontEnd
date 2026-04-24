@@ -210,11 +210,12 @@ export const BannerManagement: React.FC = () => {
                 className="absolute inset-0"
               >
                 <div className="absolute inset-0 flex items-center justify-center px-10">
-                  <div className={`w-full overflow-hidden shadow-2xl border border-white/5 relative group/ad ${activeTab === 'hero' ? 'h-[340px] md:h-[420px] rounded-[32px]' : 'h-[200px] rounded-[32px]'}`}>
-                    <div
-                      className="absolute inset-0 bg-cover bg-center"
-                      style={{ backgroundImage: `url('${resolveImageUrl(activeBannersForPreview[previewIndex]?.imgUrl) || activeBannersForPreview[previewIndex]?.imgUrl || ''}')` }}
-                    ></div>
+                  <div className={`w-full overflow-hidden rounded-[32px] shadow-2xl border border-gray-200 relative bg-gray-50 flex items-center justify-center ${activeTab === 'hero' ? 'h-[340px] md:h-[420px]' : 'h-[200px]'}`}>
+                    <img
+                      src={resolveImageUrl(activeBannersForPreview[previewIndex]?.imgUrl) || activeBannersForPreview[previewIndex]?.imgUrl || ''}
+                      alt="banner preview"
+                      className="max-w-full max-h-full object-contain"
+                    />
                   </div>
                 </div>
               </motion.div>
