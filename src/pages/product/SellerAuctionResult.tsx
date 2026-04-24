@@ -229,10 +229,10 @@ export const SellerAuctionResult: React.FC = () => {
                     <h3 className="text-lg font-bold text-gray-900">
                       {activeTransactionTab === 'face-to-face' ? '거래 방식 및 장소' : '배송지 정보'}
                     </h3>
-                    {activeTransactionTab === 'delivery' && (result.deliveryAddrRoad || result.deliveryAddrDetail) && (
+                    {activeTransactionTab === 'delivery' && (
                       <button
                         onClick={handleCopyAddress}
-                        className="text-xs font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1 transition-colors"
+                        className="text-xs font-bold text-gray-400 hover:text-gray-900 flex items-center gap-1 transition-colors"
                       >
                         <BsCopy className="w-3.5 h-3.5" />
                         복사하기
