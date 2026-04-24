@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BsBox2, BsChat, BsChevronRight, BsBell, BsThreeDotsVertical, BsTrash } from 'react-icons/bs';
+import { BsBox2, BsChat, BsChevronRight, BsBell, BsThreeDotsVertical, BsTrash, BsBellSlash } from 'react-icons/bs';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { getProfileImageUrl } from '@/utils/imageUtils';
@@ -193,9 +193,8 @@ export const Inbox: React.FC = () => {
         <div className="ml-auto">
           <button
             onClick={activeTab === 'noti' ? handleDeleteAllNotis : handleDeleteAllChats}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all whitespace-nowrap"
+            className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-gray-900 transition-all whitespace-nowrap"
           >
-            <BsTrash className="w-3.5 h-3.5" />
             모두 지우기
           </button>
         </div>
@@ -244,7 +243,7 @@ export const Inbox: React.FC = () => {
                     </button>
                     
                     {activeNotiMenu === noti.id && (
-                      <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-100 rounded-2xl shadow-2xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
+                      <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
                         <button
                           onClick={(e) => {
                             e.preventDefault();
@@ -252,9 +251,9 @@ export const Inbox: React.FC = () => {
                             deleteNotification(noti.id);
                             setActiveNotiMenu(null);
                           }}
-                          className="w-full flex items-center justify-start px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
+                          className="w-full flex items-center justify-start px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
                         >
-                          <BsTrash className="w-4 h-4 mr-2" />
+                          <BsBellSlash className="w-4 h-4 mr-2.5" />
                           알림 지우기
                         </button>
                       </div>
