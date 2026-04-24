@@ -144,7 +144,7 @@ export const NoticeDetail: React.FC = () => {
           <div className="flex justify-center">
             <Link
               to="/notice"
-              className="flex items-center gap-2 px-6 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:border-gray-900 transition-all shadow-sm"
+              className="flex items-center gap-2 px-6 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-all shadow-sm"
             >
               <BsList className="w-5 h-5" />
               목록보기

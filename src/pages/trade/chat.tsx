@@ -1097,13 +1097,13 @@ export const Chat: React.FC = () => {
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
                     <button
                       onClick={() => { navigate(`/seller/${selectedRoom.otherUser.no}`); setShowMoreMenu(false); }}
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
+                      className="flex items-center justify-start px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
                       <BsPersonCircle className="w-4 h-4 mr-2.5" /> 프로필 보기
                     </button>
                     <button
                       onClick={() => { navigate(`/products/${selectedRoom.productId}`); setShowMoreMenu(false); }}
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
+                      className="flex items-center justify-start px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
                       <BsBoxSeam className="w-4 h-4 mr-2.5" /> 상품 보기
                     </button>
@@ -1115,7 +1115,7 @@ export const Chat: React.FC = () => {
                         navigate(targetUrl);
                         setShowMoreMenu(false);
                       }}
-                      className="flex items-center px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
+                      className="flex items-center justify-start px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors w-full text-left"
                     >
                       <BsLayoutTextSidebar className="w-4 h-4 mr-2.5" /> 거래 정보 보기
                     </button>
@@ -1400,7 +1400,7 @@ export const Chat: React.FC = () => {
                             imageInputRef.current?.click();
                             setIsAttachmentMenuOpen(false);
                           }}
-                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
+                          className="w-full flex items-center justify-start gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group text-left"
                         >
                           <div className="p-2 bg-gray-100 rounded-xl text-gray-500 group-hover:bg-gray-200 transition-colors">
                             <BsImage className="w-4 h-4" />
@@ -1412,7 +1412,7 @@ export const Chat: React.FC = () => {
                           <button
                             type="button"
                             onClick={handleLocationClick}
-                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
+                            className="w-full flex items-center justify-start gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group text-left"
                           >
                             <div className="p-2 bg-gray-100 rounded-xl text-gray-500 group-hover:bg-gray-200 transition-colors">
                               <BsGeoAltFill className="w-4 h-4" />
@@ -1424,7 +1424,7 @@ export const Chat: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => { setIsAttachmentMenuOpen(false); setShowAppointmentModal(true); }}
-                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group"
+                          className="w-full flex items-center justify-start gap-3 px-4 py-3 hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-2xl transition-all group text-left"
                         >
                           <div className="p-2 bg-gray-100 rounded-xl text-gray-500 group-hover:bg-gray-200 transition-colors">
                             <BsCalendarPlus className="w-4 h-4" />
@@ -1733,7 +1733,7 @@ export const Chat: React.FC = () => {
                     <button
                       type="button"
                       onClick={openApptPostcode}
-                      className="flex-1 flex items-center gap-2 px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-600 hover:bg-white hover:ring-2 hover:ring-[#FF5A5A]/20 transition-all text-left overflow-hidden"
+                      className="flex-1 flex items-center justify-start gap-2 px-5 h-[56px] bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-600 hover:bg-white hover:ring-2 hover:ring-[#FF5A5A]/20 transition-all text-left overflow-hidden"
                     >
                       <BsGeoAltFill className="w-4 h-4 text-[#FF5A5A] flex-shrink-0" />
                       <span className="truncate">{apptAddrRoad || '주소 검색'}</span>

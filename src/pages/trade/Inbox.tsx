@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { getProfileImageUrl } from '@/utils/imageUtils';
 import { formatMessagePreview } from '@/utils/chatUtils';
+import api from '@/services/api';
 
 const formatDate = (date: Date | string | null | undefined) => {
   if (!date) return '';
@@ -19,13 +20,21 @@ const formatDate = (date: Date | string | null | undefined) => {
 };
 
 export const Inbox: React.FC = () => {
-  const { user, notifications, chats, markNotificationAsRead, deleteNotification, markChatAsRead } = useAppContext();
+  const { user, notifications, chats, markNotificationAsRead, deleteNotification, markChatAsRead, fetchChats } = useAppContext();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'noti' | 'chat'>('noti');
   const [notiFilter, setNotiFilter] = useState<'all' | 'bid' | 'activity'>('all');
   const [chatFilter, setChatFilter] = useState<'all' | 'seller' | 'buyer'>('all');
   const [visibleNotisCount, setVisibleNotisCount] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeNotiMenu, setActiveNotiMenu] = useState<string | null>(null);
+
+  // Close menu on outside click
+  useEffect(() => {
+    const handleClickOutside = () => setActiveNotiMenu(null);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -73,6 +82,30 @@ export const Inbox: React.FC = () => {
     if (chatFilter === 'all') return true;
     return c.otherUser.role === chatFilter;
   });
+
+  const handleDeleteAllNotis = async () => {
+    if (filteredNotis.length === 0) return;
+    if (window.confirm('현재 필터링된 모든 알림을 삭제하시겠습니까?')) {
+      for (const noti of filteredNotis) {
+        await deleteNotification(noti.id);
+      }
+    }
+  };
+
+  const handleDeleteAllChats = async () => {
+    if (filteredChats.length === 0) return;
+    if (window.confirm('현재 필터링된 모든 대화방을 나가시겠습니까?')) {
+      for (const chat of filteredChats) {
+        try {
+          await api.delete(`/chat/rooms/${chat.roomNo}`);
+        } catch (err) {
+          console.error(`채팅방 ${chat.roomNo} 삭제 실패:`, err);
+        }
+      }
+      // Re-fetch chats to sync UI
+      fetchChats();
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-12">
@@ -155,6 +188,17 @@ export const Inbox: React.FC = () => {
             </button>
           </>
         )}
+        
+        {/* Delete All Button */}
+        <div className="ml-auto">
+          <button
+            onClick={activeTab === 'noti' ? handleDeleteAllNotis : handleDeleteAllChats}
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all whitespace-nowrap"
+          >
+            <BsTrash className="w-3.5 h-3.5" />
+            모두 지우기
+          </button>
+        </div>
       </div>
 
       {/* List Content */}
@@ -183,21 +227,37 @@ export const Inbox: React.FC = () => {
                   </div>
                 </Link>
                 
-                {/* Deletion Menu */}
+                {/* Deletion Menu (Dropdown) */}
                 <div className="absolute top-4 right-4">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (window.confirm('이 알림을 삭제하시겠습니까?')) {
-                        deleteNotification(noti.id);
-                      }
-                    }}
-                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
-                    title="알림 삭제"
-                  >
-                    <BsThreeDotsVertical className="w-5 h-5" />
-                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setActiveNotiMenu(activeNotiMenu === noti.id ? null : noti.id);
+                      }}
+                      className={`p-2 rounded-full transition-all ${activeNotiMenu === noti.id ? 'bg-gray-100 text-gray-900' : 'text-gray-300 hover:text-gray-600 hover:bg-gray-50'}`}
+                    >
+                      <BsThreeDotsVertical className="w-5 h-5" />
+                    </button>
+                    
+                    {activeNotiMenu === noti.id && (
+                      <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-100 rounded-2xl shadow-2xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            deleteNotification(noti.id);
+                            setActiveNotiMenu(null);
+                          }}
+                          className="w-full flex items-center justify-start px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
+                        >
+                          <BsTrash className="w-4 h-4 mr-2" />
+                          알림 지우기
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))

@@ -156,7 +156,7 @@ export const Report: React.FC = () => {
                       key={idx}
                       type="button"
                       onClick={() => setReason(r)}
-                      className={`w-full p-4 text-left rounded-2xl border-2 transition-all font-bold text-sm ${reason === r
+                      className={`w-full p-4 flex items-center justify-start rounded-2xl border-2 transition-all font-bold text-sm ${reason === r
                         ? 'border-brand bg-brand/5 text-brand'
                         : 'border-gray-50 bg-gray-50 text-gray-600 hover:border-gray-200'
                         }`}
