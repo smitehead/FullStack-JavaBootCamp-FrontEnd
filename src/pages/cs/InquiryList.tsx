@@ -8,19 +8,23 @@ import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import React, { useEffect, useState, useCallback } from 'react';
 import { Pagination } from '@/components/Pagination';
+import { showToast } from '@/components/toastService';
 
 export const InquiryList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<InquiryType | '전체'>('전체');
   const navigate = useNavigate();
-  const { user } = useAppContext();
+  const { user, isInitialized } = useAppContext();
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchInquiries = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     try {
       const params: any = { page: currentPage - 1, size: 10 };
@@ -38,6 +42,13 @@ export const InquiryList: React.FC = () => {
   }, [user, currentPage, selectedType, searchTerm]);
 
   useEffect(() => {
+    if (isInitialized && !user) {
+      showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'info');
+      navigate('/login');
+    }
+  }, [isInitialized, user, navigate]);
+
+  useEffect(() => {
     fetchInquiries();
   }, [fetchInquiries]);
 
@@ -49,7 +60,7 @@ export const InquiryList: React.FC = () => {
 
   const categories: (InquiryType | '전체')[] = ['전체', '버그 신고', '포인트 문의', '계정 문의', '기타'];
 
-  if (isLoading) return (
+  if (!isInitialized || isLoading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
     </div>
