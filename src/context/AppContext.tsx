@@ -152,6 +152,7 @@ interface AppContextType {
   refreshActivityLogs: () => Promise<void>;
   fetchChats: () => Promise<void>;
   updateNotifyChat: (enabled: boolean) => void;
+  updateNotifyBadge: (key: 'auctionEnd' | 'newBid' | 'marketing', enabled: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -161,6 +162,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const notifyChatRef = useRef(true);
+  const [notifySettings, setNotifySettings] = useState({ notifyAuctionEnd: 1, notifyNewBid: 1, notifyMarketing: 0 });
   const [users, setUsers] = useState<User[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -261,7 +263,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, []);
 
-  // notifyChat 설정 로드 (로그인/로그아웃 시에만 실행)
+  // 알림 설정 로드 (로그인/로그아웃 시에만 실행)
   useEffect(() => {
     if (!user) {
       notifyChatRef.current = true;
@@ -269,6 +271,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
     api.get('/members/me').then(res => {
       notifyChatRef.current = res.data.notifyChat === 1;
+      setNotifySettings({
+        notifyAuctionEnd: res.data.notifyAuctionEnd ?? 1,
+        notifyNewBid: res.data.notifyNewBid ?? 1,
+        notifyMarketing: res.data.marketingAgree ?? 0,
+      });
     }).catch(() => {});
   }, [user?.id]);
 
@@ -773,8 +780,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const updateNotifyBadge = (key: 'auctionEnd' | 'newBid' | 'marketing', enabled: boolean) => {
+    setNotifySettings(prev => ({
+      ...prev,
+      ...(key === 'auctionEnd' ? { notifyAuctionEnd: enabled ? 1 : 0 } :
+          key === 'newBid'     ? { notifyNewBid: enabled ? 1 : 0 } :
+                                 { notifyMarketing: enabled ? 1 : 0 }),
+    }));
+  };
+
   const filteredChats = chats.filter(c => !hiddenChatRoomNos.includes(c.roomNo));
-  const unreadNotificationsCount = notifications.filter(n => !n.read).length;
+  const unreadNotificationsCount = notifications.filter(n => {
+    if (n.read) return false;
+    // "bid" 타입: auctionEnd, newBid 둘 다 꺼져 있을 때만 제외
+    if (n.type === 'bid' && !notifySettings.notifyAuctionEnd && !notifySettings.notifyNewBid) return false;
+    // "이벤트" 타입: 마케팅 수신 꺼져 있으면 제외
+    if (n.type === '이벤트' && !notifySettings.notifyMarketing) return false;
+    return true;
+  }).length;
   const unreadChatsCount = filteredChats.filter(c => c.unreadCount > 0).length;
 
   return (
@@ -821,6 +844,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       refreshActivityLogs,
       fetchChats,
       updateNotifyChat: (val: boolean) => { notifyChatRef.current = val; },
+      updateNotifyBadge,
     }}>
       {children}
     </AppContext.Provider>
