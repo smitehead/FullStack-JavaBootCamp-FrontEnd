@@ -25,7 +25,7 @@ export const Settings: React.FC = () => {
       setActiveTab(initialTab);
     }
   }, [initialTab]);
-  const { user, logout, updateCurrentUserAddress } = useAppContext();
+  const { user, logout, updateCurrentUserAddress, updateNotifyChat } = useAppContext();
   const [activeProductCount, setActiveProductCount] = useState(0);
   const [tradingProductCount, setTradingProductCount] = useState(0);
   const [settings, setSettings] = useState({
@@ -334,6 +334,7 @@ export const Settings: React.FC = () => {
           key === 'newBid' ? 'newBid' :
             key === 'chat' ? 'chat' : 'marketing']: newVal,
       });
+      if (key === 'chat') updateNotifyChat(newVal);
     } catch (e) {
       setSettings(prev => ({ ...prev, [key]: !newVal }));
       showToast('설정 변경에 실패했습니다.', 'error');

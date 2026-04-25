@@ -151,6 +151,7 @@ interface AppContextType {
   unreadChatsCount: number;
   refreshActivityLogs: () => Promise<void>;
   fetchChats: () => Promise<void>;
+  updateNotifyChat: (enabled: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -159,6 +160,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isInitialized, setIsInitialized] = useState(false);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [notifyChat, setNotifyChat] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -219,7 +221,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       
       const currentUnread = mapped.reduce((sum, r) => sum + r.unreadCount, 0);
       
-      if (!isFirstChatFetch.current && currentUnread > previousUnreadChatsCount.current) {
+      if (!isFirstChatFetch.current && currentUnread > previousUnreadChatsCount.current && notifyChat) {
         showToast('새로운 채팅 메시지가 도착했습니다.', 'success');
       }
       
@@ -239,7 +241,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     } catch (err) {
       console.error('[Chat] 목록 로딩 실패:', err);
     }
-  }, [hiddenChatRoomNos]);
+  }, [hiddenChatRoomNos, notifyChat]);
 
   // 알림 목록 API 로드
   const fetchNotifications = useCallback(async () => {
@@ -263,9 +265,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       fetchNotifications();
       fetchChats();
+      api.get('/members/me').then(res => {
+        setNotifyChat(res.data.notifyChat === 1);
+      }).catch(() => {});
     } else {
       setNotifications([]);
       setChats([]);
+      setNotifyChat(true);
       isFirstChatFetch.current = true;
       previousUnreadChatsCount.current = 0;
     }
@@ -806,7 +812,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       unreadNotificationsCount,
       unreadChatsCount,
       refreshActivityLogs,
-      fetchChats
+      fetchChats,
+      updateNotifyChat: setNotifyChat,
     }}>
       {children}
     </AppContext.Provider>
