@@ -12,6 +12,7 @@ import { showToast } from '@/components/toastService';
 
 export const InquiryList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [appliedKeyword, setAppliedKeyword] = useState('');
   const [selectedType, setSelectedType] = useState<InquiryType | '전체'>('전체');
   const navigate = useNavigate();
   const { user, isInitialized } = useAppContext();
@@ -29,7 +30,7 @@ export const InquiryList: React.FC = () => {
     try {
       const params: any = { page: currentPage, size: 10 };
       if (selectedType !== '전체') params.type = selectedType;
-      if (searchTerm.trim()) params.keyword = searchTerm.trim();
+      if (appliedKeyword.trim()) params.keyword = appliedKeyword.trim();
 
       const res = await api.get('/inquiries/my', { params });
       setInquiries(res.data.content || []);
@@ -39,7 +40,7 @@ export const InquiryList: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [user, currentPage, selectedType, searchTerm]);
+  }, [user, currentPage, selectedType, appliedKeyword]);
 
   useEffect(() => {
     if (isInitialized && !user) {
@@ -54,8 +55,8 @@ export const InquiryList: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setAppliedKeyword(searchTerm);
     setCurrentPage(1);
-    fetchInquiries();
   };
 
   const categories: (InquiryType | '전체')[] = ['전체', '버그 신고', '포인트 문의', '계정 문의', '기타'];
