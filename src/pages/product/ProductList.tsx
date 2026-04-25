@@ -653,8 +653,8 @@ export const ProductList: React.FC = () => {
             )}
             {searchParams.get('q') && (
               <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
-                <BsSearch className="w-3 h-3 mr-1" />
-                <span>"{searchParams.get('q')}"</span>
+                <BsSearch className="w-3 h-3 mr-1 shrink-0" />
+                <span className="max-w-[160px] truncate">"{searchParams.get('q')}"</span>
                 <button
                   onClick={() => removeFilter('q')}
                   className="ml-2 hover:text-brand-dark"

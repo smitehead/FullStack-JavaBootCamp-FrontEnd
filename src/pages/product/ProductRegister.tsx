@@ -139,6 +139,7 @@ export const ProductRegister: React.FC = () => {
     // 필수 항목 검증
     if (images.length === 0) { showToast('이미지를 최소 1장 등록해주세요.', 'warning'); return; }
     if (!title.trim()) { showToast('제목을 입력해주세요.', 'warning'); return; }
+    if (title.trim().length > 100) { showToast('제목은 100자 이내로 입력해주세요.', 'warning'); return; }
     if (!description.trim()) { showToast('상품 설명을 입력해주세요.', 'warning'); return; }
     if (!largeCat) { showToast('카테고리를 선택해주세요.', 'warning'); return; }
     
@@ -360,13 +361,18 @@ export const ProductRegister: React.FC = () => {
         {/* Basic Info & Description */}
         <section className="space-y-6">
           <div>
-            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">제목 <span className="text-red-500">*</span></label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">제목 <span className="text-red-500">*</span></label>
+              <span className={`text-xs font-medium ${title.length > 100 ? 'text-red-500' : 'text-gray-400'}`}>
+                {title.length}/100
+              </span>
+            </div>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="상품 제목을 입력해주세요"
-              className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border text-sm font-medium transition-all outline-none"
+              className={`w-full rounded-2xl shadow-sm focus:ring-2 focus:bg-white p-4 border text-sm font-medium transition-all outline-none ${title.length > 100 ? 'border-red-300 focus:ring-red-200' : 'border-gray-100 focus:ring-[#FF5A5A]/20'}`}
             />
           </div>
 

@@ -118,6 +118,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                 className="w-full pl-6 pr-12 py-3.5 bg-[#F8F9FA] border-none rounded-2xl text-sm focus:ring-2 focus:ring-gray-100 focus:bg-white transition-all outline-none placeholder:text-gray-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                maxLength={100}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
               />
@@ -157,7 +158,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               <span className="truncate">{term}</span>
                             </div>
                             <BsX
-                              className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
+                              className="w-4 h-4 shrink-0 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 removeRecentSearch(idx);
