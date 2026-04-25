@@ -5,7 +5,8 @@ import { ProductCard } from '@/components/ProductCard';
 import { 
   BsBag, BsBagFill, BsPencilSquare, BsChevronLeft, BsChevronRight,
   BsHeart, BsHeartFill, BsGear, BsGearFill, BsWallet, BsBox2, BsShop, 
-  BsTrophy, BsChat, BsThreeDotsVertical, BsXCircleFill, BsEyeSlash
+  BsTrophy, BsChat, BsThreeDotsVertical, BsXCircleFill, BsEyeSlash,
+  BsImage, BsTrash
 } from 'react-icons/bs';
 import { Pagination } from '@/components/Pagination';
 import { Product } from '@/types';
@@ -94,7 +95,10 @@ export const MyPage: React.FC = () => {
 
   // Close menu on click outside
   useEffect(() => {
-    const handleOutsideClick = () => setOpenMenuId(null);
+    const handleOutsideClick = () => {
+      setOpenMenuId(null);
+      setIsProfileMenuOpen(false);
+    };
     window.addEventListener('click', handleOutsideClick);
     return () => window.removeEventListener('click', handleOutsideClick);
   }, []);
@@ -138,6 +142,7 @@ export const MyPage: React.FC = () => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [selectedProductForReview, setSelectedProductForReview] = useState<Product | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   // user.profileImage가 외부에서 바뀌면(세션 복원 등) 동기화
   React.useEffect(() => {
@@ -175,9 +180,29 @@ export const MyPage: React.FC = () => {
       showToast('이미지 업로드에 실패했습니다.', 'error');
     } finally {
       setUploadingProfile(false);
+      setIsProfileMenuOpen(false);
       if (e.target) {
         e.target.value = '';
       }
+    }
+  };
+
+  const handleDeleteProfileImage = async () => {
+    if (!user) return;
+    try {
+      setUploadingProfile(true);
+      const memberNo = getMemberNo(user);
+      // 서버에 빈 URL 전송하여 프로필 이미지 삭제 처리
+      await api.put(`/members/${memberNo}/profile-image-url`, { url: '' });
+      
+      updateCurrentUserProfileImage('');
+      setProfileImage('');
+      showToast('프로필 이미지가 삭제되었습니다.', 'success');
+    } catch (err) {
+      showToast('이미지 삭제에 실패했습니다.', 'error');
+    } finally {
+      setUploadingProfile(false);
+      setIsProfileMenuOpen(false);
     }
   };
 
@@ -388,15 +413,29 @@ export const MyPage: React.FC = () => {
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
           {/* Profile Image */}
           <div className="relative group">
-            <div className="w-32 h-32 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-gray-100 flex items-center justify-center">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsProfileMenuOpen(!isProfileMenuOpen);
+              }}
+              disabled={uploadingProfile}
+              className="w-32 h-32 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-gray-100 flex items-center justify-center relative active:scale-95 transition-transform"
+            >
               <img
                 src={getProfileImageUrl(profileImage)}
                 alt="Profile"
                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                 referrerPolicy="no-referrer"
               />
-            </div>
-            <button onClick={triggerFileInput} disabled={uploadingProfile} className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-gray-100 hover:border-gray-200 transition-all duration-300 border border-gray-100 disabled:opacity-50 group">
+            </button>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsProfileMenuOpen(!isProfileMenuOpen);
+              }}
+              disabled={uploadingProfile} 
+              className="absolute -bottom-2 -right-2 bg-white text-gray-700 p-2.5 rounded-2xl shadow-lg hover:bg-gray-100 hover:border-gray-200 transition-all duration-300 border border-gray-100 disabled:opacity-50 group z-20"
+            >
               {uploadingProfile
                 ? <div className="w-5 h-5 border-2 border-brand/20 border-t-brand rounded-full animate-spin" />
                 : (
@@ -407,6 +446,32 @@ export const MyPage: React.FC = () => {
                 )
               }
             </button>
+
+            {/* Dropdown Menu */}
+            {isProfileMenuOpen && (
+              <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[60] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    triggerFileInput();
+                    setIsProfileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center justify-start px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                >
+                  <BsImage className="w-4 h-4 mr-2.5" /> 앨범에서 선택
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteProfileImage();
+                  }}
+                  className="w-full flex items-center justify-start px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                >
+                  <BsTrash className="w-4 h-4 mr-2.5" /> 프로필 사진 삭제
+                </button>
+              </div>
+            )}
+
             <input type="file" ref={fileInputRef} onChange={handleProfileImageChange} accept="image/*" className="hidden" />
           </div>
 
