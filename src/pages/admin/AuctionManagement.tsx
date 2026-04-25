@@ -119,9 +119,24 @@ export const AuctionManagement: React.FC = () => {
             <div key={product.id} className="px-5 py-2.5 hover:bg-gray-50 transition-colors group">
               <div className="flex items-center min-w-0">
                 <img src={resolveImageUrl(product.images[0]) || ''} alt={product.title} className="w-8 h-8 rounded-none object-cover bg-gray-100 shrink-0 mr-3" referrerPolicy="no-referrer" />
-                <Link to={`/products/${product.id.replace('prod_', '')}`} target="_blank" title={product.title} className="w-[200px] shrink-0 text-[13px] font-bold text-gray-900 truncate hover:text-[#FF5A5A] transition-colors" onClick={(e) => e.stopPropagation()}>
+                <span
+                  title={product.title}
+                  className="w-[200px] shrink-0 text-[13px] font-bold text-gray-900 truncate hover:text-[#FF5A5A] transition-colors cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const token = sessionStorage.getItem('java_token');
+                    const user = sessionStorage.getItem('java_user');
+                    if (token) localStorage.setItem('tab_token', token);
+                    if (user) localStorage.setItem('tab_user', user);
+                    setTimeout(() => {
+                      localStorage.removeItem('tab_token');
+                      localStorage.removeItem('tab_user');
+                    }, 500);
+                    window.open(`/products/${product.id.replace('prod_', '')}`, '_blank');
+                  }}
+                >
                   {product.title}
-                </Link>
+                </span>
                 <div className="w-[56px] shrink-0">
                   <span className={`inline-flex px-1.5 py-0.5 rounded-none text-[11px] font-bold ${
                     product.status === 'active'    ? 'bg-green-50 text-green-600' :

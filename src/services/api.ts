@@ -7,7 +7,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('java_token');
+    const token = sessionStorage.getItem('java_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -30,7 +30,7 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401) {
       const url = error.config?.url ?? '';
-      const hadToken = !!localStorage.getItem('java_token');
+      const hadToken = !!sessionStorage.getItem('java_token');
       if (!url.includes('/auth/logout') && hadToken) {
         window.dispatchEvent(new CustomEvent('forceLogout'));
       }

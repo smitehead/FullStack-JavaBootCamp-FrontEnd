@@ -268,116 +268,133 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     if (!user) return;
 
-    const token = localStorage.getItem('java_token');
-    if (!token) return;
-
     const memberNo = extractMemberNo(user.id);
-    const eventSource = new EventSource(`/api/sse/subscribe?token=${encodeURIComponent(token)}`);
+    let eventSource: EventSource | null = null;
+    let cancelled = false;
 
-    // 최초 연결 및 재연결 감지 — 재연결 시 누락 이벤트를 보정하기 위해 window 이벤트 발행
-    let isFirstConnect = true;
-    eventSource.addEventListener('connect', () => {
-      if (isFirstConnect) {
-        isFirstConnect = false;
-        return; // 최초 연결은 무시 (컴포넌트가 마운트 시 이미 fetch)
-      }
-      window.dispatchEvent(new CustomEvent('sse:reconnected'));
-    });
+    api.post('/sse/ticket').then(res => {
+      if (cancelled) return;
+      const ticket = res.data.ticket;
+      eventSource = new EventSource(`/api/sse/subscribe?ticket=${encodeURIComponent(ticket)}`);
 
-    eventSource.addEventListener('pointUpdate', (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data && typeof data.points === 'number') {
-          // [방어] 백엔드가 payload에 memberNo를 포함하는 경우 2차 검증
-          // SSE 연결 자체가 memberNo 기반 1:1이므로 정상 케이스에서는 항상 일치하지만,
-          // localStorage 공유 등 예외 상황의 크로스토크를 최종 차단한다.
-          if (data.memberNo !== undefined && data.memberNo !== memberNo) {
-            console.warn('[SSE] pointUpdate memberNo 불일치 — 무시함', { expected: memberNo, received: data.memberNo });
-            return;
+      // 최초 연결 및 재연결 감지 — 재연결 시 누락 이벤트를 보정하기 위해 window 이벤트 발행
+      let isFirstConnect = true;
+      eventSource.addEventListener('connect', () => {
+        if (isFirstConnect) {
+          isFirstConnect = false;
+          return;
+        }
+        window.dispatchEvent(new CustomEvent('sse:reconnected'));
+      });
+
+      eventSource.addEventListener('pointUpdate', (event: MessageEvent) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data && typeof data.points === 'number') {
+            if (data.memberNo !== undefined && data.memberNo !== memberNo) {
+              console.warn('[SSE] pointUpdate memberNo 불일치 — 무시함', { expected: memberNo, received: data.memberNo });
+              return;
+            }
+            setUser(prev => {
+              if (!prev) return prev;
+              if (prev.points === data.points) return prev;
+              const updated = { ...prev, points: data.points };
+              sessionStorage.setItem('java_user', JSON.stringify(updated));
+              return updated;
+            });
+            window.dispatchEvent(new CustomEvent('sse:pointUpdate', { detail: data }));
           }
-          setUser(prev => {
-            if (!prev) return prev;
-            if (prev.points === data.points) return prev;
-            const updated = { ...prev, points: data.points };
-            localStorage.setItem('java_user', JSON.stringify(updated));
-            return updated;
-          });
-          // ProductDetail 등 다른 컴포넌트에서 포인트 변동을 감지할 수 있도록 window event 발행
-          window.dispatchEvent(new CustomEvent('sse:pointUpdate', { detail: data }));
+        } catch (e) {
+          console.error('[SSE] pointUpdate 파싱 오류', e);
         }
-      } catch (e) {
-        console.error('[SSE] pointUpdate 파싱 오류', e);
-      }
-    });
+      });
 
-    // 입찰가 실시간 브로드캐스트 — ProductDetail에 전달하기 위해 window event 발행
-    eventSource.addEventListener('priceUpdate', (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data);
-        window.dispatchEvent(new CustomEvent('sse:priceUpdate', { detail: data }));
-      } catch (e) {
-        console.error('[SSE] priceUpdate 파싱 오류', e);
-      }
-    });
-
-    // 실시간 알림 수신
-    eventSource.addEventListener('notification', (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data && data.notiNo) {
-          const newNoti: Notification = {
-            id: String(data.notiNo),
-            message: data.content,
-            read: false,
-            link: data.linkUrl || '/',
-            createdAt: data.createdAt,
-            type: data.type as NotificationType,
-          };
-          // 즉시 state 반영 → 빨간점 바로 활성화
-          setNotifications(prev => {
-            if (prev.some(n => n.id === newNoti.id)) return prev;
-            return [newNoti, ...prev];
-          });
-          // 다른 컴포넌트(MyPage 등)에서 실시간 반응할 수 있도록 window event 발행
-          window.dispatchEvent(new CustomEvent('sse:notification', { detail: newNoti }));
+      // 입찰가 실시간 브로드캐스트 — ProductDetail에 전달하기 위해 window event 발행
+      eventSource.addEventListener('priceUpdate', (event: MessageEvent) => {
+        try {
+          const data = JSON.parse(event.data);
+          window.dispatchEvent(new CustomEvent('sse:priceUpdate', { detail: data }));
+        } catch (e) {
+          console.error('[SSE] priceUpdate 파싱 오류', e);
         }
-      } catch (e) {
-        console.error('[SSE] notification 파싱 오류', e);
-      }
-    });
+      });
 
-    // 판매자 경매 취소 브로드캐스트 → ProductDetail에 전달
-    eventSource.addEventListener('auctionCancelled', (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data);
-        window.dispatchEvent(new CustomEvent('sse:auctionCancelled', { detail: data }));
-      } catch (e) {
-        console.error('[SSE] auctionCancelled 파싱 오류', e);
-      }
-    });
+      // 실시간 알림 수신
+      eventSource.addEventListener('notification', (event: MessageEvent) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data && data.notiNo) {
+            const newNoti: Notification = {
+              id: String(data.notiNo),
+              message: data.content,
+              read: false,
+              link: data.linkUrl || '/',
+              createdAt: data.createdAt,
+              type: data.type as NotificationType,
+            };
+            setNotifications(prev => {
+              if (prev.some(n => n.id === newNoti.id)) return prev;
+              return [newNoti, ...prev];
+            });
+            window.dispatchEvent(new CustomEvent('sse:notification', { detail: newNoti }));
+          }
+        } catch (e) {
+          console.error('[SSE] notification 파싱 오류', e);
+        }
+      });
 
-    // 다른 기기에서 로그인 시 즉시 강제 로그아웃 처리
-    eventSource.addEventListener('forceLogout', () => {
-      eventSource.close();
-      localStorage.removeItem('java_token');
-      localStorage.removeItem('java_user');
-      setUser(null);
-      setForceLogoutModalOpen(true);
-    });
+      // 판매자 경매 취소 브로드캐스트 → ProductDetail에 전달
+      eventSource.addEventListener('auctionCancelled', (event: MessageEvent) => {
+        try {
+          const data = JSON.parse(event.data);
+          window.dispatchEvent(new CustomEvent('sse:auctionCancelled', { detail: data }));
+        } catch (e) {
+          console.error('[SSE] auctionCancelled 파싱 오류', e);
+        }
+      });
 
-    eventSource.onerror = (err) => {
-      console.error(`[SSE] 연결 오류 (memberNo: ${memberNo})`, err);
-      // close() 미호출 - EventSource 스펙상 오류 시 자동 재연결됨
-    };
+      // 다른 기기에서 로그인 시 즉시 강제 로그아웃 처리
+      eventSource.addEventListener('forceLogout', () => {
+        eventSource?.close();
+        sessionStorage.removeItem('java_token');
+        sessionStorage.removeItem('java_user');
+        setUser(null);
+        setForceLogoutModalOpen(true);
+      });
+
+      eventSource.onerror = (err) => {
+        console.error(`[SSE] 연결 오류 (memberNo: ${memberNo})`, err);
+      };
+    }).catch(err => {
+      console.error('[SSE] ticket 발급 실패', err);
+    });
 
     return () => {
-      eventSource.close();
+      cancelled = true;
+      eventSource?.close();
     };
   }, [user?.id]); // 사용자 ID가 바뀔 때(로그인/로그아웃) 재연결
 
   // 앱 시작 시 localStorage에 저장된 로그인 정보 복원 (탭별 격리)
   useEffect(() => {
-    const savedUser = localStorage.getItem('java_user');
+    // 새 탭으로 열린 경우: tab_token/tab_user를 읽고 즉시 삭제
+    const tabToken = localStorage.getItem('tab_token');
+    const tabUser = localStorage.getItem('tab_user');
+    if (tabToken && tabUser) {
+      sessionStorage.setItem('java_token', tabToken);
+      sessionStorage.setItem('java_user', tabUser);
+      localStorage.removeItem('tab_token');
+      localStorage.removeItem('tab_user');
+    }
+
+    // 탭이 닫히기 전 tab_token이 남아있으면 삭제 (로딩 실패 시 보험)
+    const cleanupOnUnload = () => {
+      localStorage.removeItem('tab_token');
+      localStorage.removeItem('tab_user');
+    };
+    window.addEventListener('beforeunload', cleanupOnUnload);
+
+    const savedUser = sessionStorage.getItem('java_user');
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
       setUser(parsedUser);
@@ -394,7 +411,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                 mannerTemp: res.data.mannerTemp || 36.5,
                 profileImage: resolveImageUrl(res.data.profileImgUrl) || prev.profileImage,
               };
-              localStorage.setItem('java_user', JSON.stringify(updated));
+              sessionStorage.setItem('java_user', JSON.stringify(updated));
               return updated;
             });
           }
@@ -404,6 +421,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       }
     }
     setIsInitialized(true);
+
+    return () => window.removeEventListener('beforeunload', cleanupOnUnload);
   }, []);
 
   const login = async (userId: string, password: string): Promise<boolean> => {
@@ -411,7 +430,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const response = await api.post('/auth/login', { userId, password });
       const { token, memberNo, nickname, addrShort } = response.data;
 
-      localStorage.setItem('java_token', token);
+      sessionStorage.setItem('java_token', token);
 
       let dbPoints = 0;
       let dbMannerTemp = 36.5;
@@ -443,7 +462,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       };
 
       setUser(loggedInUser);
-      localStorage.setItem('java_user', JSON.stringify(loggedInUser));
+      sessionStorage.setItem('java_user', JSON.stringify(loggedInUser));
       return true;
     } catch (error) {
       console.error('로그인 실패', error);
@@ -454,8 +473,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const logout = () => {
     api.post('/auth/logout').catch(console.error);
     setUser(null);
-    localStorage.removeItem('java_user');
-    localStorage.removeItem('java_token');
+    sessionStorage.removeItem('java_user');
+    sessionStorage.removeItem('java_token');
   };
 
   const closeForceLogoutModal = () => setForceLogoutModalOpen(false);
@@ -463,8 +482,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // api.ts의 401 인터셉터에서 발생시키는 커스텀 이벤트 처리 (SSE 미연결 상태 백업)
   useEffect(() => {
     const handleForceLogout = () => {
-      localStorage.removeItem('java_token');
-      localStorage.removeItem('java_user');
+      sessionStorage.removeItem('java_token');
+      sessionStorage.removeItem('java_user');
       setUser(null);
       setForceLogoutModalOpen(true);
     };
@@ -668,7 +687,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       const updated = { ...user, points };
       setUser(updated);
-      localStorage.setItem('java_user', JSON.stringify(updated));
+      sessionStorage.setItem('java_user', JSON.stringify(updated));
     }
   };
 
@@ -676,7 +695,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       const updated = { ...user, profileImage: profileImageUrl };
       setUser(updated);
-      localStorage.setItem('java_user', JSON.stringify(updated));
+      sessionStorage.setItem('java_user', JSON.stringify(updated));
     }
   };
 
@@ -684,7 +703,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (user) {
       const updated = { ...user, address };
       setUser(updated);
-      localStorage.setItem('java_user', JSON.stringify(updated));
+      sessionStorage.setItem('java_user', JSON.stringify(updated));
     }
   };
 
@@ -695,7 +714,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setUser(prev => {
         if (!prev) return prev;
         const updated = { ...prev, account };
-        localStorage.setItem('java_user', JSON.stringify(updated));
+        sessionStorage.setItem('java_user', JSON.stringify(updated));
         return updated;
       });
       showToast('계좌가 성공적으로 등록되었습니다.', 'success');
