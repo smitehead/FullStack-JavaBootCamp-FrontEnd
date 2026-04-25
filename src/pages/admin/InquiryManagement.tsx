@@ -166,6 +166,12 @@ export const InquiryManagement: React.FC = () => {
                 </Link>
                 <span className="text-gray-300">|</span>
                 <span className="font-bold text-gray-500">{inquiry.type}</span>
+                {inquiry.type === '버그 신고' && inquiry.bugType && (
+                  <>
+                    <span className="text-gray-300">·</span>
+                    <span className="px-1.5 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-bold rounded">{inquiry.bugType}</span>
+                  </>
+                )}
                 <span className="text-gray-300">|</span>
                 <span className="text-[10px] font-medium text-gray-400">{formatDate(inquiry.createdAt)}</span>
               </div>
@@ -203,6 +209,12 @@ export const InquiryManagement: React.FC = () => {
                     </Link>
                     <p className="text-[10px] font-medium text-gray-500">{formatDate(selectedInquiry.createdAt)}</p>
                   </div>
+                </div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">{selectedInquiry.type}</span>
+                  {selectedInquiry.type === '버그 신고' && selectedInquiry.bugType && (
+                    <span className="px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-bold rounded">{selectedInquiry.bugType}</span>
+                  )}
                 </div>
                 <h4 className="text-base font-bold text-gray-900 mb-1">{selectedInquiry.title}</h4>
                 <p className="text-sm text-gray-700 font-medium leading-relaxed whitespace-pre-wrap">{selectedInquiry.content}</p>
