@@ -137,6 +137,8 @@ export const Chat: React.FC = () => {
         lastMessageAt: r.lastMessageAt || '',
         unreadCount: r.unreadCount || 0,
         productPrice: r.productPrice || r.currentPrice || 0,
+        appointmentStatus: r.appointmentStatus ?? 0,
+        appointmentAt: r.appointmentAt || null,
       }));
       const sortedRooms = (rooms || []).sort((a: any, b: any) => {
         const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
@@ -361,6 +363,17 @@ export const Chat: React.FC = () => {
         });
 
         scrollToBottom();
+
+        // 상대방 APPOINTMENT 수신 시 방의 약속 상태 즉시 업데이트
+        if (data.msgType === 'APPOINTMENT' && data.senderNo !== memberNo) {
+          const newApptAt = data.apptAt ?? null;
+          setChatRooms(prev =>
+            prev.map(r => r.roomNo === selectedRoom.roomNo
+              ? { ...r, appointmentStatus: 1, appointmentAt: newApptAt }
+              : r)
+          );
+          setSelectedRoom(prev => prev ? { ...prev, appointmentStatus: 1, appointmentAt: newApptAt } : null);
+        }
 
         // 상대방 메시지면 읽음 처리
         if (data.senderNo !== memberNo) {
@@ -958,6 +971,48 @@ export const Chat: React.FC = () => {
       showToast('채팅방 나가기에 실패했습니다.', 'error');
     }
   };
+
+  // ══════════════════════════════════════════════════
+  // 약속 만료 감지 — 약속 시간이 지나면 안내 메시지 + 토스트
+  // ══════════════════════════════════════════════════
+  useEffect(() => {
+    if (!selectedRoom || selectedRoom.appointmentStatus !== 1 || !selectedRoom.appointmentAt) return;
+
+    const apptTime = new Date(selectedRoom.appointmentAt).getTime();
+    const msUntilExpiry = apptTime - Date.now();
+
+    if (msUntilExpiry <= 0) return; // 이미 만료됨 (서버에서 0으로 내려왔을 것)
+
+    const timer = setTimeout(() => {
+      // 방 상태 로컬 업데이트
+      setChatRooms(prev =>
+        prev.map(r => r.roomNo === selectedRoom.roomNo ? { ...r, appointmentStatus: 0 } : r)
+      );
+      setSelectedRoom(prev => prev ? { ...prev, appointmentStatus: 0 } : null);
+
+      // 채팅창 안내 메시지
+      const sysMsg: ChatMessage = {
+        id: `sys_appt_end_${Date.now()}`,
+        senderId: 'system',
+        senderNo: 0,
+        content: '약속된 상품을 잘 받으셨나요?',
+        createdAt: new Date().toISOString(),
+        isRead: 1,
+        status: 'SENT',
+        msgType: 'SYSTEM',
+      };
+      setMessages(prev => [...prev, sysMsg]);
+      requestAnimationFrame(() => {
+        const container = messagesContainerRef.current;
+        if (container) container.scrollTop = container.scrollHeight;
+      });
+
+      // 토스트
+      showToast('약속된 상품을 잘 받으셨나요?', 'info');
+    }, msUntilExpiry);
+
+    return () => clearTimeout(timer);
+  }, [selectedRoom?.roomNo, selectedRoom?.appointmentAt, selectedRoom?.appointmentStatus]);
 
   // ──── 유틸 ────
   const scrollToBottom = () => {
