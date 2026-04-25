@@ -409,7 +409,7 @@ export const MyPage: React.FC = () => {
   return (
     <div className="max-w-[1200px] mx-auto px-10 py-8">
       {/* Profile Header */}
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10 mb-8 relative overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10 mb-8 relative">
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
           {/* Profile Image */}
           <div className="relative group">
@@ -449,7 +449,7 @@ export const MyPage: React.FC = () => {
 
             {/* Dropdown Menu */}
             {isProfileMenuOpen && (
-              <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[60] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
+              <div className="absolute left-full top-3/4 mt-4 ml-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-left">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
