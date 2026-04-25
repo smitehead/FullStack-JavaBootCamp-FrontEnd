@@ -10,18 +10,14 @@ import { useAppContext } from '@/context/AppContext';
 
 export const InquiryCreate: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAppContext();
-
+  const { user, isInitialized } = useAppContext();
+  
   React.useEffect(() => {
-    if (!user) {
-      const confirmed = window.confirm('로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?');
-      if (confirmed) {
-        navigate('/login');
-      } else {
-        navigate('/');
-      }
+    if (isInitialized && !user) {
+      showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'info');
+      navigate('/login');
     }
-  }, [user, navigate]);
+  }, [isInitialized, user, navigate]);
   const [type, setType] = useState<InquiryType | ''>('');
   const [bugType, setBugType] = useState<BugType | ''>('');
   const [title, setTitle] = useState('');

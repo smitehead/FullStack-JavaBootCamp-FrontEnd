@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ProductCard } from '@/components/ProductCard';
 import { 
-  BsBox2, BsChatLeft, BsBox2Fill, BsChatLeftFill, 
-  BsShieldFill, BsFlagFill, BsArrowLeft, BsChevronLeft, BsChevronRight
+  BsShop, BsTrophy, BsChat, BsXCircle, BsBox2, BsChevronLeft, BsChevronRight, BsStarFill, BsStar, BsShieldCheck,
+  BsShieldFill, BsFlagFill, BsArrowLeft, BsBox2Fill, BsChatLeftFill, BsChatLeft
 } from 'react-icons/bs';
+import { Pagination } from '@/components/Pagination';
 import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
@@ -372,43 +373,3 @@ export const SellerProfile: React.FC = () => {
   );
 };
 
-const Pagination = ({ currentPage, totalPages, onPageChange }: {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}) => {
-  if (totalPages <= 1) return null;
-
-  return (
-    <div className="flex justify-center items-center space-x-2 pt-12">
-      <button
-        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-        disabled={currentPage === 1}
-        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
-      >
-        <BsChevronLeft className="w-5 h-5" />
-      </button>
-
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-        <button
-          key={p}
-          onClick={() => onPageChange(p)}
-          className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${p === currentPage
-            ? 'bg-brand text-white'
-            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
-            }`}
-        >
-          {p}
-        </button>
-      ))}
-
-      <button
-        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-        disabled={currentPage === totalPages}
-        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
-      >
-        <BsChevronRight className="w-5 h-5" />
-      </button>
-    </div>
-  );
-};

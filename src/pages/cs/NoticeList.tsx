@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { BsSearch, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { NoticeCategory } from '@/types';
+import { Pagination } from '@/components/Pagination';
 import { format } from 'date-fns';
 import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
 import api from '@/services/api';
@@ -51,7 +52,6 @@ export const NoticeList: React.FC = () => {
     fetchNotices();
   };
 
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-8">
@@ -140,39 +140,11 @@ export const NoticeList: React.FC = () => {
             )}
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center space-x-2 pt-12">
-              <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all"
-              >
-                <BsChevronLeft className="w-5 h-5" />
-              </button>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${page === currentPage
-                    ? 'bg-brand text-white'
-                    : 'border border-gray-200 text-gray-500 hover:border-gray-900 hover:text-gray-900'
-                    }`}
-                >
-                  {page}
-                </button>
-              ))}
-
-              <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all"
-              >
-                <BsChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          )}
+          <Pagination 
+            currentPage={currentPage} 
+            totalPages={totalPages} 
+            onPageChange={(page) => setCurrentPage(page)} 
+          />
         </div>
       </div>
     </div>

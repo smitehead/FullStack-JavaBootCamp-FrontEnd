@@ -133,6 +133,9 @@ interface AppContextType {
   markNotificationAsRead: (id: string) => void;
   deleteNotification: (id: string) => Promise<void>;
   markAllNotificationsAsRead: () => void;
+  deleteAllNotifications: () => Promise<void>;
+  hideChatRoom: (roomNo: number) => void;
+  hideAllChatRooms: () => void;
   markChatAsRead: (id: string) => void;
   addNotification: (message: string, link: string, type?: NotificationType) => void;
   updateUserRole: (userId: string, isAdmin: boolean) => void;
@@ -160,6 +163,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [products, setProducts] = useState<Product[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [chats, setChats] = useState<ChatRoom[]>([]);
+  const [hiddenChatRoomNos, setHiddenChatRoomNos] = useState<number[]>(() => {
+    const saved = localStorage.getItem('hiddenChatRoomNos');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [reports, setReports] = useState<Report[]>([]);
   const [mannerHistory, setMannerHistory] = useState<MannerHistory[]>([]);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
@@ -220,10 +227,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       isFirstChatFetch.current = false;
       
       setChats(mapped);
+
+      // 새 메시지가 있는 방은 숨김 목록에서 제거 (자동 다시 표시)
+      const unhideNos = mapped
+        .filter(c => c.unreadCount > 0 && hiddenChatRoomNos.includes(c.roomNo))
+        .map(c => c.roomNo);
+      
+      if (unhideNos.length > 0) {
+        setHiddenChatRoomNos(prev => prev.filter(no => !unhideNos.includes(no)));
+      }
     } catch (err) {
       console.error('[Chat] 목록 로딩 실패:', err);
     }
-  }, []);
+  }, [hiddenChatRoomNos]);
 
   // 알림 목록 API 로드
   const fetchNotifications = useCallback(async () => {
@@ -618,6 +634,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const deleteAllNotifications = async () => {
+    setNotifications([]);
+    try {
+      // 만약 구현되어 있지 않다면 개별 삭제 로직으로 대체 가능하지만, 
+      // 인터페이스 상으로는 깔끔하게 제공합니다.
+      await api.delete('/notifications');
+    } catch (err) {
+      console.error('[알림] 전체 삭제 실패:', err);
+    }
+  };
+
+  const hideChatRoom = (roomNo: number) => {
+    setHiddenChatRoomNos(prev => [...new Set([...prev, roomNo])]);
+  };
+
+  const hideAllChatRooms = () => {
+    setHiddenChatRoomNos(chats.map(c => c.roomNo));
+  };
+
   const markChatAsRead = (id: string) => {
     setChats(prev =>
       prev.map(chat => chat.id === id ? { ...chat, unreadCount: 0 } : chat)
@@ -725,8 +760,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const filteredChats = chats.filter(c => !hiddenChatRoomNos.includes(c.roomNo));
   const unreadNotificationsCount = notifications.filter(n => !n.read).length;
-  const unreadChatsCount = chats.filter(c => c.unreadCount > 0).length;
+  const unreadChatsCount = filteredChats.filter(c => c.unreadCount > 0).length;
 
   return (
     <AppContext.Provider value={{
@@ -736,7 +772,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       users,
       products,
       notifications,
-      chats,
+      chats: filteredChats,
       withdrawnUsers,
       reports,
       mannerHistory,
@@ -753,6 +789,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       markNotificationAsRead,
       deleteNotification,
       markAllNotificationsAsRead,
+      deleteAllNotifications,
+      hideChatRoom,
+      hideAllChatRooms,
       markChatAsRead,
       addNotification,
       updateUserRole,

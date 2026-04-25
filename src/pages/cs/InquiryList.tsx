@@ -7,22 +7,27 @@ import { CustomerCenterSidebar } from '@/pages/cs/CustomerCenterSidebar';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import React, { useEffect, useState, useCallback } from 'react';
+import { Pagination } from '@/components/Pagination';
+import { showToast } from '@/components/toastService';
 
 export const InquiryList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<InquiryType | '전체'>('전체');
   const navigate = useNavigate();
-  const { user } = useAppContext();
+  const { user, isInitialized } = useAppContext();
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchInquiries = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     try {
-      const params: any = { page: currentPage - 1, size: 10 };
+      const params: any = { page: currentPage, size: 10 };
       if (selectedType !== '전체') params.type = selectedType;
       if (searchTerm.trim()) params.keyword = searchTerm.trim();
 
@@ -37,6 +42,13 @@ export const InquiryList: React.FC = () => {
   }, [user, currentPage, selectedType, searchTerm]);
 
   useEffect(() => {
+    if (isInitialized && !user) {
+      showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'info');
+      navigate('/login');
+    }
+  }, [isInitialized, user, navigate]);
+
+  useEffect(() => {
     fetchInquiries();
   }, [fetchInquiries]);
 
@@ -48,7 +60,7 @@ export const InquiryList: React.FC = () => {
 
   const categories: (InquiryType | '전체')[] = ['전체', '버그 신고', '포인트 문의', '계정 문의', '기타'];
 
-  if (isLoading) return (
+  if (!isInitialized || isLoading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
     </div>
@@ -154,39 +166,11 @@ export const InquiryList: React.FC = () => {
             )}
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center space-x-2 pt-12">
-              <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all"
-              >
-                <BsChevronLeft className="w-5 h-5" />
-              </button>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${page === currentPage
-                    ? 'bg-brand text-white'
-                    : 'border border-gray-200 text-gray-500 hover:border-gray-900 hover:text-gray-900'
-                    }`}
-                >
-                  {page}
-                </button>
-              ))}
-
-              <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all"
-              >
-                <BsChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          )}
+          <Pagination 
+            currentPage={currentPage} 
+            totalPages={totalPages} 
+            onPageChange={(page) => setCurrentPage(page)} 
+          />
 
           {/* Help Banner */}
           <div className="mt-12 p-8 bg-gray-900 rounded-3xl text-white flex flex-col md:flex-row items-center justify-between gap-6">

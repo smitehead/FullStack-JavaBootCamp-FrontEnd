@@ -7,6 +7,7 @@ import {
   BsHeart, BsHeartFill, BsGear, BsGearFill, BsWallet, BsBox2, BsShop, 
   BsTrophy, BsChat, BsThreeDotsVertical, BsXCircleFill, BsEyeSlash
 } from 'react-icons/bs';
+import { Pagination } from '@/components/Pagination';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrls, resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
@@ -73,7 +74,7 @@ export const MyPage: React.FC = () => {
     setSearchParams({ tab: activeTab }, { replace: true });
   }, [activeTab, setSearchParams]);
   const [sellingFilter, setSellingFilter] = useState<'all' | 'active' | 'ended' | 'completed'>('all');
-  const [biddingFilter, setBiddingFilter] = useState<'all' | 'leader' | 'outbid' | 'lost'>('all');
+  const [biddingFilter, setBiddingFilter] = useState<'all' | 'leader' | 'trading' | 'outbid' | 'lost'>('all');
 
   interface ReviewItem {
     reviewNo: number;
@@ -542,14 +543,14 @@ export const MyPage: React.FC = () => {
 
             {activeTab === 'bidding' && (
               <div className="flex bg-gray-100 p-1 rounded-xl">
-                {(['all', 'leader', 'outbid', 'lost'] as const).map(filter => (
+                {(['all', 'trading', 'leader', 'outbid', 'lost'] as const).map(filter => (
                   <button key={filter} onClick={() => {
                     setBiddingFilter(filter);
                     setBiddingPage(1);
                     fetchBiddingProducts(1, filter);
                   }}
                     className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${biddingFilter === filter ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {filter === 'all' ? '전체' : filter === 'leader' ? '상위입찰' : filter === 'outbid' ? '추월변동' : '낙찰실패'}
+                    {filter === 'all' ? '전체' : filter === 'trading' ? '거래중' : filter === 'leader' ? '상위입찰' : filter === 'outbid' ? '추월변동' : '낙찰실패'}
                   </button>
                 ))}
               </div>
@@ -825,44 +826,3 @@ const EmptyState = ({ message }: { message: string }) => (
     <p>{message}</p>
   </div>
 );
-
-const Pagination = ({ currentPage, totalPages, onPageChange }: {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}) => {
-  if (totalPages <= 1) return null;
-
-  return (
-    <div className="flex justify-center items-center space-x-2 pt-12">
-      <button
-        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-        disabled={currentPage === 1}
-        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
-      >
-        <BsChevronLeft className="w-5 h-5" />
-      </button>
-
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-        <button
-          key={p}
-          onClick={() => onPageChange(p)}
-          className={`w-10 h-10 flex items-center justify-center rounded font-bold transition-all ${p === currentPage
-            ? 'bg-brand text-white'
-            : 'border border-gray-200 text-gray-500 hover:bg-gray-50'
-            }`}
-        >
-          {p}
-        </button>
-      ))}
-
-      <button
-        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-        disabled={currentPage === totalPages}
-        className="w-10 h-10 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold"
-      >
-        <BsChevronRight className="w-5 h-5" />
-      </button>
-    </div>
-  );
-};
