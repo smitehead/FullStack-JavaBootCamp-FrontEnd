@@ -848,6 +848,13 @@ export const Chat: React.FC = () => {
     if (!apptAddrRoad) { showToast('장소를 입력해주세요.', 'error'); return; }
     if (!selectedRoom || !memberNo) return;
 
+    const combinedDate = new Date(apptSelectedDate);
+    let hour = apptHour;
+    if (apptPeriod === 'PM' && hour < 12) hour += 12;
+    if (apptPeriod === 'AM' && hour === 12) hour = 0;
+    combinedDate.setHours(hour, apptMinute, 0, 0);
+    const apptAt = combinedDate.toISOString();
+
     const dateLabel = `${apptSelectedDate.getMonth() + 1}월 ${apptSelectedDate.getDate()}일 ${WEEKDAYS_KO[apptSelectedDate.getDay()]}요일`;
     const timeLabel = `${apptPeriod === 'AM' ? '오전' : '오후'} ${apptHour}:${String(apptMinute).padStart(2, '0')}`;
     const payload = { dateLabel, timeLabel, addrRoad: apptAddrRoad, addrDetail: apptAddrDetail };
@@ -872,7 +879,7 @@ export const Chat: React.FC = () => {
     if (client && client.connected) {
       client.publish({
         destination: '/pub/chat/message',
-        body: JSON.stringify({ roomNo: selectedRoom.roomNo, senderNo: memberNo, content, msgType: 'APPOINTMENT', clientUuid }),
+        body: JSON.stringify({ roomNo: selectedRoom.roomNo, senderNo: memberNo, content, msgType: 'APPOINTMENT', clientUuid, apptAt }),
       });
       const timeout = setTimeout(() => {
         setMessages(prev => prev.map(m => m.clientUuid === clientUuid && m.status === 'SENDING' ? { ...m, status: 'FAILED' } : m));
@@ -880,8 +887,9 @@ export const Chat: React.FC = () => {
       }, SEND_TIMEOUT);
       sendTimeouts.current.set(clientUuid, timeout);
       setChatRooms(prev =>
-        prev.map(r => r.roomNo === selectedRoom.roomNo ? { ...r, lastMessage: `${dateLabel} ${timeLabel}`, lastMessageAt: new Date().toISOString() } : r)
+        prev.map(r => r.roomNo === selectedRoom.roomNo ? { ...r, lastMessage: `${dateLabel} ${timeLabel}`, lastMessageAt: new Date().toISOString(), appointmentStatus: 1, appointmentAt: apptAt } : r)
       );
+      setSelectedRoom(prev => prev ? { ...prev, appointmentStatus: 1, appointmentAt: apptAt } : null);
     } else {
       showToast('채팅 서버와 연결이 끊어졌습니다.', 'error');
       setMessages(prev => prev.map(m => m.clientUuid === clientUuid ? { ...m, status: 'FAILED' } : m));
@@ -1057,9 +1065,16 @@ export const Chat: React.FC = () => {
                        {formatRelativeTime(room.lastMessageAt)}
                      </span>
                   </div>
-                  <p className={`text-xs truncate ${room.unreadCount > 0 ? 'text-brand font-bold' : 'text-gray-500'}`}>
-                    {formatMessagePreview(room.lastMessage) || '첫 대화를 남겨보세요'}
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className={`text-xs truncate flex-1 ${room.unreadCount > 0 ? 'text-brand font-bold' : 'text-gray-500'}`}>
+                      {formatMessagePreview(room.lastMessage) || '첫 대화를 남겨보세요'}
+                    </p>
+                    {room.appointmentStatus === 1 && (
+                      <span className="flex-shrink-0 bg-brand text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        약속중
+                      </span>
+                    )}
+                  </div>
                 </div>
               </button>
             ))
@@ -1079,9 +1094,16 @@ export const Chat: React.FC = () => {
               <img src={selectedRoom.productImage || '/images/default-product.png'}
                 alt="" className="w-10 h-10 rounded-xl bg-gray-50 object-cover" />
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-sm text-gray-900 truncate">
-                  {selectedRoom.productTitle}
-                </h4>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-bold text-sm text-gray-900 truncate">
+                    {selectedRoom.productTitle}
+                  </h4>
+                  {selectedRoom.appointmentStatus === 1 && (
+                    <span className="bg-brand text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                      약속중
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-black font-medium mt-0.5">
                   {(selectedRoom.productPrice || 0).toLocaleString()}원
                 </p>
