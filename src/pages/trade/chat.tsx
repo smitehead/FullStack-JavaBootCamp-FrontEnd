@@ -1125,7 +1125,7 @@ export const Chat: React.FC = () => {
                       {formatMessagePreview(room.lastMessage) || '첫 대화를 남겨보세요'}
                     </p>
                     {room.appointmentStatus === 1 && (
-                      <span className="flex-shrink-0 bg-brand text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      <span className="flex-shrink-0 bg-brand text-white text-[10px] font-bold px-2 h-5 inline-flex items-center justify-center rounded-full">
                         약속중
                       </span>
                     )}
@@ -1154,7 +1154,7 @@ export const Chat: React.FC = () => {
                     {selectedRoom.productTitle}
                   </h4>
                   {selectedRoom.appointmentStatus === 1 && (
-                    <span className="bg-brand text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                    <span className="bg-brand text-white text-[10px] font-bold px-2 h-5 inline-flex items-center justify-center rounded-full whitespace-nowrap">
                       약속중
                     </span>
                   )}

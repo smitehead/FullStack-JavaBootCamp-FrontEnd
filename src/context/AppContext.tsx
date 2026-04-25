@@ -224,7 +224,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const currentUnread = mapped.reduce((sum, r) => sum + r.unreadCount, 0);
       
       if (!isFirstChatFetch.current && currentUnread > previousUnreadChatsCount.current && notifyChatRef.current) {
-        showToast('새로운 채팅 메시지가 도착했습니다.', 'success');
+        showToast('새로운 채팅 메시지가 도착했습니다.', 'chat');
       }
       
       previousUnreadChatsCount.current = currentUnread;
