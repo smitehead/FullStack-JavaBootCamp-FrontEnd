@@ -150,11 +150,11 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               navigate(`/search?q=${encodeURIComponent(term)}`);
                               setIsSearchFocused(false);
                             }}
-                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-between group"
+                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-between group overflow-hidden"
                           >
-                            <div className="flex items-center gap-3">
-                              <BsClock className="w-3.5 h-3.5 text-gray-300" />
-                              {term}
+                            <div className="flex items-center gap-3 min-w-0">
+                              <BsClock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                              <span className="truncate">{term}</span>
                             </div>
                             <BsX
                               className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
@@ -184,10 +184,10 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                               navigate(`/search?q=${encodeURIComponent(term)}`);
                               setIsSearchFocused(false);
                             }}
-                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-3"
+                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-3 overflow-hidden"
                           >
-                            <BsArrowUpRight className="w-3.5 h-3.5 text-gray-300" />
-                            {term}
+                            <BsArrowUpRight className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                            <span className="truncate">{term}</span>
                           </button>
                         ))
                       ) : (
