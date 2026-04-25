@@ -160,7 +160,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isInitialized, setIsInitialized] = useState(false);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [notifyChat, setNotifyChat] = useState(true);
+  const notifyChatRef = useRef(true);
   const [users, setUsers] = useState<User[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -221,7 +221,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       
       const currentUnread = mapped.reduce((sum, r) => sum + r.unreadCount, 0);
       
-      if (!isFirstChatFetch.current && currentUnread > previousUnreadChatsCount.current && notifyChat) {
+      if (!isFirstChatFetch.current && currentUnread > previousUnreadChatsCount.current && notifyChatRef.current) {
         showToast('새로운 채팅 메시지가 도착했습니다.', 'success');
       }
       
@@ -241,7 +241,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     } catch (err) {
       console.error('[Chat] 목록 로딩 실패:', err);
     }
-  }, [hiddenChatRoomNos, notifyChat]);
+  }, [hiddenChatRoomNos]);
 
   // 알림 목록 API 로드
   const fetchNotifications = useCallback(async () => {
@@ -261,17 +261,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, []);
 
+  // notifyChat 설정 로드 (로그인/로그아웃 시에만 실행)
+  useEffect(() => {
+    if (!user) {
+      notifyChatRef.current = true;
+      return;
+    }
+    api.get('/members/me').then(res => {
+      notifyChatRef.current = res.data.notifyChat === 1;
+    }).catch(() => {});
+  }, [user?.id]);
+
   useEffect(() => {
     if (user) {
       fetchNotifications();
       fetchChats();
-      api.get('/members/me').then(res => {
-        setNotifyChat(res.data.notifyChat === 1);
-      }).catch(() => {});
     } else {
       setNotifications([]);
       setChats([]);
-      setNotifyChat(true);
       isFirstChatFetch.current = true;
       previousUnreadChatsCount.current = 0;
     }
@@ -813,7 +820,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       unreadChatsCount,
       refreshActivityLogs,
       fetchChats,
-      updateNotifyChat: setNotifyChat,
+      updateNotifyChat: (val: boolean) => { notifyChatRef.current = val; },
     }}>
       {children}
     </AppContext.Provider>
