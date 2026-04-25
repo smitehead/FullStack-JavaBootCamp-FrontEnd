@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useRef, ReactNode, useEffect, useCallback } from 'react';
 import { Category, Notification, ChatRoom, User, Product, Account, WithdrawnUser, NotificationType, Report, MannerHistory, ActivityLog } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrl } from '@/utils/imageUtils';
