@@ -27,7 +27,7 @@ export const InquiryCreate: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
-  const categories: InquiryType[] = ['버그 신고', '계정 문의', '기타'];
+  const categories: InquiryType[] = ['버그 신고', '포인트 문의', '계정 문의', '기타'];
   const bugTypes: BugType[] = ['기능 작동 오류', '화면/UI 오류', '데이터/정보 오류', '로그인/계정 문제', '속도/접속 저하', '기타'];
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
