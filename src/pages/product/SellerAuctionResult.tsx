@@ -5,7 +5,7 @@ import { resolveImageUrl, getProfileImageUrl } from '@/utils/imageUtils';
 import { useAppContext } from '@/context/AppContext';
 import { getMemberNo } from '@/utils/memberUtils';
 import { AlertCircle } from 'lucide-react';
-import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill, BsPerson, BsCopy } from 'react-icons/bs';
+import { BsXCircle, BsBox2, BsCreditCard, BsInfoCircle, BsChat, BsChevronLeft, BsChevronRight, BsGeoAltFill, BsPerson, BsCopy, BsArrowRepeat } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import { ReviewModal } from '@/components/ReviewModal';
 
@@ -444,8 +444,14 @@ export const SellerAuctionResult: React.FC = () => {
                   )}
 
                   {isCanceled && (
-                    <div className="bg-gray-50 border border-gray-100 p-6 rounded-2xl text-center">
+                    <div className="bg-gray-50 border border-gray-100 p-6 rounded-2xl text-center space-y-4">
                       <p className="text-sm font-bold text-gray-500">거래가 취소되었습니다.</p>
+                      <button
+                        onClick={() => navigate(`/products/${result.productNo}`)}
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
+                      >
+                        <BsArrowRepeat className="w-4 h-4" /> 재게시하기
+                      </button>
                     </div>
                   )}
                 </div>

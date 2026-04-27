@@ -109,7 +109,7 @@ export const MyPage: React.FC = () => {
     const memberNo = getMemberNo(user);
     if (!memberNo) return;
     api.get(`/reviews/target/${memberNo}`)
-      .then(res => setReviews(res.data))
+      .then(res => setReviews([...(res.data || [])].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())))
       .catch(() => setReviews([]));
   }, [activeTab, user]);
 
@@ -638,7 +638,8 @@ export const MyPage: React.FC = () => {
                 {/* 판매 내역 */}
                 {activeTab === 'selling' && sellingProducts.map(p => {
                   const ars = p.auctionResultStatus;
-                  const hasPendingResult = p.status === 'pending';
+                  const isTradeCanceled = ars === '거래취소';
+                  const hasPendingResult = p.status === 'pending' && !isTradeCanceled;
                   const isResultConfirmed = p.status === 'completed' && ars === '구매확정';
                   const isResultCanceled = p.status === 'canceled';
 
@@ -672,7 +673,8 @@ export const MyPage: React.FC = () => {
                 })}
 
                 {activeTab === 'bidding' && biddingProducts.map(p => {
-                  const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
+                  const effectiveStatus = bidStatusOverrides[p.id] ||
+                    (p.auctionResultStatus === '거래취소' ? 'lost' : p.bidStatus);
                   return (
                     <div key={p.id} className="flex flex-col gap-2">
                       <ProductCard

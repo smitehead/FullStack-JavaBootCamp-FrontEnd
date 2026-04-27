@@ -998,7 +998,7 @@ export const ProductDetail: React.FC = () => {
                         <BsHouseX className="w-4 h-4 mr-2.5" /> 경매 취소하기
                       </button>
                     )}
-                    {isFinished && product && (product.participantCount === 0 || product.status === 'closed_failed') && (
+                    {isFinished && product && (product.participantCount === 0 || product.status === 'closed_failed' || product.status === 'canceled') && (
                       <button
                         onClick={() => { setShowMoreMenu(false); setShowRepostModal(true); }}
                         className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
