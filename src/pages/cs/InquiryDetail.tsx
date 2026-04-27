@@ -53,7 +53,7 @@ export const InquiryDetail: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin mb-4" />
+        <div className="spinner-border w-10 h-10 mb-4" />
         <p className="text-gray-400 font-bold">내역을 불러오는 중...</p>
       </div>
     );

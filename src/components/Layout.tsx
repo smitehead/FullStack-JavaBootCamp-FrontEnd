@@ -75,6 +75,19 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
     });
   };
 
+  // URL 경로 변경 시 검색어 초기화 처리
+  useEffect(() => {
+    if (location.pathname !== '/search') {
+      setSearchTerm('');
+    } else {
+      // 검색 페이지인 경우 URL의 q 파라미터와 입력창 동기화
+      const q = new URLSearchParams(location.search).get('q') || '';
+      if (q !== searchTerm) {
+        setSearchTerm(q);
+      }
+    }
+  }, [location.pathname, location.search]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = searchTerm.trim();
