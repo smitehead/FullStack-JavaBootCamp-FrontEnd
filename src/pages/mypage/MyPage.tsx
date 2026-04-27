@@ -16,6 +16,13 @@ import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 import { ReviewModal } from '@/components/ReviewModal';
 
+/** AbortController 취소 에러 여부 판별 (Axios CanceledError / native AbortError 모두 처리) */
+function isAbortError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const e = err as { name?: string; code?: string };
+  return e.name === 'CanceledError' || e.name === 'AbortError' || e.code === 'ERR_CANCELED';
+}
+
 /** 백엔드 ProductListResponseDto → 프론트 Product 타입 변환 */
 function mapToProduct(item: any): Product & { bidStatus?: string } {
   return {
@@ -134,6 +141,12 @@ export const MyPage: React.FC = () => {
   const [wishlistTotalPages, setWishlistTotalPages] = useState(1);
   const [wishlistTotal, setWishlistTotal] = useState(0);
 
+  // AbortController refs — 탭·필터 전환 시 이전 요청 강제 취소용
+  const sellingAbortRef  = useRef<AbortController | null>(null);
+  const biddingAbortRef  = useRef<AbortController | null>(null);
+  const purchasedAbortRef = useRef<AbortController | null>(null);
+  const wishlistAbortRef = useRef<AbortController | null>(null);
+
   // SSE 실시간 입찰 상태 오버라이드: { [productId]: 'outbid' | 'bidding' }
   const [bidStatusOverrides, setBidStatusOverrides] = useState<Record<string, string>>({});
   const biddingProductsRef = useRef(biddingProducts);
@@ -212,23 +225,46 @@ export const MyPage: React.FC = () => {
 
   // 데이터 로딩
   const fetchSellingProducts = useCallback(async (page = 1, filter = sellingFilter) => {
+    // ① 이전 요청 취소 → 새 컨트롤러 등록
+    sellingAbortRef.current?.abort();
+    const controller = new AbortController();
+    sellingAbortRef.current = controller;
+
+    // ② 즉시 상태 초기화 — stale 데이터 플래시 방지
+    setSellingProducts([]);
+    setLoading(true);
+
     try {
-      setLoading(true);
-      const res = await api.get('/products/my-selling', { params: { page, size: 6, filter } });
+      const res = await api.get('/products/my-selling', {
+        params: { page, size: 6, filter },
+        signal: controller.signal,
+      });
       setSellingProducts((res.data.content || []).map(mapToProduct));
       setSellingTotalPages(res.data.totalPages || 1);
       setSellingTotal(res.data.totalElements || 0);
     } catch (err) {
+      // ③ 취소 에러는 정상 흐름 — 토스트·콘솔 없이 조용히 무시
+      if (isAbortError(err)) return;
       console.error('판매 목록 조회 실패', err);
     } finally {
-      setLoading(false);
+      // 이 컨트롤러가 여전히 최신일 때만 로딩 해제
+      if (sellingAbortRef.current === controller) setLoading(false);
     }
   }, [sellingFilter]);
 
   const fetchBiddingProducts = useCallback(async (page = 1, filter = biddingFilter) => {
+    biddingAbortRef.current?.abort();
+    const controller = new AbortController();
+    biddingAbortRef.current = controller;
+
+    setBiddingProducts([]);
+    setLoading(true);
+
     try {
-      setLoading(true);
-      const res = await api.get('/products/my-bidding', { params: { page, size: 6, filter } });
+      const res = await api.get('/products/my-bidding', {
+        params: { page, size: 6, filter },
+        signal: controller.signal,
+      });
       const products = (res.data.content || []).map(mapToProduct);
       setBiddingProducts(products);
       setBiddingTotalPages(res.data.totalPages || 1);
@@ -239,37 +275,58 @@ export const MyPage: React.FC = () => {
       }
       return products;
     } catch (err) {
+      if (isAbortError(err)) return [];
       console.error('입찰 목록 조회 실패', err);
       return [];
     } finally {
-      setLoading(false);
+      if (biddingAbortRef.current === controller) setLoading(false);
     }
   }, [biddingFilter]);
 
   const fetchPurchasedProducts = useCallback(async (page = 1) => {
+    purchasedAbortRef.current?.abort();
+    const controller = new AbortController();
+    purchasedAbortRef.current = controller;
+
+    setPurchasedProducts([]);
+    setLoading(true);
+
     try {
-      setLoading(true);
-      const res = await api.get('/products/my-purchased', { params: { page, size: 6 } });
+      const res = await api.get('/products/my-purchased', {
+        params: { page, size: 6 },
+        signal: controller.signal,
+      });
       setPurchasedProducts((res.data.content || []).map(mapToProduct));
       setPurchasedTotalPages(res.data.totalPages || 1);
     } catch (err) {
+      if (isAbortError(err)) return;
       console.error('구매 목록 조회 실패', err);
     } finally {
-      setLoading(false);
+      if (purchasedAbortRef.current === controller) setLoading(false);
     }
   }, []);
 
   const fetchWishlistProducts = useCallback(async (page = 1) => {
+    wishlistAbortRef.current?.abort();
+    const controller = new AbortController();
+    wishlistAbortRef.current = controller;
+
+    setWishlistProducts([]);
+    setLoading(true);
+
     try {
-      setLoading(true);
-      const res = await api.get('/wishlists/my', { params: { page, size: 6 } });
+      const res = await api.get('/wishlists/my', {
+        params: { page, size: 6 },
+        signal: controller.signal,
+      });
       setWishlistProducts((res.data.content || []).map(mapToProduct));
       setWishlistTotalPages(res.data.totalPages || 1);
       setWishlistTotal(res.data.totalElements || 0);
     } catch (err) {
+      if (isAbortError(err)) return;
       console.error('찜 목록 조회 실패', err);
     } finally {
-      setLoading(false);
+      if (wishlistAbortRef.current === controller) setLoading(false);
     }
   }, []);
 
@@ -297,6 +354,16 @@ export const MyPage: React.FC = () => {
       showToast(err.response?.data?.message || '오류가 발생했습니다.', 'error');
     }
   };
+
+  // 컴포넌트 언마운트 시 진행 중인 모든 요청 일괄 취소
+  useEffect(() => {
+    return () => {
+      sellingAbortRef.current?.abort();
+      biddingAbortRef.current?.abort();
+      purchasedAbortRef.current?.abort();
+      wishlistAbortRef.current?.abort();
+    };
+  }, []);
 
   // 로그인 시 카운트 표시용 사전 로드
   useEffect(() => {
