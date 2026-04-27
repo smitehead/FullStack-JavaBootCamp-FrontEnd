@@ -16,6 +16,7 @@ import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 import { ReviewModal } from '@/components/ReviewModal';
 
+
 /** 백엔드 ProductListResponseDto → 프론트 Product 타입 변환 */
 function mapToProduct(item: any): Product & { bidStatus?: string } {
   return {
@@ -109,7 +110,7 @@ export const MyPage: React.FC = () => {
     const memberNo = getMemberNo(user);
     if (!memberNo) return;
     api.get(`/reviews/target/${memberNo}`)
-      .then(res => setReviews(res.data))
+      .then(res => setReviews([...(res.data || [])].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())))
       .catch(() => setReviews([]));
   }, [activeTab, user]);
 
@@ -133,6 +134,14 @@ export const MyPage: React.FC = () => {
   const [wishlistPage, setWishlistPage] = useState(1);
   const [wishlistTotalPages, setWishlistTotalPages] = useState(1);
   const [wishlistTotal, setWishlistTotal] = useState(0);
+
+  // 요청 순번 카운터 — stale 응답 무시용 (네트워크 취소 없이 레이스 컨디션 방지)
+  const sellingFetchIdRef  = useRef(0);
+  const biddingFetchIdRef  = useRef(0);
+  const purchasedFetchIdRef = useRef(0);
+  const wishlistFetchIdRef = useRef(0);
+  // 언마운트 여부 추적 — setState on unmounted component 방지
+  const isMountedRef = useRef(true);
 
   // SSE 실시간 입찰 상태 오버라이드: { [productId]: 'outbid' | 'bidding' }
   const [bidStatusOverrides, setBidStatusOverrides] = useState<Record<string, string>>({});
@@ -212,64 +221,81 @@ export const MyPage: React.FC = () => {
 
   // 데이터 로딩
   const fetchSellingProducts = useCallback(async (page = 1, filter = sellingFilter) => {
+    // ① 순번 발급 — 이 호출이 완료될 때까지 더 새로운 호출이 왔으면 결과를 버림
+    const fetchId = ++sellingFetchIdRef.current;
+    // ② 즉시 상태 초기화 — stale 데이터 플래시 방지
+    setSellingProducts([]);
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await api.get('/products/my-selling', { params: { page, size: 6, filter } });
+      // ③ 최신 요청인지, 아직 마운트 상태인지 확인 후 setState
+      if (!isMountedRef.current || fetchId !== sellingFetchIdRef.current) return;
       setSellingProducts((res.data.content || []).map(mapToProduct));
       setSellingTotalPages(res.data.totalPages || 1);
       setSellingTotal(res.data.totalElements || 0);
     } catch (err) {
+      if (!isMountedRef.current || fetchId !== sellingFetchIdRef.current) return;
       console.error('판매 목록 조회 실패', err);
     } finally {
-      setLoading(false);
+      if (isMountedRef.current && fetchId === sellingFetchIdRef.current) setLoading(false);
     }
   }, [sellingFilter]);
 
   const fetchBiddingProducts = useCallback(async (page = 1, filter = biddingFilter) => {
+    const fetchId = ++biddingFetchIdRef.current;
+    setBiddingProducts([]);
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await api.get('/products/my-bidding', { params: { page, size: 6, filter } });
+      if (!isMountedRef.current || fetchId !== biddingFetchIdRef.current) return [];
       const products = (res.data.content || []).map(mapToProduct);
       setBiddingProducts(products);
       setBiddingTotalPages(res.data.totalPages || 1);
       setBiddingTotal(res.data.totalElements || 0);
       // 프로필 카드 카운트는 전체 조회('all')일 때만 갱신
-      if (!filter || filter === 'all') {
-        setBiddingProfileTotal(res.data.totalElements || 0);
-      }
+      if (!filter || filter === 'all') setBiddingProfileTotal(res.data.totalElements || 0);
       return products;
     } catch (err) {
+      if (!isMountedRef.current || fetchId !== biddingFetchIdRef.current) return [];
       console.error('입찰 목록 조회 실패', err);
       return [];
     } finally {
-      setLoading(false);
+      if (isMountedRef.current && fetchId === biddingFetchIdRef.current) setLoading(false);
     }
   }, [biddingFilter]);
 
   const fetchPurchasedProducts = useCallback(async (page = 1) => {
+    const fetchId = ++purchasedFetchIdRef.current;
+    setPurchasedProducts([]);
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await api.get('/products/my-purchased', { params: { page, size: 6 } });
+      if (!isMountedRef.current || fetchId !== purchasedFetchIdRef.current) return;
       setPurchasedProducts((res.data.content || []).map(mapToProduct));
       setPurchasedTotalPages(res.data.totalPages || 1);
     } catch (err) {
+      if (!isMountedRef.current || fetchId !== purchasedFetchIdRef.current) return;
       console.error('구매 목록 조회 실패', err);
     } finally {
-      setLoading(false);
+      if (isMountedRef.current && fetchId === purchasedFetchIdRef.current) setLoading(false);
     }
   }, []);
 
   const fetchWishlistProducts = useCallback(async (page = 1) => {
+    const fetchId = ++wishlistFetchIdRef.current;
+    setWishlistProducts([]);
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await api.get('/wishlists/my', { params: { page, size: 6 } });
+      if (!isMountedRef.current || fetchId !== wishlistFetchIdRef.current) return;
       setWishlistProducts((res.data.content || []).map(mapToProduct));
       setWishlistTotalPages(res.data.totalPages || 1);
       setWishlistTotal(res.data.totalElements || 0);
     } catch (err) {
+      if (!isMountedRef.current || fetchId !== wishlistFetchIdRef.current) return;
       console.error('찜 목록 조회 실패', err);
     } finally {
-      setLoading(false);
+      if (isMountedRef.current && fetchId === wishlistFetchIdRef.current) setLoading(false);
     }
   }, []);
 
@@ -297,6 +323,12 @@ export const MyPage: React.FC = () => {
       showToast(err.response?.data?.message || '오류가 발생했습니다.', 'error');
     }
   };
+
+  // 언마운트 시 isMounted 플래그 해제 — 진행 중 응답의 setState 차단
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => { isMountedRef.current = false; };
+  }, []);
 
   // 로그인 시 카운트 표시용 사전 로드
   useEffect(() => {
@@ -638,7 +670,8 @@ export const MyPage: React.FC = () => {
                 {/* 판매 내역 */}
                 {activeTab === 'selling' && sellingProducts.map(p => {
                   const ars = p.auctionResultStatus;
-                  const hasPendingResult = p.status === 'pending';
+                  const isTradeCanceled = ars === '거래취소';
+                  const hasPendingResult = p.status === 'pending' && !isTradeCanceled;
                   const isResultConfirmed = p.status === 'completed' && ars === '구매확정';
                   const isResultCanceled = p.status === 'canceled';
 
@@ -672,7 +705,8 @@ export const MyPage: React.FC = () => {
                 })}
 
                 {activeTab === 'bidding' && biddingProducts.map(p => {
-                  const effectiveStatus = bidStatusOverrides[p.id] || p.bidStatus;
+                  const effectiveStatus = bidStatusOverrides[p.id] ||
+                    (p.auctionResultStatus === '거래취소' ? 'lost' : p.bidStatus);
                   return (
                     <div key={p.id} className="flex flex-col gap-2">
                       <ProductCard

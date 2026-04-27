@@ -862,7 +862,7 @@ export const Settings: React.FC = () => {
                         </div>
                       </div>
                       <button
-                        onClick={() => unblockUser(user.id)}
+                        onClick={() => unblockUser(user.memberNo)}
                         className="px-4 py-2 text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-2xl hover:bg-gray-100 transition-all"
                       >
                         차단 해제

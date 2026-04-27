@@ -83,7 +83,7 @@ export const SellerProfile: React.FC = () => {
           joinedAt: data.joinedAt ? new Date(data.joinedAt).toLocaleDateString() : '-',
         });
         setSellerProducts((data.products || []).map(mapToProduct));
-        setReviews(reviewRes.data || []);
+        setReviews([...(reviewRes.data || [])].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       })
       .catch(() => showToast('판매자 정보를 불러오지 못했습니다.', 'error'))
       .finally(() => setLoading(false));
