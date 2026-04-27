@@ -14,6 +14,7 @@ declare global {
 import { BsCheckCircle, BsBox2, BsExclamationCircle, BsInfoCircle, BsCreditCard, BsGeoAltFill, BsChat, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import { ReviewModal } from '@/components/ReviewModal';
+import { formatPrice } from '@/utils/formatUtils';
 interface AuctionResultDetail {
   resultNo: number;
   status: string; // 배송대기 | 결제완료 | 구매확정 | 거래취소
@@ -60,6 +61,7 @@ export const WonProductDetail: React.FC = () => {
   const [address, setAddress] = useState('');
   const [detailAddress, setDetailAddress] = useState('');
   const [activeTransactionTab, setActiveTransactionTab] = useState<'delivery' | 'face-to-face'>('delivery');
+  const [chatRoomNo, setChatRoomNo] = useState<number | null>(null);
 
   const fetchDetail = useCallback(async () => {
     if (!id) return;
@@ -103,6 +105,29 @@ export const WonProductDetail: React.FC = () => {
       navigate('/login');
     }
   }, [isInitialized, user, navigate]);
+
+  // 낙찰 결과 로드 시 채팅방 자동 생성 + 초기 시스템 메시지 전송
+  useEffect(() => {
+    if (!result || !user) return;
+    const buyerNo = getMemberNo(user);
+    if (!buyerNo) return;
+    api.post('/chat/rooms', {
+      buyerNo,
+      sellerNo: result.seller.sellerNo,
+      productNo: result.productNo,
+    }).then(res => {
+      const roomNo = res.data?.roomNo;
+      if (!roomNo) return;
+      setChatRoomNo(roomNo);
+      // 초기 메시지를 실제 저장해 lastMessageAt을 세팅 → 채팅 목록 최신순 정렬 반영
+      api.post(`/chat/rooms/${roomNo}/messages`, {
+        content: '첫 대화를 남겨보세요',
+        msgType: 'SYSTEM',
+      }).catch(() => {});
+    }).catch(() => {});
+  // result.productNo가 확정됐을 때 한 번만 실행
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result?.productNo]);
 
   if (!isInitialized || !user) return null;
 
@@ -204,20 +229,23 @@ export const WonProductDetail: React.FC = () => {
   };
 
   const handleChatWithSeller = async () => {
+    if (chatRoomNo) {
+      navigate(`/chat?roomNo=${chatRoomNo}`);
+      return;
+    }
     const buyerNo = getMemberNo(user);
     if (!buyerNo) {
       showToast("'로그인이 필요한 서비스입니다.' 로그인 페이지로 이동합니다.", 'error');
       navigate('/login');
       return;
     }
-
     try {
       const res = await api.post('/chat/rooms', {
-        buyerNo: buyerNo,
+        buyerNo,
         sellerNo: result.seller.sellerNo,
         productNo: result.productNo,
       });
-      if (res.data && res.data.roomNo) {
+      if (res.data?.roomNo) {
         navigate(`/chat?roomNo=${res.data.roomNo}`);
       } else {
         showToast('채팅방 정보를 받아올 수 없습니다.', 'error');
@@ -267,7 +295,7 @@ export const WonProductDetail: React.FC = () => {
                     <p className="text-sm text-gray-500 mb-4 line-clamp-1">{result.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">최종 낙찰가</span>
-                      <span className="text-2xl font-bold text-gray-900">{result.finalPrice.toLocaleString()}원</span>
+                      <span className="text-2xl font-bold text-gray-900">{formatPrice(result.finalPrice)}원</span>
                     </div>
                   </div>
                 </div>
@@ -386,7 +414,7 @@ export const WonProductDetail: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500 font-medium">낙찰 금액</span>
-                    <span className="text-gray-900 font-bold">{result.finalPrice.toLocaleString()}원</span>
+                    <span className="text-gray-900 font-bold">{formatPrice(result.finalPrice)}원</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500 font-medium">배송비</span>
@@ -397,7 +425,7 @@ export const WonProductDetail: React.FC = () => {
 
                   <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
                     <span className="text-base font-bold text-gray-900">총 결제 금액</span>
-                    <span className="text-2xl font-bold text-brand">{result.finalPrice.toLocaleString()}원</span>
+                    <span className="text-2xl font-bold text-brand">{formatPrice(result.finalPrice)}원</span>
                   </div>
                 </div>
 

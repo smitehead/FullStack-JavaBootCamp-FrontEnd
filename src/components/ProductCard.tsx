@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
+import { formatPrice } from '@/utils/formatUtils';
 
 interface ProductCardProps {
   product: Product;
@@ -263,7 +264,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               {product.status === 'completed' ? '최종 낙찰가' : '현재 입찰가'}
             </p>
             <p className={`text-lg font-bold transition-colors duration-500 ${priceHighlight ? 'text-red-600 animate-pulse' : (showBadge ? 'text-brand' : 'text-gray-900')}`}>
-              {product.currentPrice.toLocaleString()}원
+              {formatPrice(product.currentPrice)}원
             </p>
           </div>
 

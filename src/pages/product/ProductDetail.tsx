@@ -13,6 +13,7 @@ import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 import { resolveImageUrls, getProfileImageUrl } from '../../utils/imageUtils';
 import { Pagination } from '@/components/Pagination';
+import { formatPrice } from '@/utils/formatUtils';
 
 // 카테고리 ID로 전체 경로를 찾는 헬퍼 함수
 const findCategoryPath = (id: string | number): string[] => {
@@ -1212,21 +1213,21 @@ export const ProductDetail: React.FC = () => {
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500">시작 입찰가</span>
-                <span className="font-bold text-gray-900">{(product.startPrice || 0).toLocaleString()} 원</span>
+                <span className="font-bold text-gray-900">{formatPrice(product.startPrice || 0)} 원</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500">최소 입찰 단위</span>
-                <span className="font-bold text-gray-900">{(product.minBidIncrement || 0).toLocaleString()} 원</span>
+                <span className="font-bold text-gray-900">{formatPrice(product.minBidIncrement || 0)} 원</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500">즉시 구매가</span>
                 <span className="font-bold text-indigo-600">
-                  {product.instantPrice ? `${Number(product.instantPrice).toLocaleString()} 원` : '-'}
+                  {product.instantPrice ? `${formatPrice(Number(product.instantPrice))} 원` : '-'}
                 </span>
               </div>
               <div className="flex justify-between items-end pt-2 border-t border-gray-50">
                 <span className="text-gray-500 font-bold mb-1">{isFinished ? '최종 낙찰가' : '현재 입찰가'}</span>
-                <span className={`text-3xl font-bold text-brand`}>{(product.currentPrice || 0).toLocaleString()} 원</span>
+                <span className={`text-3xl font-bold text-brand`}>{formatPrice(product.currentPrice || 0)} 원</span>
               </div>
             </div>
 
@@ -1356,7 +1357,7 @@ export const ProductDetail: React.FC = () => {
             <div id="detail" className="scroll-mt-[300px] space-y-8">
               <div>
                 <h3 className="text-lg font-bold text-gray-900 mb-4">상품 상세 설명</h3>
-                <div className="text-gray-600 leading-relaxed whitespace-pre-line">
+                <div className="text-gray-600 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
                   {product.description}
                 </div>
               </div>
@@ -1601,7 +1602,7 @@ export const ProductDetail: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">나의 입찰가</span>
-                      <span className="text-sm font-bold text-gray-900">{myHighestBid.toLocaleString()}원</span>
+                      <span className="text-sm font-bold text-gray-900">{formatPrice(myHighestBid)}원</span>
                     </div>
                   </div>
                 </div>
@@ -1624,11 +1625,11 @@ export const ProductDetail: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">현재가</p>
-                  <p className="text-lg font-bold text-gray-900">{(product.currentPrice || 0).toLocaleString()}원</p>
+                  <p className="text-lg font-bold text-gray-900">{formatPrice(product.currentPrice || 0)}원</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">최소 입찰 단위</p>
-                  <p className="text-lg font-bold text-gray-900">{(product.minBidIncrement || 0).toLocaleString()}원</p>
+                  <p className="text-lg font-bold text-gray-900">{formatPrice(product.minBidIncrement || 0)}원</p>
                 </div>
               </div>
 
@@ -1660,7 +1661,7 @@ export const ProductDetail: React.FC = () => {
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
                     </div>
                     <p className="text-xs text-gray-400 mt-2 flex items-center">
-                      <BsInfoCircle className="w-3 h-3 mr-1" /> 최소 {((product.currentPrice || 0) + (product.minBidIncrement || 0)).toLocaleString()}원 이상 입찰 가능
+                      <BsInfoCircle className="w-3 h-3 mr-1" /> 최소 {formatPrice((product.currentPrice || 0) + (product.minBidIncrement || 0))}원 이상 입찰 가능
                     </p>
                   </div>
                 ) : (
@@ -1689,7 +1690,7 @@ export const ProductDetail: React.FC = () => {
                       <span className="absolute right-6 font-bold text-gray-400 pointer-events-none">원</span>
                     </div>
                     <p className="text-xs text-gray-400 mt-2 flex items-center">
-                      <BsInfoCircle className="w-3 h-3 mr-1" /> 최소 {((product.currentPrice || 0) + (product.minBidIncrement || 0)).toLocaleString()}원 이상 설정 가능
+                      <BsInfoCircle className="w-3 h-3 mr-1" /> 최소 {formatPrice((product.currentPrice || 0) + (product.minBidIncrement || 0))}원 이상 설정 가능
                     </p>
                   </div>
                 )}
@@ -2182,7 +2183,7 @@ export const ProductDetail: React.FC = () => {
               <h3 className="text-xl font-bold text-gray-900 mb-2">포인트가 부족합니다</h3>
               <p className="text-sm text-gray-500 mb-8 leading-relaxed font-medium">
                 입찰을 진행하기 위해 포인트 충전이 필요합니다.<br />
-                현재 보유 포인트: <span className="text-indigo-600 font-bold">{(user?.points || 0).toLocaleString()}P</span><br />
+                현재 보유 포인트: <span className="text-indigo-600 font-bold">{formatPrice(user?.points || 0)}P</span><br />
                 지금 충전하러 가시겠습니까?
               </p>
               <div className="flex gap-3">
@@ -2283,7 +2284,7 @@ export const ProductDetail: React.FC = () => {
             <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">즉시 구매하시겠습니까?</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                <span className="font-semibold text-gray-900">{Number(product.instantPrice).toLocaleString()}원</span>에 즉시 구매합니다.<br />
+                <span className="font-semibold text-gray-900">{formatPrice(Number(product.instantPrice))}원</span>에 즉시 구매합니다.<br />
                 구매 후에는 취소가 불가능합니다.
               </p>
               <div className="flex gap-3 w-full">
@@ -2314,7 +2315,7 @@ export const ProductDetail: React.FC = () => {
             <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">입찰하시겠습니까?</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                <span className="font-semibold text-gray-900">{bidAmount.toLocaleString()}원</span>으로 입찰에 참여합니다.<br />
+                <span className="font-semibold text-gray-900">{formatPrice(bidAmount)}원</span>으로 입찰에 참여합니다.<br />
                 입찰 후 취소 시 위약금이 발생할 수 있습니다.
               </p>
               <div className="flex gap-3 w-full">
@@ -2345,7 +2346,7 @@ export const ProductDetail: React.FC = () => {
             <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">자동 입찰을 설정하시겠습니까?</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                최대 <span className="font-semibold text-gray-900">{autoBidMaxAmount.toLocaleString()}원</span>까지 자동으로 상위 입찰을 진행하도록 설정합니다.
+                최대 <span className="font-semibold text-gray-900">{formatPrice(autoBidMaxAmount)}원</span>까지 자동으로 상위 입찰을 진행하도록 설정합니다.
               </p>
               <div className="flex gap-3 w-full">
                 <button

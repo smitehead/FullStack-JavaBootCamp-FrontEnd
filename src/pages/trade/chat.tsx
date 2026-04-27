@@ -142,7 +142,7 @@ export const Chat: React.FC = () => {
         appointmentStatus: r.appointmentStatus ?? 0,
         appointmentAt: r.appointmentAt || null,
       }));
-      const sortedRooms = (rooms || []).sort((a: any, b: any) => {
+      const sortedRooms = rooms.sort((a, b) => {
         const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
         const timeB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
         return timeB - timeA;
@@ -663,6 +663,9 @@ export const Chat: React.FC = () => {
     const clientUuid = getUuid();
     const content = newMessage.trim();
     setNewMessage('');
+    // textarea 높이 초기화
+    const ta = document.querySelector<HTMLTextAreaElement>('textarea[placeholder="메시지를 입력하세요..."]');
+    if (ta) { ta.style.height = 'auto'; }
 
     // A) 낙관적 UI — 로컬에 즉시 표시
     const optimisticMsg: ChatMessage = {
@@ -1530,15 +1533,29 @@ export const Chat: React.FC = () => {
                   />
                 </div>
                 <div className="flex-1 relative">
-                  <input type="text" value={newMessage}
+                  <textarea
+                    value={newMessage}
                     onChange={(e) => {
                       if (e.target.value.length <= MAX_CONTENT_LENGTH) setNewMessage(e.target.value);
+                      e.target.style.height = 'auto';
+                      e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        if (newMessage.trim() && isConnected) {
+                          handleBsSendMessage(e as any);
+                        }
+                      }
                     }}
                     placeholder="메시지를 입력하세요..."
                     maxLength={MAX_CONTENT_LENGTH}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all" />
+                    rows={1}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all resize-none overflow-y-auto leading-5"
+                    style={{ maxHeight: '120px' }}
+                  />
                   {newMessage.length > 3800 && (
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">
+                    <span className="absolute right-3 bottom-3 text-[10px] text-gray-400">
                       {newMessage.length}/{MAX_CONTENT_LENGTH}
                     </span>
                   )}

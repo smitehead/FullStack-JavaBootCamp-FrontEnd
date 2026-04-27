@@ -8,6 +8,7 @@ import api from '@/services/api';
 import { ProductRequestDto } from '@/types';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
+import { formatPrice } from '@/utils/formatUtils';
 
 export const ProductRegister: React.FC = () => {
   const navigate = useNavigate();
@@ -47,19 +48,45 @@ export const ProductRegister: React.FC = () => {
   const [addrShort, setAddrShort] = useState('');
 
   useEffect(() => {
-    if (editProduct) {
+    if (!editProduct) return;
+
+    setTitle(editProduct.title);
+    setDescription(editProduct.description);
+    setStartPrice(editProduct.startPrice);
+    setInstantPrice(editProduct.instantPrice || 0);
+    setIsInstantPriceEnabled(!!editProduct.instantPrice);
+    setMinBidIncrement(editProduct.minBidIncrement);
+    setAddress(editProduct.location);
+    setMethods({
+      face: editProduct.transactionMethod === 'face-to-face' || editProduct.transactionMethod === 'both',
+      delivery: editProduct.transactionMethod === 'delivery' || editProduct.transactionMethod === 'both',
+    });
+
+    // 카테고리 복원 (depth 순 정렬: 0=대분류, 1=중분류, 2=소분류)
+    if (editProduct.categoryPath && editProduct.categoryPath.length > 0) {
+      const sorted = [...editProduct.categoryPath].sort((a, b) => a.depth - b.depth);
+      if (sorted[0]) setLargeCat(String(sorted[0].id));
+      if (sorted[1]) setMediumCat(String(sorted[1].id));
+      if (sorted[2]) setSmallCat(String(sorted[2].id));
+    }
+
+    // 기존 이미지 URL → File 변환 (미리보기 즉시 표시 후 실제 파일 병렬 fetch)
+    if (editProduct.images && editProduct.images.length > 0) {
       setImages(editProduct.images);
-      setTitle(editProduct.title);
-      setDescription(editProduct.description);
-      setStartPrice(editProduct.startPrice);
-      setInstantPrice(editProduct.instantPrice || 0);
-      setIsInstantPriceEnabled(!!editProduct.instantPrice);
-      setMinBidIncrement(editProduct.minBidIncrement);
-      setAddress(editProduct.location);
-      setMethods({
-        face: editProduct.transactionMethod === 'face-to-face' || editProduct.transactionMethod === 'both',
-        delivery: editProduct.transactionMethod === 'delivery' || editProduct.transactionMethod === 'both'
-      });
+      (async () => {
+        try {
+          const files = await Promise.all(
+            editProduct.images.map(async (url, i) => {
+              const res = await fetch(url);
+              const blob = await res.blob();
+              return new File([blob], `image-${i + 1}.jpg`, { type: blob.type || 'image/jpeg' });
+            })
+          );
+          setImageFiles(files);
+        } catch {
+          // fetch 실패 시 사용자가 직접 이미지를 다시 업로드해야 함
+        }
+      })();
     }
   }, [editProduct]);
 
@@ -151,7 +178,7 @@ export const ProductRegister: React.FC = () => {
     // 필수 항목 검증
     if (images.length === 0) { showToast('이미지를 최소 1장 등록해주세요.', 'warning'); return; }
     if (!title.trim()) { showToast('제목을 입력해주세요.', 'warning'); return; }
-    if (title.trim().length > 100) { showToast('제목은 100자 이내로 입력해주세요.', 'warning'); return; }
+    if (title.trim().length > 50) { showToast('제목은 50자 이내로 입력해주세요.', 'warning'); return; }
     if (!description.trim()) { showToast('상품 설명을 입력해주세요.', 'warning'); return; }
     if (!largeCat) { showToast('카테고리를 선택해주세요.', 'warning'); return; }
     
@@ -356,7 +383,7 @@ export const ProductRegister: React.FC = () => {
               <div key={idx} className="w-24 h-24 relative rounded-xl overflow-hidden border border-gray-100 shadow-sm group">
                 <img src={img || undefined} alt="preview" className="w-full h-full object-cover" />
                 {idx === 0 && (
-                  <div className="absolute top-1 left-1 bg-gray-900/90 text-white text-[10px] font-bold w-10 h-5 flex items-center justify-center rounded-lg shadow-sm z-10">
+                  <div className="absolute top-1 left-1 bg-gray-900/90 text-white text-[10px] font-bold w-10 h-5 flex items-center justify-center rounded-full shadow-sm z-10">
                     대표
                   </div>
                 )}
@@ -380,8 +407,8 @@ export const ProductRegister: React.FC = () => {
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">제목 <span className="text-red-500">*</span></label>
-              <span className={`text-xs font-medium ${title.length > 100 ? 'text-red-500' : 'text-gray-400'}`}>
-                {title.length}/100
+              <span className={`text-xs font-medium ${title.length > 50 ? 'text-red-500' : 'text-gray-400'}`}>
+                {title.length}/50
               </span>
             </div>
             <input
@@ -389,7 +416,7 @@ export const ProductRegister: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="상품 제목을 입력해주세요"
-              className={`w-full rounded-2xl shadow-sm focus:ring-2 focus:bg-white p-4 border text-sm font-medium transition-all outline-none ${title.length > 100 ? 'border-red-300 focus:ring-red-200' : 'border-gray-100 focus:ring-[#FF5A5A]/20'}`}
+              className={`w-full rounded-2xl shadow-sm focus:ring-2 focus:bg-white p-4 border text-sm font-medium transition-all outline-none ${title.length > 50 ? 'border-red-300 focus:ring-red-200' : 'border-gray-100 focus:ring-[#FF5A5A]/20'}`}
             />
           </div>
 
@@ -462,9 +489,11 @@ export const ProductRegister: React.FC = () => {
                   placeholder="0"
                   step="1000"
                   min="0"
-                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border bg-white font-medium transition-all outline-none"
+                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border bg-white font-medium transition-all outline-none ${startPrice >= 1000000 ? 'pr-28' : 'pr-10'}`}
                 />
-                <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
+                <span className={`absolute right-4 top-0 h-full flex items-center font-bold transition-colors ${startPrice >= 1000000 ? 'text-brand' : 'text-gray-400'}`}>
+                  {startPrice >= 1000000 ? formatPrice(startPrice) + '원' : '원'}
+                </span>
               </div>
             </div>
             <div>
@@ -494,9 +523,11 @@ export const ProductRegister: React.FC = () => {
                   placeholder={isInstantPriceEnabled ? "0" : "-"}
                   step="1000"
                   min="0"
-                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border font-medium transition-all outline-none ${!isInstantPriceEnabled ? 'bg-gray-100 text-gray-400' : 'text-brand-dark bg-white'}`}
+                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border font-medium transition-all outline-none ${!isInstantPriceEnabled ? 'bg-gray-100 text-gray-400 pr-10' : (instantPrice >= 1000000 ? 'text-brand-dark bg-white pr-28' : 'text-brand-dark bg-white pr-10')}`}
                 />
-                <span className={`absolute right-4 top-0 h-full flex items-center font-bold transition-colors ${!isInstantPriceEnabled ? 'text-gray-300' : 'text-gray-400'}`}>원</span>
+                <span className={`absolute right-4 top-0 h-full flex items-center font-bold transition-colors ${!isInstantPriceEnabled ? 'text-gray-300' : (instantPrice >= 1000000 ? 'text-brand' : 'text-gray-400')}`}>
+                  {instantPrice >= 1000000 && isInstantPriceEnabled ? formatPrice(instantPrice) + '원' : '원'}
+                </span>
               </div>
             </div>
           </div>
@@ -517,9 +548,11 @@ export const ProductRegister: React.FC = () => {
                   placeholder="예: 1000"
                   step="1000"
                   min="0"
-                  className="w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 pr-10 border bg-white font-medium transition-all outline-none"
+                  className={`w-full border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white p-4 border bg-white font-medium transition-all outline-none ${minBidIncrement >= 1000000 ? 'pr-28' : 'pr-10'}`}
                 />
-                <span className="absolute right-4 top-0 h-full flex items-center text-gray-400 font-bold">원</span>
+                <span className={`absolute right-4 top-0 h-full flex items-center font-bold transition-colors ${minBidIncrement >= 1000000 ? 'text-brand' : 'text-gray-400'}`}>
+                  {minBidIncrement >= 1000000 ? formatPrice(minBidIncrement) + '원' : '원'}
+                </span>
               </div>
               <div className="bg-white/50 border border-gray-200 p-3 rounded-xl flex items-start gap-2">
                 <BsInfoCircle className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />

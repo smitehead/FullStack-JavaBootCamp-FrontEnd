@@ -127,7 +127,6 @@ export const MyPage: React.FC = () => {
   const [biddingPage, setBiddingPage] = useState(1);
   const [biddingTotalPages, setBiddingTotalPages] = useState(1);
   const [biddingTotal, setBiddingTotal] = useState(0);
-  // 프로필 카드용 총 입찰 건수 — 필터와 무관하게 'all' 조회 결과만 반영
   const [biddingProfileTotal, setBiddingProfileTotal] = useState(0);
   const [purchasedPage, setPurchasedPage] = useState(1);
   const [purchasedTotalPages, setPurchasedTotalPages] = useState(1);
@@ -252,8 +251,8 @@ export const MyPage: React.FC = () => {
       setBiddingProducts(products);
       setBiddingTotalPages(res.data.totalPages || 1);
       setBiddingTotal(res.data.totalElements || 0);
-      // 프로필 카드 카운트는 전체 조회('all')일 때만 갱신
-      if (!filter || filter === 'all') setBiddingProfileTotal(res.data.totalElements || 0);
+      // '전체' 필터일 때만 프로필 카드의 총 입찰 건수 갱신
+      if (filter === 'all') setBiddingProfileTotal(res.data.totalElements || 0);
       return products;
     } catch (err) {
       if (!isMountedRef.current || fetchId !== biddingFetchIdRef.current) return [];
@@ -333,7 +332,7 @@ export const MyPage: React.FC = () => {
   // 로그인 시 카운트 표시용 사전 로드
   useEffect(() => {
     if (!user) return;
-    fetchBiddingProducts(1);
+    fetchBiddingProducts(1, 'all');
     fetchWishlistProducts(1);
   }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 

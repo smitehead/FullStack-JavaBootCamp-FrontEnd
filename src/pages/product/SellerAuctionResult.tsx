@@ -45,6 +45,7 @@ export const SellerAuctionResult: React.FC = () => {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [activeTransactionTab, setActiveTransactionTab] = useState<'delivery' | 'face-to-face'>('delivery');
+  const [chatRoomNo, setChatRoomNo] = useState<number | null>(null);
 
   const fetchDetail = useCallback(async () => {
     if (!id) return;
@@ -71,6 +72,29 @@ export const SellerAuctionResult: React.FC = () => {
     }
   }, [fetchDetail, isInitialized, user]);
 
+  // 낙찰 결과 로드 시 채팅방 자동 생성 + 초기 시스템 메시지 전송
+  useEffect(() => {
+    if (!result || !user) return;
+    const sellerNo = getMemberNo(user);
+    if (!sellerNo) return;
+    api.post('/chat/rooms', {
+      buyerNo: result.buyer.buyerNo,
+      sellerNo,
+      productNo: result.productNo,
+    }).then(res => {
+      const roomNo = res.data?.roomNo;
+      if (!roomNo) return;
+      setChatRoomNo(roomNo);
+      // 초기 메시지를 실제 저장해 lastMessageAt을 세팅 → 채팅 목록 최신순 정렬 반영
+      api.post(`/chat/rooms/${roomNo}/messages`, {
+        content: '첫 대화를 남겨보세요',
+        msgType: 'SYSTEM',
+      }).catch(() => {});
+    }).catch(() => {});
+  // result.productNo가 확정됐을 때 한 번만 실행
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result?.productNo]);
+
   if (!isInitialized || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -89,6 +113,10 @@ export const SellerAuctionResult: React.FC = () => {
   const images = result.images.map(img => resolveImageUrl(img) || img);
 
   const handleChatWithBuyer = async () => {
+    if (chatRoomNo) {
+      navigate(`/chat?roomNo=${chatRoomNo}`);
+      return;
+    }
     const sellerNo = getMemberNo(user);
     if (!sellerNo) {
       showToast('로그인이 필요한 서비스입니다.', 'error');
