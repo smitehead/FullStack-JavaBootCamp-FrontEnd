@@ -792,13 +792,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const filteredChats = chats.filter(c => !hiddenChatRoomNos.includes(c.roomNo));
   const unreadNotificationsCount = notifications.filter(n => {
     if (n.read) return false;
-    // "bid" 타입: auctionEnd, newBid 둘 다 꺼져 있을 때만 제외
-    if (n.type === 'bid' && !notifySettings.notifyAuctionEnd && !notifySettings.notifyNewBid) return false;
-    // "이벤트" 타입: 마케팅 수신 꺼져 있으면 제외
+    if (n.type === 'auctionEnd' && !notifySettings.notifyAuctionEnd) return false;
+    if (n.type === 'newBid' && !notifySettings.notifyNewBid) return false;
+    if (n.type === 'bid' && (!notifySettings.notifyAuctionEnd || !notifySettings.notifyNewBid)) return false;
     if (n.type === '이벤트' && !notifySettings.notifyMarketing) return false;
     return true;
   }).length;
-  const unreadChatsCount = filteredChats.filter(c => c.unreadCount > 0).length;
+  const unreadChatsCount = notifyChatRef.current
+    ? filteredChats.filter(c => c.unreadCount > 0).length
+    : 0;
 
   return (
     <AppContext.Provider value={{
