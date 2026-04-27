@@ -292,7 +292,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                                 {!noti.read && (
                                   <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-brand" />
                                 )}
-                                <p className="text-[10px] font-bold text-[#FF5A5A] mb-0.5">{({ bid: '낙찰', activity: '거래', '제재': '제재', QNA: '문의', QNA_ANSWER: '답변', '시스템': '시스템', '이벤트': '이벤트' } as Record<string, string>)[noti.type] ?? noti.type}</p>
+                                <p className="text-[10px] font-bold text-[#FF5A5A] mb-0.5">{({ bid: '낙찰', auctionEnd: '경매종료', newBid: '새입찰', activity: '거래', '제재': '제재', '제재해제': '제재해제', QNA: '문의', QNA_ANSWER: '답변', '시스템': '시스템', '이벤트': '이벤트', marketing: '이벤트', system: '시스템' } as Record<string, string>)[noti.type] ?? noti.type}</p>
                                 <p className={`leading-snug line-clamp-2 ${!noti.read ? 'font-semibold text-gray-800' : 'font-normal text-gray-400'}`}>
                                   {formatMessagePreview(noti.message).replace(/^\[.+?\]\s*/, '')}
                                 </p>

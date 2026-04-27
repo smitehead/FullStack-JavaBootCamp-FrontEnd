@@ -795,7 +795,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (n.type === 'auctionEnd' && !notifySettings.notifyAuctionEnd) return false;
     if (n.type === 'newBid' && !notifySettings.notifyNewBid) return false;
     if (n.type === 'bid' && (!notifySettings.notifyAuctionEnd || !notifySettings.notifyNewBid)) return false;
-    if (n.type === '이벤트' && !notifySettings.notifyMarketing) return false;
+    if ((n.type === '이벤트' || n.type === 'marketing') && !notifySettings.notifyMarketing) return false;
     return true;
   }).length;
   const unreadChatsCount = notifyChatRef.current
