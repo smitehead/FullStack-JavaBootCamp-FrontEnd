@@ -328,16 +328,21 @@ export const Settings: React.FC = () => {
     const newVal = !settings[key];
     setSettings(prev => ({ ...prev, [key]: newVal }));
 
+    // 낙관적 업데이트: API 응답 전에 AppContext 즉시 반영
+    if (key === 'chat') updateNotifyChat(newVal);
+    if (key === 'auctionEnd' || key === 'newBid' || key === 'marketing') updateNotifyBadge(key, newVal);
+
     try {
       await api.put('/members/me/notification', {
         [key === 'auctionEnd' ? 'auctionEnd' :
           key === 'newBid' ? 'newBid' :
             key === 'chat' ? 'chat' : 'marketing']: newVal,
       });
-      if (key === 'chat') updateNotifyChat(newVal);
-      if (key === 'auctionEnd' || key === 'newBid' || key === 'marketing') updateNotifyBadge(key, newVal);
     } catch (e) {
+      // 실패 시 롤백
       setSettings(prev => ({ ...prev, [key]: !newVal }));
+      if (key === 'chat') updateNotifyChat(!newVal);
+      if (key === 'auctionEnd' || key === 'newBid' || key === 'marketing') updateNotifyBadge(key, !newVal);
       showToast('설정 변경에 실패했습니다.', 'error');
     }
   };
