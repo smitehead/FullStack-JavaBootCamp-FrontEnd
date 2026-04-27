@@ -16,12 +16,6 @@ import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 import { ReviewModal } from '@/components/ReviewModal';
 
-/** AbortController 취소 에러 여부 판별 (Axios CanceledError / native AbortError 모두 처리) */
-function isAbortError(err: unknown): boolean {
-  if (!err || typeof err !== 'object') return false;
-  const e = err as { name?: string; code?: string };
-  return e.name === 'CanceledError' || e.name === 'AbortError' || e.code === 'ERR_CANCELED';
-}
 
 /** 백엔드 ProductListResponseDto → 프론트 Product 타입 변환 */
 function mapToProduct(item: any): Product & { bidStatus?: string } {
@@ -141,11 +135,13 @@ export const MyPage: React.FC = () => {
   const [wishlistTotalPages, setWishlistTotalPages] = useState(1);
   const [wishlistTotal, setWishlistTotal] = useState(0);
 
-  // AbortController refs — 탭·필터 전환 시 이전 요청 강제 취소용
-  const sellingAbortRef  = useRef<AbortController | null>(null);
-  const biddingAbortRef  = useRef<AbortController | null>(null);
-  const purchasedAbortRef = useRef<AbortController | null>(null);
-  const wishlistAbortRef = useRef<AbortController | null>(null);
+  // 요청 순번 카운터 — stale 응답 무시용 (네트워크 취소 없이 레이스 컨디션 방지)
+  const sellingFetchIdRef  = useRef(0);
+  const biddingFetchIdRef  = useRef(0);
+  const purchasedFetchIdRef = useRef(0);
+  const wishlistFetchIdRef = useRef(0);
+  // 언마운트 여부 추적 — setState on unmounted component 방지
+  const isMountedRef = useRef(true);
 
   // SSE 실시간 입찰 상태 오버라이드: { [productId]: 'outbid' | 'bidding' }
   const [bidStatusOverrides, setBidStatusOverrides] = useState<Record<string, string>>({});
@@ -225,108 +221,81 @@ export const MyPage: React.FC = () => {
 
   // 데이터 로딩
   const fetchSellingProducts = useCallback(async (page = 1, filter = sellingFilter) => {
-    // ① 이전 요청 취소 → 새 컨트롤러 등록
-    sellingAbortRef.current?.abort();
-    const controller = new AbortController();
-    sellingAbortRef.current = controller;
-
+    // ① 순번 발급 — 이 호출이 완료될 때까지 더 새로운 호출이 왔으면 결과를 버림
+    const fetchId = ++sellingFetchIdRef.current;
     // ② 즉시 상태 초기화 — stale 데이터 플래시 방지
     setSellingProducts([]);
     setLoading(true);
-
     try {
-      const res = await api.get('/products/my-selling', {
-        params: { page, size: 6, filter },
-        signal: controller.signal,
-      });
+      const res = await api.get('/products/my-selling', { params: { page, size: 6, filter } });
+      // ③ 최신 요청인지, 아직 마운트 상태인지 확인 후 setState
+      if (!isMountedRef.current || fetchId !== sellingFetchIdRef.current) return;
       setSellingProducts((res.data.content || []).map(mapToProduct));
       setSellingTotalPages(res.data.totalPages || 1);
       setSellingTotal(res.data.totalElements || 0);
     } catch (err) {
-      // ③ 취소 에러는 정상 흐름 — 토스트·콘솔 없이 조용히 무시
-      if (isAbortError(err)) return;
+      if (!isMountedRef.current || fetchId !== sellingFetchIdRef.current) return;
       console.error('판매 목록 조회 실패', err);
     } finally {
-      // 이 컨트롤러가 여전히 최신일 때만 로딩 해제
-      if (sellingAbortRef.current === controller) setLoading(false);
+      if (isMountedRef.current && fetchId === sellingFetchIdRef.current) setLoading(false);
     }
   }, [sellingFilter]);
 
   const fetchBiddingProducts = useCallback(async (page = 1, filter = biddingFilter) => {
-    biddingAbortRef.current?.abort();
-    const controller = new AbortController();
-    biddingAbortRef.current = controller;
-
+    const fetchId = ++biddingFetchIdRef.current;
     setBiddingProducts([]);
     setLoading(true);
-
     try {
-      const res = await api.get('/products/my-bidding', {
-        params: { page, size: 6, filter },
-        signal: controller.signal,
-      });
+      const res = await api.get('/products/my-bidding', { params: { page, size: 6, filter } });
+      if (!isMountedRef.current || fetchId !== biddingFetchIdRef.current) return [];
       const products = (res.data.content || []).map(mapToProduct);
       setBiddingProducts(products);
       setBiddingTotalPages(res.data.totalPages || 1);
       setBiddingTotal(res.data.totalElements || 0);
       // 프로필 카드 카운트는 전체 조회('all')일 때만 갱신
-      if (!filter || filter === 'all') {
-        setBiddingProfileTotal(res.data.totalElements || 0);
-      }
+      if (!filter || filter === 'all') setBiddingProfileTotal(res.data.totalElements || 0);
       return products;
     } catch (err) {
-      if (isAbortError(err)) return [];
+      if (!isMountedRef.current || fetchId !== biddingFetchIdRef.current) return [];
       console.error('입찰 목록 조회 실패', err);
       return [];
     } finally {
-      if (biddingAbortRef.current === controller) setLoading(false);
+      if (isMountedRef.current && fetchId === biddingFetchIdRef.current) setLoading(false);
     }
   }, [biddingFilter]);
 
   const fetchPurchasedProducts = useCallback(async (page = 1) => {
-    purchasedAbortRef.current?.abort();
-    const controller = new AbortController();
-    purchasedAbortRef.current = controller;
-
+    const fetchId = ++purchasedFetchIdRef.current;
     setPurchasedProducts([]);
     setLoading(true);
-
     try {
-      const res = await api.get('/products/my-purchased', {
-        params: { page, size: 6 },
-        signal: controller.signal,
-      });
+      const res = await api.get('/products/my-purchased', { params: { page, size: 6 } });
+      if (!isMountedRef.current || fetchId !== purchasedFetchIdRef.current) return;
       setPurchasedProducts((res.data.content || []).map(mapToProduct));
       setPurchasedTotalPages(res.data.totalPages || 1);
     } catch (err) {
-      if (isAbortError(err)) return;
+      if (!isMountedRef.current || fetchId !== purchasedFetchIdRef.current) return;
       console.error('구매 목록 조회 실패', err);
     } finally {
-      if (purchasedAbortRef.current === controller) setLoading(false);
+      if (isMountedRef.current && fetchId === purchasedFetchIdRef.current) setLoading(false);
     }
   }, []);
 
   const fetchWishlistProducts = useCallback(async (page = 1) => {
-    wishlistAbortRef.current?.abort();
-    const controller = new AbortController();
-    wishlistAbortRef.current = controller;
-
+    const fetchId = ++wishlistFetchIdRef.current;
     setWishlistProducts([]);
     setLoading(true);
-
     try {
-      const res = await api.get('/wishlists/my', {
-        params: { page, size: 6 },
-        signal: controller.signal,
-      });
+      const res = await api.get('/wishlists/my', { params: { page, size: 6 } });
+      if (!isMountedRef.current || fetchId !== wishlistFetchIdRef.current) return;
       setWishlistProducts((res.data.content || []).map(mapToProduct));
       setWishlistTotalPages(res.data.totalPages || 1);
       setWishlistTotal(res.data.totalElements || 0);
     } catch (err) {
-      if (isAbortError(err)) return;
+      if (!isMountedRef.current || fetchId !== wishlistFetchIdRef.current) return;
       console.error('찜 목록 조회 실패', err);
     } finally {
-      if (wishlistAbortRef.current === controller) setLoading(false);
+      if (isMountedRef.current && fetchId === wishlistFetchIdRef.current) setLoading(false);
     }
   }, []);
 
@@ -355,14 +324,10 @@ export const MyPage: React.FC = () => {
     }
   };
 
-  // 컴포넌트 언마운트 시 진행 중인 모든 요청 일괄 취소
+  // 언마운트 시 isMounted 플래그 해제 — 진행 중 응답의 setState 차단
   useEffect(() => {
-    return () => {
-      sellingAbortRef.current?.abort();
-      biddingAbortRef.current?.abort();
-      purchasedAbortRef.current?.abort();
-      wishlistAbortRef.current?.abort();
-    };
+    isMountedRef.current = true;
+    return () => { isMountedRef.current = false; };
   }, []);
 
   // 로그인 시 카운트 표시용 사전 로드
