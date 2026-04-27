@@ -126,6 +126,8 @@ export const MyPage: React.FC = () => {
   const [biddingPage, setBiddingPage] = useState(1);
   const [biddingTotalPages, setBiddingTotalPages] = useState(1);
   const [biddingTotal, setBiddingTotal] = useState(0);
+  // 프로필 카드용 총 입찰 건수 — 필터와 무관하게 'all' 조회 결과만 반영
+  const [biddingProfileTotal, setBiddingProfileTotal] = useState(0);
   const [purchasedPage, setPurchasedPage] = useState(1);
   const [purchasedTotalPages, setPurchasedTotalPages] = useState(1);
   const [wishlistPage, setWishlistPage] = useState(1);
@@ -231,6 +233,10 @@ export const MyPage: React.FC = () => {
       setBiddingProducts(products);
       setBiddingTotalPages(res.data.totalPages || 1);
       setBiddingTotal(res.data.totalElements || 0);
+      // 프로필 카드 카운트는 전체 조회('all')일 때만 갱신
+      if (!filter || filter === 'all') {
+        setBiddingProfileTotal(res.data.totalElements || 0);
+      }
       return products;
     } catch (err) {
       console.error('입찰 목록 조회 실패', err);
@@ -349,7 +355,7 @@ export const MyPage: React.FC = () => {
     const onNotification = (e: Event) => {
       const noti = (e as CustomEvent).detail as { type?: string };
       // 낙찰/입찰 관련 알림 → 경매 종료 후 낙찰성공/실패 뱃지 즉시 반영
-      if (noti?.type === 'bid') {
+      if (noti?.type === 'bid' || noti?.type === 'auctionEnd' || noti?.type === 'newBid') {
         fetchBiddingProducts(biddingPage).then(() => setBidStatusOverrides({}));
       }
     };
@@ -506,7 +512,7 @@ export const MyPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">입찰내역</p>
-                    <p className="text-lg font-bold text-gray-900">{biddingTotal}<span className="text-xs font-medium ml-0.5">건</span></p>
+                    <p className="text-lg font-bold text-gray-900">{biddingProfileTotal}<span className="text-xs font-medium ml-0.5">건</span></p>
                   </div>
                 </button>
                 <button onClick={() => setActiveTab('wishlist')} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-start gap-3 group text-left">

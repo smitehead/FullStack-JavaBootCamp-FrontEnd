@@ -129,7 +129,7 @@ export interface Product {
   hasSellerReview?: boolean;
 }
 
-export type NotificationType = "bid" | "activity" | "제재" | "제재해제" | "QNA" | "QNA_ANSWER" | "시스템" | "이벤트";
+export type NotificationType = "bid" | "auctionEnd" | "newBid" | "activity" | "제재" | "제재해제" | "QNA" | "QNA_ANSWER" | "시스템" | "이벤트";
 
 export interface Notification {
   id: string;
