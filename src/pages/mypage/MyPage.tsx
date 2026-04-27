@@ -324,7 +324,7 @@ export const MyPage: React.FC = () => {
     const onNotification = (e: Event) => {
       const noti = (e as CustomEvent).detail as { type?: string };
       // 낙찰/입찰 관련 알림 → 경매 종료 후 낙찰성공/실패 뱃지 즉시 반영
-      if (noti?.type === 'bid') {
+      if (noti?.type === 'bid' || noti?.type === 'auctionEnd' || noti?.type === 'newBid') {
         fetchBiddingProducts(biddingPage).then(() => setBidStatusOverrides({}));
       }
     };
