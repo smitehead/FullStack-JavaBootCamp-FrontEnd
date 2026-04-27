@@ -551,6 +551,7 @@ export const Settings: React.FC = () => {
                           <input
                             type="text"
                             className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none font-bold text-gray-900"
+                            maxLength={10}
                             value={formData.nickname}
                             onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
                           />

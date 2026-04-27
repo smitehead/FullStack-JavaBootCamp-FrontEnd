@@ -203,7 +203,7 @@ export const InquiryCreate: React.FC = () => {
           >
             {isSubmitting ? (
               <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="spinner-border w-5 h-5 !border-white/30 !border-t-white" />
                 접수 중...
               </>
             ) : (

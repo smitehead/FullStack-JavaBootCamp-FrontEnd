@@ -497,7 +497,8 @@ export const Signup: React.FC = () => {
                       type="text"
                       required
                       className="block flex-1 px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
-                      placeholder="한글/영문 15자 이내"
+                      placeholder="한글/영문 10자 이내"
+                      maxLength={10}
                       value={formData.nickname}
                       onChange={(e) => {
                         setFormData({ ...formData, nickname: e.target.value });

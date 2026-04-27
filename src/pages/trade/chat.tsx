@@ -137,6 +137,8 @@ export const Chat: React.FC = () => {
         lastMessageAt: r.lastMessageAt || '',
         unreadCount: r.unreadCount || 0,
         productPrice: r.productPrice || r.currentPrice || 0,
+        appointmentStatus: r.appointmentStatus ?? 0,
+        appointmentAt: r.appointmentAt || null,
       }));
       const sortedRooms = (rooms || []).sort((a: any, b: any) => {
         const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
@@ -361,6 +363,17 @@ export const Chat: React.FC = () => {
         });
 
         scrollToBottom();
+
+        // 상대방 APPOINTMENT 수신 시 방의 약속 상태 즉시 업데이트
+        if (data.msgType === 'APPOINTMENT' && data.senderNo !== memberNo) {
+          const newApptAt = data.apptAt ?? null;
+          setChatRooms(prev =>
+            prev.map(r => r.roomNo === selectedRoom.roomNo
+              ? { ...r, appointmentStatus: 1, appointmentAt: newApptAt }
+              : r)
+          );
+          setSelectedRoom(prev => prev ? { ...prev, appointmentStatus: 1, appointmentAt: newApptAt } : null);
+        }
 
         // 상대방 메시지면 읽음 처리
         if (data.senderNo !== memberNo) {
@@ -848,6 +861,13 @@ export const Chat: React.FC = () => {
     if (!apptAddrRoad) { showToast('장소를 입력해주세요.', 'error'); return; }
     if (!selectedRoom || !memberNo) return;
 
+    const combinedDate = new Date(apptSelectedDate);
+    let hour = apptHour;
+    if (apptPeriod === 'PM' && hour < 12) hour += 12;
+    if (apptPeriod === 'AM' && hour === 12) hour = 0;
+    combinedDate.setHours(hour, apptMinute, 0, 0);
+    const apptAt = combinedDate.toISOString();
+
     const dateLabel = `${apptSelectedDate.getMonth() + 1}월 ${apptSelectedDate.getDate()}일 ${WEEKDAYS_KO[apptSelectedDate.getDay()]}요일`;
     const timeLabel = `${apptPeriod === 'AM' ? '오전' : '오후'} ${apptHour}:${String(apptMinute).padStart(2, '0')}`;
     const payload = { dateLabel, timeLabel, addrRoad: apptAddrRoad, addrDetail: apptAddrDetail };
@@ -872,7 +892,7 @@ export const Chat: React.FC = () => {
     if (client && client.connected) {
       client.publish({
         destination: '/pub/chat/message',
-        body: JSON.stringify({ roomNo: selectedRoom.roomNo, senderNo: memberNo, content, msgType: 'APPOINTMENT', clientUuid }),
+        body: JSON.stringify({ roomNo: selectedRoom.roomNo, senderNo: memberNo, content, msgType: 'APPOINTMENT', clientUuid, apptAt }),
       });
       const timeout = setTimeout(() => {
         setMessages(prev => prev.map(m => m.clientUuid === clientUuid && m.status === 'SENDING' ? { ...m, status: 'FAILED' } : m));
@@ -880,8 +900,9 @@ export const Chat: React.FC = () => {
       }, SEND_TIMEOUT);
       sendTimeouts.current.set(clientUuid, timeout);
       setChatRooms(prev =>
-        prev.map(r => r.roomNo === selectedRoom.roomNo ? { ...r, lastMessage: `${dateLabel} ${timeLabel}`, lastMessageAt: new Date().toISOString() } : r)
+        prev.map(r => r.roomNo === selectedRoom.roomNo ? { ...r, lastMessage: `${dateLabel} ${timeLabel}`, lastMessageAt: new Date().toISOString(), appointmentStatus: 1, appointmentAt: apptAt } : r)
       );
+      setSelectedRoom(prev => prev ? { ...prev, appointmentStatus: 1, appointmentAt: apptAt } : null);
     } else {
       showToast('채팅 서버와 연결이 끊어졌습니다.', 'error');
       setMessages(prev => prev.map(m => m.clientUuid === clientUuid ? { ...m, status: 'FAILED' } : m));
@@ -950,6 +971,48 @@ export const Chat: React.FC = () => {
       showToast('채팅방 나가기에 실패했습니다.', 'error');
     }
   };
+
+  // ══════════════════════════════════════════════════
+  // 약속 만료 감지 — 약속 시간이 지나면 안내 메시지 + 토스트
+  // ══════════════════════════════════════════════════
+  useEffect(() => {
+    if (!selectedRoom || selectedRoom.appointmentStatus !== 1 || !selectedRoom.appointmentAt) return;
+
+    const apptTime = new Date(selectedRoom.appointmentAt).getTime();
+    const msUntilExpiry = apptTime - Date.now();
+
+    if (msUntilExpiry <= 0) return; // 이미 만료됨 (서버에서 0으로 내려왔을 것)
+
+    const timer = setTimeout(() => {
+      // 방 상태 로컬 업데이트
+      setChatRooms(prev =>
+        prev.map(r => r.roomNo === selectedRoom.roomNo ? { ...r, appointmentStatus: 0 } : r)
+      );
+      setSelectedRoom(prev => prev ? { ...prev, appointmentStatus: 0 } : null);
+
+      // 채팅창 안내 메시지
+      const sysMsg: ChatMessage = {
+        id: `sys_appt_end_${Date.now()}`,
+        senderId: 'system',
+        senderNo: 0,
+        content: '약속된 상품을 잘 받으셨나요?',
+        createdAt: new Date().toISOString(),
+        isRead: 1,
+        status: 'SENT',
+        msgType: 'SYSTEM',
+      };
+      setMessages(prev => [...prev, sysMsg]);
+      requestAnimationFrame(() => {
+        const container = messagesContainerRef.current;
+        if (container) container.scrollTop = container.scrollHeight;
+      });
+
+      // 토스트
+      showToast('약속된 상품을 잘 받으셨나요?', 'info');
+    }, msUntilExpiry);
+
+    return () => clearTimeout(timer);
+  }, [selectedRoom?.roomNo, selectedRoom?.appointmentAt, selectedRoom?.appointmentStatus]);
 
   // ──── 유틸 ────
   const scrollToBottom = () => {
@@ -1057,9 +1120,16 @@ export const Chat: React.FC = () => {
                        {formatRelativeTime(room.lastMessageAt)}
                      </span>
                   </div>
-                  <p className={`text-xs truncate ${room.unreadCount > 0 ? 'text-brand font-bold' : 'text-gray-500'}`}>
-                    {formatMessagePreview(room.lastMessage) || '첫 대화를 남겨보세요'}
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className={`text-xs truncate flex-1 ${room.unreadCount > 0 ? 'text-brand font-bold' : 'text-gray-500'}`}>
+                      {formatMessagePreview(room.lastMessage) || '첫 대화를 남겨보세요'}
+                    </p>
+                    {room.appointmentStatus === 1 && (
+                      <span className="flex-shrink-0 bg-brand text-white text-[10px] font-bold px-2 h-5 inline-flex items-center justify-center rounded-full">
+                        약속중
+                      </span>
+                    )}
+                  </div>
                 </div>
               </button>
             ))
@@ -1079,9 +1149,16 @@ export const Chat: React.FC = () => {
               <img src={selectedRoom.productImage || '/images/default-product.png'}
                 alt="" className="w-10 h-10 rounded-xl bg-gray-50 object-cover" />
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-sm text-gray-900 truncate">
-                  {selectedRoom.productTitle}
-                </h4>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-bold text-sm text-gray-900 truncate">
+                    {selectedRoom.productTitle}
+                  </h4>
+                  {selectedRoom.appointmentStatus === 1 && (
+                    <span className="bg-brand text-white text-[10px] font-bold px-2 h-5 inline-flex items-center justify-center rounded-full whitespace-nowrap">
+                      약속중
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-black font-medium mt-0.5">
                   {(selectedRoom.productPrice || 0).toLocaleString()}원
                 </p>

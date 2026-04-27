@@ -1,11 +1,11 @@
 import React from 'react';
 import { toast } from 'sonner';
 import { BsStars } from 'react-icons/bs';
-import { BsCheckCircle, BsExclamationCircle, BsInfoCircle } from 'react-icons/bs';
+import { BsCheckCircle, BsExclamationCircle, BsInfoCircle, BsChat } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BellRing, X } from 'lucide-react';
 
-export type ToastType = 'success' | 'error' | 'info' | 'warning' | 'bid';
+export type ToastType = 'success' | 'error' | 'info' | 'warning' | 'bid' | 'chat';
 
 export const showToast = (message: string, type: ToastType = 'info') => {
   const config = {
@@ -14,6 +14,7 @@ export const showToast = (message: string, type: ToastType = 'info') => {
     info: { icon: <BsInfoCircle className="w-4 h-4 text-blue-500" />, color: 'text-blue-600' },
     warning: { icon: <BsExclamationCircle className="w-4 h-4 text-amber-500" />, color: 'text-amber-600' },
     bid: { icon: <BsStars className="w-4 h-4 text-red-500 animate-pulse" />, color: 'text-red-500' },
+    chat: { icon: <BsChat className="w-4 h-4 text-blue-500" />, color: 'text-blue-600' },
   };
 
   const { icon, color } = config[type];

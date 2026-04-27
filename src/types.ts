@@ -184,6 +184,8 @@ export interface ChatRoom {
   lastMessageAt: string;
   unreadCount: number;
   tradeType?: string;
+  appointmentStatus?: number;
+  appointmentAt?: string;
 }
 
 export interface ReviewTag {
