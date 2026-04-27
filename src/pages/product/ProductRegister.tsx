@@ -116,15 +116,27 @@ export const ProductRegister: React.FC = () => {
       showToast('계정이 정지된 상태에서는 상품을 등록할 수 없습니다.', 'error');
       return;
     }
-    if (e.target.files && e.target.files[0]) {
-      if (images.length >= 5) {
+    if (e.target.files) {
+      const selectedFiles = Array.from(e.target.files);
+      const remainingSlots = 5 - images.length;
+      
+      if (remainingSlots <= 0) {
         showToast('이미지는 최대 5장까지 등록 가능합니다.', 'error');
         return;
       }
-      const file = e.target.files[0];
-      const url = URL.createObjectURL(file);
-      setImages([...images, url]);
-      setImageFiles([...imageFiles, file]);
+
+      const filesToAdd = selectedFiles.slice(0, remainingSlots);
+      
+      if (selectedFiles.length > remainingSlots) {
+        showToast(`최대 5장까지만 등록 가능합니다. (${remainingSlots}장 추가됨)`, 'warning');
+      }
+
+      const newImageUrls = filesToAdd.map(file => URL.createObjectURL(file));
+      setImages(prev => [...prev, ...newImageUrls]);
+      setImageFiles(prev => [...prev, ...filesToAdd]);
+      
+      // 인풋 초기화
+      e.target.value = '';
     }
   };
 
@@ -338,11 +350,16 @@ export const ProductRegister: React.FC = () => {
             <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 hover:border-gray-500 transition-all text-gray-400 hover:text-gray-900 group">
               <BsCamera className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
               <span className="text-[10px] font-bold uppercase tracking-wider">사진 추가</span>
-              <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+              <input type="file" className="hidden" accept="image/*" multiple onChange={handleImageUpload} />
             </label>
             {images.map((img, idx) => (
               <div key={idx} className="w-24 h-24 relative rounded-xl overflow-hidden border border-gray-100 shadow-sm group">
                 <img src={img || undefined} alt="preview" className="w-full h-full object-cover" />
+                {idx === 0 && (
+                  <div className="absolute top-1 left-1 bg-gray-900/90 text-white text-[10px] font-bold w-10 h-5 flex items-center justify-center rounded-lg shadow-sm z-10">
+                    대표
+                  </div>
+                )}
                 <button
                   type="button"
                   onClick={() => removeImage(idx)}
