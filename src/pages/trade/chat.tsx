@@ -96,6 +96,8 @@ export const Chat: React.FC = () => {
   const sendTimeouts = useRef(new Map<string, NodeJS.Timeout>());
   // 이미지 input ref
   const imageInputRef = useRef<HTMLInputElement>(null);
+  // 새 메시지 수신 후 DOM 반영 완료 시점에 스크롤하기 위한 플래그
+  const shouldScrollToBottomRef = useRef(false);
 
   // ──── UUID 생성 (HTTPS 환경 여부 무관) ────
   const getUuid = () => {
@@ -359,10 +361,9 @@ export const Chat: React.FC = () => {
             latitude: data.latitude,
             longitude: data.longitude,
           };
+          shouldScrollToBottomRef.current = true;
           return [...prev, newMsg];
         });
-
-        scrollToBottom();
 
         // 상대방 APPOINTMENT 수신 시 방의 약속 상태 즉시 업데이트
         if (data.msgType === 'APPOINTMENT' && data.senderNo !== memberNo) {
@@ -1014,11 +1015,18 @@ export const Chat: React.FC = () => {
     return () => clearTimeout(timer);
   }, [selectedRoom?.roomNo, selectedRoom?.appointmentAt, selectedRoom?.appointmentStatus]);
 
+  // messages 상태가 DOM에 반영된 뒤 스크롤 (React가 커밋한 이후 실행)
+  useEffect(() => {
+    if (!shouldScrollToBottomRef.current) return;
+    shouldScrollToBottomRef.current = false;
+    const container = messagesContainerRef.current;
+    if (container) container.scrollTop = container.scrollHeight;
+  }, [messages]);
+
   // ──── 유틸 ────
   const scrollToBottom = () => {
     const container = messagesContainerRef.current;
     if (container) {
-      // requestAnimationFrame을 사용하여 돔 렌더링 후 스크롤이 적용되도록 함
       requestAnimationFrame(() => {
         container.scrollTop = container.scrollHeight;
       });

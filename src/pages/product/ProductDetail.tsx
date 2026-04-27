@@ -12,6 +12,7 @@ import { ko } from 'date-fns/locale';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 import { resolveImageUrls, getProfileImageUrl } from '../../utils/imageUtils';
+import { Pagination } from '@/components/Pagination';
 
 // 카테고리 ID로 전체 경로를 찾는 헬퍼 함수
 const findCategoryPath = (id: string | number): string[] => {
@@ -46,6 +47,8 @@ export const ProductDetail: React.FC = () => {
   const [qnaInput, setQnaInput] = useState('');
   const [answerInputs, setAnswerInputs] = useState<Record<number, string>>({});
   const [showAnswerInput, setShowAnswerInput] = useState<Record<number, boolean>>({});
+  const [qnaCurrentPage, setQnaCurrentPage] = useState(1);
+  const QNA_PAGE_SIZE = 5;
 
   useEffect(() => {
     if (product) {
@@ -54,7 +57,10 @@ export const ProductDetail: React.FC = () => {
   }, [product]);
 
   useEffect(() => {
-    if (id) fetchQnaList();
+    if (id) {
+      fetchQnaList();
+      setQnaCurrentPage(1);
+    }
   }, [id]);
 
   /** 상품 삭제 처리 */
@@ -1462,7 +1468,7 @@ export const ProductDetail: React.FC = () => {
                 {qnaList.length === 0 && (
                   <p className="text-sm text-gray-400 text-center py-6">아직 등록된 문의가 없습니다.</p>
                 )}
-                {qnaList.map(qna => (
+                {qnaList.slice((qnaCurrentPage - 1) * QNA_PAGE_SIZE, qnaCurrentPage * QNA_PAGE_SIZE).map(qna => (
                   <div key={qna.qnaNo} className="border-b border-gray-100 pb-6">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -1521,6 +1527,11 @@ export const ProductDetail: React.FC = () => {
                   </div>
                 ))}
               </div>
+              <Pagination
+                currentPage={qnaCurrentPage}
+                totalPages={Math.ceil(qnaList.length / QNA_PAGE_SIZE)}
+                onPageChange={setQnaCurrentPage}
+              />
             </div>
           </div>
 
