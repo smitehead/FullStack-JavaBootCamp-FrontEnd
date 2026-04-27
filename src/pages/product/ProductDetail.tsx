@@ -1127,7 +1127,7 @@ export const ProductDetail: React.FC = () => {
 
             {/* Title & Tags */}
             <div className="flex flex-col mb-3">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">{product.title}</h1>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 break-words leading-tight">{product.title}</h1>
               <div className="flex flex-wrap gap-2 mb-3">
                 {(product.transactionMethod === 'face-to-face' || product.transactionMethod === 'both') && (
                   <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">직거래</span>
