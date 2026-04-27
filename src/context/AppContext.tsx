@@ -790,6 +790,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const filteredChats = chats.filter(c => !hiddenChatRoomNos.includes(c.roomNo));
+
   const unreadNotificationsCount = notifications.filter(n => {
     if (n.read) return false;
     if (n.type === 'auctionEnd' && !notifySettings.notifyAuctionEnd) return false;
