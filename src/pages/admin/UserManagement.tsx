@@ -123,6 +123,10 @@ export const UserManagement: React.FC = () => {
         showToast('변경 사유를 입력해주세요.', 'error');
         return;
       }
+      if (mannerValue < 0 || mannerValue > 100) {
+        showToast('매너온도는 0~100 사이여야 합니다.', 'error');
+        return;
+      }
       updateUserManner(selectedUser.id, mannerValue, mannerReason);
     } else if (modalType === 'points') {
       if (isNaN(pointAmount) || !Number.isFinite(pointAmount)) {
@@ -377,11 +381,13 @@ export const UserManagement: React.FC = () => {
                       <input
                         type="number"
                         step="0.1"
+                        min={0}
+                        max={100}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-lg"
                         value={mannerValue}
                         onChange={(e) => {
                           const val = parseFloat(e.target.value);
-                          if (!isNaN(val)) setMannerValue(val);
+                          if (!isNaN(val)) setMannerValue(Math.max(0, Math.min(100, val)));
                         }}
                         onKeyDown={(e) => {
                           if (['e', 'E', '+', '-'].includes(e.key)) {
