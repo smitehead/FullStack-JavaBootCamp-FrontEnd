@@ -36,7 +36,7 @@ export const UserManagement: React.FC = () => {
   const [mannerReason, setMannerReason] = useState('');
   const [suspendDays, setSuspendDays] = useState(7);
   const [suspendReason, setSuspendReason] = useState('');
-  const [pointAmount, setPointAmount] = useState(0);
+  const [pointAmount, setPointAmount] = useState('');
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -102,7 +102,7 @@ export const UserManagement: React.FC = () => {
       setMannerValue(user.mannerTemp);
       setMannerReason('');
     }
-    if (type === 'points') setPointAmount(0);
+    if (type === 'points') setPointAmount('');
     if (type === 'suspend') {
       setSuspendDays(7);
       setSuspendReason('');
@@ -129,17 +129,22 @@ export const UserManagement: React.FC = () => {
       }
       updateUserManner(selectedUser.id, mannerValue, mannerReason);
     } else if (modalType === 'points') {
-      if (isNaN(pointAmount) || !Number.isFinite(pointAmount)) {
+      const parsed = parseInt(pointAmount, 10);
+      if (isNaN(parsed)) {
         showToast('올바른 포인트 금액을 입력해주세요.', 'error');
         return;
       }
-      updateUserPoints(selectedUser.id, pointAmount);
+      if (parsed === 0) {
+        showToast('0P는 입력할 수 없습니다.', 'error');
+        return;
+      }
+      updateUserPoints(selectedUser.id, parsed);
     }
 
     setIsModalOpen(false);
     setSelectedUser(null);
     setModalType(null);
-    setPointAmount(0);
+    setPointAmount('');
     setSuspendReason('');
     setMannerReason('');
   };
@@ -471,14 +476,16 @@ export const UserManagement: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-2">증감/차감 금액 (P)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     placeholder="예: 10000 또는 -5000"
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-lg"
                     value={pointAmount}
-                    onChange={(e) => setPointAmount(e.target.value === '' ? 0 : parseInt(e.target.value, 10))}
-                    onKeyDown={(e) => {
-                      if (['e', 'E', '+', '.'].includes(e.key)) {
-                        e.preventDefault();
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      // 빈 값, 마이너스 부호 단독, 또는 정수(음수 포함)만 허용
+                      if (val === '' || val === '-' || /^-?\d+$/.test(val)) {
+                        setPointAmount(val);
                       }
                     }}
                   />
