@@ -250,15 +250,26 @@ export const Home: React.FC = () => {
               </Link>
             </div>
           </div>
+          
+          <script dangerouslySetInnerHTML={{ __html: `
+            function scrollCategories(direction) {
+              const el = document.getElementById('category-scroll-container');
+              if (el) {
+                const scrollAmount = direction === 'left' ? -el.offsetWidth * 0.6 : el.offsetWidth * 0.6;
+                el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+              }
+            }
+          `}} />
 
           <div className="relative group">
             <div
+              id="category-scroll-container"
               ref={scrollRef}
               onMouseDown={handleMouseDown}
               onMouseLeave={handleMouseLeave}
               onMouseUp={handleMouseUp}
               onMouseMove={handleMouseMove}
-              className={`flex overflow-x-auto pb-4 gap-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none`}
+              className={`flex overflow-x-auto pb-4 gap-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none scroll-smooth`}
             >
               {CATEGORY_DATA.map(cat => (
                 <button
@@ -271,9 +282,27 @@ export const Home: React.FC = () => {
               ))}
             </div>
             
-            {/* Hover Side Blurs */}
-            <div className="absolute top-0 left-0 h-full w-24 bg-gradient-to-r from-white via-white/40 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-            <div className="absolute top-0 right-0 h-full w-24 bg-gradient-to-l from-white via-white/40 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+            {/* Hover Side Blurs - 너비 축소 (w-24 -> w-12) */}
+            <div className="absolute top-0 left-0 h-[124px] w-12 bg-gradient-to-r from-white/80 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+            <div className="absolute top-0 right-0 h-[124px] w-12 bg-gradient-to-l from-white/80 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+
+            {/* Navigation Icons */}
+            <button 
+              onClick={() => {
+                if (scrollRef.current) scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+              }}
+              className="absolute left-[-20px] top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-20"
+            >
+              <BsChevronLeft className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => {
+                if (scrollRef.current) scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+              }}
+              className="absolute right-[-20px] top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-20"
+            >
+              <BsChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </section>
 
