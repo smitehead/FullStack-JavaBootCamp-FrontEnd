@@ -32,7 +32,7 @@ export const UserManagement: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
   // Modal Input States
-  const [mannerValue, setMannerValue] = useState(36.5);
+  const [mannerValue, setMannerValue] = useState<number | string>(36.5);
   const [mannerReason, setMannerReason] = useState('');
   const [suspendDays, setSuspendDays] = useState(7);
   const [suspendReason, setSuspendReason] = useState('');
@@ -123,11 +123,12 @@ export const UserManagement: React.FC = () => {
         showToast('변경 사유를 입력해주세요.', 'error');
         return;
       }
-      if (mannerValue < 0 || mannerValue > 100) {
+      const mannerNum = typeof mannerValue === 'string' ? parseFloat(mannerValue) : mannerValue;
+      if (isNaN(mannerNum) || mannerNum < 0 || mannerNum > 100) {
         showToast('매너온도는 0~100 사이여야 합니다.', 'error');
         return;
       }
-      updateUserManner(selectedUser.id, mannerValue, mannerReason);
+      updateUserManner(selectedUser.id, mannerNum, mannerReason);
     } else if (modalType === 'points') {
       const parsed = parseInt(pointAmount, 10);
       if (isNaN(parsed)) {
@@ -388,6 +389,7 @@ export const UserManagement: React.FC = () => {
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-none focus:outline-none focus:ring-2 focus:ring-[#FF5A5A] font-bold text-lg"
                         value={mannerValue}
                         onChange={(e) => {
+                          if (e.target.value === '') { setMannerValue(''); return; }
                           const val = parseFloat(e.target.value);
                           if (!isNaN(val)) setMannerValue(Math.max(0, Math.min(100, val)));
                         }}
