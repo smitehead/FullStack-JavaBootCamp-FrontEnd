@@ -17,6 +17,7 @@ import { QnaSection } from '@/components/product/QnaSection';
 import { BidHistorySection } from '@/components/product/BidHistorySection';
 import { ShippingSection } from '@/components/product/ShippingSection';
 import { ProductDetailModals } from '@/components/product/ProductDetailModals';
+import { RelatedProducts } from '@/components/product/RelatedProducts';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // 카테고리 ID로 전체 경로를 찾는 헬퍼 함수
@@ -1324,6 +1325,10 @@ export const ProductDetail: React.FC = () => {
                 isSeller={isSeller}
                 currentMemberNo={currentMemberNo}
               />
+            </ErrorBoundary>
+
+            <ErrorBoundary>
+              <RelatedProducts productId={product.id} />
             </ErrorBoundary>
           </div>
 
