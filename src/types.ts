@@ -127,6 +127,7 @@ export interface Product {
   hasReview?: boolean;
   hasBuyerReview?: boolean;
   hasSellerReview?: boolean;
+  winnerNickname?: string | null;
 }
 
 export type NotificationType = "bid" | "auctionEnd" | "newBid" | "activity" | "제재" | "제재해제" | "QNA" | "QNA_ANSWER" | "시스템" | "이벤트" | "marketing" | "system";

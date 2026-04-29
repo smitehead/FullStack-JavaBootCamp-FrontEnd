@@ -24,6 +24,8 @@ export const Home: React.FC = () => {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [dragDistance, setDragDistance] = useState(0);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [direction, setDirection] = useState(0);
   const [popularProducts, setPopularProducts] = useState<any[]>([]);
@@ -152,10 +154,25 @@ export const Home: React.FC = () => {
     if (!isDragging || !scrollRef.current) return;
     e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 1.2; // 스크롤 속도 조정값 (기존 2에서 변경)
+    const walk = (x - startX) * 1.5; 
     scrollRef.current.scrollLeft = scrollLeft - walk;
     setDragDistance(Math.abs(x - startX));
+    checkScroll();
   };
+
+  const checkScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setShowLeftArrow(scrollLeft > 10);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, []);
 
   const handleCategoryClick = (catId: string) => {
     // 드래그가 아닌 클릭일 때만 이동
@@ -269,7 +286,8 @@ export const Home: React.FC = () => {
               onMouseLeave={handleMouseLeave}
               onMouseUp={handleMouseUp}
               onMouseMove={handleMouseMove}
-              className={`flex overflow-x-auto pb-4 gap-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none scroll-smooth`}
+              onScroll={checkScroll}
+              className={`flex overflow-x-auto pb-4 gap-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none`}
             >
               {CATEGORY_DATA.map(cat => (
                 <button
@@ -282,27 +300,29 @@ export const Home: React.FC = () => {
               ))}
             </div>
             
-            {/* Hover Side Blurs - 너비 축소 (w-24 -> w-12) */}
-            <div className="absolute top-0 left-0 h-[124px] w-12 bg-gradient-to-r from-white/80 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-            <div className="absolute top-0 right-0 h-[124px] w-12 bg-gradient-to-l from-white/80 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+
 
             {/* Navigation Icons */}
-            <button 
-              onClick={() => {
-                if (scrollRef.current) scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
-              }}
-              className="absolute left-[-20px] top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-20"
-            >
-              <BsChevronLeft className="w-5 h-5" />
-            </button>
-            <button 
-              onClick={() => {
-                if (scrollRef.current) scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-              }}
-              className="absolute right-[-20px] top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-20"
-            >
-              <BsChevronRight className="w-5 h-5" />
-            </button>
+            {showLeftArrow && (
+              <button 
+                onClick={() => {
+                  if (scrollRef.current) scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+                }}
+                className="absolute left-[-20px] top-[62px] -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all z-20"
+              >
+                <BsChevronLeft className="w-5 h-5 leading-none" />
+              </button>
+            )}
+            {showRightArrow && (
+              <button 
+                onClick={() => {
+                  if (scrollRef.current) scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+                }}
+                className="absolute right-[-20px] top-[62px] -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all z-20"
+              >
+                <BsChevronRight className="w-5 h-5 leading-none" />
+              </button>
+            )}
           </div>
         </section>
 

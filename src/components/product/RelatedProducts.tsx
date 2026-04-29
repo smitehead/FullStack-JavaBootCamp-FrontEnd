@@ -18,6 +18,24 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [dragDistance, setDragDistance] = useState(0);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
+
+  // 화살표 표시 여부 체크
+  const checkScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setShowLeftArrow(scrollLeft > 10);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [products]);
 
   useEffect(() => {
     const fetchRelated = async () => {
@@ -68,8 +86,10 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
     if (!isDragging || !scrollRef.current) return;
     e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 1.2; // 홈 화면과 동일한 스크롤 감도(1.2)로 조정
+    const walk = (x - startX) * 1.5; 
     scrollRef.current.scrollLeft = scrollLeft - walk;
+    setDragDistance(Math.abs(x - startX));
+    checkScroll();
   };
 
   if (isLoading) {
@@ -108,9 +128,9 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
-          className={`flex overflow-x-auto gap-5 pb-8 px-1 no-scrollbar scroll-smooth ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+          onScroll={checkScroll}
+          className={`flex overflow-x-auto gap-5 px-1 no-scrollbar ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
           style={{ 
-            scrollSnapType: isDragging ? 'none' : 'x proximity',
             WebkitOverflowScrolling: 'touch'
           }}
         >
@@ -126,34 +146,36 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
               {/* 드래그 중에는 클릭(이동) 방지를 위해 pointer-events-none 적용 검토 가능하나, 
                   일반적으로는 MouseUp 시점에 드래그 여부를 판별하여 처리함. 
                   여기서는 단순 드래그 구현에 집중함. */}
-              <div className={isDragging ? 'pointer-events-none' : ''}>
+              <div className={`pb-8 ${dragDistance > 5 ? 'pointer-events-none' : ''}`}>
                 <ProductCard product={product} />
               </div>
             </motion.div>
           ))}
         </div>
         
-        {/* Hover Side Blurs - 너비 축소 (w-24 -> w-12) */}
-        <div className="absolute top-0 left-0 h-full w-12 bg-gradient-to-r from-white/80 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-        <div className="absolute top-0 right-0 h-full w-12 bg-gradient-to-l from-white/80 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+
 
         {/* Navigation Icons */}
-        <button 
-          onClick={() => {
-            if (scrollRef.current) scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
-          }}
-          className="absolute left-[-20px] top-[40%] -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-20"
-        >
-          <BsChevronLeft className="w-5 h-5" />
-        </button>
-        <button 
-          onClick={() => {
-            if (scrollRef.current) scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-          }}
-          className="absolute right-[-20px] top-[40%] -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-20"
-        >
-          <BsChevronRight className="w-5 h-5" />
-        </button>
+        {showLeftArrow && (
+          <button 
+            onClick={() => {
+              if (scrollRef.current) scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+            }}
+            className="absolute left-[-20px] top-[140px] -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all z-20"
+          >
+            <BsChevronLeft className="w-5 h-5 leading-none" />
+          </button>
+        )}
+        {showRightArrow && (
+          <button 
+            onClick={() => {
+              if (scrollRef.current) scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+            }}
+            className="absolute right-[-20px] top-[140px] -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-brand hover:scale-110 transition-all z-20"
+          >
+            <BsChevronRight className="w-5 h-5 leading-none" />
+          </button>
+        )}
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `

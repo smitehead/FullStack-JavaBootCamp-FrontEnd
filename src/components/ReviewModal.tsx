@@ -94,7 +94,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
             </div>
             <div>
               <h3 className="text-xl font-bold text-gray-900 leading-tight">
-                <span className="text-indigo-600">{sellerNickname}</span>님과의 거래<br />
+                <span className="text-indigo-600">{sellerNickname}</span> 님과의 거래<br />
                 어떤 점이 좋았나요?
               </h3>
             </div>

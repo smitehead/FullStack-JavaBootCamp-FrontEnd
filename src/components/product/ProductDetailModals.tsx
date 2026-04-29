@@ -492,8 +492,8 @@ export const ProductDetailModals: React.FC<ProductDetailModalsProps> = ({
                   취소
                 </button>
                 <button onClick={executeBuyout} disabled={isBuyoutProcessing}
-                  className="flex-1 py-3.5 bg-[#1a1a3a] text-white rounded-2xl font-bold hover:bg-[#2a2a4a] transition-all shadow-lg shadow-blue-500/10 text-sm flex items-center justify-center gap-2">
-                  {isBuyoutProcessing ? <div className="spinner-border w-4 h-4" style={{ borderTopColor: '#fff', borderLeftColor: 'rgba(255,255,255,0.2)', borderBottomColor: 'rgba(255,255,255,0.2)', borderRightColor: 'rgba(255,255,255,0.2)' }} /> : '구매하기'}
+                  className="flex-1 py-3.5 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all shadow-lg shadow-gray-200 text-sm flex items-center justify-center gap-2">
+                  {isBuyoutProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '구매하기'}
                 </button>
               </div>
             </div>

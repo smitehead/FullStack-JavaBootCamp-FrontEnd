@@ -909,7 +909,7 @@ export const MyPage: React.FC = () => {
             setSelectedProductForReview(null);
           }}
           resultNo={selectedProductForReview.resultNo!}
-          sellerNickname={activeTab === 'selling' ? '구매자' : (selectedProductForReview.seller?.nickname || '판매자')}
+          sellerNickname={activeTab === 'selling' ? (selectedProductForReview.winnerNickname || '구매자') : (selectedProductForReview.seller?.nickname || '판매자')}
           productTitle={selectedProductForReview.title}
           productImage={selectedProductForReview.images?.[0] || ''}
           role={activeTab === 'selling' ? 'seller' : 'buyer'}

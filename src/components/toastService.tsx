@@ -46,7 +46,7 @@ export const showRebidToast = ({ productNo, title, price, image, navigate }: Reb
         initial={{ opacity: 0, x: 50, scale: 0.9 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         exit={{ opacity: 0, x: 50, scale: 0.9 }}
-        className="bg-white w-[340px] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden pointer-events-auto cursor-pointer hover:bg-gray-50 transition-colors"
+        className="bg-white w-[340px] ml-auto rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden pointer-events-auto cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => {
           navigate(`/products/${productNo}`);
           toast.dismiss(t);
