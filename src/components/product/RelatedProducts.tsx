@@ -142,7 +142,6 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               className="flex-none w-[240px] md:w-[280px]"
-              style={{ scrollSnapAlign: 'start' }}
             >
               {/* 드래그 중에는 클릭(이동) 방지를 위해 pointer-events-none 적용 검토 가능하나, 
                   일반적으로는 MouseUp 시점에 드래그 여부를 판별하여 처리함. 

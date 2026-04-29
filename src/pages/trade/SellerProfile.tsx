@@ -59,6 +59,7 @@ export const SellerProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isBlocked, setIsBlocked] = useState(false);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [visibleReviewsCount, setVisibleReviewsCount] = useState(5);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -322,9 +323,11 @@ export const SellerProfile: React.FC = () => {
                     })()}
                   </div>
                 </div>
+                
+                <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 mt-8">받은 거래 후기</h4>
 
                 <div className="space-y-4">
-                  {reviews.map((review: any) => (
+                  {reviews.slice(0, visibleReviewsCount).map((review: any) => (
                     <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 p-6">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
@@ -334,7 +337,16 @@ export const SellerProfile: React.FC = () => {
                           >
                             {review.writerNickname}
                           </Link>
-                          <span className="text-xs text-gray-400 font-medium">{new Date(review.createdAt).toLocaleDateString()}</span>
+                          <span className="text-xs text-gray-400 font-medium">
+                            {new Date(review.createdAt).toLocaleString('ko-KR', {
+                              year: 'numeric',
+                              month: 'numeric',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: 'numeric',
+                              hour12: true
+                            })}
+                          </span>
                         </div>
                       </div>
 
@@ -364,6 +376,17 @@ export const SellerProfile: React.FC = () => {
                     </div>
                   ))}
                 </div>
+
+                {reviews.length > visibleReviewsCount && (
+                  <div className="flex justify-center mt-10 mb-12">
+                    <button
+                      onClick={() => setVisibleReviewsCount(prev => prev + 5)}
+                      className="px-8 py-3 bg-white border border-gray-100 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:border-gray-200 hover:shadow-md transition-all shadow-sm"
+                    >
+                      받은 후기 더보기
+                    </button>
+                  </div>
+                )}
               </div>
             )
           )}

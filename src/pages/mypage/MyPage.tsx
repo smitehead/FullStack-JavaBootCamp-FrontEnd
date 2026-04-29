@@ -91,6 +91,7 @@ export const MyPage: React.FC = () => {
     createdAt: string;
   }
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
+  const [visibleReviewsCount, setVisibleReviewsCount] = useState(5);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [hideModalId, setHideModalId] = useState<number | null>(null);
 
@@ -798,69 +799,93 @@ export const MyPage: React.FC = () => {
                   <div className="flex flex-col gap-4">
                     <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider">받은 거래 후기</h4>
                     {reviews.length > 0 ? (
-                      reviews.map(review => (
-                        <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                          <div className="flex justify-between items-start mb-4">
-                            <div className="flex items-center gap-3">
-                              <Link 
-                                to={`/seller/${review.writerNo}`}
-                                className="font-bold text-gray-900 hover:text-gray-600 transition-colors"
-                              >
-                                {review.writerNickname}
-                              </Link>
-                              <span className="text-xs text-gray-400 font-medium">{new Date(review.createdAt).toLocaleDateString()}</span>
-                            </div>
+                      <>
+                        <div className="flex flex-col gap-4">
+                          {reviews.slice(0, visibleReviewsCount).map(review => (
+                            <div key={review.reviewNo} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                              <div className="flex justify-between items-start mb-4">
+                                <div className="flex items-center gap-3">
+                                  <Link 
+                                    to={`/seller/${review.writerNo}`}
+                                    className="font-bold text-gray-900 hover:text-gray-600 transition-colors"
+                                  >
+                                    {review.writerNickname}
+                                  </Link>
+                                   <span className="text-xs text-gray-400 font-medium">
+                                  {new Date(review.createdAt).toLocaleString('ko-KR', {
+                                    year: 'numeric',
+                                    month: 'numeric',
+                                    day: 'numeric',
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    hour12: true
+                                  })}
+                                </span>
+                                </div>
 
-                            <div className="relative">
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOpenMenuId(openMenuId === review.reviewNo ? null : review.reviewNo);
-                                }}
-                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                              >
-                                <BsThreeDotsVertical className="w-5 h-5 text-gray-400" />
-                              </button>
-                              
-                              {openMenuId === review.reviewNo && (
-                                <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
-                                  <button
+                                <div className="relative">
+                                  <button 
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      setHideModalId(review.reviewNo);
-                                      setOpenMenuId(null);
+                                      setOpenMenuId(openMenuId === review.reviewNo ? null : review.reviewNo);
                                     }}
-                                    className="w-full flex items-center justify-start px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                                   >
-                                    <BsEyeSlash className="w-4 h-4 mr-2.5" /> 후기 숨기기
+                                    <BsThreeDotsVertical className="w-5 h-5 text-gray-400" />
                                   </button>
+                                  
+                                  {openMenuId === review.reviewNo && (
+                                    <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top-right">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setHideModalId(review.reviewNo);
+                                          setOpenMenuId(null);
+                                        }}
+                                        className="w-full flex items-center justify-start px-4 py-3 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                                      >
+                                        <BsEyeSlash className="w-4 h-4 mr-2.5" /> 후기 숨기기
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              {review.tags && review.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                  {review.tags.map(tag => (
+                                    <span key={tag} className="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">{tag}</span>
+                                  ))}
                                 </div>
                               )}
+                              {review.content && (
+                                <div className="bg-gray-50 rounded-xl p-4 mb-3">
+                                  <p className="text-sm text-gray-700 leading-relaxed">{review.content}</p>
+                                </div>
+                              )}
+                              {review.productTitle && (
+                                <Link
+                                  to={`/products/${review.productNo}`}
+                                  className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
+                                >
+                                  <BsBox2 className="w-3.5 h-3.5" />
+                                  {review.productTitle}
+                                </Link>
+                              )}
                             </div>
-                          </div>
-                          {review.tags && review.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {review.tags.map(tag => (
-                                <span key={tag} className="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">{tag}</span>
-                              ))}
-                            </div>
-                          )}
-                          {review.content && (
-                            <div className="bg-gray-50 rounded-xl p-4 mb-3">
-                              <p className="text-sm text-gray-700 leading-relaxed">{review.content}</p>
-                            </div>
-                          )}
-                          {review.productTitle && (
-                            <Link
-                              to={`/products/${review.productNo}`}
-                              className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-indigo-600 transition-colors"
-                            >
-                              <BsBox2 className="w-3.5 h-3.5" />
-                              {review.productTitle}
-                            </Link>
-                          )}
+                          ))}
                         </div>
-                      ))
+
+                        {reviews.length > visibleReviewsCount && (
+                          <div className="flex justify-center mt-10 mb-12">
+                            <button
+                              onClick={() => setVisibleReviewsCount(prev => prev + 5)}
+                              className="px-8 py-3 bg-white border border-gray-100 rounded-full text-sm font-bold text-gray-600 hover:text-gray-900 hover:border-gray-200 hover:shadow-md transition-all shadow-sm"
+                            >
+                              받은 후기 더보기
+                            </button>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <EmptyState message="받은 후기가 없습니다." />
                     )}

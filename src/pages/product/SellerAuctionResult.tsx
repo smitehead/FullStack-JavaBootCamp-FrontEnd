@@ -31,6 +31,7 @@ interface SellerResultDetail {
   hasReview?: boolean;
   hasBuyerReview?: boolean;
   hasSellerReview?: boolean;
+  createdAt: string;
 }
 
 export const SellerAuctionResult: React.FC = () => {
@@ -249,8 +250,18 @@ export const SellerAuctionResult: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               {/* Product Summary */}
               <section className="p-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  낙찰 상품 정보
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-baseline justify-between w-full">
+                  <div className="flex items-center gap-2">낙찰 상품 정보</div>
+                  <span className="text-xs text-gray-400 font-medium font-sans">
+                    낙찰일 : {new Date(result.createdAt).toLocaleString('ko-KR', {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true
+                    })}
+                  </span>
                 </h3>
                 <div className="flex gap-6">
                   {images.length > 0 && (
@@ -344,8 +355,20 @@ export const SellerAuctionResult: React.FC = () => {
 
               {/* 정산 정보 */}
               <section className="p-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  정산 정보
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-baseline justify-between w-full">
+                  <div className="flex items-center gap-2">정산 정보</div>
+                  {result.confirmedAt && (
+                    <span className="text-xs text-gray-400 font-medium font-sans">
+                      정산일 : {new Date(result.confirmedAt).toLocaleString('ko-KR', {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                      })}
+                    </span>
+                  )}
                 </h3>
                 {(() => {
                   const feeRate = result.tradeType === '직거래' ? 0.01 : 0.02;
