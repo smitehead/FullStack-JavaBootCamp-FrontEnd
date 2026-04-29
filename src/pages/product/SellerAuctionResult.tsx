@@ -85,11 +85,13 @@ export const SellerAuctionResult: React.FC = () => {
       const roomNo = res.data?.roomNo;
       if (!roomNo) return;
       setChatRoomNo(roomNo);
-      // 초기 메시지를 실제 저장해 lastMessageAt을 세팅 → 채팅 목록 최신순 정렬 반영
-      api.post(`/chat/rooms/${roomNo}/messages`, {
-        content: '첫 대화를 남겨보세요',
-        msgType: 'SYSTEM',
-      }).catch(() => {});
+      // 신규 방일 때만 안내 시스템 메시지 전송 (중복 방지)
+      if (res.data?.isNew === true) {
+        api.post(`/chat/rooms/${roomNo}/messages`, {
+          content: '첫 대화를 남겨보세요',
+          msgType: 'SYSTEM',
+        }).catch(() => {});
+      }
     }).catch(() => {});
   // result.productNo가 확정됐을 때 한 번만 실행
   // eslint-disable-next-line react-hooks/exhaustive-deps

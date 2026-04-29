@@ -206,6 +206,10 @@ export const Chat: React.FC = () => {
     setMessages([]);
     setHasMore(true);
     receivedUuids.current.clear();
+    // 채팅방 전환 시 입력창 초기화
+    setNewMessage('');
+    const ta = document.querySelector<HTMLTextAreaElement>('textarea[placeholder="메시지를 입력하세요..."]');
+    if (ta) ta.style.height = 'auto';
 
     (async () => {
       const msgs = await loadMessages(selectedRoom.roomNo);
@@ -919,6 +923,11 @@ export const Chat: React.FC = () => {
     setApptAddrDetail('');
   };
 
+  // 전송 실패 메시지 삭제
+  const handleDeleteFailed = (msg: ChatMessage) => {
+    setMessages(prev => prev.filter(m => m.clientUuid !== msg.clientUuid));
+  };
+
   // 재전송
   const handleRetry = (msg: ChatMessage) => {
     if (!msg.clientUuid || !selectedRoom || !memberNo) return;
@@ -1133,7 +1142,7 @@ export const Chat: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-between gap-2">
                     <p className={`text-xs truncate flex-1 ${room.unreadCount > 0 ? 'text-brand font-bold' : 'text-gray-500'}`}>
-                      {formatMessagePreview(room.lastMessage) || '첫 대화를 남겨보세요'}
+                      {formatMessagePreview(room.lastMessage)}
                     </p>
                     {room.appointmentStatus === 1 && (
                       <span className="flex-shrink-0 bg-brand text-white text-[10px] font-bold px-2 h-5 inline-flex items-center justify-center rounded-full">
@@ -1441,9 +1450,9 @@ export const Chat: React.FC = () => {
                                 <div className="animate-spin w-2.5 h-2.5 border-2 border-gray-300 border-t-gray-500 rounded-full" />
                               )}
                               {isMe && msg.status === 'FAILED' && (
-                                <button onClick={() => handleRetry(msg)} className="text-red-500 hover:scale-110 transition-transform">
+                                <span className="text-red-500">
                                   <BsExclamationCircle className="w-3 h-3" />
-                                </button>
+                                </span>
                               )}
 
                               {/* 시간 표시 (마지막 메시지인 경우에만) */}
@@ -1454,6 +1463,23 @@ export const Chat: React.FC = () => {
                               )}
                             </div>
                           </div>
+                          {/* 전송 실패 재전송/삭제 버튼 */}
+                          {isMe && msg.status === 'FAILED' && (
+                            <div className="flex gap-1 mt-0.5">
+                              <button
+                                onClick={() => handleRetry(msg)}
+                                className="text-[10px] font-bold text-red-500 hover:text-red-600 px-2 py-0.5 rounded-lg hover:bg-red-50 transition-all"
+                              >
+                                재전송
+                              </button>
+                              <button
+                                onClick={() => handleDeleteFailed(msg)}
+                                className="text-[10px] font-bold text-gray-400 hover:text-gray-600 px-2 py-0.5 rounded-lg hover:bg-gray-100 transition-all"
+                              >
+                                삭제
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -1538,7 +1564,7 @@ export const Chat: React.FC = () => {
                     onChange={(e) => {
                       if (e.target.value.length <= MAX_CONTENT_LENGTH) setNewMessage(e.target.value);
                       e.target.style.height = 'auto';
-                      e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+                      e.target.style.height = `${Math.min(e.target.scrollHeight, 124)}px`;
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -1552,7 +1578,7 @@ export const Chat: React.FC = () => {
                     maxLength={MAX_CONTENT_LENGTH}
                     rows={1}
                     className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all resize-none overflow-y-auto leading-5"
-                    style={{ maxHeight: '120px' }}
+                    style={{ maxHeight: '124px', overflowY: 'auto' }}
                   />
                   {newMessage.length > 3800 && (
                     <span className="absolute right-3 bottom-3 text-[10px] text-gray-400">
