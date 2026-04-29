@@ -32,7 +32,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     if (showErrorScreen) {
       intervalId = setInterval(async () => {
         try {
-          const res = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+          const res = await fetch('/api/banners', { cache: 'no-store' });
           if (res.ok) {
             localStorage.removeItem('server_error');
             setShowErrorScreen(false);

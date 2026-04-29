@@ -188,11 +188,6 @@ export interface ChatRoom {
   appointmentAt?: string;
 }
 
-export interface ReviewTag {
-  id: string;
-  content: string;
-  count: number;
-}
 
 export interface Review {
   id: string;
