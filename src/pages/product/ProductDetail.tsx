@@ -17,6 +17,7 @@ import { QnaSection } from '@/components/product/QnaSection';
 import { BidHistorySection } from '@/components/product/BidHistorySection';
 import { ShippingSection } from '@/components/product/ShippingSection';
 import { ProductDetailModals } from '@/components/product/ProductDetailModals';
+import { RelatedProducts } from '@/components/product/RelatedProducts';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // 카테고리 ID로 전체 경로를 찾는 헬퍼 함수
@@ -1242,7 +1243,7 @@ export const ProductDetail: React.FC = () => {
           <div className="flex">
             {[
               { id: 'detail', label: '상품 상세' },
-              { id: 'history', label: `입찰 기록 (${product.participantCount})` },
+              { id: 'history', label: `입찰 기록` },
               { id: 'shipping', label: '배송 정보' },
               { id: 'qna', label: '상품문의' }
             ].map(tab => (
@@ -1324,6 +1325,10 @@ export const ProductDetail: React.FC = () => {
                 isSeller={isSeller}
                 currentMemberNo={currentMemberNo}
               />
+            </ErrorBoundary>
+
+            <ErrorBoundary>
+              <RelatedProducts productId={product.id} />
             </ErrorBoundary>
           </div>
 
@@ -1558,52 +1563,52 @@ export const ProductDetail: React.FC = () => {
       )}
 
       <ErrorBoundary>
-      <ProductDetailModals
-        product={product}
-        user={user}
-        bidAmount={bidAmount}
-        autoBidMaxAmount={autoBidMaxAmount}
-        isFinished={isFinished}
-        cancelCondition={cancelCondition}
-        isShareModalOpen={isShareModalOpen}
-        showCancelModal={showCancelModal}
-        showBidCancelModal={showBidCancelModal}
-        showBidTermsModal={showBidTermsModal}
-        showRechargePrompt={showRechargePrompt}
-        showDeleteModal={showDeleteModal}
-        showRepostModal={showRepostModal}
-        showBuyoutModal={showBuyoutModal}
-        showBidConfirmModal={showBidConfirmModal}
-        showAutoBidConfirmModal={showAutoBidConfirmModal}
-        isBidCancelling={isBidCancelling}
-        isBidProcessing={isBidProcessing}
-        isBuyoutProcessing={isBuyoutProcessing}
-        isDeleting={isDeleting}
-        isConfirming={isConfirming}
-        agreedNoRebid={agreedNoRebid}
-        agreedPenalty={agreedPenalty}
-        dontAskToday={dontAskToday}
-        setIsShareModalOpen={setIsShareModalOpen}
-        setShowCancelModal={setShowCancelModal}
-        setShowBidCancelModal={setShowBidCancelModal}
-        setShowRechargePrompt={setShowRechargePrompt}
-        setShowDeleteModal={setShowDeleteModal}
-        setShowRepostModal={setShowRepostModal}
-        setShowBuyoutModal={setShowBuyoutModal}
-        setShowBidConfirmModal={setShowBidConfirmModal}
-        setShowAutoBidConfirmModal={setShowAutoBidConfirmModal}
-        setAgreedNoRebid={setAgreedNoRebid}
-        setAgreedPenalty={setAgreedPenalty}
-        setDontAskToday={setDontAskToday}
-        handleAuctionCancel={handleAuctionCancel}
-        handleBidCancelConfirm={handleBidCancelConfirm}
-        handleBidTermsClose={handleBidTermsClose}
-        handleBidTermsConfirm={handleBidTermsConfirm}
-        handleDeleteProduct={handleDeleteProduct}
-        executeBuyout={executeBuyout}
-        executeStandardBid={executeStandardBid}
-        executeAutoBid={executeAutoBid}
-      />
+        <ProductDetailModals
+          product={product}
+          user={user}
+          bidAmount={bidAmount}
+          autoBidMaxAmount={autoBidMaxAmount}
+          isFinished={isFinished}
+          cancelCondition={cancelCondition}
+          isShareModalOpen={isShareModalOpen}
+          showCancelModal={showCancelModal}
+          showBidCancelModal={showBidCancelModal}
+          showBidTermsModal={showBidTermsModal}
+          showRechargePrompt={showRechargePrompt}
+          showDeleteModal={showDeleteModal}
+          showRepostModal={showRepostModal}
+          showBuyoutModal={showBuyoutModal}
+          showBidConfirmModal={showBidConfirmModal}
+          showAutoBidConfirmModal={showAutoBidConfirmModal}
+          isBidCancelling={isBidCancelling}
+          isBidProcessing={isBidProcessing}
+          isBuyoutProcessing={isBuyoutProcessing}
+          isDeleting={isDeleting}
+          isConfirming={isConfirming}
+          agreedNoRebid={agreedNoRebid}
+          agreedPenalty={agreedPenalty}
+          dontAskToday={dontAskToday}
+          setIsShareModalOpen={setIsShareModalOpen}
+          setShowCancelModal={setShowCancelModal}
+          setShowBidCancelModal={setShowBidCancelModal}
+          setShowRechargePrompt={setShowRechargePrompt}
+          setShowDeleteModal={setShowDeleteModal}
+          setShowRepostModal={setShowRepostModal}
+          setShowBuyoutModal={setShowBuyoutModal}
+          setShowBidConfirmModal={setShowBidConfirmModal}
+          setShowAutoBidConfirmModal={setShowAutoBidConfirmModal}
+          setAgreedNoRebid={setAgreedNoRebid}
+          setAgreedPenalty={setAgreedPenalty}
+          setDontAskToday={setDontAskToday}
+          handleAuctionCancel={handleAuctionCancel}
+          handleBidCancelConfirm={handleBidCancelConfirm}
+          handleBidTermsClose={handleBidTermsClose}
+          handleBidTermsConfirm={handleBidTermsConfirm}
+          handleDeleteProduct={handleDeleteProduct}
+          executeBuyout={executeBuyout}
+          executeStandardBid={executeStandardBid}
+          executeAutoBid={executeAutoBid}
+        />
       </ErrorBoundary>
     </div>
   );

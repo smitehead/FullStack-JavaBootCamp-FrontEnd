@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { BsCheckCircle, BsChevronLeft } from 'react-icons/bs';
-
-const REVIEW_TAGS = [
-  { id: 'tag_1', content: '응답이 빨라요' },
-  { id: 'tag_2', content: '친절하고 매너가 좋아요' },
-  { id: 'tag_3', content: '시간 약속을 잘 지켜요' },
-  { id: 'tag_4', content: '상품 상태가 설명과 같아요' },
-];
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
+
+interface TagDef {
+  tagId: number;
+  tagName: string;
+  applicableRole: string;
+}
 
 export const ReviewCreate: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -18,15 +17,17 @@ export const ReviewCreate: React.FC = () => {
   const queryParams = new URLSearchParams(location.search);
   const resultNo = queryParams.get('resultNo') || orderId;
 
-  const [sellerNickname, setSellerNickname] = useState('판매자');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [role, setRole] = useState<'BUYER' | 'SELLER' | null>(null);
+  const [availableTags, setAvailableTags] = useState<TagDef[]>([]);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // 이미 작성된 후기인지 진입 시 확인
+  // 이미 작성된 후기인지 확인 + 역할 조회
   useEffect(() => {
     if (!resultNo) return;
+
     api.get(`/reviews/exists/${resultNo}`)
       .then(res => {
         if (res.data?.exists) {
@@ -34,19 +35,32 @@ export const ReviewCreate: React.FC = () => {
           navigate(-1);
         }
       })
-      .catch(() => { /* 확인 실패 시 그냥 진행 */ });
+      .catch(() => {});
+
+    api.get(`/reviews/role`, { params: { resultNo } })
+      .then(res => setRole(res.data?.role ?? null))
+      .catch(() => {
+        showToast('역할 정보를 불러오는 데 실패했습니다.', 'error');
+        navigate(-1);
+      });
   }, [resultNo, navigate]);
 
-  const toggleTag = (tagContent: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tagContent)
-        ? prev.filter(t => t !== tagContent)
-        : [...prev, tagContent]
+  // 역할이 확정되면 해당 역할의 태그 목록 조회
+  useEffect(() => {
+    if (!role) return;
+    api.get(`/reviews/tags`, { params: { role } })
+      .then(res => setAvailableTags(res.data ?? []))
+      .catch(() => showToast('태그 목록을 불러오는 데 실패했습니다.', 'error'));
+  }, [role]);
+
+  const toggleTag = (tagId: number) => {
+    setSelectedTagIds(prev =>
+      prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
     );
   };
 
   const handleSubmit = async () => {
-    if (selectedTags.length === 0 && !content.trim()) {
+    if (selectedTagIds.length === 0 && !content.trim()) {
       showToast('태그 또는 후기 내용 중 하나 이상 입력해주세요.', 'error');
       return;
     }
@@ -55,7 +69,7 @@ export const ReviewCreate: React.FC = () => {
     try {
       await api.post('/reviews', {
         resultNo: Number(resultNo),
-        tags: selectedTags.length > 0 ? selectedTags : null,
+        tagIds: selectedTagIds.length > 0 ? selectedTagIds : null,
         content: content.trim() || null,
       });
       setShowSuccess(true);
@@ -73,6 +87,8 @@ export const ReviewCreate: React.FC = () => {
     }
   };
 
+  const roleLabel = role === 'BUYER' ? '구매자' : role === 'SELLER' ? '판매자' : '';
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
@@ -85,7 +101,12 @@ export const ReviewCreate: React.FC = () => {
             <BsChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
             뒤로가기
           </button>
-          <h2 className="text-2xl font-bold text-gray-900">거래 후기 작성</h2>
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900">거래 후기 작성</h2>
+            {roleLabel && (
+              <p className="text-sm text-gray-400 font-medium mt-1">{roleLabel}로서 남기는 후기입니다.</p>
+            )}
+          </div>
         </div>
 
         <section className="bg-white rounded-[40px] shadow-sm border border-gray-100 p-10 space-y-10">
@@ -94,20 +115,25 @@ export const ReviewCreate: React.FC = () => {
             <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">
               거래하며 느낀 점을 태그로 선택해주세요. (중복 선택 가능)
             </p>
-            <div className="flex flex-wrap gap-2.5">
-              {REVIEW_TAGS.map(tag => (
-                <button
-                  key={tag.id}
-                  onClick={() => toggleTag(tag.content)}
-                  className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${selectedTags.includes(tag.content)
-                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
-                      : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+            {availableTags.length === 0 && role !== null ? (
+              <p className="text-xs text-gray-400">태그를 불러오는 중...</p>
+            ) : (
+              <div className="flex flex-wrap gap-2.5">
+                {availableTags.map(tag => (
+                  <button
+                    key={tag.tagId}
+                    onClick={() => toggleTag(tag.tagId)}
+                    className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
+                      selectedTagIds.includes(tag.tagId)
+                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
+                        : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
                     }`}
-                >
-                  {tag.content}
-                </button>
-              ))}
-            </div>
+                  >
+                    {tag.tagName}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* 텍스트 후기 */}
@@ -116,14 +142,14 @@ export const ReviewCreate: React.FC = () => {
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="판매자에게 따뜻한 후기를 남겨주세요."
+              placeholder="따뜻한 후기를 남겨주세요."
               className="w-full h-40 p-6 bg-gray-50 border border-gray-100 rounded-3xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all outline-none resize-none"
             />
           </div>
 
           <button
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || role === null}
             className="w-full h-[56px] flex items-center justify-center bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
           >
             {isSubmitting ? '등록 중...' : '후기 등록하기'}
