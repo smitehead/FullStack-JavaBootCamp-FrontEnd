@@ -1326,10 +1326,6 @@ export const ProductDetail: React.FC = () => {
                 currentMemberNo={currentMemberNo}
               />
             </ErrorBoundary>
-
-            <ErrorBoundary>
-              <RelatedProducts productId={product.id} />
-            </ErrorBoundary>
           </div>
 
           {/* Right: Sidebar */}
@@ -1367,6 +1363,13 @@ export const ProductDetail: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* 연관 상품 추천: 사이드바 영역 밖으로 이동하여 전체 너비 사용 */}
+        <div className="mt-20">
+          <ErrorBoundary>
+            <RelatedProducts productId={product.id} />
+          </ErrorBoundary>
         </div>
       </div>
 

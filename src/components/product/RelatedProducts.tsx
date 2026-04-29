@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Product } from '@/types';
 import api from '@/services/api';
 import { ProductCard } from '@/components/ProductCard';
@@ -11,13 +11,18 @@ interface RelatedProductsProps {
 export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // 마우스 드래그 스크롤을 위한 Ref 및 상태
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   useEffect(() => {
     const fetchRelated = async () => {
       setIsLoading(true);
       try {
         const res = await api.get(`/products/${productId}/related`);
-        // 백엔드 데이터 매핑 (ProductDetail.tsx의 매핑 로직 참고)
         const mappedProducts = res.data.map((data: any) => ({
           id: String(data.id),
           title: data.title,
@@ -42,6 +47,30 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
     }
   }, [productId]);
 
+  // 마우스 이벤트 핸들러
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // 스크롤 속도 배율
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
   if (isLoading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center space-y-4">
@@ -53,7 +82,7 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
 
   if (products.length === 0) {
     return (
-      <div className="py-16 border-t border-gray-100 mt-12">
+      <div className="py-16 border-t border-gray-100">
         <h2 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">연관 상품 추천</h2>
         <div className="py-20 text-center bg-gray-50/50 rounded-3xl border-2 border-dashed border-gray-100">
           <p className="text-gray-400 font-semibold">관련된 상품이 없습니다.</p>
@@ -63,7 +92,7 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
   }
 
   return (
-    <div className="py-16 border-t border-gray-100 mt-12">
+    <div className="py-16 border-t border-gray-100">
       <div className="flex items-center justify-between mb-8 px-1">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 tracking-tight">연관 상품 추천</h2>
@@ -73,9 +102,14 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
 
       <div className="relative group">
         <div 
-          className="flex overflow-x-auto gap-5 pb-8 px-1 no-scrollbar scroll-smooth"
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          className={`flex overflow-x-auto gap-5 pb-8 px-1 no-scrollbar scroll-smooth ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
           style={{ 
-            scrollSnapType: 'x proximity',
+            scrollSnapType: isDragging ? 'none' : 'x proximity',
             WebkitOverflowScrolling: 'touch'
           }}
         >
@@ -88,12 +122,16 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
               className="flex-none w-[240px] md:w-[280px]"
               style={{ scrollSnapAlign: 'start' }}
             >
-              <ProductCard product={product} />
+              {/* 드래그 중에는 클릭(이동) 방지를 위해 pointer-events-none 적용 검토 가능하나, 
+                  일반적으로는 MouseUp 시점에 드래그 여부를 판별하여 처리함. 
+                  여기서는 단순 드래그 구현에 집중함. */}
+              <div className={isDragging ? 'pointer-events-none' : ''}>
+                <ProductCard product={product} />
+              </div>
             </motion.div>
           ))}
         </div>
         
-        {/* 가로 스크롤 안내용 그라데이션 (마지막 상품 도달 시 사라짐) */}
         <div className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-white to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
 
