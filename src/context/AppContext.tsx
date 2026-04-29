@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useRef, ReactNode, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Category, Notification, ChatRoom, User, Product, Account, WithdrawnUser, NotificationType, Report, MannerHistory, ActivityLog } from '@/types';
 import api from '@/services/api';
 import { resolveImageUrl } from '@/utils/imageUtils';
 import { getMemberNo } from '@/utils/memberUtils';
-import { showToast } from '@/components/toastService';
+import { showToast, showRebidToast } from '@/components/toastService';
 import { CATEGORY_DATA } from '@/data/category_data';
 
 const getCategoryNameByNo = (categoryNo: number | null | undefined): Category => {
@@ -158,6 +159,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
   const [isInitialized, setIsInitialized] = useState(false);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -349,6 +351,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       eventSource.addEventListener('priceUpdate', (event: MessageEvent) => {
         try {
           const data = JSON.parse(event.data);
+          
+          // 최고 입찰자 취소로 인한 차순위 승계 알림 (Phase 1)
+          if (data.bidCancelled && data.bidderNo != null) {
+            const myMemberNo = extractMemberNo(user.id);
+            if (Number(data.bidderNo) === myMemberNo) {
+              showRebidToast({
+                productNo: data.productNo,
+                title: data.title || '경매 상품',
+                price: data.currentPrice,
+                image: data.imageUrl,
+                navigate: navigate
+              });
+            }
+          }
+
           window.dispatchEvent(new CustomEvent('sse:priceUpdate', { detail: data }));
         } catch (e) {
           console.error('[SSE] priceUpdate 파싱 오류', e);

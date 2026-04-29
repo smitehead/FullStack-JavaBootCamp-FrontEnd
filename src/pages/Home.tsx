@@ -251,7 +251,7 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative group">
             <div
               ref={scrollRef}
               onMouseDown={handleMouseDown}
@@ -270,6 +270,10 @@ export const Home: React.FC = () => {
                 </button>
               ))}
             </div>
+            
+            {/* Hover Side Blurs */}
+            <div className="absolute top-0 left-0 h-full w-24 bg-gradient-to-r from-white via-white/40 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+            <div className="absolute top-0 right-0 h-full w-24 bg-gradient-to-l from-white via-white/40 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
           </div>
         </section>
 

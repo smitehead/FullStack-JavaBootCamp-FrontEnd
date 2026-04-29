@@ -67,7 +67,7 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
     if (!isDragging || !scrollRef.current) return;
     e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // 스크롤 속도 배율
+    const walk = (x - startX) * 1.2; // 홈 화면과 동일한 스크롤 감도(1.2)로 조정
     scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
@@ -132,7 +132,8 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
           ))}
         </div>
         
-        <div className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-white to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute top-0 left-0 h-full w-24 bg-gradient-to-r from-white via-white/40 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+        <div className="absolute top-0 right-0 h-full w-24 bg-gradient-to-l from-white via-white/40 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
