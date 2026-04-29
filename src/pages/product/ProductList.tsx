@@ -43,6 +43,7 @@ export const ProductList: React.FC = () => {
 
   const [delivery, setDelivery] = useState(searchParams.get('delivery') === 'true');
   const [faceToFace, setFaceToFace] = useState(searchParams.get('face') === 'true');
+  const [buyoutOnly, setBuyoutOnly] = useState(searchParams.get('buyout') === 'true');
 
   const [sort, setSort] = useState<SortOption>((searchParams.get('sort') as SortOption) || 'all');
   const [keyword, setKeyword] = useState(searchParams.get('q') || '');
@@ -85,6 +86,7 @@ export const ProductList: React.FC = () => {
       const curNeighborhood = searchParams.get('neighborhood');
       const curDel = searchParams.get('delivery');
       const curFace = searchParams.get('face');
+      const curBuyout = searchParams.get('buyout');
       const curSort = searchParams.get('sort') || 'all';
       const curKeyword = searchParams.get('q');
 
@@ -101,6 +103,7 @@ export const ProductList: React.FC = () => {
         neighborhood: curNeighborhood || undefined,
         delivery: curDel === 'true' || undefined,
         face: curFace === 'true' || undefined,
+        buyout: curBuyout === 'true' || undefined,
         sort: curSort,
         keyword: curKeyword || undefined,
         memberNo: memberNo || undefined,
@@ -167,6 +170,7 @@ export const ProductList: React.FC = () => {
     setNeighborhood(searchParams.get('neighborhood') || '');
     setDelivery(searchParams.get('delivery') === 'true');
     setFaceToFace(searchParams.get('face') === 'true');
+    setBuyoutOnly(searchParams.get('buyout') === 'true');
     setSort((searchParams.get('sort') as SortOption) || 'all');
     setKeyword(searchParams.get('q') || '');
   }, [searchParams]);
@@ -237,6 +241,7 @@ export const ProductList: React.FC = () => {
     setNeighborhood('');
     setDelivery(false);
     setFaceToFace(false);
+    setBuyoutOnly(false);
     setSort('all');
     setKeyword('');
   };
@@ -310,6 +315,8 @@ export const ProductList: React.FC = () => {
       updateParams({ delivery: '' });
     } else if (key === 'face') {
       updateParams({ face: '' });
+    } else if (key === 'buyout') {
+      updateParams({ buyout: '' });
     } else if (key === 'large') {
       updateParams({ large: '', medium: '', small: '' });
       setExpandedLarge(null);
@@ -485,6 +492,19 @@ export const ProductList: React.FC = () => {
             >
               적용
             </button>
+            <div className="flex-grow"></div>
+            <label className="flex items-center space-x-2 cursor-pointer group pr-2">
+              <input
+                type="checkbox"
+                checked={buyoutOnly}
+                onChange={(e) => {
+                  setBuyoutOnly(e.target.checked);
+                  updateParams({ buyout: e.target.checked ? 'true' : '' });
+                }}
+                className="w-4 h-4 rounded border-gray-300 text-brand focus:ring-brand"
+              />
+              <span className="text-sm text-gray-600 group-hover:text-gray-900">즉시 구매 가능</span>
+            </label>
           </div>
         </div>
 
@@ -649,6 +669,12 @@ export const ProductList: React.FC = () => {
               <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
                 <span>대면거래</span>
                 <button onClick={() => removeFilter('face')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
+              </div>
+            )}
+            {buyoutOnly && (
+              <div className="flex items-center bg-white border border-gray-200 text-brand px-3 py-1 rounded-full text-xs font-medium">
+                <span>즉시구매</span>
+                <button onClick={() => removeFilter('buyout')} className="ml-2 hover:text-brand-dark"><BsX className="w-3 h-3" /></button>
               </div>
             )}
             {searchParams.get('q') && (
