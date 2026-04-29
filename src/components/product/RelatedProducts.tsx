@@ -72,6 +72,7 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) =
     setIsDragging(true);
     setStartX(e.pageX - scrollRef.current.offsetLeft);
     setScrollLeft(scrollRef.current.scrollLeft);
+    setDragDistance(0);
   };
 
   const handleMouseLeave = () => {
