@@ -284,16 +284,18 @@ export const WonProductDetail: React.FC = () => {
               <section className="p-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-baseline justify-between w-full">
                   <div className="flex items-center gap-2">낙찰 상품 정보</div>
-                  <span className="text-xs text-gray-400 font-medium font-sans">
-                    낙찰일 : {new Date(result.createdAt).toLocaleString('ko-KR', {
-                      year: 'numeric',
-                      month: 'numeric',
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true
-                    })}
-                  </span>
+                  {result.createdAt && !isNaN(new Date(result.createdAt).getTime()) && (
+                    <span className="text-xs text-gray-400 font-medium font-sans">
+                      낙찰일 : {new Date(result.createdAt).toLocaleString('ko-KR', {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                      })}
+                    </span>
+                  )}
                 </h3>
                 <div className="flex gap-6">
                   {images.length > 0 && (
@@ -423,7 +425,7 @@ export const WonProductDetail: React.FC = () => {
               <section className="p-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-baseline justify-between w-full">
                   <div className="flex items-center gap-2">결제 정보</div>
-                  {result.confirmedAt && (
+                  {result.confirmedAt && !isNaN(new Date(result.confirmedAt).getTime()) && (
                     <span className="text-xs text-gray-400 font-medium font-sans">
                       결제일 : {new Date(result.confirmedAt).toLocaleString('ko-KR', {
                         year: 'numeric',
