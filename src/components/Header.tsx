@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { BsArrowUpRight, BsPersonCircle, BsGear, BsBell, BsClock, BsList, BsChat, BsSearch, BsX } from 'react-icons/bs';
+import { BsPersonCircle, BsGear, BsBell, BsClock, BsList, BsChat, BsSearch, BsX } from 'react-icons/bs';
 import { useAppContext } from '@/context/AppContext';
 import { Category } from '@/types';
 import { CATEGORY_DATA } from '@/constants';
@@ -32,10 +32,6 @@ export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const RELATED_SEARCHES = ['아이폰 15', '맥북 프로', '에어팟', '닌텐도 스위치', '캠핑의자', '가죽 자켓', '원목 식탁', '해리포터'];
-  const filteredRelated = searchTerm.trim()
-    ? RELATED_SEARCHES.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase()))
-    : [];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -124,58 +120,34 @@ export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               </button>
             </form>
 
-            {isSearchFocused && (
+            {isSearchFocused && searchTerm.trim() === '' && (
               <div className="absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-2xl mt-2 py-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                {searchTerm.trim() === '' ? (
-                  <>
-                    <div className="px-6 flex items-center justify-between mb-3">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">최근 검색어</p>
-                      <button onClick={clearRecentSearches} className="text-[10px] font-bold text-gray-300 hover:text-gray-500">전체 삭제</button>
-                    </div>
-                    <div className="space-y-1">
-                      {recentSearches.length > 0 ? (
-                        recentSearches.map((term, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => { setSearchTerm(term); saveRecentSearch(term); navigate(`/search?q=${encodeURIComponent(term)}`); setIsSearchFocused(false); }}
-                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-between group overflow-hidden"
-                          >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <BsClock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
-                              <span className="truncate">{term}</span>
-                            </div>
-                            <BsX
-                              className="w-4 h-4 shrink-0 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
-                              onClick={(e) => { e.stopPropagation(); removeRecentSearch(idx); }}
-                            />
-                          </button>
-                        ))
-                      ) : (
-                        <p className="px-6 py-4 text-xs text-gray-400 text-center italic">최근 검색어가 없습니다.</p>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p className="px-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">연관 검색어</p>
-                    <div className="space-y-1">
-                      {filteredRelated.length > 0 ? (
-                        filteredRelated.map((term, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => { setSearchTerm(term); saveRecentSearch(term); navigate(`/search?q=${encodeURIComponent(term)}`); setIsSearchFocused(false); }}
-                            className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-3 overflow-hidden"
-                          >
-                            <BsArrowUpRight className="w-3.5 h-3.5 text-gray-300 shrink-0" />
-                            <span className="truncate">{term}</span>
-                          </button>
-                        ))
-                      ) : (
-                        <p className="px-6 py-4 text-xs text-gray-400 text-center italic">연관 검색어가 없습니다.</p>
-                      )}
-                    </div>
-                  </>
-                )}
+                <div className="px-6 flex items-center justify-between mb-3">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">최근 검색어</p>
+                  <button onClick={clearRecentSearches} className="text-[10px] font-bold text-gray-300 hover:text-gray-500">전체 삭제</button>
+                </div>
+                <div className="space-y-1">
+                  {recentSearches.length > 0 ? (
+                    recentSearches.map((term, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => { setSearchTerm(term); saveRecentSearch(term); navigate(`/search?q=${encodeURIComponent(term)}`); setIsSearchFocused(false); }}
+                        className="w-full text-left px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-between group overflow-hidden"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <BsClock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                          <span className="truncate">{term}</span>
+                        </div>
+                        <BsX
+                          className="w-4 h-4 shrink-0 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
+                          onClick={(e) => { e.stopPropagation(); removeRecentSearch(idx); }}
+                        />
+                      </button>
+                    ))
+                  ) : (
+                    <p className="px-6 py-4 text-xs text-gray-400 text-center italic">최근 검색어가 없습니다.</p>
+                  )}
+                </div>
               </div>
             )}
           </div>
