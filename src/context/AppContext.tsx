@@ -36,7 +36,7 @@ const mapMemberToUser = (m: any): User => ({
   nickname: m.nickname,
   profileImage: resolveImageUrl(m.profileImgUrl) || '',
   points: m.points || 0,
-  mannerTemp: m.mannerTemp || 36.5,
+  mannerTemp: m.mannerTemp ?? 36.5,
   joinedAt: m.joinedAt,
   email: m.email,
   phoneNum: m.phoneNum,
@@ -461,7 +461,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
               const updated = {
                 ...prev,
                 points: res.data.points || 0,
-                mannerTemp: res.data.mannerTemp || 36.5,
+                mannerTemp: res.data.mannerTemp ?? 36.5,
                 profileImage: resolveImageUrl(res.data.profileImgUrl) || prev.profileImage,
               };
               sessionStorage.setItem('java_user', JSON.stringify(updated));
@@ -493,7 +493,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       try {
         const memberRes = await api.get(`/members/${memberNo}`);
         dbPoints = memberRes.data.points || 0;
-        dbMannerTemp = memberRes.data.mannerTemp || 36.5;
+        dbMannerTemp = memberRes.data.mannerTemp ?? 36.5;
         dbIsAdmin = memberRes.data.isAdmin === 1;
         dbProfileImage = resolveImageUrl(memberRes.data.profileImgUrl) || '';
         if (memberRes.data.joinedAt) {
