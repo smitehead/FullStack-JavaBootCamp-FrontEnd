@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsBell, BsShield, BsShieldCheck, BsCreditCard, BsBank, BsPersonDash, BsExclamationCircle, BsCheckCircle, BsPersonFillGear, BsChevronDown, BsX, BsToggle2On, BsToggle2Off } from 'react-icons/bs';
+import { BsBell, BsShield, BsShieldCheck, BsCreditCard, BsBank, BsPersonDash, BsExclamationCircle, BsCheckCircle, BsPersonFillGear, BsChevronDown, BsX } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 import { useAppContext } from '@/context/AppContext';
-import { getProfileImageUrl } from '@/utils/imageUtils';
+import { NotificationSettings } from '@/components/settings/NotificationSettings';
+import { BlockedUsersSettings } from '@/components/settings/BlockedUsersSettings';
+import { CardSettings } from '@/components/settings/CardSettings';
+import { AccountSettings } from '@/components/settings/AccountSettings';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // 카카오 우편번호 서비스 타입 선언
 declare global {
@@ -25,16 +29,9 @@ export const Settings: React.FC = () => {
       setActiveTab(initialTab);
     }
   }, [initialTab]);
-  const { user, logout, updateCurrentUserAddress, updateNotifyChat, updateNotifyBadge } = useAppContext();
+  const { user, logout, updateCurrentUserAddress } = useAppContext();
   const [activeProductCount, setActiveProductCount] = useState(0);
   const [tradingProductCount, setTradingProductCount] = useState(0);
-  const [settings, setSettings] = useState({
-    auctionEnd: true,
-    newBid: true,
-    marketing: false,
-    chat: true
-  });
-  const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
 
   // 탈퇴 조건 확인용 진행 중 상품 조회
   useEffect(() => {
@@ -50,7 +47,6 @@ export const Settings: React.FC = () => {
   useEffect(() => {
     if (!user) return;
 
-    // API 로드 전 초기값 설정 (user context 기반)
     setFormData(prev => ({
       ...prev,
       nickname: user.nickname,
@@ -66,22 +62,8 @@ export const Settings: React.FC = () => {
         addrDetail: res.data.addrDetail || '',
         addrShort: res.data.addrShort || '',
       });
-      setSettings({
-        auctionEnd: res.data.notifyAuctionEnd === 1,
-        newBid: res.data.notifyNewBid === 1,
-        chat: res.data.notifyChat === 1,
-        marketing: res.data.marketingAgree === 1,
-      });
     }).catch(() => { });
   }, [user]);
-
-  // 차단 사용자 목록 로드
-  useEffect(() => {
-    if (activeTab !== 'block' || !user) return;
-    api.get('/members/me/blocked')
-      .then(res => setBlockedUsers(res.data))
-      .catch(() => { });
-  }, [activeTab, user]);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [isProfileSaveModalOpen, setIsProfileSaveModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -153,39 +135,6 @@ export const Settings: React.FC = () => {
   });
 
   const [emailVerificationError, setEmailVerificationError] = useState<string | null>(null);
-
-  const [registeredCard, setRegisteredCard] = useState<{
-    cardName: string;
-    cardNo: string;
-    createdAt?: string;
-  } | null>(null);
-  const [isCardLoading, setIsCardLoading] = useState(true);
-
-  useEffect(() => {
-    api.get('/points/billing-key')
-      .then((res) => {
-        if (res.data.registered) {
-          setRegisteredCard({
-            cardName: res.data.cardName,
-            cardNo: res.data.cardNo,
-            createdAt: res.data.createdAt,
-          });
-        }
-      })
-      .catch(() => { })
-      .finally(() => setIsCardLoading(false));
-  }, []);
-
-  const handleDeleteRegisteredCard = async () => {
-    if (!confirm('등록된 카드를 삭제하시겠습니다?\n카드 삭제 후에는 간편 충전을 사용할 수 없습니다.')) return;
-    try {
-      await api.delete('/points/billing-key');
-      setRegisteredCard(null);
-      showToast('카드가 성공적으로 삭제되었습니다.', 'success');
-    } catch (e) {
-      showToast('카드 삭제 중 오류가 발생했습니다.', 'error');
-    }
-  }
 
   const [isProfileSaving, setIsProfileSaving] = useState(false);
 
@@ -321,70 +270,6 @@ export const Settings: React.FC = () => {
     } catch (e) {
       setEmailVerificationError('인증 확인에 실패했습니다.');
       showToast('인증 확인에 실패했습니다.', 'error');
-    }
-  };
-
-  const toggleSetting = async (key: keyof typeof settings) => {
-    const newVal = !settings[key];
-    setSettings(prev => ({ ...prev, [key]: newVal }));
-
-    // 낙관적 업데이트: API 응답 전에 AppContext 즉시 반영
-    if (key === 'chat') updateNotifyChat(newVal);
-    if (key === 'auctionEnd' || key === 'newBid' || key === 'marketing') updateNotifyBadge(key, newVal);
-
-    try {
-      await api.put('/members/me/notification', {
-        [key === 'auctionEnd' ? 'auctionEnd' :
-          key === 'newBid' ? 'newBid' :
-            key === 'chat' ? 'chat' : 'marketing']: newVal,
-      });
-    } catch (e) {
-      // 실패 시 롤백
-      setSettings(prev => ({ ...prev, [key]: !newVal }));
-      if (key === 'chat') updateNotifyChat(!newVal);
-      if (key === 'auctionEnd' || key === 'newBid' || key === 'marketing') updateNotifyBadge(key, !newVal);
-      showToast('설정 변경에 실패했습니다.', 'error');
-    }
-  };
-
-  const unblockUser = async (memberNo: number) => {
-    try {
-      await api.delete(`/members/me/blocked/${memberNo}`);
-      setBlockedUsers(prev => prev.filter(u => u.memberNo !== memberNo));
-      showToast('차단이 해제되었습니다.', 'success');
-    } catch (e) {
-      showToast('차단 해제에 실패했습니다.', 'error');
-    }
-  };
-
-  const [accounts, setAccounts] = useState<{
-    accountNo: number;
-    bankName: string;
-    accountNumber: string;
-    accountHolder: string;
-    isDefault: number;
-  }[]>([]);
-  const [isAccountLoading, setIsAccountLoading] = useState(false);
-
-  useEffect(() => {
-    if (activeTab === 'account') {
-      setIsAccountLoading(true);
-      api.get('/points/accounts')
-        .then(res => setAccounts(res.data))
-        .catch(() => { })
-        .finally(() => setIsAccountLoading(false));
-    }
-  }, [activeTab]);
-
-
-  const handleDeleteAccount = async (accountNo: number) => {
-    if (!confirm('이 계좌를 삭제하시겠습니까?')) return;
-    try {
-      await api.delete(`/points/accounts/${accountNo}`);
-      setAccounts(prev => prev.filter(a => a.accountNo !== accountNo));
-      showToast('계좌가 삭제되었습니다.', 'success');
-    } catch (e) {
-      showToast('계좌 삭제에 실패했습니다.', 'error');
     }
   };
 
@@ -666,217 +551,10 @@ export const Settings: React.FC = () => {
             </section>
           )}
 
-          {/* Card/Account Management */}
-          {activeTab === 'card' && (
-            <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-bold text-gray-900">결제 카드 관리</h3>
-                <button
-                  onClick={() => {
-                    if (registeredCard) {
-                      showToast('이미 카드가 등록되어 있습니다. 삭제 후 다시 눌러주세요.', 'warning');
-                    } else {
-                      navigate('/points/card-register');
-                    }
-                  }}
-                  className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
-                >
-                  카드 등록
-                </button>
-              </div>
-
-              {isCardLoading ? (
-                <div className="py-10 flex justify-center">
-                  <div className="w-6 h-6 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
-                </div>
-              ) : registeredCard ? (
-                <div className="flex items-center justify-between p-5 rounded-2xl border border-indigo-200 bg-indigo-50/30">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
-                      <BsCreditCard className="w-6 h-6 text-indigo-600" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="font-bold text-gray-900">{registeredCard.cardName || '등록된 카드'}</p>
-                        <span className="text-[10px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-full">
-                          기본
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-400">{registeredCard.cardNo || '카드번호 정보 없음'}</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleDeleteRegisteredCard}
-                    className="px-4 py-2 bg-red-50 text-red-500 text-xs font-bold rounded-2xl hover:bg-red-100 transition-all"
-                  >
-                    삭제
-                  </button>
-                </div>
-              ) : (
-                <div className="py-10 text-center text-gray-400">
-                  <BsCreditCard className="w-10 h-10 mx-auto mb-3 text-gray-200" />
-                  <p className="text-sm font-medium">등록된 카드가 없습니다.</p>
-                  <p className="text-xs text-gray-300 mt-1">카드를 등록하면 포인트를 간편하게 충전할 수 있습니다.</p>
-                </div>
-              )}
-            </section>
-          )}
-
-          {activeTab === 'account' && (
-            <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900">계좌 관리</h3>
-                  <p className="text-xs text-gray-400 mt-1">최대 3개까지 등록 가능합니다.</p>
-                </div>
-                {accounts.length < 3 && (
-                  <button
-                    onClick={() => navigate('/settings/account-register')}
-                    className="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-black transition-all"
-                  >
-                    계좌 추가
-                  </button>
-                )}
-              </div>
-
-
-              {/* 등록된 계좌 목록 */}
-              {isAccountLoading ? (
-                <div className="py-10 flex justify-center">
-                  <div className="w-6 h-6 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
-                </div>
-              ) : accounts.length === 0 ? (
-                <div className="py-10 text-center text-gray-400">
-                  <BsBank className="w-10 h-10 mx-auto mb-3 text-gray-200" />
-                  <p className="text-sm font-medium">등록된 계좌가 없습니다.</p>
-                  <p className="text-xs text-gray-300 mt-1">출금 시 사용할 계좌를 등록하세요.</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {accounts.map(acc => (
-                    <div key={acc.accountNo} className="flex items-center justify-between p-5 rounded-2xl border border-gray-100 bg-white">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
-                          <BsBank className="w-5 h-5 text-indigo-600" />
-                        </div>
-                        <div>
-                          <p className="font-bold text-gray-900">{acc.bankName}</p>
-                          <p className="text-sm text-gray-400">{acc.accountNumber} · {acc.accountHolder}</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleDeleteAccount(acc.accountNo)}
-                        className="px-3 py-1.5 bg-red-50 text-red-500 text-xs font-bold rounded-2xl hover:bg-red-100 transition-all"
-                      >
-                        삭제
-                      </button>
-                    </div>
-                  ))}
-                  <p className="text-xs text-gray-400 text-center pt-2">
-                    {accounts.length}/3 계좌 등록됨
-                  </p>
-                </div>
-              )}
-            </section>
-          )}
-
-          {/* Notification Settings */}
-          {activeTab === 'notification' && (
-            <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900">알림 설정</h3>
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex items-center justify-between py-2">
-                  <div>
-                    <p className="font-bold text-gray-900">경매 종료 알림</p>
-                    <p className="text-sm text-gray-500">관심 등록하거나 입찰한 경매가 종료될 때 알림을 받습니다.</p>
-                  </div>
-                  <button
-                    onClick={() => toggleSetting('auctionEnd')}
-                    className={`text-3xl transition-all ${settings.auctionEnd ? 'text-brand' : 'text-gray-300 hover:text-gray-400'}`}
-                  >
-                    {settings.auctionEnd ? <BsToggle2On /> : <BsToggle2Off />}
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between py-2">
-                  <div>
-                    <p className="font-bold text-gray-900">새로운 입찰 알림</p>
-                    <p className="text-sm text-gray-500">내가 올린 상품에 새로운 입찰이 발생하면 알림을 받습니다.</p>
-                  </div>
-                  <button
-                    onClick={() => toggleSetting('newBid')}
-                    className={`text-3xl transition-all ${settings.newBid ? 'text-brand' : 'text-gray-300 hover:text-gray-400'}`}
-                  >
-                    {settings.newBid ? <BsToggle2On /> : <BsToggle2Off />}
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between py-2">
-                  <div>
-                    <p className="font-bold text-gray-900">채팅 알림</p>
-                    <p className="text-sm text-gray-500">새로운 채팅 메시지가 도착하면 알림을 받습니다.</p>
-                  </div>
-                  <button
-                    onClick={() => toggleSetting('chat')}
-                    className={`text-3xl transition-all ${settings.chat ? 'text-brand' : 'text-gray-300 hover:text-gray-400'}`}
-                  >
-                    {settings.chat ? <BsToggle2On /> : <BsToggle2Off />}
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between py-2 border-t border-gray-50 pt-6">
-                  <div>
-                    <p className="font-bold text-gray-900">마케팅 정보 수신</p>
-                    <p className="text-sm text-gray-500">이벤트, 혜택 등 다양한 마케팅 소식을 받습니다.</p>
-                  </div>
-                  <button
-                    onClick={() => toggleSetting('marketing')}
-                    className={`text-3xl transition-all ${settings.marketing ? 'text-brand' : 'text-gray-300 hover:text-gray-400'}`}
-                  >
-                    {settings.marketing ? <BsToggle2On /> : <BsToggle2Off />}
-                  </button>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Blocked Users Management */}
-          {activeTab === 'block' && (
-            <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900">차단 사용자 관리</h3>
-              </div>
-
-              {blockedUsers.length > 0 ? (
-                <div className="space-y-4">
-                  {blockedUsers.map(user => (
-                    <div key={user.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                      <div className="flex items-center gap-3">
-                        <img src={getProfileImageUrl(user.profileImage)} alt={user.nickname} className="w-10 h-10 rounded-full object-cover" />
-                        <div>
-                          <p className="font-bold text-gray-900">{user.nickname}</p>
-                          <p className="text-xs text-gray-400">매너온도 {Number(user.mannerTemp).toFixed(1)}℃</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => unblockUser(user.memberNo)}
-                        className="px-4 py-2 text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-2xl hover:bg-gray-100 transition-all"
-                      >
-                        차단 해제
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-12 text-center bg-gray-50 rounded-2xl border border-gray-200">
-                  <p className="text-gray-400 font-medium">차단한 사용자가 없습니다.</p>
-                </div>
-              )}
-            </section>
-          )}
+          {activeTab === 'card' && <ErrorBoundary><CardSettings /></ErrorBoundary>}
+          {activeTab === 'account' && <ErrorBoundary><AccountSettings /></ErrorBoundary>}
+          {activeTab === 'notification' && <ErrorBoundary><NotificationSettings /></ErrorBoundary>}
+          {activeTab === 'block' && <ErrorBoundary><BlockedUsersSettings /></ErrorBoundary>}
         </div>
       </div>
 

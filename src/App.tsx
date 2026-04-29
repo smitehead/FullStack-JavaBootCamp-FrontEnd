@@ -22,6 +22,7 @@ const ScrollToTop = () => {
 // [ Context & Components ]
 import { AppProvider } from '@/context/AppContext';
 import { Layout } from '@/components/Layout';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // [ Root Pages ]
 import { Home } from '@/pages/Home';

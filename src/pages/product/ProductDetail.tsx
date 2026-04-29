@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Product, ProductQna } from '@/types';
+import { Product } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { BsBox2, BsExclamationCircle, BsReply, BsShieldFillCheck, BsFlagFill, BsInfoCircle, BsInfoCircleFill, BsCreditCard, BsArrowUpRight, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsStopwatch, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShareFill, BsArrowRepeat, BsTrash3, BsHouseX, BsLayoutTextSidebar } from 'react-icons/bs';
+import { BsBox2, BsExclamationCircle, BsShieldFillCheck, BsFlagFill, BsInfoCircle, BsInfoCircleFill, BsGraphUpArrow, BsHeart, BsHeartFill, BsClock, BsStopwatch, BsGeoAltFill, BsPeople, BsWallet, BsThreeDotsVertical, BsChat, BsArrowLeft, BsChevronRight, BsX, BsShareFill, BsArrowRepeat, BsTrash3, BsHouseX, BsLayoutTextSidebar } from 'react-icons/bs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '@/services/api';
 import { CATEGORY_DATA } from '@/constants';
@@ -12,8 +12,12 @@ import { ko } from 'date-fns/locale';
 import { getMemberNo } from '@/utils/memberUtils';
 import { showToast } from '@/components/toastService';
 import { resolveImageUrls, getProfileImageUrl } from '../../utils/imageUtils';
-import { Pagination } from '@/components/Pagination';
 import { formatPrice } from '@/utils/formatUtils';
+import { QnaSection } from '@/components/product/QnaSection';
+import { BidHistorySection } from '@/components/product/BidHistorySection';
+import { ShippingSection } from '@/components/product/ShippingSection';
+import { ProductDetailModals } from '@/components/product/ProductDetailModals';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // 카테고리 ID로 전체 경로를 찾는 헬퍼 함수
 const findCategoryPath = (id: string | number): string[] => {
@@ -44,25 +48,12 @@ export const ProductDetail: React.FC = () => {
   const [bidAmount, setBidAmount] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'detail' | 'history' | 'shipping' | 'qna'>('detail');
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [qnaList, setQnaList] = useState<ProductQna[]>([]);
-  const [qnaInput, setQnaInput] = useState('');
-  const [answerInputs, setAnswerInputs] = useState<Record<number, string>>({});
-  const [showAnswerInput, setShowAnswerInput] = useState<Record<number, boolean>>({});
-  const [qnaCurrentPage, setQnaCurrentPage] = useState(1);
-  const QNA_PAGE_SIZE = 5;
 
   useEffect(() => {
     if (product) {
       setIsWishlisted(product.isWishlisted || false);
     }
   }, [product]);
-
-  useEffect(() => {
-    if (id) {
-      fetchQnaList();
-      setQnaCurrentPage(1);
-    }
-  }, [id]);
 
   /** 상품 삭제 처리 */
   const handleDeleteProduct = async () => {
@@ -77,72 +68,6 @@ export const ProductDetail: React.FC = () => {
     } finally {
       setIsDeleting(false);
       setShowDeleteModal(false);
-    }
-  };
-
-  const fetchQnaList = async () => {
-    try {
-      const res = await api.get(`/products/${id}/qna`);
-      setQnaList(res.data);
-    } catch {
-      // 조용히 실패
-    }
-  };
-
-  const handleQnaSubmit = async () => {
-    if (!qnaInput.trim()) return;
-    if (!user) { showToast("'로그인이 필요한 서비스입니다.' 로그인 페이지로 이동합니다.", 'error'); navigate('/login'); return; }
-    try {
-      await api.post(`/products/${id}/qna`, { content: qnaInput.trim() });
-      setQnaInput('');
-      fetchQnaList();
-    } catch {
-      showToast('문의 등록에 실패했습니다.', 'error');
-    }
-  };
-
-  const handleQnaDelete = (qnaNo: number) => {
-    setTargetQnaNo(qnaNo);
-    setShowQnaDeleteModal(true);
-  };
-
-  const executeQnaDelete = async () => {
-    if (targetQnaNo === null) return;
-    try {
-      await api.delete(`/products/${id}/qna/${targetQnaNo}`);
-      fetchQnaList();
-      setShowQnaDeleteModal(false);
-    } catch {
-      showToast('삭제에 실패했습니다.', 'error');
-    }
-  };
-
-  const handleAnswerSubmit = async (qnaNo: number) => {
-    const answer = answerInputs[qnaNo];
-    if (!answer?.trim()) return;
-    try {
-      await api.post(`/products/${id}/qna/${qnaNo}/answer`, { answer: answer.trim() });
-      setAnswerInputs(prev => ({ ...prev, [qnaNo]: '' }));
-      setShowAnswerInput(prev => ({ ...prev, [qnaNo]: false }));
-      fetchQnaList();
-    } catch {
-      showToast('답변 등록에 실패했습니다.', 'error');
-    }
-  };
-
-  const handleAnswerDelete = (qnaNo: number) => {
-    setTargetQnaNo(qnaNo);
-    setShowAnswerDeleteModal(true);
-  };
-
-  const executeAnswerDelete = async () => {
-    if (targetQnaNo === null) return;
-    try {
-      await api.delete(`/products/${id}/qna/${targetQnaNo}/answer`);
-      fetchQnaList();
-      setShowAnswerDeleteModal(false);
-    } catch {
-      showToast('답변 삭제에 실패했습니다.', 'error');
     }
   };
 
@@ -178,7 +103,6 @@ export const ProductDetail: React.FC = () => {
   const [showRechargePrompt, setShowRechargePrompt] = useState(false);
   const [activeAutoBid, setActiveAutoBid] = useState<{ autoBidNo: number; maxPrice: number } | null>(null);
 
-  const [visibleBidsCount, setVisibleBidsCount] = useState(5);
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
@@ -203,10 +127,6 @@ export const ProductDetail: React.FC = () => {
   const [agreedNoRebid, setAgreedNoRebid] = useState(false);
   const [agreedPenalty, setAgreedPenalty] = useState(false);
 
-  // 문의/답변 삭제 모달 상태
-  const [showQnaDeleteModal, setShowQnaDeleteModal] = useState(false);
-  const [showAnswerDeleteModal, setShowAnswerDeleteModal] = useState(false);
-  const [targetQnaNo, setTargetQnaNo] = useState<number | null>(null);
 
   useEffect(() => {
     if (!showBidCancelModal) {
@@ -1324,7 +1244,7 @@ export const ProductDetail: React.FC = () => {
               { id: 'detail', label: '상품 상세' },
               { id: 'history', label: `입찰 기록 (${product.participantCount})` },
               { id: 'shipping', label: '배송 정보' },
-              { id: 'qna', label: `상품문의 (${qnaList.length})` }
+              { id: 'qna', label: '상품문의' }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -1389,151 +1309,22 @@ export const ProductDetail: React.FC = () => {
               </div>
             </div>
 
-            {/* History Section */}
-            <div id="history" className="scroll-mt-[300px] space-y-4">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">입찰 기록</h3>
-              <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50 text-gray-500">
-                    <tr>
-                      <th className="px-6 py-4 text-left font-bold">입찰자</th>
-                      <th className="px-6 py-4 text-right font-bold">입찰 금액</th>
-                      <th className="px-6 py-4 text-right font-bold">입찰 시간</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {product.bids.slice().sort((a, b) => (b.amount || 0) - (a.amount || 0)).slice(0, visibleBidsCount).map(bid => (
-                      <tr key={bid.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 font-medium text-gray-900 max-w-[150px] truncate" title={bid.bidderName}>
-                          {bid.bidderName}
-                        </td>
-                        <td className="px-6 py-4 text-right font-bold text-brand">{(bid.amount || 0).toLocaleString()}원</td>
-                        <td className="px-6 py-4 text-right text-gray-400">{new Date(bid.timestamp).toLocaleString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {product.bids.length > visibleBidsCount && (
-                  <button
-                    onClick={() => setVisibleBidsCount(prev => Math.min(prev + 5, product.bids.length))}
-                    className="w-full py-4 bg-gray-50 text-gray-500 font-bold text-sm hover:bg-gray-100 transition-colors border-t border-gray-100 flex items-center justify-center gap-2"
-                  >
-                    입찰 기록 5개 더보기 ({visibleBidsCount} / {product.bids.length})
-                  </button>
-                )}
-              </div>
-            </div>
+            <ErrorBoundary>
+              <BidHistorySection bids={product.bids} />
+            </ErrorBoundary>
 
-            {/* Shipping Section */}
-            <div id="shipping" className="scroll-mt-[300px] space-y-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">배송 정보</h3>
-              <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
-                <div className="flex border-b border-gray-50 pb-4">
-                  <span className="w-32 text-gray-500 font-medium">배송 방법</span>
-                  <span className="text-gray-900">
-                    {product.transactionMethod === 'both' ? '택배거래, 직거래 가능' :
-                      product.transactionMethod === 'delivery' ? '택배거래' : '직거래'}
-                  </span>
-                </div>
-                <div className="flex border-b border-gray-50 pb-4">
-                  <span className="w-32 text-gray-500 font-medium">배송 정보</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-900">배송비 별도</span>
-                    <span className="text-xs text-gray-400 font-medium">(판매자와 협의)</span>
-                  </div>
-                </div>
-                <div className="flex">
-                  <span className="w-32 text-gray-500 font-medium">거래 지역</span>
-                  <span className="text-gray-900">{product.location}</span>
-                </div>
-              </div>
-            </div>
+            <ErrorBoundary>
+              <ShippingSection transactionMethod={product.transactionMethod} location={product.location} />
+            </ErrorBoundary>
 
-            {/* QnA Section */}
-            <div id="qna" className="scroll-mt-[300px] space-y-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">상품문의 ({qnaList.length})</h3>
-              {!isFinished && !isSeller && (
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={qnaInput}
-                    onChange={e => setQnaInput(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleQnaSubmit()}
-                    placeholder="상품에 대해 궁금한 점을 남겨주세요."
-                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none"
-                  />
-                  <button onClick={handleQnaSubmit} className="bg-gray-900 text-white px-8 py-3 rounded-2xl text-sm font-bold hover:bg-black transition-colors">등록</button>
-                </div>
-              )}
-              <div className="space-y-6">
-                {qnaList.length === 0 && (
-                  <p className="text-sm text-gray-400 text-center py-6">아직 등록된 문의가 없습니다.</p>
-                )}
-                {qnaList.slice((qnaCurrentPage - 1) * QNA_PAGE_SIZE, qnaCurrentPage * QNA_PAGE_SIZE).map(qna => (
-                  <div key={qna.qnaNo} className="border-b border-gray-100 pb-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-gray-900">{qna.memberNickname}</span>
-                        {currentMemberNo === qna.memberNo && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">작성자</span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-gray-400">{new Date(qna.createdAt).toLocaleDateString('ko-KR')}</span>
-                        {currentMemberNo === qna.memberNo && (
-                          <button onClick={() => handleQnaDelete(qna.qnaNo)} className="text-[10px] text-gray-400 hover:text-brand">삭제</button>
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-4">{qna.content}</p>
-
-                    {qna.answer ? (
-                      <div className="bg-gray-50 p-4 rounded-xl ml-6 border border-gray-100">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-bold text-sm text-brand-dark">판매자 답변</span>
-                          <div className="flex items-center gap-3">
-                            <span className="text-[10px] text-gray-400">{qna.answeredAt ? new Date(qna.answeredAt).toLocaleDateString('ko-KR') : ''}</span>
-                            {isSeller && (
-                              <button onClick={() => handleAnswerDelete(qna.qnaNo)} className="text-[10px] text-gray-400 hover:text-brand">삭제</button>
-                            )}
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-600">{qna.answer}</p>
-                      </div>
-                    ) : (
-                      isSeller && !isFinished && (
-                        showAnswerInput[qna.qnaNo] ? (
-                          <div className="ml-6 flex gap-2 mt-2">
-                            <input
-                              type="text"
-                              value={answerInputs[qna.qnaNo] || ''}
-                              onChange={e => setAnswerInputs(prev => ({ ...prev, [qna.qnaNo]: e.target.value }))}
-                              onKeyDown={e => e.key === 'Enter' && handleAnswerSubmit(qna.qnaNo)}
-                              placeholder="답변을 입력하세요."
-                              className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none"
-                            />
-                            <button onClick={() => handleAnswerSubmit(qna.qnaNo)} className="bg-brand text-white px-4 py-2 rounded-2xl text-sm font-semibold hover:bg-brand-dark">등록</button>
-                            <button onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: false }))} className="text-sm text-gray-400 hover:text-gray-600 px-2">취소</button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => setShowAnswerInput(prev => ({ ...prev, [qna.qnaNo]: true }))}
-                            className="mt-2 ml-6 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-brand"
-                          >
-                            <BsReply className="w-3 h-3" /> 답글 달기
-                          </button>
-                        )
-                      )
-                    )}
-                  </div>
-                ))}
-              </div>
-              <Pagination
-                currentPage={qnaCurrentPage}
-                totalPages={Math.ceil(qnaList.length / QNA_PAGE_SIZE)}
-                onPageChange={setQnaCurrentPage}
+            <ErrorBoundary>
+              <QnaSection
+                productId={product.id}
+                isFinished={isFinished}
+                isSeller={isSeller}
+                currentMemberNo={currentMemberNo}
               />
-            </div>
+            </ErrorBoundary>
           </div>
 
           {/* Right: Sidebar */}
@@ -1766,664 +1557,54 @@ export const ProductDetail: React.FC = () => {
         </div>
       )}
 
-      {/* Share Modal */}
-      {isShareModalOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-gray-50 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-900">공유하기</h3>
-              <button onClick={() => setIsShareModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <BsX className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
-            <div className="p-8">
-              <p className="text-sm text-gray-500 mb-4 font-bold">상품 링크 복사</p>
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex items-center justify-between gap-3">
-                <p className="text-xs text-gray-400 truncate flex-1 font-medium">
-                  {window.location.href}
-                </p>
-                <button
-                  onClick={() => {
-                    const url = window.location.href;
-                    const fallbackCopy = () => {
-                      const el = document.createElement('textarea');
-                      el.value = url;
-                      el.style.position = 'fixed';
-                      el.style.opacity = '0';
-                      document.body.appendChild(el);
-                      el.select();
-                      document.execCommand('copy');
-                      document.body.removeChild(el);
-                      showToast('링크가 복사되었습니다!', 'success');
-                    };
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                      navigator.clipboard.writeText(url)
-                        .then(() => showToast('링크가 복사되었습니다!', 'success'))
-                        .catch(fallbackCopy);
-                    } else {
-                      fallbackCopy();
-                    }
-                  }}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-2xl transition-all shadow-lg shadow-indigo-900/20 active:scale-95 shrink-0"
-                >
-                  복사
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Auction Cancel Confirm Modal */}
-      <AnimatePresence>
-        {showCancelModal && (
-          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative"
-            >
-              <div className="p-8">
-                <div className="mb-8">
-                  <h3 className="text-2xl font-bold text-gray-900 tracking-tight">경매 취소</h3>
-                </div>
-
-                <div className="mb-2">
-                  {/* 조건 A: 입찰자 없음 */}
-                  {cancelCondition === 'A' && (
-                    <div className="space-y-6">
-                      <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
-                        <p className="text-sm text-gray-700 leading-relaxed font-bold">
-                          현재 입찰 참여자가 없습니다. <br />
-                          <span className="text-gray-900 underline underline-offset-4 decoration-2">아무런 패널티 없이</span> 즉시 취소할 수 있습니다.
-                        </p>
-                      </div>
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => setShowCancelModal(false)}
-                          className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95"
-                        >
-                          돌아가기
-                        </button>
-                        <button
-                          onClick={handleAuctionCancel}
-                          className="flex-1 py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-lg active:scale-95"
-                        >
-                          취소 확정
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 조건 B: 입찰자 있음 (패널티 발생) */}
-                  {cancelCondition === 'B' && (
-                    <div className="space-y-6">
-                      <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
-                        <div className="flex items-center gap-2 mb-4">
-                          <BsExclamationCircle className="w-4 h-4 text-red-500" />
-                          <p className="text-sm font-bold text-gray-900">주의: 취소 패널티가 발생합니다</p>
-                        </div>
-                        <ul className="space-y-3">
-                          <li className="flex items-center gap-2 text-xs font-bold text-gray-600">
-                            <div className="w-1 h-1 bg-gray-400 rounded-full" />
-                            매너온도 <span className="text-red-500 font-bold">10점</span> 즉시 차감
-                          </li>
-                          <li className="flex items-center gap-2 text-xs font-bold text-gray-600">
-                            <div className="w-1 h-1 bg-gray-400 rounded-full" />
-                            포인트 벌금: <span className="text-red-500 font-bold">{Math.floor(product.currentPrice * 0.03).toLocaleString()}P (현재가의 3%)</span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="px-1">
-                        <p className="text-sm text-gray-600 leading-relaxed font-medium">
-                          현재 <span className="font-bold text-gray-900 border-b-2 border-red-100">{product.participantCount}명</span>의 입찰자가 대기 중입니다.
-                          취소 시 모든 입찰자에게 포인트가 환불되며 알림이 가요.
-                        </p>
-                      </div>
-
-                      <div className="flex gap-3 pt-2">
-                        <button
-                          onClick={() => setShowCancelModal(false)}
-                          className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95"
-                        >
-                          돌아가기
-                        </button>
-                        <button
-                          onClick={handleAuctionCancel}
-                          className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-lg shadow-brand/20 active:scale-95"
-                        >
-                          패널티 감수하고 취소
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 조건 C: 마감 임박 */}
-                  {cancelCondition === 'C' && (
-                    <div className="space-y-6">
-                      <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
-                        <div className="flex items-center gap-2 mb-3">
-                          <BsExclamationCircle className="w-4 h-4 text-brand" />
-                          <p className="text-sm font-bold text-gray-900">마감 임박 (12시간 이내)</p>
-                        </div>
-                        <p className="text-xs text-gray-600 leading-relaxed font-bold">
-                          경매 종료가 얼마 남지 않아 판매자가 직접 취소할 수 없습니다.
-                          부득이한 사유가 있다면 관리자에게 문의해주세요.
-                        </p>
-                      </div>
-
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => setShowCancelModal(false)}
-                          className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95"
-                        >
-                          닫기
-                        </button>
-                        <button
-                          onClick={() => { setShowCancelModal(false); navigate(`/report?productId=${product.id}`); }}
-                          className="flex-1 py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl active:scale-95"
-                        >
-                          관리자에게 문의
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* ──────────────────────────────────────────────────────────────────
-          입찰 취소 확인 모달 (Phase 1 — 최고 입찰자 본인 취소)
-          - 위약금(현재 입찰가의 10%) 명시
-          - 보유 포인트 부족 시 취소 버튼 비활성화
-      ────────────────────────────────────────────────────────────────── */}
-      {showBidCancelModal && product && (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 relative">
-            <div className="p-8">
-              {/* 헤더 */}
-              <div className="flex flex-col mb-8 text-left">
-                <h3 className="text-2xl font-bold text-gray-900 tracking-tight leading-none">입찰 취소</h3>
-              </div>
-
-              {/* 위약금 및 정보 섹션 */}
-              {(() => {
-                const penalty = Math.floor((product.currentPrice || 0) * 0.05);
-                const userPoints = user?.points || 0;
-                const canAfford = userPoints >= penalty;
-                const refundAmount = (product.currentPrice || 0) - penalty;
-
-                return (
-                  <div className="space-y-6 mb-8 text-left">
-                    {/* 보유 포인트 카드 (페이지의 포인트 카드 스타일과 동일하게 적용) */}
-                    <div className="bg-gray-900 rounded-2xl p-5 text-white flex justify-between items-center shadow-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white/10 p-2 rounded-xl">
-                          <BsWallet className="w-5 h-5 text-white" />
-                        </div>
-                        <span className="text-xs font-bold text-indigo-300 uppercase tracking-widest">보유 포인트</span>
-                      </div>
-                      <div className={`text-xl font-bold ${canAfford ? 'text-white' : 'text-red-400'}`}>
-                        {userPoints.toLocaleString()}
-                        <span className="text-sm ml-1 text-indigo-400">P</span>
-                      </div>
-                    </div>
-
-                    {/* 패널티 안내 상세 */}
-                    <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <BsExclamationCircle className="w-4 h-4 text-red-500" />
-                        <p className="text-sm font-bold text-gray-900">취소 패널티 안내</p>
-                      </div>
-                      <ul className="space-y-3">
-                        <li className="flex items-center justify-between text-xs font-bold text-gray-600">
-                          <span>현재 입찰가</span>
-                          <span className="text-gray-900 font-bold">{(product.currentPrice || 0).toLocaleString()} P</span>
-                        </li>
-                        <li className="flex items-center justify-between text-xs font-bold text-gray-600">
-                          <span>취소 위약금 (5%)</span>
-                          <span className="text-red-500 font-bold">-{penalty.toLocaleString()} P</span>
-                        </li>
-                        <div className="h-px bg-gray-200 my-1" />
-                        <li className="flex items-center justify-between text-base font-bold">
-                          <span className="text-gray-900 font-bold text-xs">최종 반환 금액</span>
-                          <span className="text-gray-900 tracking-tight">{refundAmount.toLocaleString()} P</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    {/* 포인트 부족 알림 */}
-                    {!canAfford && (
-                      <div className="flex items-start gap-3 bg-brand/10 border border-orange-100 rounded-2xl p-4">
-                        <BsExclamationCircle className="w-5 h-5 text-brand shrink-0 mt-0.5" />
-                        <p className="text-xs font-bold text-brand-dark leading-relaxed">
-                          위약금 납부를 위한 포인트가 부족합니다. <br />포인트 충전을 완료하셔야 취소가 가능합니다.
-                        </p>
-                      </div>
-                    )}
-
-                    {/* 정책 안내 텍스트 */}
-                    <p className="text-[10px] text-gray-400 leading-relaxed text-center font-medium">
-                      경매 마감 시간은 변동 없이 유지됩니다.<br />
-                      차감된 위약금은 플랫폼 수익으로 귀속됩니다.
-                    </p>
-
-                    {/* 필수 동의 체크박스 */}
-                    <div className="space-y-3 mt-6">
-                      <label className="flex items-center gap-3 cursor-pointer group">
-                        <div className="relative flex items-center justify-center w-5 h-5 shrink-0">
-                          <input
-                            type="checkbox"
-                            checked={agreedNoRebid}
-                            onChange={(e) => setAgreedNoRebid(e.target.checked)}
-                            className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-md checked:bg-red-500 checked:border-red-500 transition-all cursor-pointer"
-                          />
-                          <svg
-                            className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">재입찰이 불가능함을 확인했습니다.</span>
-                      </label>
-                      <label className="flex items-center gap-3 cursor-pointer group">
-                        <div className="relative flex items-center justify-center w-5 h-5 shrink-0">
-                          <input
-                            type="checkbox"
-                            checked={agreedPenalty}
-                            onChange={(e) => setAgreedPenalty(e.target.checked)}
-                            className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-md checked:bg-red-500 checked:border-red-500 transition-all cursor-pointer"
-                          />
-                          <svg
-                            className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">위약금 내용을 인지했습니다.</span>
-                      </label>
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* 액션 버튼 그룹 */}
-              {(() => {
-                const penalty = Math.floor((product.currentPrice || 0) * 0.05);
-                const canAfford = (user?.points || 0) >= penalty;
-                return (
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setShowBidCancelModal(false)}
-                      disabled={isBidCancelling}
-                      className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all disabled:opacity-50"
-                    >
-                      돌아가기
-                    </button>
-                    <button
-                      onClick={handleBidCancelConfirm}
-                      disabled={!agreedNoRebid || !agreedPenalty || isBidCancelling || !canAfford}
-                      className="flex-1 py-4 bg-brand text-white font-bold rounded-2xl hover:bg-brand-dark transition-all shadow-xl shadow-brand/20 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                      {isBidCancelling ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          취소 처리 중...
-                        </>
-                      ) : (
-                        '위약금 승인 및 취소'
-                      )}
-                    </button>
-                  </div>
-                );
-              })()}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <AnimatePresence>
-        {showBidTermsModal && (
-          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative"
-            >
-              <div className="p-8">
-                <div className="mb-8">
-                  <h3 className="text-2xl font-bold text-gray-900 tracking-tight">입찰 참여 전 확인사항</h3>
-                </div>
-
-                {/* 약관 내용 박스 */}
-                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 mb-8 space-y-4 text-sm text-gray-700 leading-relaxed">
-                  <p className="font-bold text-gray-900">입찰 전 아래 사항을 반드시 확인하세요.</p>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
-                      <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
-                      <span>입찰가는 현재 최고가보다 <span className="text-gray-900 font-bold">높아야</span> 하며, 한 번 제출된 입찰은 취소 시 <span className="text-red-500 font-bold">위약금(5%)</span>이 발생합니다.</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
-                      <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
-                      <span>경매 마감 <span className="text-gray-900 font-bold">12시간 이내</span>에는 입찰 취소가 불가합니다.</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
-                      <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
-                      <span>낙찰 후 <span className="text-gray-900 font-bold">12시간 이내</span>에 결제를 완료하지 않으면 낙찰이 취소되고 차순위 입찰자에게 권한이 이전됩니다.</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-xs font-bold text-gray-600">
-                      <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 shrink-0" />
-                      <span>입찰 포인트는 상회 입찰 발생 시 즉시 환불되며, 낙찰 시 최종 결제에 사용됩니다.</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* 오늘 하루 보지 않기 체크박스 */}
-                <div className="flex items-center gap-2 mb-6 px-1">
-                  <label className="flex items-center gap-2 cursor-pointer group">
-                    <div className="relative flex items-center justify-center w-5 h-5">
-                      <input
-                        type="checkbox"
-                        className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-md checked:bg-brand checked:border-brand transition-all cursor-pointer"
-                        checked={dontAskToday}
-                        onChange={(e) => setDontAskToday(e.target.checked)}
-                      />
-                      <svg
-                        className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={3}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">
-                      오늘 하루 더 이상 보지 않기
-                    </span>
-                  </label>
-                </div>
-
-                {/* 하단 버튼 영역 */}
-                <div className="flex gap-3">
-                  <button
-                    onClick={handleBidTermsClose}
-                    className="flex-1 h-[56px] border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95 flex items-center justify-center"
-                  >
-                    뒤로가기
-                  </button>
-                  <button
-                    onClick={handleBidTermsConfirm}
-                    className={`flex-1 h-[56px] font-bold rounded-2xl transition-all active:scale-95 bg-gray-900 text-white hover:bg-black shadow-lg shadow-gray-200 flex items-center justify-center ${isConfirming ? 'animate-pulse' : ''
-                      }`}
-                  >
-                    {isConfirming ? '한 번 더 탭하여 확인' : '확인 및 입찰하기'}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Recharge Prompt Modal */}
-      {showRechargePrompt && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowRechargePrompt(false)}></div>
-          <div className="bg-white w-full max-w-sm relative z-10 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">포인트가 부족합니다</h3>
-              <p className="text-sm text-gray-500 mb-8 leading-relaxed font-medium">
-                입찰을 진행하기 위해 포인트 충전이 필요합니다.<br />
-                현재 보유 포인트: <span className="text-indigo-600 font-bold">{formatPrice(user?.points || 0)}P</span><br />
-                지금 충전하러 가시겠습니까?
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowRechargePrompt(false)}
-                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-colors text-sm"
-                >
-                  나중에
-                </button>
-                <button
-                  onClick={() => { setShowRechargePrompt(false); navigate('/points/charge'); }}
-                  className="flex-1 py-3.5 bg-brand-dark text-white font-bold rounded-2xl hover:bg-brand-dark transition-colors shadow-lg shadow-orange-100 flex items-center justify-center gap-2 text-sm"
-                >
-                  충전하기
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && product && (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">게시글을 삭제하시겠습니까?</h3>
-
-              {product.participantCount > 0 && !isFinished ? (
-                <div className="bg-red-50 p-4 rounded-2xl mb-6">
-                  <p className="text-sm text-red-600 font-bold leading-relaxed">
-                    현재 입찰자가 {product.participantCount}명 있습니다. <br />
-                    경매 도중 삭제 시 매너온도가 차감될 수 있습니다.
-                  </p>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                  삭제된 게시글은 복구할 수 없습니다.
-                </p>
-              )}
-
-              <div className="flex gap-3 w-full">
-                <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm">
-                  취소
-                </button>
-                <button
-                  onClick={handleDeleteProduct}
-                  disabled={isDeleting}
-                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm flex items-center justify-center gap-2"
-                >
-                  {isDeleting ? <div className="spinner-border w-4 h-4" style={{ borderTopColor: '#fff', borderLeftColor: 'rgba(255,255,255,0.2)', borderBottomColor: 'rgba(255,255,255,0.2)', borderRightColor: 'rgba(255,255,255,0.2)' }} /> : '삭제하기'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Repost Confirmation Modal */}
-      {showRepostModal && product && (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowRepostModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">재게시하시겠습니까?</h3>
-              <p className="text-gray-500 text-sm font-medium mb-8 leading-relaxed">
-                기존 정보를 유지한 채 경매를 다시 시작합니다.
-              </p>
-
-              <div className="flex gap-3 w-full">
-                <button
-                  onClick={() => setShowRepostModal(false)}
-                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
-                >
-                  닫기
-                </button>
-                <button
-                  onClick={() => {
-                    setShowRepostModal(false);
-                    navigate('/register', { state: { product: product } });
-                  }}
-                  className="flex-1 py-3.5 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 text-sm"
-                >
-                  재게시하기
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Buyout Confirmation Modal */}
-      {showBuyoutModal && product && (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowBuyoutModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">즉시 구매하시겠습니까?</h3>
-              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                <span className="font-semibold text-gray-900">{formatPrice(Number(product.instantPrice))}원</span>에 즉시 구매합니다.<br />
-                구매 후에는 취소가 불가능합니다.
-              </p>
-              <div className="flex gap-3 w-full">
-                <button
-                  onClick={() => setShowBuyoutModal(false)}
-                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={executeBuyout}
-                  disabled={isBuyoutProcessing}
-                  className="flex-1 py-3.5 bg-[#1a1a3a] text-white rounded-2xl font-bold hover:bg-[#2a2a4a] transition-all shadow-lg shadow-blue-500/10 text-sm flex items-center justify-center gap-2"
-                >
-                  {isBuyoutProcessing ? <div className="spinner-border w-4 h-4" style={{ borderTopColor: '#fff', borderLeftColor: 'rgba(255,255,255,0.2)', borderBottomColor: 'rgba(255,255,255,0.2)', borderRightColor: 'rgba(255,255,255,0.2)' }} /> : '구매하기'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Standard Bid Confirmation Modal */}
-      {showBidConfirmModal && product && (
-        <div className="fixed inset-0 z-[140] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowBidConfirmModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">입찰하시겠습니까?</h3>
-              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                <span className="font-semibold text-gray-900">{formatPrice(bidAmount)}원</span>으로 입찰에 참여합니다.<br />
-                입찰 후 취소 시 위약금이 발생할 수 있습니다.
-              </p>
-              <div className="flex gap-3 w-full">
-                <button
-                  onClick={() => setShowBidConfirmModal(false)}
-                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={executeStandardBid}
-                  disabled={isBidProcessing}
-                  className="flex-1 py-3.5 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all shadow-lg shadow-gray-200 text-sm flex items-center justify-center gap-2"
-                >
-                  {isBidProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '입찰하기'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Auto-Bid Confirmation Modal */}
-      {showAutoBidConfirmModal && product && (
-        <div className="fixed inset-0 z-[140] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAutoBidConfirmModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">자동 입찰을 설정하시겠습니까?</h3>
-              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                최대 <span className="font-semibold text-gray-900">{formatPrice(autoBidMaxAmount)}원</span>까지 자동으로 상위 입찰을 진행하도록 설정합니다.
-              </p>
-              <div className="flex gap-3 w-full">
-                <button
-                  onClick={() => setShowAutoBidConfirmModal(false)}
-                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={executeAutoBid}
-                  disabled={isBidProcessing}
-                  className="flex-1 py-3.5 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all shadow-lg shadow-gray-200 text-sm flex items-center justify-center gap-2"
-                >
-                  {isBidProcessing ? <div className="spinner-border w-4 h-4" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> : '설정하기'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* QnA Delete Confirmation Modal */}
-      {showQnaDeleteModal && (
-        <div className="fixed inset-0 z-[140] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowQnaDeleteModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">문의를 삭제하시겠습니까?</h3>
-              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                삭제된 문의는 복구할 수 없습니다.
-              </p>
-              <div className="flex gap-3 w-full">
-                <button
-                  onClick={() => setShowQnaDeleteModal(false)}
-                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={executeQnaDelete}
-                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
-                >
-                  삭제하기
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Answer Delete Confirmation Modal */}
-      {showAnswerDeleteModal && (
-        <div className="fixed inset-0 z-[140] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAnswerDeleteModal(false)}></div>
-          <div className="bg-white rounded-2xl w-full max-w-sm relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-left">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">답변을 삭제하시겠습니까?</h3>
-              <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                삭제된 답변은 복구할 수 없습니다.
-              </p>
-              <div className="flex gap-3 w-full">
-                <button
-                  onClick={() => setShowAnswerDeleteModal(false)}
-                  className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={executeAnswerDelete}
-                  className="flex-1 py-3.5 bg-brand text-white rounded-2xl font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 text-sm"
-                >
-                  삭제하기
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <ErrorBoundary>
+      <ProductDetailModals
+        product={product}
+        user={user}
+        bidAmount={bidAmount}
+        autoBidMaxAmount={autoBidMaxAmount}
+        isFinished={isFinished}
+        cancelCondition={cancelCondition}
+        isShareModalOpen={isShareModalOpen}
+        showCancelModal={showCancelModal}
+        showBidCancelModal={showBidCancelModal}
+        showBidTermsModal={showBidTermsModal}
+        showRechargePrompt={showRechargePrompt}
+        showDeleteModal={showDeleteModal}
+        showRepostModal={showRepostModal}
+        showBuyoutModal={showBuyoutModal}
+        showBidConfirmModal={showBidConfirmModal}
+        showAutoBidConfirmModal={showAutoBidConfirmModal}
+        isBidCancelling={isBidCancelling}
+        isBidProcessing={isBidProcessing}
+        isBuyoutProcessing={isBuyoutProcessing}
+        isDeleting={isDeleting}
+        isConfirming={isConfirming}
+        agreedNoRebid={agreedNoRebid}
+        agreedPenalty={agreedPenalty}
+        dontAskToday={dontAskToday}
+        setIsShareModalOpen={setIsShareModalOpen}
+        setShowCancelModal={setShowCancelModal}
+        setShowBidCancelModal={setShowBidCancelModal}
+        setShowRechargePrompt={setShowRechargePrompt}
+        setShowDeleteModal={setShowDeleteModal}
+        setShowRepostModal={setShowRepostModal}
+        setShowBuyoutModal={setShowBuyoutModal}
+        setShowBidConfirmModal={setShowBidConfirmModal}
+        setShowAutoBidConfirmModal={setShowAutoBidConfirmModal}
+        setAgreedNoRebid={setAgreedNoRebid}
+        setAgreedPenalty={setAgreedPenalty}
+        setDontAskToday={setDontAskToday}
+        handleAuctionCancel={handleAuctionCancel}
+        handleBidCancelConfirm={handleBidCancelConfirm}
+        handleBidTermsClose={handleBidTermsClose}
+        handleBidTermsConfirm={handleBidTermsConfirm}
+        handleDeleteProduct={handleDeleteProduct}
+        executeBuyout={executeBuyout}
+        executeStandardBid={executeStandardBid}
+        executeAutoBid={executeAutoBid}
+      />
+      </ErrorBoundary>
     </div>
   );
 };
