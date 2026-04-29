@@ -39,7 +39,7 @@ interface AuctionResultDetail {
   hasReview: boolean;
   hasBuyerReview?: boolean;
   hasSellerReview?: boolean;
-  createdAt: string;
+  endTime?: string;
 }
 
 
@@ -284,9 +284,9 @@ export const WonProductDetail: React.FC = () => {
               <section className="p-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-baseline justify-between w-full">
                   <div className="flex items-center gap-2">낙찰 상품 정보</div>
-                  {result.createdAt && !isNaN(new Date(result.createdAt).getTime()) && (
+                  {result.endTime && !isNaN(new Date(result.endTime).getTime()) && (
                     <span className="text-xs text-gray-400 font-medium font-sans">
-                      낙찰일 : {new Date(result.createdAt).toLocaleString('ko-KR', {
+                      낙찰일 : {new Date(result.endTime).toLocaleString('ko-KR', {
                         year: 'numeric',
                         month: 'numeric',
                         day: 'numeric',
