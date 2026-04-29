@@ -1,23 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BsCheckCircle } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
 
-const BUYER_REVIEW_TAGS = [
-  { id: 'tag_1', content: '응답이 빨라요' },
-  { id: 'tag_2', content: '친절하고 매너가 좋아요' },
-  { id: 'tag_3', content: '시간 약속을 잘 지켜요' },
-  { id: 'tag_4', content: '상품 상태가 설명과 같아요' },
-  { id: 'tag_5', content: '집 근처로 와주었어요' },
-];
-
-const SELLER_REVIEW_TAGS = [
-  { id: 'tag_6', content: '응답이 빨라요' },
-  { id: 'tag_7', content: '친절하고 매너가 좋아요' },
-  { id: 'tag_8', content: '시간 약속을 잘 지켜요' },
-  { id: 'tag_9', content: '쿨거래 감사합니다' },
-  { id: 'tag_10', content: '연락이 잘 돼요' },
-];
+interface TagDef {
+  tagId: number;
+  tagName: string;
+  applicableRole: string;
+}
 
 interface ReviewModalProps {
   isOpen: boolean;
@@ -26,7 +16,7 @@ interface ReviewModalProps {
   sellerNickname: string;
   productTitle: string;
   productImage: string;
-  role?: 'buyer' | 'seller'; // 역할에 따른 분기 (기본값: buyer)
+  role?: 'buyer' | 'seller';
   onSuccess?: () => void;
 }
 
@@ -40,24 +30,30 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
   role = 'buyer',
   onSuccess
 }) => {
-  const REVIEW_TAGS = role === 'seller' ? SELLER_REVIEW_TAGS : BUYER_REVIEW_TAGS;
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [availableTags, setAvailableTags] = useState<TagDef[]>([]);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [reviewContent, setReviewContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const backendRole = role === 'buyer' ? 'BUYER' : 'SELLER';
+    api.get('/reviews/tags', { params: { role: backendRole } })
+      .then(res => setAvailableTags(res.data ?? []))
+      .catch(() => showToast('태그 목록을 불러오는 데 실패했습니다.', 'error'));
+  }, [isOpen, role]);
+
   if (!isOpen) return null;
 
-  const toggleTag = (tagContent: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tagContent)
-        ? prev.filter(t => t !== tagContent)
-        : [...prev, tagContent]
+  const toggleTag = (tagId: number) => {
+    setSelectedTagIds(prev =>
+      prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
     );
   };
 
   const handleSubmit = async () => {
-    if (selectedTags.length === 0 && !reviewContent.trim()) {
+    if (selectedTagIds.length === 0 && !reviewContent.trim()) {
       showToast('태그 또는 후기 내용 중 하나 이상 입력해주세요.', 'error');
       return;
     }
@@ -66,9 +62,8 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
     try {
       await api.post('/reviews', {
         resultNo,
-        tags: selectedTags.length > 0 ? selectedTags : null,
+        tagIds: selectedTagIds.length > 0 ? selectedTagIds : null,
         content: reviewContent.trim() || null,
-        role,
       });
       setShowSuccess(true);
       setTimeout(() => {
@@ -109,18 +104,22 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1">거래하며 느낀 점을 선택해주세요</p>
               <div className="flex flex-wrap gap-2">
-                {REVIEW_TAGS.map(tag => (
-                  <button
-                    key={tag.id}
-                    onClick={() => toggleTag(tag.content)}
-                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${selectedTags.includes(tag.content)
-                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
-                        : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
-                      }`}
-                  >
-                    {tag.content}
-                  </button>
-                ))}
+                {availableTags.length === 0 ? (
+                  <p className="text-xs text-gray-400">태그를 불러오는 중...</p>
+                ) : (
+                  availableTags.map(tag => (
+                    <button
+                      key={tag.tagId}
+                      onClick={() => toggleTag(tag.tagId)}
+                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${selectedTagIds.includes(tag.tagId)
+                          ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
+                          : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+                        }`}
+                    >
+                      {tag.tagName}
+                    </button>
+                  ))
+                )}
               </div>
             </div>
 
