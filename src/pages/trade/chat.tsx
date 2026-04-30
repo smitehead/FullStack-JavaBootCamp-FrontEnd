@@ -1306,7 +1306,7 @@ export const Chat: React.FC = () => {
                           </div>
                         )}
 
-                        <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]`}>
+                        <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%] min-w-0`}>
                           {/* 닉네임 표시 (상대방 첫 메시지인 경우) */}
                           {!isMe && isFirstInGroup && (
                             <span className="text-[11px] font-semibold text-gray-400 mb-1.5 ml-1">
@@ -1315,7 +1315,7 @@ export const Chat: React.FC = () => {
                           )}
 
                           <div className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                            <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                            <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} min-w-0`}>
                               {/* ──── 메시지 콘텐츠 (msgType 분기) ──── */}
                               {msg.msgType === 'APPOINTMENT' ? (() => {
                                 let appt: any = {};
@@ -1429,7 +1429,7 @@ export const Chat: React.FC = () => {
                                   </div>
                                 </div>
                               ) : (
-                                <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${isMe
+                                <div className={`p-3 px-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm break-words whitespace-pre-wrap min-w-0 ${isMe
                                   ? msg.status === 'FAILED' ? 'bg-red-50 text-red-800 rounded-tr-none border border-red-100' : 'bg-brand text-white rounded-tr-none'
                                   : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
                                   } ${msg.status === 'SENDING' ? 'opacity-70' : ''}`}>

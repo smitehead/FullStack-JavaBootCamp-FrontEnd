@@ -182,7 +182,7 @@ export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
                   >
                     <BsBell className="w-6 h-6" />
                     {(unreadNotificationsCount > 0 || unreadChatsCount > 0) && (
-                      <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-brand rounded-full border-2 border-white"></span>
+                      <span className="absolute top-2.5 right-2.5 w-3 h-3 bg-brand rounded-full border-2 border-white"></span>
                     )}
                   </button>
                   {isNotiOpen && (
