@@ -1314,7 +1314,7 @@ export const Chat: React.FC = () => {
                             </span>
                           )}
 
-                          <div className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                          <div className={`flex items-end gap-1.5 min-w-0 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                             <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} min-w-0`}>
                               {/* ──── 메시지 콘텐츠 (msgType 분기) ──── */}
                               {msg.msgType === 'APPOINTMENT' ? (() => {
