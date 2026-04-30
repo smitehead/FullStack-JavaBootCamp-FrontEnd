@@ -74,6 +74,23 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  .chat-input-scrollbar::-webkit-scrollbar {
+    width: 3px;
+  }
+  .chat-input-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .chat-input-scrollbar::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 9999px;
+  }
+  .chat-input-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+  .chat-input-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
 }
 
 @layer components {

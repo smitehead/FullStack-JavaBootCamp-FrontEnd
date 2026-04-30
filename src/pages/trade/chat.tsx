@@ -1559,27 +1559,29 @@ export const Chat: React.FC = () => {
                   />
                 </div>
                 <div className="flex-1 relative">
-                  <textarea
-                    value={newMessage}
-                    onChange={(e) => {
-                      if (e.target.value.length <= MAX_CONTENT_LENGTH) setNewMessage(e.target.value);
-                      e.target.style.height = 'auto';
-                      e.target.style.height = `${Math.min(e.target.scrollHeight, 124)}px`;
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        if (newMessage.trim() && isConnected) {
-                          handleBsSendMessage(e as any);
+                  <div className="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-brand focus-within:border-transparent transition-all">
+                    <textarea
+                      value={newMessage}
+                      onChange={(e) => {
+                        if (e.target.value.length <= MAX_CONTENT_LENGTH) setNewMessage(e.target.value);
+                        e.target.style.height = 'auto';
+                        e.target.style.height = `${Math.min(e.target.scrollHeight, 124)}px`;
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          if (newMessage.trim() && isConnected) {
+                            handleBsSendMessage(e as any);
+                          }
                         }
-                      }
-                    }}
-                    placeholder="메시지를 입력하세요..."
-                    maxLength={MAX_CONTENT_LENGTH}
-                    rows={1}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all resize-none overflow-y-auto leading-5"
-                    style={{ maxHeight: '124px', overflowY: 'auto' }}
-                  />
+                      }}
+                      placeholder="메시지를 입력하세요..."
+                      maxLength={MAX_CONTENT_LENGTH}
+                      rows={1}
+                      className="w-full bg-transparent px-5 py-3 text-sm font-medium focus:outline-none resize-none overflow-y-auto leading-5 chat-input-scrollbar block"
+                      style={{ maxHeight: '124px' }}
+                    />
+                  </div>
                   {newMessage.length > 3800 && (
                     <span className="absolute right-3 bottom-3 text-[10px] text-gray-400">
                       {newMessage.length}/{MAX_CONTENT_LENGTH}
