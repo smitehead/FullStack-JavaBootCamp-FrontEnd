@@ -53,23 +53,25 @@ export const ProductList: React.FC = () => {
 
   // 두 스크롤 콜백 ref - 마지막 요소 관래
   const observer = useRef<IntersectionObserver | null>(null);
+  const loadingRef = useRef(false);
+  loadingRef.current = loading;
+
   const lastElementRef = useCallback((node: HTMLDivElement | null) => {
-    if (loading) return;
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
+      if (entries[0].isIntersecting && hasMore && !loadingRef.current) {
         setPage(prevPage => prevPage + 1);
       }
-    }, { threshold: 0.1 }); // 10% 보이면 바로 발화
+    }, { threshold: 0.1 });
     if (node) observer.current.observe(node);
-  }, [loading, hasMore]);
+  }, [hasMore]);
 
   // 이전 페이지 ref - 중복 포치 방지
   const fetchedPageRef = useRef<number>(0);
 
   // 데이터 가져오기 함수
   const fetchProducts = useCallback(async (pageToFetch: number, isNewSearch: boolean) => {
-    if (loading) return;
+    if (loadingRef.current) return;
     setLoading(true);
 
     try {
@@ -151,6 +153,15 @@ export const ProductList: React.FC = () => {
     fetchedPageRef.current = page;
     fetchProducts(page, false);
   }, [page, fetchProducts]);
+
+  // 로드 후 viewport가 안 채워지면 자동으로 다음 페이지 로드 (새로고침 대응)
+  useEffect(() => {
+    if (loading || !hasMore || products.length === 0) return;
+    const isFull = document.documentElement.scrollHeight > window.innerHeight + 100;
+    if (!isFull) {
+      setPage(prev => prev + 1);
+    }
+  }, [loading, hasMore, products.length]);
 
   // URL 변경 시 상태 동기화 (예: 뒤로가기 버튼)
   useEffect(() => {
