@@ -330,18 +330,18 @@ export const UserManagement: React.FC = () => {
                   <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm hidden xl:block">|</span>
                   <span className="hidden xl:block w-[96px] shrink-0 text-xs text-gray-400">가입 {user.joinedAt.split('T')[0]}</span>
                 </div>
-                {/* 우측: 액션 버튼 — 항상 표시 */}
+                {/* 우측: 액션 버튼 — hover 시 표시 */}
                 {!user.isWithdrawn && (
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button onClick={() => handleOpenModal(user as any, 'manner')} className="p-1.5 hover:bg-orange-100 text-orange-400 hover:text-orange-600 rounded-none transition-colors" title="온도 조절">
+                  <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => handleOpenModal(user as any, 'manner')} className="p-1.5 hover:bg-orange-100 text-orange-600 rounded-none transition-colors" title="온도 조절">
                       <BsThermometerHalf className="w-3.5 h-3.5" />
                     </button>
-                    <button onClick={() => handleOpenModal(user as any, 'points')} className="p-1.5 hover:bg-blue-100 text-blue-400 hover:text-blue-600 rounded-none transition-colors" title="포인트 지급">
+                    <button onClick={() => handleOpenModal(user as any, 'points')} className="p-1.5 hover:bg-blue-100 text-blue-600 rounded-none transition-colors" title="포인트 지급">
                       <BsCoin className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => user.isSuspended ? toggleSuspension(user as any) : handleOpenModal(user as any, 'suspend')}
-                      className={`p-1.5 rounded-none transition-colors ${user.isSuspended ? 'text-green-400 hover:bg-green-100 hover:text-green-600' : 'text-red-400 hover:bg-red-100 hover:text-red-600'}`}
+                      className={`p-1.5 rounded-none transition-colors ${user.isSuspended ? 'hover:bg-green-100 text-green-600' : 'hover:bg-red-100 text-red-600'}`}
                       title={user.isSuspended ? "정지 해제" : "계정 정지"}
                     >
                       {user.isSuspended ? <BsPersonCheck className="w-3.5 h-3.5" /> : <BsPersonX className="w-3.5 h-3.5" />}
