@@ -595,7 +595,7 @@ export const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => sendVerificationCode(false)}
-                      disabled={isEmailVerified || cooldown > 0 || !emailId || (isCustomDomain ? !customDomain : !emailDomain)}
+                      disabled={isEmailVerified || showCodeInput || cooldown > 0 || !emailId || (isCustomDomain ? !customDomain : !emailDomain)}
                       className="h-[56px] px-6 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all disabled:bg-gray-200 whitespace-nowrap flex items-center justify-center"
                     >
                       코드전송
