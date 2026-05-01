@@ -12,7 +12,10 @@ export const FindAccount: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('id');
 
   // 아이디 찾기 상태
-  const [idEmail, setIdEmail] = useState('');
+  const [idEmailId, setIdEmailId] = useState('');
+  const [idEmailDomain, setIdEmailDomain] = useState('');
+  const [idCustomDomain, setIdCustomDomain] = useState('');
+  const [isIdCustomDomain, setIsIdCustomDomain] = useState(false);
   const [foundId, setFoundId] = useState<string | null>(null);
 
   // 비밀번호 찾기 상태
@@ -28,6 +31,11 @@ export const FindAccount: React.FC = () => {
   const [pwVerificationError, setPwVerificationError] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
   const [cooldown, setCooldown] = useState(0);
+
+  const getFullIdEmail = () => {
+    const domain = isIdCustomDomain ? idCustomDomain : idEmailDomain;
+    return domain ? `${idEmailId}@${domain}` : idEmailId;
+  };
 
   const getFullPwEmail = () => {
     const domain = isPwCustomDomain ? pwCustomDomain : pwEmailDomain;
@@ -65,8 +73,13 @@ export const FindAccount: React.FC = () => {
 
   const handleFindId = async (e: React.FormEvent) => {
     e.preventDefault();
+    const fullEmail = getFullIdEmail();
+    if (!fullEmail.includes('@') || fullEmail.endsWith('@')) {
+      showToast('올바른 이메일 형식을 입력해주세요.', 'error');
+      return;
+    }
     try {
-      const res = await api.post('/auth/find-id', { email: idEmail });
+      const res = await api.post('/auth/find-id', { email: fullEmail });
       setFoundId(res.data.userId);
     } catch (err: any) {
       showToast(err.response?.data?.message || '일치하는 이메일 정보가 없습니다.', 'error');
@@ -158,17 +171,63 @@ export const FindAccount: React.FC = () => {
 
               {!foundId ? (
                 <form className="space-y-6" onSubmit={handleFindId}>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 주소</label>
-                    <div className="relative">
-                      <input
-                        type="email"
-                        required
-                        className="block w-full px-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white hover:border-[#FF5A5A]/30 transition-all outline-none"
-                        placeholder="example@email.com"
-                        value={idEmail}
-                        onChange={(e) => setIdEmail(e.target.value)}
-                      />
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">이메일 주소</label>
+                      <div className="flex flex-col gap-2 mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="relative flex-1">
+                            <input
+                              type="text"
+                              required
+                              className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
+                              placeholder="이메일 아이디"
+                              value={idEmailId}
+                              onChange={(e) => setIdEmailId(e.target.value)}
+                            />
+                          </div>
+                          <span className="text-gray-400 font-bold">@</span>
+                          <div className="relative flex-1">
+                            <select
+                              className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none appearance-none"
+                              value={isIdCustomDomain ? 'custom' : idEmailDomain}
+                              onChange={(e) => {
+                                if (e.target.value === 'custom') {
+                                  setIsIdCustomDomain(true);
+                                } else {
+                                  setIsIdCustomDomain(false);
+                                  setIdEmailDomain(e.target.value);
+                                }
+                              }}
+                            >
+                              <option value="">선택</option>
+                              <option value="naver.com">naver.com</option>
+                              <option value="gmail.com">gmail.com</option>
+                              <option value="daum.net">daum.net</option>
+                              <option value="hanmail.net">hanmail.net</option>
+                              <option value="nate.com">nate.com</option>
+                              <option value="outlook.com">outlook.com</option>
+                              <option value="custom">직접 입력</option>
+                            </select>
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 font-bold">
+                              <BsChevronDown className="w-4 h-4" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {isIdCustomDomain && (
+                          <div className="animate-in slide-in-from-top-1 duration-200">
+                            <input
+                              type="text"
+                              required
+                              className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
+                              placeholder="도메인을 입력해주세요"
+                              value={idCustomDomain}
+                              onChange={(e) => setIdCustomDomain(e.target.value)}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -363,12 +422,12 @@ export const FindAccount: React.FC = () => {
                 </form>
               ) : (
                 <div className="space-y-8 animate-in zoom-in-95 duration-300 text-left">
-                  <div className="bg-emerald-50 p-8 rounded-2xl text-left border border-emerald-100">
+                  <div className="bg-gray-50 p-8 rounded-2xl text-left border border-gray-100">
                     <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 shadow-sm">
                       <BsEnvelope className="w-6 h-6 text-emerald-600" />
                     </div>
-                    <p className="text-sm font-bold text-emerald-800 mb-2">임시 비밀번호 전송 완료</p>
-                    <p className="text-xs text-emerald-600 leading-relaxed font-medium">
+                    <p className="text-sm font-bold text-gray-900 mb-2">임시 비밀번호 전송 완료</p>
+                    <p className="text-xs text-gray-500 leading-relaxed font-medium">
                       등록된 이메일로 임시 비밀번호가 발송되었습니다.<br />
                       로그인 후 반드시 비밀번호를 변경해주세요.
                     </p>
