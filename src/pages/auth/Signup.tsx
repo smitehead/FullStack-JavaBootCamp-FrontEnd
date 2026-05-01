@@ -434,7 +434,8 @@ export const Signup: React.FC = () => {
                         placeholder="영문 소문자, 숫자 포함 5~20자"
                         value={formData.userId}
                         onChange={(e) => {
-                          setFormData({ ...formData, userId: e.target.value });
+                          const val = e.target.value.replace(/\s/g, '');
+                          setFormData({ ...formData, userId: val });
                           setIdCheckMessage(null);
                           setIsIdChecked(false);
                         }}
@@ -465,7 +466,7 @@ export const Signup: React.FC = () => {
                         className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
                         placeholder="최소 8자 이상"
                         value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value.replace(/\s/g, '') })}
                       />
                     </div>
                   </div>
@@ -481,7 +482,7 @@ export const Signup: React.FC = () => {
                         className="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
                         placeholder="비밀번호 재입력"
                         value={formData.confirmPassword}
-                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value.replace(/\s/g, '') })}
                       />
                     </div>
                   </div>
@@ -501,7 +502,8 @@ export const Signup: React.FC = () => {
                       maxLength={10}
                       value={formData.nickname}
                       onChange={(e) => {
-                        setFormData({ ...formData, nickname: e.target.value });
+                        const val = e.target.value.replace(/\s/g, '');
+                        setFormData({ ...formData, nickname: val });
                         setNicknameCheckMessage(null);
                         setIsNicknameChecked(false);
                       }}
