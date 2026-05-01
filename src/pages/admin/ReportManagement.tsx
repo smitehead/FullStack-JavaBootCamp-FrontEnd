@@ -223,8 +223,8 @@ export const ReportManagement: React.FC = () => {
                       {report.content || '-'}
                     </div>
                     <span className="text-gray-200 shrink-0 w-[20px] text-center text-sm">|</span>
-                    <div className="w-[140px] shrink-0 overflow-hidden">
-                      <span title={report.type || '-'} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-none text-[10px] font-bold max-w-full truncate ${target.bgColor} ${target.color}`}>
+                    <div className="w-[200px] shrink-0 overflow-hidden">
+                      <span title={report.type || '-'} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-none text-[10px] font-bold max-w-full ${target.bgColor} ${target.color}`}>
                         <TargetIcon className="w-2.5 h-2.5 shrink-0" />{report.type || '-'}
                       </span>
                     </div>

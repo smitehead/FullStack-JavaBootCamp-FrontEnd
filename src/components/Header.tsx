@@ -7,6 +7,7 @@ import { CATEGORY_DATA } from '@/constants';
 import { getProfileImageUrl } from '@/utils/imageUtils';
 import { formatMessagePreview, formatRelativeTime } from '@/utils/chatUtils';
 import mainLogo from '@/assets/images/main_logo.png';
+import { showToast } from '@/components/toastService';
 
 interface HeaderProps {
   onLogout: () => void;
@@ -334,7 +335,7 @@ export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               <Link to="/admin" className="flex items-center text-xs font-semibold text-white bg-black px-4 py-1.5 rounded-full shadow-lg shadow-gray-900/10 hover:bg-gray-800 transition-all active:scale-95">관리자모드</Link>
             )}
             <button
-              onClick={() => navigate(user ? '/settings?tab=profile' : '/login')}
+              onClick={() => { if (user) { navigate('/settings?tab=profile'); } else { showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'error'); navigate('/login'); } }}
               className="flex items-center text-xs font-bold text-gray-400 bg-white border border-gray-100 px-3 py-1.5 rounded-full shadow-sm hover:border-[#FF5A5A] hover:text-[#FF5A5A] transition-all group overflow-hidden"
             >
               <span className="whitespace-nowrap">{user?.address || '위치를 확인할 수 없습니다.'}</span>

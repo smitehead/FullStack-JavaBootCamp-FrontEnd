@@ -264,9 +264,16 @@ export const Signup: React.FC = () => {
       return;
     }
 
-    // 3. 비밀번호 유효성 검사 (8자 이상)
-    if (formData.password.length < 8) {
-      showToast("'비밀번호'는 최소 8자 이상이어야 합니다.", 'error');
+    // 3. 비밀번호 유효성 검사
+    const pwRules = {
+      length: formData.password.length >= 8 && formData.password.length <= 16,
+      upper: /[A-Z]/.test(formData.password),
+      lower: /[a-z]/.test(formData.password),
+      number: /[0-9]/.test(formData.password),
+      special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password),
+    };
+    if (!Object.values(pwRules).every(Boolean)) {
+      showToast('비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함한 8~16자여야 합니다.', 'error');
       return;
     }
 
@@ -464,11 +471,12 @@ export const Signup: React.FC = () => {
                         type="password"
                         required
                         className="block w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-[#FF5A5A]/20 focus:bg-white transition-all outline-none"
-                        placeholder="최소 8자 이상"
+                        placeholder="8~16자"
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value.replace(/\s/g, '') })}
                       />
                     </div>
+                    <p className="mt-2 ml-1 text-[10px] text-gray-400 leading-relaxed">대문자, 소문자, 숫자, 특수문자를 포함한 8~16자 이내로 작성해주세요.</p>
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">비밀번호 확인</label>
