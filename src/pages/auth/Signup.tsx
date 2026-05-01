@@ -264,7 +264,7 @@ export const Signup: React.FC = () => {
       return;
     }
 
-    // 3. 비밀번호 유효성 검사
+    // 3. 비밀번호 유효성 검사.
     const pwRules = {
       length: formData.password.length >= 8 && formData.password.length <= 16,
       upper: /[A-Z]/.test(formData.password),
@@ -476,7 +476,7 @@ export const Signup: React.FC = () => {
                         onChange={(e) => setFormData({ ...formData, password: e.target.value.replace(/\s/g, '') })}
                       />
                     </div>
-                    <p className="mt-2 ml-1 text-[10px] text-gray-400 leading-relaxed">대문자, 소문자, 숫자, 특수문자를 포함한 8~16자 이내로 작성해주세요.</p>
+                    <p className="mt-2 ml-1 text-[10px] text-gray-400 whitespace-nowrap">대문자, 소문자, 숫자, 특수문자를 포함한 8~16자 이내로 작성해주세요.</p>
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 ml-1">비밀번호 확인</label>
