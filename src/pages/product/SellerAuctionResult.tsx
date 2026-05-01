@@ -122,7 +122,7 @@ export const SellerAuctionResult: React.FC = () => {
     }
     const sellerNo = getMemberNo(user);
     if (!sellerNo) {
-      showToast('로그인이 필요한 서비스입니다.', 'error');
+      showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'error');
       navigate('/login');
       return;
     }

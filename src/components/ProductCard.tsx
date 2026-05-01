@@ -92,7 +92,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     e.stopPropagation();
 
     if (!user) {
-      alert('로그인이 필요한 서비스입니다.');
+      showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'error');
       navigate('/login');
       return;
     }
@@ -117,7 +117,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     e.stopPropagation();
 
     if (!user) {
-      showToast('로그인이 필요한 서비스입니다.', 'error');
+      showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'error');
       navigate('/login');
       return;
     }

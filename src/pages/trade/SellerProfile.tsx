@@ -99,7 +99,8 @@ export const SellerProfile: React.FC = () => {
 
   const handleBlockToggle = async () => {
     if (!user) {
-      showToast('로그인이 필요한 서비스입니다.', 'warning');
+      showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'error');
+      navigate('/login');
       return;
     }
     const memberNo = id?.replace(/[^0-9]/g, '');

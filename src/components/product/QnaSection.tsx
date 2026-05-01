@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BsReply } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
 import { ProductQna } from '@/types';
 import { Pagination } from '@/components/Pagination';
 import { showToast } from '@/components/toastService';
@@ -15,6 +16,7 @@ interface QnaSectionProps {
 const QNA_PAGE_SIZE = 5;
 
 export const QnaSection: React.FC<QnaSectionProps> = ({ productId, isFinished, isSeller, currentMemberNo }) => {
+  const navigate = useNavigate();
   const [qnaList, setQnaList] = useState<ProductQna[]>([]);
   const [qnaInput, setQnaInput] = useState('');
   const [answerInputs, setAnswerInputs] = useState<Record<number, string>>({});
@@ -41,6 +43,7 @@ export const QnaSection: React.FC<QnaSectionProps> = ({ productId, isFinished, i
   }, [productId]);
 
   const handleQnaSubmit = async () => {
+    if (!currentMemberNo) { showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'error'); navigate('/login'); return; }
     if (!qnaInput.trim()) return;
     try {
       await api.post(`/products/${productId}/qna`, { content: qnaInput.trim() });
@@ -107,6 +110,7 @@ export const QnaSection: React.FC<QnaSectionProps> = ({ productId, isFinished, i
             value={qnaInput}
             onChange={e => setQnaInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleQnaSubmit()}
+            onClick={() => { if (!currentMemberNo) { showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'error'); navigate('/login'); } }}
             placeholder="상품에 대해 궁금한 점을 남겨주세요."
             className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none"
           />
