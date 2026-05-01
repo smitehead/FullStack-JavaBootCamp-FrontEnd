@@ -17,6 +17,7 @@ export const ProductRegister: React.FC = () => {
 
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
@@ -152,9 +153,18 @@ export const ProductRegister: React.FC = () => {
         return;
       }
 
-      const filesToAdd = selectedFiles.slice(0, remainingSlots);
-      
-      if (selectedFiles.length > remainingSlots) {
+      const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      const validFiles = selectedFiles.filter(file => {
+        if (!ALLOWED_TYPES.includes(file.type)) {
+          showToast(`지원하지 않는 형식입니다. (${file.name})`, 'error');
+          return false;
+        }
+        return true;
+      });
+
+      const filesToAdd = validFiles.slice(0, remainingSlots);
+
+      if (validFiles.length > remainingSlots) {
         showToast(`최대 5장까지만 등록 가능합니다. (${remainingSlots}장 추가됨)`, 'warning');
       }
 
@@ -263,6 +273,7 @@ export const ProductRegister: React.FC = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const sellerNo = getMemberNo(user);
       if (!sellerNo) { showToast('로그인 정보를 확인할 수 없습니다.', 'error'); return; }
@@ -307,9 +318,11 @@ export const ProductRegister: React.FC = () => {
 
       showToast('상품이 성공적으로 등록되었습니다.', 'success');
       navigate('/');
-    } catch (error) {
+    } catch (error: any) {
       console.error('상품 등록 실패', error);
-      showToast('상품 등록 중 오류가 발생했습니다.', 'error');
+      const msg = error?.response?.data?.message || error?.message || '알 수 없는 오류';
+      showToast(`상품 등록에 실패했습니다. (${msg})`, 'error');
+      setIsSubmitting(false);
     }
   };
 
@@ -695,9 +708,10 @@ export const ProductRegister: React.FC = () => {
           </button>
           <button
             type="submit"
-            className="px-12 h-[56px] flex items-center justify-center rounded-2xl bg-brand text-white font-bold text-base hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95"
+            disabled={isSubmitting}
+            className="px-12 h-[56px] flex items-center justify-center rounded-2xl bg-brand text-white font-bold text-base hover:bg-brand-dark transition-all shadow-lg shadow-brand/10 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
           >
-            등록하기
+            {isSubmitting ? '등록 중...' : '등록하기'}
           </button>
         </div>
 
