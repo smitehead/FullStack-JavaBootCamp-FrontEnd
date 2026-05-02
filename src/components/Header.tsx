@@ -157,12 +157,12 @@ export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             <Link to="/notice" className="hidden lg:flex text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">고객센터</Link>
 
             {!isInitialized ? (
-              <div className="flex items-center space-x-3">
-                <div className="w-28 h-9 bg-gray-100 rounded-2xl animate-pulse" />
-                <div className="w-24 h-9 bg-gray-100 rounded-2xl animate-pulse" />
-                <div className="w-9 h-9 bg-gray-100 rounded-xl animate-pulse" />
+              <>
+                <div className="w-32 h-9 bg-gray-100 rounded-2xl animate-pulse" />
+                <div className="hidden lg:block w-24 h-9 bg-gray-100 rounded-2xl animate-pulse" />
+                <div className="w-11 h-9 bg-gray-100 rounded-xl animate-pulse" />
                 <div className="w-10 h-10 bg-gray-100 rounded-full animate-pulse" />
-              </div>
+              </>
             ) : user ? (
               <>
                 <div className="flex flex-col items-end">
