@@ -156,19 +156,22 @@ export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
           <div className="flex items-center space-x-6">
             <Link to="/notice" className="hidden lg:flex text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">고객센터</Link>
 
-            {user && (
-              <div className="flex flex-col items-end">
-                <Link to="/points" className="bg-[#F8F9FA] px-4 py-2.5 rounded-2xl flex items-center space-x-2 border border-gray-50 hover:bg-gray-100 transition-colors">
-                  <span className="text-brand font-bold text-sm">P</span>
-                  <span className="text-sm font-bold text-gray-700">{user.points.toLocaleString()}</span>
-                </Link>
-              </div>
-            )}
-
             {!isInitialized ? (
-              <div className="w-40 h-9 bg-gray-100 rounded-xl animate-pulse" />
+              <div className="flex items-center space-x-3">
+                <div className="w-28 h-9 bg-gray-100 rounded-2xl animate-pulse" />
+                <div className="w-24 h-9 bg-gray-100 rounded-2xl animate-pulse" />
+                <div className="w-9 h-9 bg-gray-100 rounded-xl animate-pulse" />
+                <div className="w-10 h-10 bg-gray-100 rounded-full animate-pulse" />
+              </div>
             ) : user ? (
               <>
+                <div className="flex flex-col items-end">
+                  <Link to="/points" className="bg-[#F8F9FA] px-4 py-2.5 rounded-2xl flex items-center space-x-2 border border-gray-50 hover:bg-gray-100 transition-colors">
+                    <span className="text-brand font-bold text-sm">P</span>
+                    <span className="text-sm font-bold text-gray-700">{user.points.toLocaleString()}</span>
+                  </Link>
+                </div>
+
                 <Link
                   to="/register"
                   className="hidden lg:flex items-center space-x-1.5 bg-brand text-white px-5 py-3 rounded-2xl text-sm font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/20 active:scale-95"
