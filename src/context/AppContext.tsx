@@ -160,9 +160,14 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const saved = sessionStorage.getItem('java_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
+  const [isInitialized, setIsInitialized] = useState(() => !!sessionStorage.getItem('java_user'));
   const [isAdminLoading, setIsAdminLoading] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
   const notifyChatRef = useRef(true);
   const [notifySettings, setNotifySettings] = useState({ notifyAuctionEnd: 1, notifyNewBid: 1, notifyMarketing: 0, notifyChat: 1 });
   const [users, setUsers] = useState<User[]>([]);
@@ -452,8 +457,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const savedUser = sessionStorage.getItem('java_user');
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
-      setUser(parsedUser);
-
       const memberNo = parseInt(parsedUser.id.replace(/[^0-9]/g, ''), 10);
       if (!isNaN(memberNo)) {
         api.get(`/members/${memberNo}`).then(res => {
@@ -470,8 +473,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
               return updated;
             });
           }
-        }).catch(err => console.error("사용자 데이터 동기화 실패", err))
-          .finally(() => setIsInitialized(true));
+        }).catch(err => console.error("사용자 데이터 동기화 실패", err));
         return;
       }
     }
