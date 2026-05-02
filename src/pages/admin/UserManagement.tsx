@@ -181,9 +181,17 @@ export const UserManagement: React.FC = () => {
     }
   };
 
-  const handleUserClick = (nickname: string) => {
-    setSearchTerm(nickname);
-    setSearchParams({ nickname });
+  const handleOpenProfile = (userId: string) => {
+    const memberNo = userId.replace('user_', '');
+    const token = sessionStorage.getItem('java_token');
+    const user = sessionStorage.getItem('java_user');
+    if (token) localStorage.setItem('tab_token', token);
+    if (user) localStorage.setItem('tab_user', user);
+    setTimeout(() => {
+      localStorage.removeItem('tab_token');
+      localStorage.removeItem('tab_user');
+    }, 500);
+    window.open(`/seller/${memberNo}`, '_blank');
   };
 
   return (
@@ -278,7 +286,7 @@ export const UserManagement: React.FC = () => {
                   <img src={getProfileImageUrl(user.profileImage)} alt={user.nickname} className="w-8 h-8 rounded-none object-cover bg-gray-100 shrink-0 mr-3" />
                   {/* 닉네임 */}
                   <button
-                    onClick={() => handleUserClick(user.nickname)}
+                    onClick={() => handleOpenProfile(user.id)}
                     title={user.nickname}
                     className="w-[100px] shrink-0 text-[13px] font-bold text-gray-900 hover:text-[#FF5A5A] transition-colors truncate text-left"
                   >
