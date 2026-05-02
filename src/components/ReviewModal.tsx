@@ -37,6 +37,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 }) => {
   const [availableTags, setAvailableTags] = useState<TagDef[]>([]);
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<'positive' | 'negative' | null>(null);
   const [reviewContent, setReviewContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -51,10 +52,14 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
   if (!isOpen) return null;
 
-  const toggleTag = (tagId: number) => {
-    setSelectedTagIds(prev =>
-      prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
-    );
+  const toggleTag = (tagId: number, isNegative: boolean) => {
+    const group = isNegative ? 'negative' : 'positive';
+    if (selectedGroup !== null && selectedGroup !== group) return;
+    setSelectedTagIds(prev => {
+      const next = prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId];
+      setSelectedGroup(next.length === 0 ? null : group);
+      return next;
+    });
   };
 
   const handleSubmit = async () => {
@@ -115,35 +120,47 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                   <div>
                     <p className="text-xs font-bold text-indigo-400 mb-2">좋았어요</p>
                     <div className="flex flex-wrap gap-2">
-                      {availableTags.filter(t => !NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => (
-                        <button
-                          key={tag.tagId}
-                          onClick={() => toggleTag(tag.tagId)}
-                          className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${selectedTagIds.includes(tag.tagId)
-                              ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
-                              : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
-                            }`}
-                        >
-                          {tag.tagName}
-                        </button>
-                      ))}
+                      {availableTags.filter(t => !NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => {
+                        const disabled = selectedGroup === 'negative';
+                        return (
+                          <button
+                            key={tag.tagId}
+                            onClick={() => toggleTag(tag.tagId, false)}
+                            disabled={disabled}
+                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${selectedTagIds.includes(tag.tagId)
+                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
+                                : disabled
+                                  ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed'
+                                  : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+                              }`}
+                          >
+                            {tag.tagName}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                   <div>
                     <p className="text-xs font-bold text-red-400 mb-2">아쉬웠어요</p>
                     <div className="flex flex-wrap gap-2">
-                      {availableTags.filter(t => NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => (
-                        <button
-                          key={tag.tagId}
-                          onClick={() => toggleTag(tag.tagId)}
-                          className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${selectedTagIds.includes(tag.tagId)
-                              ? 'bg-red-500 border-red-500 text-white shadow-md'
-                              : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
-                            }`}
-                        >
-                          {tag.tagName}
-                        </button>
-                      ))}
+                      {availableTags.filter(t => NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => {
+                        const disabled = selectedGroup === 'positive';
+                        return (
+                          <button
+                            key={tag.tagId}
+                            onClick={() => toggleTag(tag.tagId, true)}
+                            disabled={disabled}
+                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${selectedTagIds.includes(tag.tagId)
+                                ? 'bg-red-500 border-red-500 text-white shadow-md'
+                                : disabled
+                                  ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed'
+                                  : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+                              }`}
+                          >
+                            {tag.tagName}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

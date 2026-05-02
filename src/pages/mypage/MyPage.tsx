@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+
+const NEGATIVE_TAG_NAMES = new Set([
+  '응답이 느렸어요', '불친절했어요', '약속을 지키지 않았어요',
+  '상품 상태가 설명과 달랐어요', '결제가 늦었어요', '연락이 되지 않았어요',
+]);
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { ProductCard } from '@/components/ProductCard';
@@ -785,12 +790,15 @@ export const MyPage: React.FC = () => {
                           const tagCounts: Record<string, number> = {};
                           reviews.forEach(r => r.tags?.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
                           const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
-                          return sortedTags.map(([tag, count]) => (
-                            <div key={tag} className="bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 border border-gray-100">
-                              <span className="text-sm font-medium text-gray-700">{tag}</span>
-                              <span className="bg-indigo-100 text-indigo-600 text-xs font-bold px-2 py-0.5 rounded-full">{count}</span>
-                            </div>
-                          ));
+                          return sortedTags.map(([tag, count]) => {
+                            const isNeg = NEGATIVE_TAG_NAMES.has(tag);
+                            return (
+                              <div key={tag} className={`px-4 py-2 rounded-xl flex items-center gap-2 border ${isNeg ? 'bg-red-50 border-red-100' : 'bg-indigo-50 border-indigo-100'}`}>
+                                <span className={`text-sm font-medium ${isNeg ? 'text-red-700' : 'text-indigo-700'}`}>{tag}</span>
+                                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isNeg ? 'bg-red-100 text-red-600' : 'bg-indigo-100 text-indigo-600'}`}>{count}</span>
+                              </div>
+                            );
+                          });
                         })()}
                       </div>
                     </div>
@@ -853,9 +861,12 @@ export const MyPage: React.FC = () => {
                               </div>
                               {review.tags && review.tags.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mb-3">
-                                  {review.tags.map(tag => (
-                                    <span key={tag} className="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">{tag}</span>
-                                  ))}
+                                  {review.tags.map(tag => {
+                                    const isNeg = NEGATIVE_TAG_NAMES.has(tag);
+                                    return (
+                                      <span key={tag} className={`text-xs font-bold px-3 py-1 rounded-full ${isNeg ? 'bg-red-50 text-red-500' : 'bg-indigo-50 text-indigo-600'}`}>{tag}</span>
+                                    );
+                                  })}
                                 </div>
                               )}
                               {review.content && (

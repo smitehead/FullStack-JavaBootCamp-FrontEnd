@@ -25,6 +25,7 @@ export const ReviewCreate: React.FC = () => {
   const [role, setRole] = useState<'BUYER' | 'SELLER' | null>(null);
   const [availableTags, setAvailableTags] = useState<TagDef[]>([]);
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<'positive' | 'negative' | null>(null);
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -58,10 +59,14 @@ export const ReviewCreate: React.FC = () => {
       .catch(() => showToast('태그 목록을 불러오는 데 실패했습니다.', 'error'));
   }, [role]);
 
-  const toggleTag = (tagId: number) => {
-    setSelectedTagIds(prev =>
-      prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
-    );
+  const toggleTag = (tagId: number, isNegative: boolean) => {
+    const group = isNegative ? 'negative' : 'positive';
+    if (selectedGroup !== null && selectedGroup !== group) return;
+    setSelectedTagIds(prev => {
+      const next = prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId];
+      setSelectedGroup(next.length === 0 ? null : group);
+      return next;
+    });
   };
 
   const handleSubmit = async () => {
@@ -127,37 +132,49 @@ export const ReviewCreate: React.FC = () => {
                 <div>
                   <p className="text-xs font-bold text-indigo-400 mb-3">좋았어요</p>
                   <div className="flex flex-wrap gap-2.5">
-                    {availableTags.filter(t => !NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => (
-                      <button
-                        key={tag.tagId}
-                        onClick={() => toggleTag(tag.tagId)}
-                        className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
-                          selectedTagIds.includes(tag.tagId)
-                            ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
-                            : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
-                        }`}
-                      >
-                        {tag.tagName}
-                      </button>
-                    ))}
+                    {availableTags.filter(t => !NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => {
+                      const disabled = selectedGroup === 'negative';
+                      return (
+                        <button
+                          key={tag.tagId}
+                          onClick={() => toggleTag(tag.tagId, false)}
+                          disabled={disabled}
+                          className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
+                            selectedTagIds.includes(tag.tagId)
+                              ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
+                              : disabled
+                                ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed'
+                                : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+                          }`}
+                        >
+                          {tag.tagName}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
                 <div>
                   <p className="text-xs font-bold text-red-400 mb-3">아쉬웠어요</p>
                   <div className="flex flex-wrap gap-2.5">
-                    {availableTags.filter(t => NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => (
-                      <button
-                        key={tag.tagId}
-                        onClick={() => toggleTag(tag.tagId)}
-                        className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
-                          selectedTagIds.includes(tag.tagId)
-                            ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-100'
-                            : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
-                        }`}
-                      >
-                        {tag.tagName}
-                      </button>
-                    ))}
+                    {availableTags.filter(t => NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => {
+                      const disabled = selectedGroup === 'positive';
+                      return (
+                        <button
+                          key={tag.tagId}
+                          onClick={() => toggleTag(tag.tagId, true)}
+                          disabled={disabled}
+                          className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
+                            selectedTagIds.includes(tag.tagId)
+                              ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-100'
+                              : disabled
+                                ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed'
+                                : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+                          }`}
+                        >
+                          {tag.tagName}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
