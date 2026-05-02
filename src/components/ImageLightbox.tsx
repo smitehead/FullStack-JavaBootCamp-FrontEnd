@@ -87,7 +87,7 @@ export const ImageLightbox: React.FC<Props> = ({ urls, index, onClose, onNav }) 
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm overflow-hidden"
-      onClick={isZoomed ? undefined : onClose}
+      onClick={onClose}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
