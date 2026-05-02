@@ -96,6 +96,7 @@ export const MyPage: React.FC = () => {
     createdAt: string;
   }
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
+  const [allReceivedTags, setAllReceivedTags] = useState<string[]>([]);
   const [visibleReviewsCount, setVisibleReviewsCount] = useState(5);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [hideModalId, setHideModalId] = useState<number | null>(null);
@@ -116,8 +117,12 @@ export const MyPage: React.FC = () => {
     const memberNo = getMemberNo(user);
     if (!memberNo) return;
     api.get(`/reviews/target/${memberNo}`)
-      .then(res => setReviews([...(res.data || [])].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())))
-      .catch(() => setReviews([]));
+      .then(res => {
+        const sorted = [...(res.data || [])].sort((a: ReviewItem, b: ReviewItem) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setReviews(sorted);
+        setAllReceivedTags(sorted.flatMap((r: ReviewItem) => r.tags ?? []));
+      })
+      .catch(() => { setReviews([]); setAllReceivedTags([]); });
   }, [activeTab, user]);
 
   const [sellingProducts, setSellingProducts] = useState<Product[]>([]);
@@ -782,13 +787,13 @@ export const MyPage: React.FC = () => {
               {activeTab === 'reviews' && (
                 <div className="flex flex-col gap-8">
                   {/* 태그 집계 */}
-                  {reviews.length > 0 && (
+                  {allReceivedTags.length > 0 && (
                     <div className="bg-white rounded-2xl border border-gray-100 p-6">
                       <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">받은 태그</h4>
                       <div className="flex flex-wrap gap-3">
                         {(() => {
                           const tagCounts: Record<string, number> = {};
-                          reviews.forEach(r => r.tags?.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+                          allReceivedTags.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; });
                           const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
                           return sortedTags.map(([tag, count]) => {
                             const isNeg = NEGATIVE_TAG_NAMES.has(tag);
