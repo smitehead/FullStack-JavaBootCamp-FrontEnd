@@ -18,15 +18,6 @@ export const ProductList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAppContext(); // 로그인 사용자 정보 (memberNo 전송용)
 
-  const [blockedSellerNos, setBlockedSellerNos] = useState<Set<number>>(new Set());
-
-  useEffect(() => {
-    if (!user) { setBlockedSellerNos(new Set()); return; }
-    api.get('/members/me/blocked')
-      .then(res => setBlockedSellerNos(new Set((res.data || []).map((b: any) => Number(b.id)))))
-      .catch(() => {});
-  }, [user]);
-
   // 데이터 상태
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
@@ -133,11 +124,7 @@ export const ProductList: React.FC = () => {
           participantCount: item.participantCount || 0,
           currentPrice: item.currentPrice || 0,
           endTime: item.endTime || new Date().toISOString()
-        }))
-        .filter((p: Product) => {
-          const sellerNo = Number(p.seller.id.replace('user_', ''));
-          return !blockedSellerNos.has(sellerNo);
-        });
+        }));
 
       if (isNewSearch) {
         setProducts(mappedProducts);
