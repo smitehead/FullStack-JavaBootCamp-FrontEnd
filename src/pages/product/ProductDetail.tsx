@@ -18,6 +18,7 @@ import { BidHistorySection } from '@/components/product/BidHistorySection';
 import { ShippingSection } from '@/components/product/ShippingSection';
 import { ProductDetailModals } from '@/components/product/ProductDetailModals';
 import { RelatedProducts } from '@/components/product/RelatedProducts';
+import { ImageLightbox } from '@/components/ImageLightbox';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // 카테고리 ID로 전체 경로를 찾는 헬퍼 함수
@@ -74,6 +75,7 @@ export const ProductDetail: React.FC = () => {
 
   const currentMemberNo = getMemberNo(user);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -943,7 +945,12 @@ export const ProductDetail: React.FC = () => {
         <div className="lg:w-[55%] flex flex-col relative group">
           <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden shadow-sm relative flex items-center justify-center">
             {product.images && product.images.length > 0 ? (
-              <img src={product.images[selectedImage]} alt={product.title} className="w-full h-full object-cover transition-transform duration-500" />
+              <img
+                src={product.images[selectedImage]}
+                alt={product.title}
+                className="w-full h-full object-cover transition-transform duration-500 cursor-zoom-in"
+                onClick={() => setLightboxOpen(true)}
+              />
             ) : (
               <div className="flex flex-col items-center text-gray-300">
                 <BsBox2 className="w-20 h-20 mb-2" />
@@ -1613,6 +1620,15 @@ export const ProductDetail: React.FC = () => {
           executeAutoBid={executeAutoBid}
         />
       </ErrorBoundary>
+
+      {lightboxOpen && product.images.length > 0 && (
+        <ImageLightbox
+          urls={product.images}
+          index={selectedImage}
+          onClose={() => setLightboxOpen(false)}
+          onNav={setSelectedImage}
+        />
+      )}
     </div>
   );
 };
