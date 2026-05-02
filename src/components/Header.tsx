@@ -14,7 +14,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
-  const { user, isInitialized, notifications, chats, markNotificationAsRead, markAllNotificationsAsRead, unreadNotificationsCount, unreadChatsCount } = useAppContext();
+  const { user, notifications, chats, markNotificationAsRead, markAllNotificationsAsRead, unreadNotificationsCount, unreadChatsCount } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
@@ -156,14 +156,7 @@ export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
           <div className="flex items-center space-x-6">
             <Link to="/notice" className="hidden lg:flex text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">고객센터</Link>
 
-            {!isInitialized ? (
-              <>
-                <div className="w-32 h-9 bg-gray-100 rounded-2xl animate-pulse" />
-                <div className="hidden lg:block w-24 h-9 bg-gray-100 rounded-2xl animate-pulse" />
-                <div className="w-11 h-9 bg-gray-100 rounded-xl animate-pulse" />
-                <div className="w-10 h-10 bg-gray-100 rounded-full animate-pulse" />
-              </>
-            ) : user ? (
+            {user ? (
               <>
                 <div className="flex flex-col items-end">
                   <Link to="/points" className="bg-[#F8F9FA] px-4 py-2.5 rounded-2xl flex items-center space-x-2 border border-gray-50 hover:bg-gray-100 transition-colors">
@@ -334,22 +327,16 @@ export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
           </div>
 
           <div className="flex items-center space-x-3">
-            {!isInitialized ? (
-              <div className="w-[76px] h-7 bg-gray-100 rounded-full animate-pulse" />
-            ) : (
-              <>
-                {user?.isAdmin && (
-                  <Link to="/admin" className="flex items-center text-xs font-semibold text-white bg-black px-4 py-1.5 rounded-full shadow-lg shadow-gray-900/10 hover:bg-gray-800 transition-all active:scale-95">관리자모드</Link>
-                )}
-                <button
-                  onClick={() => { if (user) { navigate('/settings?tab=profile'); } else { showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'error'); navigate('/login'); } }}
-                  className="flex items-center text-xs font-bold text-gray-400 bg-white border border-gray-100 px-3 py-1.5 rounded-full shadow-sm hover:border-[#FF5A5A] hover:text-[#FF5A5A] transition-all group overflow-hidden"
-                >
-                  <span className="whitespace-nowrap">{user?.address || '위치 미설정'}</span>
-                  <span className="text-[10px] max-w-0 opacity-0 group-hover:max-w-[100px] group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap ml-0 group-hover:ml-2 border-l border-transparent group-hover:border-gray-200 pl-0 group-hover:pl-2">위치 변경하기</span>
-                </button>
-              </>
+            {user?.isAdmin && (
+              <Link to="/admin" className="flex items-center text-xs font-semibold text-white bg-black px-4 py-1.5 rounded-full shadow-lg shadow-gray-900/10 hover:bg-gray-800 transition-all active:scale-95">관리자모드</Link>
             )}
+            <button
+              onClick={() => { if (user) { navigate('/settings?tab=profile'); } else { showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.', 'error'); navigate('/login'); } }}
+              className="flex items-center text-xs font-bold text-gray-400 bg-white border border-gray-100 px-3 py-1.5 rounded-full shadow-sm hover:border-[#FF5A5A] hover:text-[#FF5A5A] transition-all group overflow-hidden"
+            >
+              <span className="whitespace-nowrap">{user?.address || '위치 미설정'}</span>
+              <span className="text-[10px] max-w-0 opacity-0 group-hover:max-w-[100px] group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap ml-0 group-hover:ml-2 border-l border-transparent group-hover:border-gray-200 pl-0 group-hover:pl-2">위치 변경하기</span>
+            </button>
           </div>
         </div>
       </div>
