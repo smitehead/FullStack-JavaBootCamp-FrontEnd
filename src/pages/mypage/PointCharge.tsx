@@ -6,10 +6,12 @@ import { BsCreditCard, BsArrowLeft } from 'react-icons/bs';
 import api from '@/services/api';
 import { useAppContext } from '@/context/AppContext';
 import { showToast } from '@/components/toastService';
+import { useConfirm } from '@/components/ConfirmModal';
 
 export const PointCharge: React.FC = () => {
   const navigate = useNavigate();
   const { user, updateCurrentUserPoints } = useAppContext();
+  const { showConfirm, ConfirmDialog } = useConfirm();
 
   const [amount, setAmount] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -52,15 +54,16 @@ export const PointCharge: React.FC = () => {
 
 
   // 카드 삭제
-  const handleDeleteCard = async () => {
-    if (!confirm('등록된 카드를 삭제하시겠습니까?')) return;
-    try {
-      await api.delete('/points/billing-key');
-      setRegisteredCard(null);
-      showToast('카드가 삭제되었습니다.', 'success');
-    } catch (e) {
-      showToast('카드 삭제에 실패했습니다.', 'error');
-    }
+  const handleDeleteCard = () => {
+    showConfirm('등록된 카드를 삭제하시겠습니까?', async () => {
+      try {
+        await api.delete('/points/billing-key');
+        setRegisteredCard(null);
+        showToast('카드가 삭제되었습니다.', 'success');
+      } catch (e) {
+        showToast('카드 삭제에 실패했습니다.', 'error');
+      }
+    }, { variant: 'danger', confirmText: '삭제' });
   };
 
   // 충전 버튼 클릭 — 핵심 로직
@@ -144,6 +147,8 @@ export const PointCharge: React.FC = () => {
   }
 
   return (
+    <>
+    {ConfirmDialog}
     <div className="max-w-2xl mx-auto px-6 py-12">
       {/* 헤더 */}
       <div className="flex items-center gap-4 mb-10">
@@ -272,5 +277,6 @@ export const PointCharge: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };

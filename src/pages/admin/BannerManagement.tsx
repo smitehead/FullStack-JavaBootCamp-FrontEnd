@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { showToast } from '@/components/toastService';
 import { BsTrash3, BsPen, BsImage, BsLink, BsUpload } from 'react-icons/bs';
 
 import { BsPlusLg, BsXCircle, BsChevronLeft, BsChevronRight, BsCheckCircle } from 'react-icons/bs';
@@ -81,7 +82,7 @@ export const BannerManagement: React.FC = () => {
   // API: 배너 등록/수정
   const handleSave = async () => {
     if (!imgUrl.trim()) {
-      alert('이미지를 업로드하거나 URL을 입력해주세요.');
+      showToast('이미지를 업로드하거나 URL을 입력해주세요.', 'warning');
       return;
     }
     // datetime-local 입력값은 "2026-03-26T12:00" 형식(초 없음)이라
@@ -98,7 +99,7 @@ export const BannerManagement: React.FC = () => {
       fetchBanners();
     } catch (e) {
       console.error('배너 저장 실패', e);
-      alert('배너 저장에 실패했습니다. 다시 시도해주세요.');
+      showToast('배너 저장에 실패했습니다. 다시 시도해주세요.', 'error');
     }
   };
 
@@ -377,7 +378,7 @@ export const BannerManagement: React.FC = () => {
                           setImgUrl(res.data.url);
                         } catch (err) {
                           console.error('이미지 업로드 실패', err);
-                          alert('이미지 업로드에 실패했습니다.');
+                          showToast('이미지 업로드에 실패했습니다.', 'error');
                         } finally {
                           setIsUploading(false);
                           e.target.value = '';

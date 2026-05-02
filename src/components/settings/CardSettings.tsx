@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { BsCreditCard } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
+import { useConfirm } from '@/components/ConfirmModal';
 
 export const CardSettings: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export const CardSettings: React.FC = () => {
     createdAt?: string;
   } | null>(null);
   const [isCardLoading, setIsCardLoading] = useState(true);
+  const { showConfirm, ConfirmDialog } = useConfirm();
 
   useEffect(() => {
     api.get('/points/billing-key')
@@ -28,18 +30,25 @@ export const CardSettings: React.FC = () => {
       .finally(() => setIsCardLoading(false));
   }, []);
 
-  const handleDeleteRegisteredCard = async () => {
-    if (!confirm('등록된 카드를 삭제하시겠습니다?\n카드 삭제 후에는 간편 충전을 사용할 수 없습니다.')) return;
-    try {
-      await api.delete('/points/billing-key');
-      setRegisteredCard(null);
-      showToast('카드가 성공적으로 삭제되었습니다.', 'success');
-    } catch {
-      showToast('카드 삭제 중 오류가 발생했습니다.', 'error');
-    }
+  const handleDeleteRegisteredCard = () => {
+    showConfirm(
+      '등록된 카드를 삭제하시겠습니까?',
+      async () => {
+        try {
+          await api.delete('/points/billing-key');
+          setRegisteredCard(null);
+          showToast('카드가 성공적으로 삭제되었습니다.', 'success');
+        } catch {
+          showToast('카드 삭제 중 오류가 발생했습니다.', 'error');
+        }
+      },
+      { variant: 'danger', confirmText: '삭제', subMessage: '카드 삭제 후에는 간편 충전을 사용할 수 없습니다.' }
+    );
   };
 
   return (
+    <>
+    {ConfirmDialog}
     <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-xl font-bold text-gray-900">결제 카드 관리</h3>
@@ -92,5 +101,6 @@ export const CardSettings: React.FC = () => {
         </div>
       )}
     </section>
+    </>
   );
 };

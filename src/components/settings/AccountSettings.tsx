@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { BsBank } from 'react-icons/bs';
 import api from '@/services/api';
 import { showToast } from '@/components/toastService';
+import { useConfirm } from '@/components/ConfirmModal';
 
 interface BankAccount {
   accountNo: number;
@@ -16,6 +17,7 @@ export const AccountSettings: React.FC = () => {
   const navigate = useNavigate();
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [isAccountLoading, setIsAccountLoading] = useState(false);
+  const { showConfirm, ConfirmDialog } = useConfirm();
 
   useEffect(() => {
     setIsAccountLoading(true);
@@ -26,17 +28,20 @@ export const AccountSettings: React.FC = () => {
   }, []);
 
   const handleDeleteAccount = async (accountNo: number) => {
-    if (!confirm('이 계좌를 삭제하시겠습니까?')) return;
-    try {
-      await api.delete(`/points/accounts/${accountNo}`);
-      setAccounts(prev => prev.filter(a => a.accountNo !== accountNo));
-      showToast('계좌가 삭제되었습니다.', 'success');
-    } catch {
-      showToast('계좌 삭제에 실패했습니다.', 'error');
-    }
+    showConfirm('이 계좌를 삭제하시겠습니까?', async () => {
+      try {
+        await api.delete(`/points/accounts/${accountNo}`);
+        setAccounts(prev => prev.filter(a => a.accountNo !== accountNo));
+        showToast('계좌가 삭제되었습니다.', 'success');
+      } catch {
+        showToast('계좌 삭제에 실패했습니다.', 'error');
+      }
+    }, { variant: 'danger', confirmText: '삭제' });
   };
 
   return (
+    <>
+    {ConfirmDialog}
     <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 animate-in fade-in duration-300">
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -90,5 +95,6 @@ export const AccountSettings: React.FC = () => {
         </div>
       )}
     </section>
+    </>
   );
 };

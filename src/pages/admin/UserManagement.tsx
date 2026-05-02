@@ -7,6 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { User } from '@/types';
 import { showToast } from '@/components/toastService';
+import { useConfirm } from '@/components/ConfirmModal';
 import { getProfileImageUrl } from '@/utils/imageUtils';
 
 type UserStatus = '정상' | '정지' | '영구정지' | '탈퇴';
@@ -17,6 +18,7 @@ const ITEMS_PER_PAGE = 15;
 
 export const UserManagement: React.FC = () => {
   const { users, suspendUser, unsuspendUser, updateUserRole, updateUserManner, updateUserPoints, mannerHistory, isAdminLoading } = useAppContext();
+  const { showConfirm, ConfirmDialog } = useConfirm();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialSearch = searchParams.get('nickname') || '';
 
@@ -152,9 +154,7 @@ export const UserManagement: React.FC = () => {
 
   const toggleSuspension = (user: User) => {
     if (user.isSuspended) {
-      if (window.confirm('정지를 해제하시겠습니까?')) {
-        unsuspendUser(user.id);
-      }
+      showConfirm('정지를 해제하시겠습니까?', () => unsuspendUser(user.id), { confirmText: '해제' });
     } else {
       handleOpenModal(user, 'suspend');
     }
@@ -165,11 +165,11 @@ export const UserManagement: React.FC = () => {
       showToast(`이미 ${newIsAdmin ? '관리자' : '일반'} 권한입니다.`, 'error');
       return;
     }
-
-    if (window.confirm(`정말로 ${newIsAdmin ? '관리자' : '일반'} 권한으로 변경하시겠습니까?`)) {
-      updateUserRole(user.id, newIsAdmin);
-      showToast('권한이 변경되었습니다.', 'success');
-    }
+    showConfirm(
+      `${newIsAdmin ? '관리자' : '일반'} 권한으로 변경하시겠습니까?`,
+      () => { updateUserRole(user.id, newIsAdmin); showToast('권한이 변경되었습니다.', 'success'); },
+      { confirmText: '변경' }
+    );
   };
 
   const toggleSort = (field: SortField) => {
@@ -195,6 +195,8 @@ export const UserManagement: React.FC = () => {
   };
 
   return (
+    <>
+    {ConfirmDialog}
     <div className="space-y-4">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
@@ -520,5 +522,6 @@ export const UserManagement: React.FC = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
