@@ -4,6 +4,11 @@ import { BsCheckCircle, BsChevronLeft } from 'react-icons/bs';
 import { showToast } from '@/components/toastService';
 import api from '@/services/api';
 
+const NEGATIVE_TAG_NAMES = new Set([
+  '응답이 느렸어요', '불친절했어요', '약속을 지키지 않았어요',
+  '상품 상태가 설명과 달랐어요', '결제가 늦었어요', '연락이 되지 않았어요',
+]);
+
 interface TagDef {
   tagId: number;
   tagName: string;
@@ -118,20 +123,43 @@ export const ReviewCreate: React.FC = () => {
             {availableTags.length === 0 && role !== null ? (
               <p className="text-xs text-gray-400">태그를 불러오는 중...</p>
             ) : (
-              <div className="flex flex-wrap gap-2.5">
-                {availableTags.map(tag => (
-                  <button
-                    key={tag.tagId}
-                    onClick={() => toggleTag(tag.tagId)}
-                    className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
-                      selectedTagIds.includes(tag.tagId)
-                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
-                        : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
-                    }`}
-                  >
-                    {tag.tagName}
-                  </button>
-                ))}
+              <div className="space-y-5">
+                <div>
+                  <p className="text-xs font-bold text-indigo-400 mb-3">좋았어요</p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {availableTags.filter(t => !NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => (
+                      <button
+                        key={tag.tagId}
+                        onClick={() => toggleTag(tag.tagId)}
+                        className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
+                          selectedTagIds.includes(tag.tagId)
+                            ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
+                            : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        {tag.tagName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-red-400 mb-3">아쉬웠어요</p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {availableTags.filter(t => NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => (
+                      <button
+                        key={tag.tagId}
+                        onClick={() => toggleTag(tag.tagId)}
+                        className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
+                          selectedTagIds.includes(tag.tagId)
+                            ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-100'
+                            : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        {tag.tagName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </div>
