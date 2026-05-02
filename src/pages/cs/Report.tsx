@@ -78,6 +78,7 @@ export const Report: React.FC = () => {
 
       await api.post('/reports', formData);
       setIsSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => {
         navigate(-1);
       }, 3000);
