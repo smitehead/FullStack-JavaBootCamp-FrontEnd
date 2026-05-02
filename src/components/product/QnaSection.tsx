@@ -49,8 +49,9 @@ export const QnaSection: React.FC<QnaSectionProps> = ({ productId, isFinished, i
       await api.post(`/products/${productId}/qna`, { content: qnaInput.trim() });
       setQnaInput('');
       fetchQnaList();
-    } catch {
-      showToast('문의 등록에 실패했습니다.', 'error');
+    } catch (err: any) {
+      const msg = err?.response?.data?.error || '문의 등록에 실패했습니다.';
+      showToast(msg, 'error');
     }
   };
 
