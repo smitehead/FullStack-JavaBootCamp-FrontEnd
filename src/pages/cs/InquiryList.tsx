@@ -61,7 +61,7 @@ export const InquiryList: React.FC = () => {
 
   const categories: (InquiryType | '전체')[] = ['전체', '버그 신고', '포인트 문의', '계정 문의', '기타'];
 
-  if (!isInitialized || isLoading) return (
+  if (!isInitialized) return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="spinner-border w-10 h-10" />
     </div>
@@ -126,7 +126,11 @@ export const InquiryList: React.FC = () => {
 
           {/* Inquiry List */}
           <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
-            {inquiries.length > 0 ? (
+            {isLoading ? (
+              <div className="py-20 flex justify-center">
+                <div className="spinner-border w-8 h-8" />
+              </div>
+            ) : inquiries.length > 0 ? (
               <div className="divide-y divide-gray-50">
                 {inquiries.map(inquiry => (
                   <Link
@@ -165,6 +169,7 @@ export const InquiryList: React.FC = () => {
                 <p className="text-gray-400 font-bold">문의 내역이 없습니다.</p>
               </div>
             )}
+
           </div>
 
           <Pagination 
