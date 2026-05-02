@@ -164,7 +164,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const notifyChatRef = useRef(true);
-  const [notifySettings, setNotifySettings] = useState({ notifyAuctionEnd: 1, notifyNewBid: 1, notifyMarketing: 0 });
+  const [notifySettings, setNotifySettings] = useState({ notifyAuctionEnd: 1, notifyNewBid: 1, notifyMarketing: 0, notifyChat: 1 });
   const [users, setUsers] = useState<User[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -272,11 +272,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       return;
     }
     api.get('/members/me').then(res => {
-      notifyChatRef.current = res.data.notifyChat === 1;
+      const chatEnabled = res.data.notifyChat === 1;
+      notifyChatRef.current = chatEnabled;
       setNotifySettings({
         notifyAuctionEnd: res.data.notifyAuctionEnd ?? 1,
         notifyNewBid: res.data.notifyNewBid ?? 1,
         notifyMarketing: res.data.marketingAgree ?? 0,
+        notifyChat: chatEnabled ? 1 : 0,
       });
     }).catch(() => {});
   }, [user?.id]);
@@ -816,7 +818,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if ((n.type === '이벤트' || n.type === 'marketing') && !notifySettings.notifyMarketing) return false;
     return true;
   }).length;
-  const unreadChatsCount = notifyChatRef.current
+  const unreadChatsCount = notifySettings.notifyChat
     ? filteredChats.filter(c => c.unreadCount > 0).length
     : 0;
 
@@ -863,7 +865,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       unreadChatsCount,
       refreshActivityLogs,
       fetchChats,
-      updateNotifyChat: (val: boolean) => { notifyChatRef.current = val; },
+      updateNotifyChat: (val: boolean) => {
+        notifyChatRef.current = val;
+        setNotifySettings(prev => ({ ...prev, notifyChat: val ? 1 : 0 }));
+      },
       updateNotifyBadge,
     }}>
       {children}
