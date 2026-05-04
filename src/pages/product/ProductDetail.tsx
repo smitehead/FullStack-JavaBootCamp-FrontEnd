@@ -937,12 +937,14 @@ export const ProductDetail: React.FC = () => {
                 </button>
                 {isSeller && (
                   <>
-                    <button
-                      onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
-                      className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
-                    >
-                      <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
-                    </button>
+                    {isFinished && (
+                      <button
+                        onClick={() => { setShowMoreMenu(false); setShowDeleteModal(true); }}
+                        className="w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border-b border-gray-50"
+                      >
+                        <BsTrash3 className="w-4 h-4 mr-2.5" /> 삭제하기
+                      </button>
+                    )}
                     {!isFinished && (
                       <button
                         onClick={() => { setShowMoreMenu(false); setShowCancelModal(true); }}
