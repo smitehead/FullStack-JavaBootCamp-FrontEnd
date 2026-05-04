@@ -625,6 +625,7 @@ export const Settings: React.FC = () => {
                       value={passwordData.new}
                       onChange={(e) => setPasswordData({ ...passwordData, new: e.target.value })}
                     />
+                    <p className="mt-2 ml-1 text-[10px] text-gray-400">대문자, 소문자, 숫자, 특수문자를 포함한 8~16자 이내로 작성해주세요.</p>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">비밀번호 확인</label>

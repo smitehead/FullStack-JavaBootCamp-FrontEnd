@@ -137,7 +137,7 @@ export const CardRegistration: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-50 pt-8 pb-12 px-4">
+    <div className="min-h-[calc(100vh-64px)] bg-gray-50 pt-8 pb-12 px-4">
       <div className="max-w-md mx-auto">
 
         {/* 뒤로가기 */}

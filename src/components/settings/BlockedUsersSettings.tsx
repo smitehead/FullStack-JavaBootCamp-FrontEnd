@@ -12,10 +12,10 @@ export const BlockedUsersSettings: React.FC = () => {
       .catch(() => {});
   }, []);
 
-  const unblockUser = async (memberNo: number) => {
+  const unblockUser = async (userId: number) => {
     try {
-      await api.delete(`/members/me/blocked/${memberNo}`);
-      setBlockedUsers(prev => prev.filter(u => u.memberNo !== memberNo));
+      await api.delete(`/members/me/blocked/${userId}`);
+      setBlockedUsers(prev => prev.filter(u => (u.memberNo ?? u.id) !== userId));
       showToast('차단이 해제되었습니다.', 'success');
     } catch {
       showToast('차단 해제에 실패했습니다.', 'error');
@@ -40,7 +40,7 @@ export const BlockedUsersSettings: React.FC = () => {
                 </div>
               </div>
               <button
-                onClick={() => unblockUser(user.memberNo)}
+                onClick={() => unblockUser(user.memberNo ?? user.id)}
                 className="px-4 py-2 bg-red-50 text-red-500 text-xs font-bold rounded-2xl hover:bg-red-100 transition-all"
               >
                 차단 해제

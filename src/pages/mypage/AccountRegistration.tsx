@@ -94,7 +94,7 @@ export const AccountRegistration: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-50 pt-8 pb-12 px-4">
+    <div className="min-h-[calc(100vh-64px)] bg-gray-50 pt-8 pb-12 px-4">
       <div className="max-w-md mx-auto">
         <button onClick={() => navigate(-1)} className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-8 group">
           <svg className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
