@@ -305,7 +305,9 @@ export const Settings: React.FC = () => {
         logout();
       }, 2000);
     } catch (e: any) {
-      setWithdrawError(e.response?.data?.message || '탈퇴 처리에 실패했습니다.');
+      const data = e.response?.data;
+      const msg = data?.error || data?.message || Object.values(data ?? {})[0] || '탈퇴 처리에 실패했습니다.';
+      setWithdrawError(String(msg));
     }
   };
 

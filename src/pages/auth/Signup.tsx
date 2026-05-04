@@ -323,8 +323,10 @@ export const Signup: React.FC = () => {
     } catch (error: any) {
       if (error.response?.status === 409) {
         showToast("이미 사용 중인 '아이디', '닉네임', 또는 '이메일'입니다.", 'error');
-      } else if (error.response?.status === 400) {
-        showToast(error.response.data?.message || '입력 정보를 다시 확인해주세요.', 'error');
+      } else if (error.response?.status === 400 || error.response?.status === 500) {
+        const data = error.response.data;
+        const msg = data?.error || data?.message || Object.values(data ?? {})[0] || '입력 정보를 다시 확인해주세요.';
+        showToast(String(msg), 'error');
       } else {
         showToast("'회원가입'에 실패했습니다. 잠시 후 다시 시도해주세요.", 'error');
       }

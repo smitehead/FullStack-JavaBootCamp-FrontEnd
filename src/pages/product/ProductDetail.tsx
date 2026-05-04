@@ -680,11 +680,12 @@ export const ProductDetail: React.FC = () => {
       setShowAutoBidConfirmModal(false);
       await fetchProduct();
     } catch (error: any) {
-      const errorMsg = typeof error.response?.data === 'string'
-        ? error.response.data
-        : (error.response?.data?.message || '자동 입찰 설정에 실패했습니다.');
+      const data = error.response?.data;
+      const errorMsg = typeof data === 'string'
+        ? data
+        : (data?.error || data?.message || '자동 입찰 설정에 실패했습니다.');
       showToast(errorMsg, 'error');
-      setShowAutoBidConfirmModal(false);
+      // 모달을 닫지 않음 — 에러 원인을 확인하고 다시 입력할 수 있어야 함
     } finally {
       setIsBidProcessing(false);
     }
