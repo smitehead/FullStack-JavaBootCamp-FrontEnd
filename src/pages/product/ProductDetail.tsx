@@ -102,6 +102,13 @@ export const ProductDetail: React.FC = () => {
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'bid' | 'auto'>('bid');
   const [autoBidMaxAmount, setAutoBidMaxAmount] = useState<number>(0);
+
+  // 확인 모달 오픈 순간의 스냅샷 — SSE로 livePrice가 바뀌어도 모달 내 가격은 고정됨
+  const [bidSnapshot, setBidSnapshot] = useState<{
+    bidPrice: number;
+    autoBidMaxPrice: number;
+    targetPrice: number;  // 클릭 시점 현재가 — 백엔드 race condition 검증용
+  } | null>(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showRechargePrompt, setShowRechargePrompt] = useState(false);
   const [activeAutoBid, setActiveAutoBid] = useState<{ autoBidNo: number; maxPrice: number } | null>(null);
@@ -572,10 +579,12 @@ export const ProductDetail: React.FC = () => {
       setIsBidModalOpen(false);
       setTimeout(() => navigate('/mypage?tab=bidding'), 800);
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message
-        || (typeof error.response?.data === 'string' ? error.response.data : '즉시 구매에 실패했습니다.');
+      const data = error.response?.data;
+      const errorMsg = typeof data === 'string'
+        ? data
+        : (data?.error || data?.message || '즉시 구매에 실패했습니다.');
       showToast(errorMsg, 'error');
-      setShowBuyoutModal(false);
+      // 모달을 닫지 않음 — 잔액 부족 등의 원인을 확인하고 재시도 가능해야 함
     } finally {
       setIsBuyoutProcessing(false);
     }
@@ -615,6 +624,13 @@ export const ProductDetail: React.FC = () => {
       return;
     }
 
+    // 확인 모달을 열기 직전 가격 스냅샷 — 이후 SSE 업데이트와 완전히 분리됨
+    setBidSnapshot({
+      bidPrice: bidAmount,
+      autoBidMaxPrice: autoBidMaxAmount,
+      targetPrice: product.currentPrice,
+    });
+
     if (modalType === 'auto') {
       setShowAutoBidConfirmModal(true);
     } else {
@@ -631,11 +647,16 @@ export const ProductDetail: React.FC = () => {
       justBidRef.current = true;
       setTimeout(() => { justBidRef.current = false; }, 3000);
 
+      // 스냅샷 우선 사용 — 모달이 열린 후 SSE로 갱신된 livePrice가 아닌
+      // 사용자가 '확인' 버튼을 보던 순간의 값을 전송해야 백엔드 race condition 검증이 의미 있음
+      const frozenBidPrice = bidSnapshot?.bidPrice ?? bidAmount;
+      const frozenTargetPrice = bidSnapshot?.targetPrice ?? product.currentPrice;
+
       const response = await api.post('/bids', {
         productNo: product.id,
         memberNo: memberNo,
-        bidPrice: bidAmount,
-        targetPrice: product.currentPrice  // 클릭 시점 현재가 — 서버 측 가격 변동 감지용
+        bidPrice: frozenBidPrice,
+        targetPrice: frozenTargetPrice,
       });
       const bidResult = response.data as { autoBidFired: boolean; finalBidderNo: number; finalPrice: number };
 
@@ -1581,6 +1602,7 @@ export const ProductDetail: React.FC = () => {
           user={user}
           bidAmount={bidAmount}
           autoBidMaxAmount={autoBidMaxAmount}
+          bidSnapshot={bidSnapshot}
           isFinished={isFinished}
           cancelCondition={cancelCondition}
           isShareModalOpen={isShareModalOpen}

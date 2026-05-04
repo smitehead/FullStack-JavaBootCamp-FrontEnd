@@ -6,11 +6,18 @@ import { Product } from '@/types';
 import { showToast } from '@/components/toastService';
 import { formatPrice } from '@/utils/formatUtils';
 
+interface BidSnapshot {
+  bidPrice: number;
+  autoBidMaxPrice: number;
+  targetPrice: number;
+}
+
 interface ProductDetailModalsProps {
   product: Product;
   user: { points?: number; id?: string } | null;
   bidAmount: number;
   autoBidMaxAmount: number;
+  bidSnapshot: BidSnapshot | null;
   isFinished: boolean;
   cancelCondition: 'A' | 'B' | 'C';
 
@@ -59,7 +66,7 @@ interface ProductDetailModalsProps {
 }
 
 export const ProductDetailModals: React.FC<ProductDetailModalsProps> = ({
-  product, user, bidAmount, autoBidMaxAmount, isFinished, cancelCondition,
+  product, user, bidAmount, autoBidMaxAmount, bidSnapshot, isFinished, cancelCondition,
   isShareModalOpen, showCancelModal, showBidCancelModal, showBidTermsModal,
   showRechargePrompt, showDeleteModal, showRepostModal, showBuyoutModal,
   showBidConfirmModal, showAutoBidConfirmModal,
@@ -509,7 +516,8 @@ export const ProductDetailModals: React.FC<ProductDetailModalsProps> = ({
             <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">입찰하시겠습니까?</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                <span className="font-semibold text-gray-900">{formatPrice(bidAmount)}원</span>으로 입찰에 참여합니다.<br />
+                {/* bidSnapshot.bidPrice: 모달 오픈 시점 고정 가격 — livePrice 변동 차단 */}
+                <span className="font-semibold text-gray-900">{formatPrice(bidSnapshot?.bidPrice ?? bidAmount)}원</span>으로 입찰에 참여합니다.<br />
                 입찰 후 취소 시 위약금이 발생할 수 있습니다.
               </p>
               <div className="flex gap-3 w-full">
@@ -534,7 +542,8 @@ export const ProductDetailModals: React.FC<ProductDetailModalsProps> = ({
             <div className="p-8 text-left">
               <h3 className="text-xl font-bold text-gray-900 mb-2">자동 입찰을 설정하시겠습니까?</h3>
               <p className="text-sm text-gray-500 mb-8 font-medium leading-relaxed">
-                최대 <span className="font-semibold text-gray-900">{formatPrice(autoBidMaxAmount)}원</span>까지 자동으로 상위 입찰을 진행하도록 설정합니다.
+                {/* bidSnapshot.autoBidMaxPrice: 모달 오픈 시점 고정 가격 — livePrice 변동 차단 */}
+                최대 <span className="font-semibold text-gray-900">{formatPrice(bidSnapshot?.autoBidMaxPrice ?? autoBidMaxAmount)}원</span>까지 자동으로 상위 입찰을 진행하도록 설정합니다.
               </p>
               <div className="flex gap-3 w-full">
                 <button onClick={() => setShowAutoBidConfirmModal(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all text-sm">
