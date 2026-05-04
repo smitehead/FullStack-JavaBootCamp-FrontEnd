@@ -634,7 +634,8 @@ export const ProductDetail: React.FC = () => {
       const response = await api.post('/bids', {
         productNo: product.id,
         memberNo: memberNo,
-        bidPrice: bidAmount
+        bidPrice: bidAmount,
+        targetPrice: product.currentPrice  // 클릭 시점 현재가 — 서버 측 가격 변동 감지용
       });
       const bidResult = response.data as { autoBidFired: boolean; finalBidderNo: number; finalPrice: number };
 
@@ -652,11 +653,12 @@ export const ProductDetail: React.FC = () => {
 
       await fetchProduct();
     } catch (error: any) {
-      const errorMsg = typeof error.response?.data === 'string'
-        ? error.response.data
-        : (error.response?.data?.message || '입찰에 실패했습니다.');
+      const data = error.response?.data;
+      const errorMsg = typeof data === 'string'
+        ? data
+        : (data?.error || data?.message || '입찰에 실패했습니다.');
       showToast(errorMsg, 'error');
-      setShowBidConfirmModal(false);
+      // 모달을 닫지 않음 — 에러 원인 확인 후 재시도 가능해야 함
     } finally {
       setIsBidProcessing(false);
     }
