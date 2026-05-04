@@ -13,6 +13,25 @@ interface BankAccount {
   isDefault: number;
 }
 
+const BANK_LOGOS: Record<string, string> = {
+  'KB국민은행': '/images/KB국민은행.png',
+  '신한은행': '/images/신한은행.png',
+  '우리은행': '/images/우리은행.jpg',
+  '하나은행': '/images/하나은행.png',
+  'NH농협은행': '/images/NH농협은행.jpg',
+  'IBK기업은행': '/images/ibk기업은행.png',
+  '카카오뱅크': '/images/카카오뱅크.png',
+  '토스뱅크': '/images/토스은행.png',
+  '케이뱅크': '/images/케이뱅크.png',
+  'SC제일은행': '/images/제일은행.png',
+  '씨티은행': '/images/씨티은행.png',
+  '수협은행': '/images/수협은행.png',
+  '우체국': '/images/우체국.png',
+  '새마을금고': '/images/새마을금고.jpg',
+  '신협': '/images/신협.png',
+  '경남은행': '/images/경남은행.png',
+};
+
 export const AccountSettings: React.FC = () => {
   const navigate = useNavigate();
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
@@ -73,8 +92,24 @@ export const AccountSettings: React.FC = () => {
           {accounts.map(acc => (
             <div key={acc.accountNo} className="flex items-center justify-between p-5 rounded-2xl border border-gray-100 bg-white">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
-                  <BsBank className="w-5 h-5 text-indigo-600" />
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 ${BANK_LOGOS[acc.bankName] ? 'bg-white border border-gray-100' : 'bg-indigo-50'}`}>
+                  {BANK_LOGOS[acc.bankName] ? (
+                    <img
+                      src={BANK_LOGOS[acc.bankName]}
+                      alt={acc.bankName}
+                      className="w-full h-full object-cover p-1"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                        const fallback = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
+                        if (fallback) fallback.classList.remove('hidden');
+                      }}
+                    />
+                  ) : null}
+                  {BANK_LOGOS[acc.bankName] ? (
+                    <span className="hidden text-xs font-bold text-gray-400">{acc.bankName.substring(0, 1)}</span>
+                  ) : (
+                    <BsBank className="w-5 h-5 text-indigo-600" />
+                  )}
                 </div>
                 <div>
                   <p className="font-bold text-gray-900">{acc.bankName}</p>
