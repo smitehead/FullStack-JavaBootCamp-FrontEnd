@@ -103,12 +103,16 @@ export const ProductDetail: React.FC = () => {
   const [modalType, setModalType] = useState<'bid' | 'auto'>('bid');
   const [autoBidMaxAmount, setAutoBidMaxAmount] = useState<number>(0);
 
-  // 확인 모달 오픈 순간의 스냅샷 — SSE로 livePrice가 바뀌어도 모달 내 가격은 고정됨
-  const [bidSnapshot, setBidSnapshot] = useState<{
+  // 확인 모달 오픈 순간의 스냅샷 — useRef로 관리해 SSE 리렌더와 완전히 분리
+  // useState는 SSE로 인한 리렌더 시 부모 state 변경으로 자식 prop도 재평가될 수 있음
+  // useRef는 값이 바뀌어도 리렌더를 유발하지 않고, 리렌더로 인해 값이 초기화되지도 않음
+  const bidSnapshotRef = React.useRef<{
     bidPrice: number;
     autoBidMaxPrice: number;
-    targetPrice: number;  // 클릭 시점 현재가 — 백엔드 race condition 검증용
+    targetPrice: number;
   } | null>(null);
+  // 모달 리렌더링을 위해 별도로 snapshot 버전 카운터 유지
+  const [bidSnapshotVersion, setBidSnapshotVersion] = React.useState(0);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showRechargePrompt, setShowRechargePrompt] = useState(false);
   const [activeAutoBid, setActiveAutoBid] = useState<{ autoBidNo: number; maxPrice: number } | null>(null);
@@ -624,12 +628,13 @@ export const ProductDetail: React.FC = () => {
       return;
     }
 
-    // 확인 모달을 열기 직전 가격 스냅샷 — 이후 SSE 업데이트와 완전히 분리됨
-    setBidSnapshot({
+    // 확인 모달을 열기 직전 가격 스냅샷 — ref에 직접 저장하므로 SSE 리렌더와 무관
+    bidSnapshotRef.current = {
       bidPrice: bidAmount,
       autoBidMaxPrice: autoBidMaxAmount,
       targetPrice: product.currentPrice,
-    });
+    };
+    setBidSnapshotVersion((v: number) => v + 1); // 모달 컴포넌트가 새 ref 값을 읽도록 리렌더 유발
 
     if (modalType === 'auto') {
       setShowAutoBidConfirmModal(true);
@@ -649,8 +654,8 @@ export const ProductDetail: React.FC = () => {
 
       // 스냅샷 우선 사용 — 모달이 열린 후 SSE로 갱신된 livePrice가 아닌
       // 사용자가 '확인' 버튼을 보던 순간의 값을 전송해야 백엔드 race condition 검증이 의미 있음
-      const frozenBidPrice = bidSnapshot?.bidPrice ?? bidAmount;
-      const frozenTargetPrice = bidSnapshot?.targetPrice ?? product.currentPrice;
+      const frozenBidPrice = bidSnapshotRef.current?.bidPrice ?? bidAmount;
+      const frozenTargetPrice = bidSnapshotRef.current?.targetPrice ?? product.currentPrice;
 
       const response = await api.post('/bids', {
         productNo: product.id,
@@ -1602,7 +1607,7 @@ export const ProductDetail: React.FC = () => {
           user={user}
           bidAmount={bidAmount}
           autoBidMaxAmount={autoBidMaxAmount}
-          bidSnapshot={bidSnapshot}
+          bidSnapshot={bidSnapshotRef.current}
           isFinished={isFinished}
           cancelCondition={cancelCondition}
           isShareModalOpen={isShareModalOpen}
