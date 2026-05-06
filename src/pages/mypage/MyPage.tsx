@@ -697,20 +697,7 @@ export const MyPage: React.FC = () => {
                         customLink={hasPendingResult ? `/seller-result/${p.id}` : undefined}
                         onWishlistToggle={handleWishlistToggle}
                       />
-                      <div className="flex items-center justify-end px-1">
-                        {((p.hasSellerReview === false || p.hasReview === false) && p.resultNo) && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setSelectedProductForReview(p);
-                              setShowReviewModal(true);
-                            }}
-                            className="inline-flex items-center px-3 py-1 bg-white border border-gray-200 text-gray-700 rounded-full text-xs font-bold hover:bg-gray-50 transition-all font-sans"
-                          >
-                            후기 작성하기
-                          </button>
-                        )}
-                      </div>
+                      <div className="flex items-center justify-end px-1"></div>
                     </div>
                   );
                 })}

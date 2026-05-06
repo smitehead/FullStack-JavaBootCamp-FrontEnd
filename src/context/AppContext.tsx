@@ -158,12 +158,25 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const getIsAdminFromToken = (): boolean => {
+  try {
+    const token = sessionStorage.getItem('java_token');
+    if (!token) return false;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.isAdmin === 1 || payload.isAdmin === true;
+  } catch { return false; }
+};
+
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(() => {
     try {
       const saved = sessionStorage.getItem('java_user');
-      return saved ? JSON.parse(saved) : null;
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      // isAdmin은 java_user 대신 JWT 토큰에서 읽어 조작 방지
+      parsed.isAdmin = getIsAdminFromToken();
+      return parsed;
     } catch { return null; }
   });
   const [isInitialized, setIsInitialized] = useState(() => !!sessionStorage.getItem('java_user'));
@@ -491,14 +504,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
       let dbPoints = 0;
       let dbMannerTemp = 36.5;
-      let dbIsAdmin = false;
       let dbProfileImage = '';
       let dbJoinedAt = new Date().toISOString();
       try {
         const memberRes = await api.get(`/members/me/summary`);
         dbPoints = memberRes.data.points || 0;
         dbMannerTemp = memberRes.data.mannerTemp ?? 36.5;
-        dbIsAdmin = memberRes.data.isAdmin === 1;
         dbProfileImage = resolveImageUrl(memberRes.data.profileImgUrl) || '';
         if (memberRes.data.joinedAt) {
           dbJoinedAt = memberRes.data.joinedAt;
@@ -514,7 +525,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         points: dbPoints,
         mannerTemp: dbMannerTemp,
         joinedAt: dbJoinedAt,
-        isAdmin: dbIsAdmin,
+        isAdmin: getIsAdminFromToken(),
         address: addrShort || '',
       };
 
