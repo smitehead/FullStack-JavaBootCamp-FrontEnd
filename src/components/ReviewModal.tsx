@@ -141,7 +141,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-red-400 mb-2">아쉬웠어요</p>
+                    <p className="text-xs font-bold text-brand mb-2">아쉬웠어요</p>
                     <div className="flex flex-wrap gap-2">
                       {availableTags.filter(t => NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => {
                         const disabled = selectedGroup === 'positive';
@@ -151,7 +151,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                             onClick={() => toggleTag(tag.tagId, true)}
                             disabled={disabled}
                             className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${selectedTagIds.includes(tag.tagId)
-                                ? 'bg-red-500 border-red-500 text-white shadow-md'
+                                ? 'bg-brand border-brand text-white shadow-md'
                                 : disabled
                                   ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed'
                                   : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'

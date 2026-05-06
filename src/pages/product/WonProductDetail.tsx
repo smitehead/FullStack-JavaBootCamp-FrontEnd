@@ -126,11 +126,11 @@ export const WonProductDetail: React.FC = () => {
         api.post(`/chat/rooms/${roomNo}/messages`, {
           content: '첫 대화를 남겨보세요',
           msgType: 'SYSTEM',
-        }).catch(() => {});
+        }).catch(() => { });
       }
-    }).catch(() => {});
-  // result.productNo가 확정됐을 때 한 번만 실행
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    }).catch(() => { });
+    // result.productNo가 확정됐을 때 한 번만 실행
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result?.productNo]);
 
   if (!isInitialized || !user) return null;
@@ -517,7 +517,7 @@ export const WonProductDetail: React.FC = () => {
                         <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-full shadow-sm group relative cursor-help">
                           <AlertCircle className="w-5 h-5 text-brand" />
                           <span className="text-sm font-bold text-brand">취소 요청 대기 중</span>
-                          
+
                           {/* Tooltip */}
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 bg-gray-900/95 backdrop-blur-md text-white text-xs p-4 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] shadow-2xl pointer-events-none border border-white/10 text-center">
                             <p className="leading-relaxed font-medium">
@@ -615,10 +615,10 @@ export const WonProductDetail: React.FC = () => {
 
                 <div className="pt-8 border-t border-white/10">
                   <div className="space-y-3">
-                      <button
-                        onClick={handleChatWithSeller}
+                    <button
+                      onClick={handleChatWithSeller}
                       className="w-full py-5 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95"
-                      >
+                    >
                       <BsChat className="w-5 h-5 text-gray-900" />
                       판매자와 채팅하기
                     </button>

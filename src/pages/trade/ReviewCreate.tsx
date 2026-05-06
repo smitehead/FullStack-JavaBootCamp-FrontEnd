@@ -154,7 +154,7 @@ export const ReviewCreate: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-red-400 mb-3">아쉬웠어요</p>
+                  <p className="text-xs font-bold text-brand mb-3">아쉬웠어요</p>
                   <div className="flex flex-wrap gap-2.5">
                     {availableTags.filter(t => NEGATIVE_TAG_NAMES.has(t.tagName)).map(tag => {
                       const disabled = selectedGroup === 'positive';
@@ -165,7 +165,7 @@ export const ReviewCreate: React.FC = () => {
                           disabled={disabled}
                           className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
                             selectedTagIds.includes(tag.tagId)
-                              ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-100'
+                              ? 'bg-brand border-brand text-white shadow-lg shadow-brand/20'
                               : disabled
                                 ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed'
                                 : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
