@@ -300,6 +300,7 @@ export const ProductDetail: React.FC = () => {
   // -----------------------------------------------------------------------------
   useEffect(() => {
     if (!product || !product.id) return;
+    console.log('[SSE] 리스너 등록 — product.id:', product.id, '/ user?.id:', user?.id);
 
     const handlePriceUpdate = (detail: {
       productNo: number | string;
@@ -309,7 +310,11 @@ export const ProductDetail: React.FC = () => {
       bidCancelled?: boolean;
       participantCount?: number;
     }) => {
-      if (String(detail.productNo) !== String(product.id)) return;
+      console.log('[SSE] priceUpdate 수신:', detail, '/ product.id:', product.id);
+      if (String(detail.productNo) !== String(product.id)) {
+        console.warn('[SSE] productNo 불일치 — 무시:', detail.productNo, '!=', product.id);
+        return;
+      }
 
       // SSE 수신 가격을 ref에 기록 — fetchProduct 경쟁 조건 방지
       // bidCancelled 이벤트는 가격이 내려가므로 max 비교 없이 직접 반영
