@@ -330,7 +330,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     let eventSource: EventSource | null = null;
     let cancelled = false;
 
-    api.post('/sse/ticket').then(res => {
+    api.get('/sse/ticket').then(res => {
       if (cancelled) return;
       const ticket = res.data.ticket;
       eventSource = new EventSource(`/api/sse/subscribe?ticket=${encodeURIComponent(ticket)}`);
