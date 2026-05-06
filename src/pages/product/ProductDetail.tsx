@@ -684,11 +684,15 @@ export const ProductDetail: React.FC = () => {
 
       if (bidResult.autoBidFired && bidResult.finalBidderNo !== memberNo) {
         setIsHighestBidder(false);
+        isHighestBidderRef.current = false;
         showToast('입찰은 완료되었으나, 다른 유저의 자동 입찰에 의해 상위 입찰자가 갱신되었습니다.', 'warning');
       } else {
         setIsHighestBidder(true);
+        isHighestBidderRef.current = true;
         showToast('입찰이 완료되었습니다!', 'success');
       }
+      // API 응답으로 확정된 isHighestBidder를 fetchProduct가 덮어쓰지 못하도록 보호
+      sseHasRunRef.current = true;
 
       await fetchProduct();
     } catch (error: any) {
