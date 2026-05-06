@@ -64,6 +64,9 @@ import { InquiryCreate } from '@/pages/cs/InquiryCreate';
 import { InquiryDetail } from '@/pages/cs/InquiryDetail';
 import { Report } from '@/pages/cs/Report';
 
+// [ Route Guards ]
+import { AdminRoute } from '@/components/AdminRoute';
+
 // [ Admin Pages (관리자) ]
 import { AdminLayout } from '@/pages/admin/AdminLayout';
 import { AdminDashboard } from '@/pages/admin/AdminDashboard';
@@ -141,7 +144,8 @@ const App: React.FC = () => {
         <Routes>
           {/* Admin Routes */}
           <Route path="/admin/*" element={
-            <AdminLayout>
+            <AdminRoute>
+              <AdminLayout>
               <Routes>
                 <Route path="/" element={<AdminDashboard />} />
                 <Route path="/users" element={<UserManagement />} />
@@ -156,7 +160,8 @@ const App: React.FC = () => {
                 <Route path="/withdraws" element={<WithdrawManagement />} />
                 <Route path="/revenue" element={<RevenueManagement />} />
               </Routes>
-            </AdminLayout>
+              </AdminLayout>
+            </AdminRoute>
           } />
 
           {/* User Routes */}
