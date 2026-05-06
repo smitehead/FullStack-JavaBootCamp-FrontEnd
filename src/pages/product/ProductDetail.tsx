@@ -152,6 +152,9 @@ export const ProductDetail: React.FC = () => {
   // 입찰 참여 여부 및 최고입찰자 여부 (SSE 실시간 반영)
   const [hasBid, setHasBid] = useState(false);
   const [isHighestBidder, setIsHighestBidder] = useState(false);
+  // SSE 클로저는 stale closure 문제로 state를 직접 읽을 수 없으므로 ref로 동기화
+  const isHighestBidderRef = React.useRef(false);
+  useEffect(() => { isHighestBidderRef.current = isHighestBidder; }, [isHighestBidder]);
 
   // 입찰 성공 후 상품 데이터 재조회
   const fetchProduct = React.useCallback(async () => {
@@ -374,11 +377,16 @@ export const ProductDetail: React.FC = () => {
         setHasBid(true);
       } else {
         // 타인 입찰 → 추월당함 (justBidRef 관계없이 뱃지 즉시 반영)
+        const wasHighestBidder = isHighestBidderRef.current;
         setIsHighestBidder(false);
         if (!justBidRef.current) {
           const title = product?.title || '이 상품';
           const truncatedTitle = title.length > 10 ? title.substring(0, 10) + '..' : title;
-          showToast(`'${truncatedTitle}' 상품에 새로운 입찰이 생겼습니다!`, 'bid');
+          if (wasHighestBidder) {
+            showToast(`'${truncatedTitle}' 상위 입찰자가 나타났습니다!`, 'bid');
+          } else {
+            showToast(`'${truncatedTitle}' 상품에 새로운 입찰이 생겼습니다!`, 'bid');
+          }
         }
       }
 
