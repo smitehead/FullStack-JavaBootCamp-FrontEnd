@@ -532,7 +532,7 @@ export const ProductDetail: React.FC = () => {
     try {
       const memberNo = getMemberNo(user);
       if (!memberNo) return;
-      const res = await api.get(`/members/${memberNo}`);
+      const res = await api.get(`/members/me/summary`);
       updateCurrentUserPoints(res.data.points);
     } catch (e) {
       console.error("포인트 조회 실패", e);

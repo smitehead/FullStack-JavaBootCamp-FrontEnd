@@ -459,7 +459,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const parsedUser = JSON.parse(savedUser);
       const memberNo = parseInt(parsedUser.id.replace(/[^0-9]/g, ''), 10);
       if (!isNaN(memberNo)) {
-        api.get(`/members/${memberNo}`).then(res => {
+        api.get(`/members/me/summary`).then(res => {
           if (res.data) {
             setUser(prev => {
               if (!prev) return prev;
@@ -495,7 +495,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       let dbProfileImage = '';
       let dbJoinedAt = new Date().toISOString();
       try {
-        const memberRes = await api.get(`/members/${memberNo}`);
+        const memberRes = await api.get(`/members/me/summary`);
         dbPoints = memberRes.data.points || 0;
         dbMannerTemp = memberRes.data.mannerTemp ?? 36.5;
         dbIsAdmin = memberRes.data.isAdmin === 1;
