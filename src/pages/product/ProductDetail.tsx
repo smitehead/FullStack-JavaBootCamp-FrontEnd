@@ -231,11 +231,8 @@ export const ProductDetail: React.FC = () => {
         setHasBid(false);
       }
 
-      // 최고입찰자 여부: 백엔드가 memberNo 기반으로 직접 판별한 값을 사용
-      // SSE가 이미 실시간으로 업데이트했다면 fetchProduct의 응답으로 덮어쓰지 않음
-      if (!sseHasRunRef.current) {
-        setIsHighestBidder(data.isHighestBidder === true);
-      }
+      // 최고입찰자 여부: 서버 응답이 항상 권위 있는 출처 — SSE와 항상 동기화
+      setIsHighestBidder(data.isHighestBidder === true);
 
       // 활성 자동입찰 조회 (로그인 사용자만)
       const loginMemberNo = getMemberNo(user);
@@ -682,19 +679,15 @@ export const ProductDetail: React.FC = () => {
       setIsBidModalOpen(false);
       setShowBidConfirmModal(false);
 
-      if (bidResult.autoBidFired && bidResult.finalBidderNo !== memberNo) {
-        setIsHighestBidder(false);
-        isHighestBidderRef.current = false;
-        showToast('입찰은 완료되었으나, 다른 유저의 자동 입찰에 의해 상위 입찰자가 갱신되었습니다.', 'warning');
-      } else {
-        setIsHighestBidder(true);
-        isHighestBidderRef.current = true;
-        showToast('입찰이 완료되었습니다!', 'success');
-      }
-      // API 응답으로 확정된 isHighestBidder를 fetchProduct가 덮어쓰지 못하도록 보호
-      sseHasRunRef.current = true;
+      showToast('입찰이 완료되었습니다!', 'success');
 
+      // isHighestBidder는 fetchProduct 서버 응답으로만 결정 — 여기서 낙관적 업데이트 금지
+      // (auto-bid가 SSE보다 먼저 도착하면 true로 덮어써 복구를 막는 경합 조건이 생김)
       await fetchProduct();
+
+      // 자동입찰은 커밋 후 별도 트랜잭션으로 실행되므로 SSE보다 API 응답이 먼저 도착함.
+      // 2초 후 재조회해서 자동입찰 결과(isHighestBidder)를 서버에서 확인.
+      setTimeout(() => fetchProduct(), 2000);
     } catch (error: any) {
       const data = error.response?.data;
       const errorMsg = typeof data === 'string'
