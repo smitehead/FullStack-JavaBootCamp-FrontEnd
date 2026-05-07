@@ -679,16 +679,10 @@ export const ProductDetail: React.FC = () => {
       setIsBidModalOpen(false);
       setShowBidConfirmModal(false);
 
-      if (bidResult.autoBidFired && bidResult.finalBidderNo !== memberNo) {
-        setIsHighestBidder(false);
-        isHighestBidderRef.current = false;
-        showToast('입찰은 완료되었으나, 다른 유저의 자동 입찰에 의해 상위 입찰자가 갱신되었습니다.', 'warning');
-      } else {
-        setIsHighestBidder(true);
-        isHighestBidderRef.current = true;
-        showToast('입찰이 완료되었습니다!', 'success');
-      }
+      showToast('입찰이 완료되었습니다!', 'success');
 
+      // isHighestBidder는 fetchProduct 서버 응답으로만 결정 — 여기서 낙관적 업데이트 금지
+      // (auto-bid가 SSE보다 먼저 도착하면 true로 덮어써 복구를 막는 경합 조건이 생김)
       await fetchProduct();
 
       // 자동입찰은 커밋 후 별도 트랜잭션으로 실행되므로 SSE보다 API 응답이 먼저 도착함.
