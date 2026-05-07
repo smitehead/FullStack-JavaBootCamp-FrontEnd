@@ -33,10 +33,7 @@ export const NoticeDetail: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [detailRes, listRes] = await Promise.all([
-          api.get(`/notices/${id}`),
-          api.get('/notices/all')
-        ]);
+        const detailRes = await api.get(`/notices/${id}`);
         
         setNotice(detailRes.data);
       } catch (err) {
